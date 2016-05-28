@@ -53,6 +53,7 @@ public class Main extends javax.swing.JFrame {
         /* Set the Nimbus look and feel */
         //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
 
+        System.out.println("Tao la Hoang.");
         try {
             UIManager.setLookAndFeel(new HiFiLookAndFeel());
         } catch (javax.swing.UnsupportedLookAndFeelException ex) {
