@@ -189,7 +189,7 @@ public final class MainFrame extends javax.swing.JFrame {
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setTitle("Mobile Phone Management System");
         setPreferredSize(new java.awt.Dimension(1000, 640));
-        setSize(new java.awt.Dimension(900, 640));
+        setSize(new java.awt.Dimension(0, 0));
 
         pnSidebar.setBorder(javax.swing.BorderFactory.createEtchedBorder());
 
@@ -320,6 +320,7 @@ public final class MainFrame extends javax.swing.JFrame {
                 .addGap(0, 0, Short.MAX_VALUE))
         );
 
+        pnMain.setPreferredSize(new java.awt.Dimension(800, 640));
         pnMain.setLayout(new java.awt.GridLayout(1, 1));
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
