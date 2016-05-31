@@ -149,7 +149,6 @@ public final class MainFrame extends javax.swing.JFrame {
 
     public void setPanel(JPanel pnChild) {
         pnMain.removeAll();
-                pnMain.validate();
         pnMain.add(pnChild);
         pnMain.validate();
         pnMain.repaint();
@@ -189,7 +188,8 @@ public final class MainFrame extends javax.swing.JFrame {
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setTitle("Mobile Phone Management System");
-        setSize(new java.awt.Dimension(900, 650));
+        setPreferredSize(new java.awt.Dimension(1000, 640));
+        setSize(new java.awt.Dimension(900, 640));
 
         pnSidebar.setBorder(javax.swing.BorderFactory.createEtchedBorder());
 
