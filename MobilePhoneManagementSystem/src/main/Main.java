@@ -9,6 +9,7 @@ import com.jtattoo.plaf.hifi.HiFiLookAndFeel;
 import java.awt.Color;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.util.Properties;
 import javax.swing.ButtonGroup;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
@@ -352,7 +353,11 @@ public final class Main extends javax.swing.JFrame {
      */
     public static void main(String args[]) {
         try {
-            UIManager.setLookAndFeel(new HiFiLookAndFeel());
+            Properties properties = new Properties();
+            properties.put("logoString", "");
+            HiFiLookAndFeel laf = new HiFiLookAndFeel();
+            laf.setCurrentTheme(properties);
+            UIManager.setLookAndFeel(laf);
         } catch (javax.swing.UnsupportedLookAndFeelException ex) {
             java.util.logging.Logger.getLogger(Main.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         }
