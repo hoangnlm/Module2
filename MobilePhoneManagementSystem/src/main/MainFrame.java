@@ -21,7 +21,7 @@ import javax.swing.UIManager;
  *
  * @author Hoang
  */
-public final class Main extends javax.swing.JFrame {
+public final class MainFrame extends javax.swing.JFrame {
 
     private final ButtonGroup group = new ButtonGroup();
     private final int sidebarTotal = 10;
@@ -36,7 +36,7 @@ public final class Main extends javax.swing.JFrame {
     /**
      * Creates new form Main
      */
-    public Main() {
+    public MainFrame() {
         initComponents();
 
         setSidebar();
@@ -359,11 +359,11 @@ public final class Main extends javax.swing.JFrame {
             laf.setCurrentTheme(properties);
             UIManager.setLookAndFeel(laf);
         } catch (javax.swing.UnsupportedLookAndFeelException ex) {
-            java.util.logging.Logger.getLogger(Main.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(MainFrame.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         }
 
         java.awt.EventQueue.invokeLater(() -> {
-            new Main().setVisible(true);
+            new MainFrame().setVisible(true);
         });
     }
 
