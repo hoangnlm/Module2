@@ -7,6 +7,7 @@ package main;
 
 import com.jtattoo.plaf.hifi.HiFiLookAndFeel;
 import java.awt.Color;
+import java.awt.GridLayout;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.Properties;
@@ -16,6 +17,7 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
 import javax.swing.UIManager;
+import order.OrderPanel;
 
 /**
  *
@@ -38,6 +40,7 @@ public final class MainFrame extends javax.swing.JFrame {
      */
     public MainFrame() {
         initComponents();
+//        pnMain.setLayout(new GridLayout(1, 1));
 
         setSidebar();
         setSelected(0);
@@ -55,16 +58,16 @@ public final class MainFrame extends javax.swing.JFrame {
         lb[8] = lbUser;
         lb[9] = lbLogout;
 
-        pn[0] = new JPanel();
-        pn[1] = new JPanel();
-        pn[2] = new JPanel();
-        pn[3] = new JPanel();
-        pn[4] = new JPanel();
-        pn[5] = new JPanel();
-        pn[6] = new JPanel();
-        pn[7] = new JPanel();
-        pn[8] = new JPanel();
-        pn[9] = new JPanel();
+        pn[0] = new BlankPanel();
+        pn[1] = new BlankPanel();
+        pn[2] = new BlankPanel();
+        pn[3] = new BlankPanel();
+        pn[4] = new OrderPanel();
+        pn[5] = new BlankPanel();
+        pn[6] = new BlankPanel();
+        pn[7] = new BlankPanel();
+        pn[8] = new BlankPanel();
+        pn[9] = new BlankPanel();
 
         for (int i = 0; i < sidebarTotal; i++) {
             setSidebarItem(lb[i]);
@@ -146,6 +149,7 @@ public final class MainFrame extends javax.swing.JFrame {
 
     public void setPanel(JPanel pnChild) {
         pnMain.removeAll();
+                pnMain.validate();
         pnMain.add(pnChild);
         pnMain.validate();
         pnMain.repaint();
@@ -285,10 +289,8 @@ public final class MainFrame extends javax.swing.JFrame {
                     .addComponent(lbSupplier, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(lbUser, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(lbService, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(lbLogout, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(0, 0, 0))
+                    .addComponent(lbLogout, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
             .addGroup(pnSidebarLayout.createSequentialGroup()
-                .addGap(0, 0, 0)
                 .addComponent(lbProduct, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(0, 0, Short.MAX_VALUE))
         );
@@ -318,16 +320,7 @@ public final class MainFrame extends javax.swing.JFrame {
                 .addGap(0, 0, Short.MAX_VALUE))
         );
 
-        javax.swing.GroupLayout pnMainLayout = new javax.swing.GroupLayout(pnMain);
-        pnMain.setLayout(pnMainLayout);
-        pnMainLayout.setHorizontalGroup(
-            pnMainLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 340, Short.MAX_VALUE)
-        );
-        pnMainLayout.setVerticalGroup(
-            pnMainLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 0, Short.MAX_VALUE)
-        );
+        pnMain.setLayout(new java.awt.GridLayout(1, 1));
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
