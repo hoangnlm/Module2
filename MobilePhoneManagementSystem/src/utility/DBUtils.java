@@ -64,6 +64,16 @@ public class DBUtils {
         dbPassword = "111";
     }
 
+    public DBUtils(String dbHost, String dbPort, String dbName, String dbUsername, String dbPassword) {
+        this.dbHost = dbHost;
+        this.dbPort = (dbPort==null||dbPort=="")?"1433":dbPort;
+        this.dbName = dbName;
+        this.dbUsername = dbUsername;
+        this.dbPassword = dbPassword;
+    }
+    
+    
+
     public void start() {
         try {
             System.out.println(getDbUrl());
@@ -167,14 +177,13 @@ public class DBUtils {
         return callableStatement;
     }
 
-    public static CachedRowSet getCachedRowSet(String query) {
+    public CachedRowSet getCachedRowSet(String query) {
         CachedRowSet cachedRowSet = null;
         try {
-            DBUtils db = new DBUtils();
             cachedRowSet = new CachedRowSetImpl();
-            cachedRowSet.setUrl(db.getDbUrl() + ";DatabaseName=" + db.getDbName());
-            cachedRowSet.setUsername(db.getDbUsername());
-            cachedRowSet.setPassword(db.getDbPassword());
+            cachedRowSet.setUrl(getDbUrl());
+            cachedRowSet.setUsername(dbUsername);
+            cachedRowSet.setPassword(dbPassword);
             cachedRowSet.setCommand(query);
             if (!query.matches(".*\\?.*")) {
                 cachedRowSet.execute();
