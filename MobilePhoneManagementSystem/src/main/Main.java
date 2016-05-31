@@ -20,13 +20,13 @@ import javax.swing.UIManager;
  *
  * @author Hoang
  */
-public class Main extends javax.swing.JFrame {
+public final class Main extends javax.swing.JFrame {
 
-    private ButtonGroup group = new ButtonGroup();
+    private final ButtonGroup group = new ButtonGroup();
     private final int sidebarTotal = 10;
-    private JRadioButton[] rb = new JRadioButton[sidebarTotal];
-    private JLabel[] lb = new JLabel[sidebarTotal];
-    private JPanel[] pn = new JPanel[sidebarTotal];
+    private final JRadioButton[] rb = new JRadioButton[sidebarTotal];
+    private final JLabel[] lb = new JLabel[sidebarTotal];
+    private final JPanel[] pn = new JPanel[sidebarTotal];
 
     private final Color normalState = new Color(51, 51, 51); // light black
     private final Color hoverState = Color.CYAN;
@@ -190,7 +190,7 @@ public class Main extends javax.swing.JFrame {
 
         lbHome.setBackground(new java.awt.Color(51, 51, 51));
         lbHome.setFont(new java.awt.Font("Lucida Calligraphy", 0, 14)); // NOI18N
-        lbHome.setIcon(new javax.swing.ImageIcon(getClass().getResource("/image/home/Home.png"))); // NOI18N
+        lbHome.setIcon(new javax.swing.ImageIcon(getClass().getResource("/image/main/Home.png"))); // NOI18N
         lbHome.setText("HOME");
         lbHome.setBorder(javax.swing.BorderFactory.createEmptyBorder(1, 10, 1, 1));
         lbHome.setOpaque(true);
@@ -198,7 +198,7 @@ public class Main extends javax.swing.JFrame {
 
         lbProduct.setBackground(new java.awt.Color(51, 51, 51));
         lbProduct.setFont(new java.awt.Font("Lucida Calligraphy", 0, 14)); // NOI18N
-        lbProduct.setIcon(new javax.swing.ImageIcon(getClass().getResource("/image/home/Product.png"))); // NOI18N
+        lbProduct.setIcon(new javax.swing.ImageIcon(getClass().getResource("/image/main/Product.png"))); // NOI18N
         lbProduct.setText("PRODUCT");
         lbProduct.setBorder(javax.swing.BorderFactory.createEmptyBorder(1, 10, 1, 1));
         lbProduct.setOpaque(true);
@@ -206,7 +206,7 @@ public class Main extends javax.swing.JFrame {
 
         lbInbound.setBackground(new java.awt.Color(51, 51, 51));
         lbInbound.setFont(new java.awt.Font("Lucida Calligraphy", 0, 14)); // NOI18N
-        lbInbound.setIcon(new javax.swing.ImageIcon(getClass().getResource("/image/home/Inbound.png"))); // NOI18N
+        lbInbound.setIcon(new javax.swing.ImageIcon(getClass().getResource("/image/main/Inbound.png"))); // NOI18N
         lbInbound.setText("INBOUND");
         lbInbound.setBorder(javax.swing.BorderFactory.createEmptyBorder(1, 10, 1, 1));
         lbInbound.setOpaque(true);
@@ -214,7 +214,7 @@ public class Main extends javax.swing.JFrame {
 
         lbOrder.setBackground(new java.awt.Color(51, 51, 51));
         lbOrder.setFont(new java.awt.Font("Lucida Calligraphy", 0, 14)); // NOI18N
-        lbOrder.setIcon(new javax.swing.ImageIcon(getClass().getResource("/image/home/Order.png"))); // NOI18N
+        lbOrder.setIcon(new javax.swing.ImageIcon(getClass().getResource("/image/main/Order.png"))); // NOI18N
         lbOrder.setText("ORDER");
         lbOrder.setBorder(javax.swing.BorderFactory.createEmptyBorder(1, 10, 1, 1));
         lbOrder.setOpaque(true);
@@ -222,7 +222,7 @@ public class Main extends javax.swing.JFrame {
 
         lbOutbound.setBackground(new java.awt.Color(51, 51, 51));
         lbOutbound.setFont(new java.awt.Font("Lucida Calligraphy", 0, 14)); // NOI18N
-        lbOutbound.setIcon(new javax.swing.ImageIcon(getClass().getResource("/image/home/Outbound.png"))); // NOI18N
+        lbOutbound.setIcon(new javax.swing.ImageIcon(getClass().getResource("/image/main/Outbound.png"))); // NOI18N
         lbOutbound.setText("OUTBOUND");
         lbOutbound.setBorder(javax.swing.BorderFactory.createEmptyBorder(1, 10, 1, 1));
         lbOutbound.setOpaque(true);
@@ -230,7 +230,7 @@ public class Main extends javax.swing.JFrame {
 
         lbCustomer.setBackground(new java.awt.Color(51, 51, 51));
         lbCustomer.setFont(new java.awt.Font("Lucida Calligraphy", 0, 14)); // NOI18N
-        lbCustomer.setIcon(new javax.swing.ImageIcon(getClass().getResource("/image/home/Customer.png"))); // NOI18N
+        lbCustomer.setIcon(new javax.swing.ImageIcon(getClass().getResource("/image/main/Customer.png"))); // NOI18N
         lbCustomer.setText("CUSTOMER");
         lbCustomer.setBorder(javax.swing.BorderFactory.createEmptyBorder(1, 10, 1, 1));
         lbCustomer.setOpaque(true);
@@ -238,7 +238,7 @@ public class Main extends javax.swing.JFrame {
 
         lbSupplier.setBackground(new java.awt.Color(51, 51, 51));
         lbSupplier.setFont(new java.awt.Font("Lucida Calligraphy", 0, 14)); // NOI18N
-        lbSupplier.setIcon(new javax.swing.ImageIcon(getClass().getResource("/image/home/Supplier.png"))); // NOI18N
+        lbSupplier.setIcon(new javax.swing.ImageIcon(getClass().getResource("/image/main/Supplier.png"))); // NOI18N
         lbSupplier.setText("SUPPLIER");
         lbSupplier.setBorder(javax.swing.BorderFactory.createEmptyBorder(1, 10, 1, 1));
         lbSupplier.setOpaque(true);
@@ -246,7 +246,7 @@ public class Main extends javax.swing.JFrame {
 
         lbUser.setBackground(new java.awt.Color(51, 51, 51));
         lbUser.setFont(new java.awt.Font("Lucida Calligraphy", 0, 14)); // NOI18N
-        lbUser.setIcon(new javax.swing.ImageIcon(getClass().getResource("/image/home/User.png"))); // NOI18N
+        lbUser.setIcon(new javax.swing.ImageIcon(getClass().getResource("/image/main/User.png"))); // NOI18N
         lbUser.setText("USER");
         lbUser.setBorder(javax.swing.BorderFactory.createEmptyBorder(1, 10, 1, 1));
         lbUser.setOpaque(true);
@@ -254,7 +254,7 @@ public class Main extends javax.swing.JFrame {
 
         lbService.setBackground(new java.awt.Color(51, 51, 51));
         lbService.setFont(new java.awt.Font("Lucida Calligraphy", 0, 14)); // NOI18N
-        lbService.setIcon(new javax.swing.ImageIcon(getClass().getResource("/image/home/Service.png"))); // NOI18N
+        lbService.setIcon(new javax.swing.ImageIcon(getClass().getResource("/image/main/Service.png"))); // NOI18N
         lbService.setText("SERVICE");
         lbService.setBorder(javax.swing.BorderFactory.createEmptyBorder(1, 10, 1, 1));
         lbService.setOpaque(true);
@@ -262,7 +262,7 @@ public class Main extends javax.swing.JFrame {
 
         lbLogout.setBackground(new java.awt.Color(51, 51, 51));
         lbLogout.setFont(new java.awt.Font("Lucida Calligraphy", 0, 14)); // NOI18N
-        lbLogout.setIcon(new javax.swing.ImageIcon(getClass().getResource("/image/home/Logout.png"))); // NOI18N
+        lbLogout.setIcon(new javax.swing.ImageIcon(getClass().getResource("/image/main/Logout.png"))); // NOI18N
         lbLogout.setText("LOG OUT");
         lbLogout.setBorder(javax.swing.BorderFactory.createEmptyBorder(1, 10, 1, 1));
         lbLogout.setName("Log out"); // NOI18N
@@ -357,10 +357,8 @@ public class Main extends javax.swing.JFrame {
             java.util.logging.Logger.getLogger(Main.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         }
 
-        java.awt.EventQueue.invokeLater(new Runnable() {
-            public void run() {
-                new Main().setVisible(true);
-            }
+        java.awt.EventQueue.invokeLater(() -> {
+            new Main().setVisible(true);
         });
     }
 
