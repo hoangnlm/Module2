@@ -126,7 +126,7 @@ public final class Main extends javax.swing.JFrame {
     }
 
     public void setSelected(int index) {
-        // If user pressed "Sign out"
+        // If user pressed "Log out"
         if (lb[index].getText() == "Log out" || lb[index].getName() == "Log out") {
             logOut();
             return;
