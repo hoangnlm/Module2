@@ -191,7 +191,7 @@ public final class MainFrame extends javax.swing.JFrame {
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setTitle("Mobile Phone Management System");
-        setPreferredSize(new java.awt.Dimension(990, 705));
+        setPreferredSize(new java.awt.Dimension(1000, 705));
         setSize(new java.awt.Dimension(0, 0));
 
         pnSidebar.setBorder(javax.swing.BorderFactory.createEtchedBorder());
@@ -333,7 +333,7 @@ public final class MainFrame extends javax.swing.JFrame {
                 .addComponent(lbLogout, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
         );
 
-        pnMain.setPreferredSize(new java.awt.Dimension(800, 680));
+        pnMain.setPreferredSize(new java.awt.Dimension(810, 680));
         pnMain.setLayout(new java.awt.GridLayout(1, 1));
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
@@ -342,7 +342,7 @@ public final class MainFrame extends javax.swing.JFrame {
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addComponent(pnMain, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(pnSidebar, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
         );
         layout.setVerticalGroup(
