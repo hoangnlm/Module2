@@ -26,7 +26,7 @@ import order.OrderPanel;
 public final class MainFrame extends javax.swing.JFrame {
 
     private final ButtonGroup group = new ButtonGroup();
-    private final int sidebarTotal = 11;
+    private final int sidebarTotal = 12;
     private final JRadioButton[] rb = new JRadioButton[sidebarTotal];
     private final JLabel[] lb = new JLabel[sidebarTotal];
     private final JPanel[] pn = new JPanel[sidebarTotal];
@@ -58,6 +58,7 @@ public final class MainFrame extends javax.swing.JFrame {
         lb[8] = lbEmployee;
         lb[9] = lbUser;
         lb[10] = lbLogout;
+        lb[11] = lbExit;
 
         pn[0] = new BlankPanel();
         pn[1] = new BlankPanel();
@@ -69,7 +70,6 @@ public final class MainFrame extends javax.swing.JFrame {
         pn[7] = new BlankPanel();
         pn[8] = new BlankPanel();
         pn[9] = new BlankPanel();
-        pn[10] = new BlankPanel();
 
         for (int i = 0; i < sidebarTotal; i++) {
             setSidebarItem(lb[i]);
@@ -131,8 +131,13 @@ public final class MainFrame extends javax.swing.JFrame {
     }
 
     public void setSelected(int index) {
+        // If user pressed "Exit"
+        if (lb[index] == lbExit) {
+            System.exit(0);
+        }
+                
         // If user pressed "Log out"
-        if (lb[index].getText() == "Log out" || lb[index].getName() == "Log out") {
+        if (lb[index] == lbLogout) {
             logOut();
             return;
         }
@@ -187,13 +192,16 @@ public final class MainFrame extends javax.swing.JFrame {
         lbService = new javax.swing.JLabel();
         lbLogout = new javax.swing.JLabel();
         lbEmployee = new javax.swing.JLabel();
+        lbExit = new javax.swing.JLabel();
         pnMain = new javax.swing.JPanel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setTitle("Mobile Phone Management System");
+        setMinimumSize(new java.awt.Dimension(1000, 705));
         setPreferredSize(new java.awt.Dimension(1000, 705));
         setSize(new java.awt.Dimension(0, 0));
 
+        pnSidebar.setBackground(new java.awt.Color(51, 51, 51));
         pnSidebar.setBorder(javax.swing.BorderFactory.createEtchedBorder());
 
         lbHome.setBackground(new java.awt.Color(51, 51, 51));
@@ -285,6 +293,15 @@ public final class MainFrame extends javax.swing.JFrame {
         lbEmployee.setOpaque(true);
         lbEmployee.setPreferredSize(new java.awt.Dimension(170, 60));
 
+        lbExit.setBackground(new java.awt.Color(51, 51, 51));
+        lbExit.setFont(new java.awt.Font("Lucida Calligraphy", 0, 14)); // NOI18N
+        lbExit.setIcon(new javax.swing.ImageIcon(getClass().getResource("/image/main/Exit.png"))); // NOI18N
+        lbExit.setText("EXIT");
+        lbExit.setBorder(javax.swing.BorderFactory.createEmptyBorder(1, 10, 1, 1));
+        lbExit.setName("Exit"); // NOI18N
+        lbExit.setOpaque(true);
+        lbExit.setPreferredSize(new java.awt.Dimension(170, 60));
+
         javax.swing.GroupLayout pnSidebarLayout = new javax.swing.GroupLayout(pnSidebar);
         pnSidebar.setLayout(pnSidebarLayout);
         pnSidebarLayout.setHorizontalGroup(
@@ -304,33 +321,36 @@ public final class MainFrame extends javax.swing.JFrame {
                     .addComponent(lbUser, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(lbService, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(lbLogout, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(lbEmployee, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                    .addComponent(lbEmployee, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(lbExit, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
         );
         pnSidebarLayout.setVerticalGroup(
             pnSidebarLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(pnSidebarLayout.createSequentialGroup()
                 .addGap(0, 0, 0)
-                .addComponent(lbHome, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(lbHome, javax.swing.GroupLayout.PREFERRED_SIZE, 55, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(1, 1, 1)
-                .addComponent(lbProduct, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(lbProduct, javax.swing.GroupLayout.PREFERRED_SIZE, 55, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(1, 1, 1)
-                .addComponent(lbInbound, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(lbInbound, javax.swing.GroupLayout.PREFERRED_SIZE, 55, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(1, 1, 1)
-                .addComponent(lbOutbound, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(lbOutbound, javax.swing.GroupLayout.PREFERRED_SIZE, 55, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(1, 1, 1)
-                .addComponent(lbOrder, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(lbOrder, javax.swing.GroupLayout.PREFERRED_SIZE, 55, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(1, 1, 1)
-                .addComponent(lbCustomer, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(lbCustomer, javax.swing.GroupLayout.PREFERRED_SIZE, 55, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(1, 1, 1)
-                .addComponent(lbSupplier, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(lbSupplier, javax.swing.GroupLayout.PREFERRED_SIZE, 55, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(1, 1, 1)
-                .addComponent(lbService, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(lbService, javax.swing.GroupLayout.PREFERRED_SIZE, 55, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(1, 1, 1)
-                .addComponent(lbEmployee, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(lbEmployee, javax.swing.GroupLayout.PREFERRED_SIZE, 55, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(1, 1, 1)
-                .addComponent(lbUser, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(lbUser, javax.swing.GroupLayout.PREFERRED_SIZE, 55, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(1, 1, 1)
-                .addComponent(lbLogout, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addComponent(lbLogout, javax.swing.GroupLayout.PREFERRED_SIZE, 55, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(1, 1, 1)
+                .addComponent(lbExit, javax.swing.GroupLayout.PREFERRED_SIZE, 55, javax.swing.GroupLayout.PREFERRED_SIZE))
         );
 
         pnMain.setPreferredSize(new java.awt.Dimension(810, 680));
@@ -341,9 +361,10 @@ public final class MainFrame extends javax.swing.JFrame {
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addComponent(pnMain, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(pnSidebar, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addComponent(pnMain, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addGap(3, 3, 3)
+                .addComponent(pnSidebar, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(0, 0, 0))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -380,6 +401,7 @@ public final class MainFrame extends javax.swing.JFrame {
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JLabel lbCustomer;
     private javax.swing.JLabel lbEmployee;
+    private javax.swing.JLabel lbExit;
     private javax.swing.JLabel lbHome;
     private javax.swing.JLabel lbInbound;
     private javax.swing.JLabel lbLogout;
