@@ -164,7 +164,7 @@ public class ConfigPanel extends javax.swing.JPanel {
         btCancel.setBounds(190, 420, 50, 50);
 
         lbBg.setBackground(new java.awt.Color(255, 255, 255));
-        lbBg.setIcon(new javax.swing.ImageIcon(getClass().getResource("/image/main/Login.png"))); // NOI18N
+        lbBg.setIcon(new javax.swing.ImageIcon(getClass().getResource("/image/main/Login2.png"))); // NOI18N
         add(lbBg);
         lbBg.setBounds(0, 0, 269, 554);
     }// </editor-fold>//GEN-END:initComponents

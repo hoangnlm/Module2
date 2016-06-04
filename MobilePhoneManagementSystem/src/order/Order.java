@@ -17,6 +17,7 @@ import java.util.List;
 public class Order {
     private int ordID;
     private Date ordDate;
+    private String ordStatusID;
     private String ordStatus;
     
     private int cusID;
@@ -39,6 +40,10 @@ public class Order {
 
     public Date getOrdDate() {
         return ordDate;
+    }
+
+    public String getOrdStatusID() {
+        return ordStatusID;
     }
 
     public String getOrdStatus() {
@@ -76,6 +81,10 @@ public class Order {
 
     public void setOrdDate(Date ordDate) {
         this.ordDate = ordDate;
+    }
+
+    public void setOrdStatusID(String ordStatusID) {
+        this.ordStatusID = ordStatusID;
     }
 
     public void setOrdStatus(String ordStatus) {

@@ -87,8 +87,6 @@ public class LoginFrame extends javax.swing.JFrame {
                     LoginFrame loginFrame = new LoginFrame();
                     loginFrame.setVisible(true);
                 } else { // Neu file config da ton tai
-//                    System.out.println("config trong LoginFrame" + config.toString());
-
                     try {
                         Properties props = new Properties();
                         props.put("logoString", "");

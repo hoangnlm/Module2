@@ -90,6 +90,11 @@ public class OrderDialog extends javax.swing.JDialog {
         btAddCustomer.setContentAreaFilled(false);
         btAddCustomer.setFocusPainted(false);
         btAddCustomer.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        btAddCustomer.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btAddCustomerActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
@@ -354,6 +359,10 @@ public class OrderDialog extends javax.swing.JDialog {
     private void btCancelActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btCancelActionPerformed
         dispose();
     }//GEN-LAST:event_btCancelActionPerformed
+
+    private void btAddCustomerActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btAddCustomerActionPerformed
+        new CustomerDialog().setVisible(true);
+    }//GEN-LAST:event_btAddCustomerActionPerformed
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btAdd;

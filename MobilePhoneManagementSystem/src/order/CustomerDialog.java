@@ -38,13 +38,14 @@ public class CustomerDialog extends javax.swing.JDialog {
         jLabel5 = new javax.swing.JLabel();
         cbCusLevel = new javax.swing.JComboBox<>();
         cbCusEnabled = new javax.swing.JCheckBox();
+        btCustomerLevel = new javax.swing.JButton();
         jScrollPane1 = new javax.swing.JScrollPane();
         jTable1 = new javax.swing.JTable();
         btAdd = new javax.swing.JButton();
         btChange = new javax.swing.JButton();
         btRemove = new javax.swing.JButton();
         btRefresh = new javax.swing.JButton();
-        btRefresh1 = new javax.swing.JButton();
+        btCancel = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setMinimumSize(new java.awt.Dimension(712, 500));
@@ -64,6 +65,17 @@ public class CustomerDialog extends javax.swing.JDialog {
 
         cbCusEnabled.setSelected(true);
         cbCusEnabled.setText("Enabled");
+
+        btCustomerLevel.setIcon(new javax.swing.ImageIcon(getClass().getResource("/image/order/Add2.png"))); // NOI18N
+        btCustomerLevel.setBorderPainted(false);
+        btCustomerLevel.setContentAreaFilled(false);
+        btCustomerLevel.setFocusPainted(false);
+        btCustomerLevel.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        btCustomerLevel.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btCustomerLevelActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
@@ -89,6 +101,8 @@ public class CustomerDialog extends javax.swing.JDialog {
                     .addComponent(tfCusAddress, javax.swing.GroupLayout.PREFERRED_SIZE, 274, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addGroup(jPanel1Layout.createSequentialGroup()
                         .addComponent(cbCusLevel, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(btCustomerLevel, javax.swing.GroupLayout.PREFERRED_SIZE, 20, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addComponent(cbCusEnabled)))
                 .addGap(3, 3, 3))
@@ -111,10 +125,12 @@ public class CustomerDialog extends javax.swing.JDialog {
                             .addComponent(jLabel4)
                             .addComponent(tfCusAddress, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(jLabel5)
-                            .addComponent(cbCusLevel, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(cbCusEnabled, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE))))
+                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                                .addComponent(jLabel5)
+                                .addComponent(cbCusLevel, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addComponent(cbCusEnabled, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addComponent(btCustomerLevel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
                 .addGap(6, 6, 6))
         );
 
@@ -151,9 +167,14 @@ public class CustomerDialog extends javax.swing.JDialog {
         btRefresh.setIcon(new javax.swing.ImageIcon(getClass().getResource("/image/order/Refresh2.png"))); // NOI18N
         btRefresh.setText("Refresh");
 
-        btRefresh1.setFont(new java.awt.Font("Lucida Grande", 0, 14)); // NOI18N
-        btRefresh1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/image/order/Cancel2.png"))); // NOI18N
-        btRefresh1.setText("Cancel");
+        btCancel.setFont(new java.awt.Font("Lucida Grande", 0, 14)); // NOI18N
+        btCancel.setIcon(new javax.swing.ImageIcon(getClass().getResource("/image/order/Cancel2.png"))); // NOI18N
+        btCancel.setText("Cancel");
+        btCancel.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btCancelActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -171,7 +192,7 @@ public class CustomerDialog extends javax.swing.JDialog {
                 .addGap(18, 18, 18)
                 .addComponent(btRefresh, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(18, 18, 18)
-                .addComponent(btRefresh1, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(btCancel, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap(80, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
@@ -184,7 +205,7 @@ public class CustomerDialog extends javax.swing.JDialog {
                     .addComponent(btChange, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(btRemove, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(btRefresh, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(btRefresh1, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(btCancel, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 308, Short.MAX_VALUE)
                 .addContainerGap())
@@ -193,11 +214,20 @@ public class CustomerDialog extends javax.swing.JDialog {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
+    private void btCancelActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btCancelActionPerformed
+        dispose();
+    }//GEN-LAST:event_btCancelActionPerformed
+
+    private void btCustomerLevelActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btCustomerLevelActionPerformed
+        new CustomerLevelDialog().setVisible(true);
+    }//GEN-LAST:event_btCustomerLevelActionPerformed
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btAdd;
+    private javax.swing.JButton btCancel;
     private javax.swing.JButton btChange;
+    private javax.swing.JButton btCustomerLevel;
     private javax.swing.JButton btRefresh;
-    private javax.swing.JButton btRefresh1;
     private javax.swing.JButton btRemove;
     private javax.swing.JCheckBox cbCusEnabled;
     private javax.swing.JComboBox<String> cbCusLevel;

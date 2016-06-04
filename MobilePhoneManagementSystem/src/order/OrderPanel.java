@@ -51,6 +51,7 @@ public class OrderPanel extends javax.swing.JPanel {
         jLabel1 = new javax.swing.JLabel();
         btCustomer = new javax.swing.JButton();
         btSalesOff = new javax.swing.JButton();
+        btCustomer1 = new javax.swing.JButton();
 
         setPreferredSize(new java.awt.Dimension(790, 640));
 
@@ -197,7 +198,7 @@ public class OrderPanel extends javax.swing.JPanel {
         jLabel1.setText("<html><u><i><font color='red'>O</font>rder <font color='red'>M</font>anagement</i></u></html>");
 
         btCustomer.setFont(new java.awt.Font("Lucida Grande", 0, 14)); // NOI18N
-        btCustomer.setIcon(new javax.swing.ImageIcon(getClass().getResource("/image/order/Customer2.png"))); // NOI18N
+        btCustomer.setIcon(new javax.swing.ImageIcon(getClass().getResource("/image/order/Customer.png"))); // NOI18N
         btCustomer.setText("Customer...");
         btCustomer.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -208,6 +209,20 @@ public class OrderPanel extends javax.swing.JPanel {
         btSalesOff.setFont(new java.awt.Font("Lucida Grande", 0, 14)); // NOI18N
         btSalesOff.setIcon(new javax.swing.ImageIcon(getClass().getResource("/image/order/SalesOff2.png"))); // NOI18N
         btSalesOff.setText("SalesOff...");
+        btSalesOff.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btSalesOffActionPerformed(evt);
+            }
+        });
+
+        btCustomer1.setFont(new java.awt.Font("Lucida Grande", 0, 14)); // NOI18N
+        btCustomer1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/image/order/Customer2.png"))); // NOI18N
+        btCustomer1.setLabel("Cus. Level...");
+        btCustomer1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btCustomer1ActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout pnTitleLayout = new javax.swing.GroupLayout(pnTitle);
         pnTitle.setLayout(pnTitleLayout);
@@ -217,9 +232,11 @@ public class OrderPanel extends javax.swing.JPanel {
                 .addContainerGap()
                 .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 306, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(btCustomer, javax.swing.GroupLayout.PREFERRED_SIZE, 134, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(btCustomer1, javax.swing.GroupLayout.PREFERRED_SIZE, 120, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(btSalesOff, javax.swing.GroupLayout.PREFERRED_SIZE, 134, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(btCustomer, javax.swing.GroupLayout.PREFERRED_SIZE, 120, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(btSalesOff, javax.swing.GroupLayout.PREFERRED_SIZE, 120, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(3, 3, 3))
         );
         pnTitleLayout.setVerticalGroup(
@@ -228,9 +245,10 @@ public class OrderPanel extends javax.swing.JPanel {
                 .addGap(10, 10, 10)
                 .addGroup(pnTitleLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(btCustomer, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(btSalesOff, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(10, 10, 10))
-            .addComponent(jLabel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(btSalesOff, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(btCustomer1, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(0, 0, 0))
+            .addComponent(jLabel1, javax.swing.GroupLayout.DEFAULT_SIZE, 61, Short.MAX_VALUE)
         );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
@@ -260,9 +278,9 @@ public class OrderPanel extends javax.swing.JPanel {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(pnFilter, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 285, Short.MAX_VALUE)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 282, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 150, Short.MAX_VALUE)
+                .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 147, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(btDelete, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -286,7 +304,6 @@ public class OrderPanel extends javax.swing.JPanel {
     }//GEN-LAST:event_tfUserNameActionPerformed
 
     private void btAddActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btAddActionPerformed
-//           System.out.println(getParent().getParent().getParent().getParent().getParent());
         new OrderDialog().setVisible(true);
     }//GEN-LAST:event_btAddActionPerformed
 
@@ -298,10 +315,19 @@ public class OrderPanel extends javax.swing.JPanel {
         // TODO add your handling code here:
     }//GEN-LAST:event_cbStatusActionPerformed
 
+    private void btSalesOffActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btSalesOffActionPerformed
+        new SalesOffDialog().setVisible(true);
+    }//GEN-LAST:event_btSalesOffActionPerformed
+
+    private void btCustomer1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btCustomer1ActionPerformed
+        new CustomerLevelDialog().setVisible(true);
+    }//GEN-LAST:event_btCustomer1ActionPerformed
+
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btAdd;
     private javax.swing.JButton btCustomer;
+    private javax.swing.JButton btCustomer1;
     private javax.swing.JButton btDelete;
     private javax.swing.JButton btRefresh;
     private javax.swing.JButton btSalesOff;

@@ -12,13 +12,30 @@ package order;
  */
 public class OrderDetails {
 
+    private int ordID;
     private int ordDetailsID;
     private int proID;
     private String proName;
     private int proQty;
     private float proPrice;
 
+    public OrderDetails() {
+    }
+    
+    public OrderDetails(int ordID, int ordDetailsID, int proID, String proName, int proQty, float proPrice) {
+        this.ordID = ordID;
+        this.ordDetailsID = ordDetailsID;
+        this.proID = proID;
+        this.proName = proName;
+        this.proQty = proQty;
+        this.proPrice = proPrice;
+    }
+    
     // Getters
+    public int getOrdID() {
+        return ordID;
+    }
+
     public int getOrdDetailsID() {
         return ordDetailsID;
     }
@@ -40,6 +57,10 @@ public class OrderDetails {
     }
 
     // Setters
+    public void setOrdID(int ordID) {
+        this.ordID = ordID;
+    }
+
     public void setOrdDetailsID(int ordDetailsID) {
         this.ordDetailsID = ordDetailsID;
     }
