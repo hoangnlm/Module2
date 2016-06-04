@@ -234,12 +234,7 @@ public class ConfigPanel extends javax.swing.JPanel {
     // End of variables declaration//GEN-END:variables
 
     private void checkConnection() {
-        config.host = tfHost.getText();
-        config.port = tfPort.getText();
-        config.DBName = tfDBName.getText();
-        config.name = tfName.getText();
-        config.password = new String(tfPassword.getPassword());
-        DBUtils db = new DBUtils(config.host, config.port, config.DBName, config.name, config.password);
+        DBUtils db = new DBUtils(tfHost.getText(), tfPort.getText(), tfDBName.getText(), tfName.getText(), new String(tfPassword.getPassword()));
         if (!db.start()) { //Ket noi database that bai
             SwingUtils.showErrorDialog("Error: cannot connect database!");
             tfHost.requestFocus();
@@ -251,7 +246,6 @@ public class ConfigPanel extends javax.swing.JPanel {
             config.DBName = tfDBName.getText();
             config.name = tfName.getText();
             config.password = new String(tfPassword.getPassword());
-                        System.out.println("config trong ConfigPanel"+config);
 
             // Quay ve panel login
             reloadContentPanel();
