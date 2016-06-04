@@ -28,14 +28,12 @@ public class DBUtils {
 
         // Buoc 2: Get ket qua (result set hoac prepared st hoac callable st
         // hoac cached rowset) va xu ly ket qua
-        ResultSet rs = db.getResultSet("select * from CustomerLevels");
-        rs.next();
+//        ResultSet rs = db.getResultSet("select * from CustomerLevels");
+//        rs.next();
         // Xu ly ket qua ...
-
         // Buoc 3: Stop db util
         // db.stop();
-        System.out.println(rs.getString(3));
-
+//        System.out.println(rs.getString(3));
 //		PreparedStatement ps = db.getPreparedStatement("update class set class_name=? where class_id=?");
 //		ps.setString(1, "ten class moi sua");
 //		ps.setString(2, "3343422");
@@ -66,21 +64,23 @@ public class DBUtils {
 
     public DBUtils(String dbHost, String dbPort, String dbName, String dbUsername, String dbPassword) {
         this.dbHost = dbHost;
-        this.dbPort = (dbPort==null||dbPort=="")?"1433":dbPort;
+        this.dbPort = (dbPort == null || dbPort == "") ? "1433" : dbPort;
         this.dbName = dbName;
         this.dbUsername = dbUsername;
         this.dbPassword = dbPassword;
     }
-    
-    
 
-    public void start() {
+    public boolean start() {
+        boolean result = false;
         try {
-            System.out.println(getDbUrl());
+//            System.out.println(getDbUrl());
             connection = DriverManager.getConnection(getDbUrl(), dbUsername, dbPassword);
+//            connection = DriverManager.getConnection("jdbc:sqlserver://10.211.55.7:1433;DatabaseName=", "sa", "111");
+            result = true;
         } catch (SQLException e) {
             e.printStackTrace();
         }
+        return result;
     }
 
     public void stop() {

@@ -27,8 +27,7 @@ public class ConfigPanel extends javax.swing.JPanel {
      */
     public ConfigPanel(JPanel parent) {
         this.parent = parent;
-        this.loginFrame = (LoginFrame) parent.getParent().getParent().getParent().getParent();
-        this.config = loginFrame.config;
+        this.config = LoginFrame.config;
 
         initComponents();
         setBackground(new Color(0, 255, 0, 0));
@@ -61,6 +60,9 @@ public class ConfigPanel extends javax.swing.JPanel {
         tfDBName.setText(config.DBName);
         tfName.setText(config.name);
         tfPassword.setText(config.password);
+        
+        // Set focus khi khoi tao
+        tfHost.requestFocus();
     }
 
     /**
@@ -169,6 +171,7 @@ public class ConfigPanel extends javax.swing.JPanel {
 
     private void tfHostFocusGained(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_tfHostFocusGained
         tfHost.setBackground(new Color(255, 255, 255, 255));
+        tfHost.selectAll();
     }//GEN-LAST:event_tfHostFocusGained
 
     private void tfHostFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_tfHostFocusLost
@@ -177,6 +180,7 @@ public class ConfigPanel extends javax.swing.JPanel {
 
     private void tfPasswordFocusGained(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_tfPasswordFocusGained
         tfPassword.setBackground(new Color(255, 255, 255, 255));
+        tfPassword.selectAll();
     }//GEN-LAST:event_tfPasswordFocusGained
 
     private void tfPasswordFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_tfPasswordFocusLost
@@ -184,14 +188,12 @@ public class ConfigPanel extends javax.swing.JPanel {
     }//GEN-LAST:event_tfPasswordFocusLost
 
     private void btCancelActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btCancelActionPerformed
-        parent.removeAll();
-        parent.add(new LoginPanel(parent));
-        parent.validate();
-        parent.repaint();
+        reloadContentPanel();
     }//GEN-LAST:event_btCancelActionPerformed
 
     private void tfPortFocusGained(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_tfPortFocusGained
         tfPort.setBackground(new Color(255, 255, 255, 255));
+        tfPort.selectAll();
     }//GEN-LAST:event_tfPortFocusGained
 
     private void tfPortFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_tfPortFocusLost
@@ -200,6 +202,7 @@ public class ConfigPanel extends javax.swing.JPanel {
 
     private void tfDBNameFocusGained(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_tfDBNameFocusGained
         tfDBName.setBackground(new Color(255, 255, 255, 255));
+        tfDBName.selectAll();
     }//GEN-LAST:event_tfDBNameFocusGained
 
     private void tfDBNameFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_tfDBNameFocusLost
@@ -208,6 +211,7 @@ public class ConfigPanel extends javax.swing.JPanel {
 
     private void tfNameFocusGained(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_tfNameFocusGained
         tfName.setBackground(new Color(255, 255, 255, 255));
+        tfName.selectAll();
     }//GEN-LAST:event_tfNameFocusGained
 
     private void tfNameFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_tfNameFocusLost
@@ -236,11 +240,28 @@ public class ConfigPanel extends javax.swing.JPanel {
         config.name = tfName.getText();
         config.password = new String(tfPassword.getPassword());
         DBUtils db = new DBUtils(config.host, config.port, config.DBName, config.name, config.password);
-        if(!db.start()){
+        if (!db.start()) { //Ket noi database that bai
             SwingUtils.showErrorDialog("Error: cannot connect database!");
-        }else{
+            tfHost.requestFocus();
+        } else { // Ket noi database thanh cong
             SwingUtils.showMessageDialog("Connected database successfully!");
             db.stop();
+            config.host = tfHost.getText();
+            config.port = tfPort.getText();
+            config.DBName = tfDBName.getText();
+            config.name = tfName.getText();
+            config.password = new String(tfPassword.getPassword());
+                        System.out.println("config trong ConfigPanel"+config);
+
+            // Quay ve panel login
+            reloadContentPanel();
         }
+    }
+
+    private void reloadContentPanel() {
+        parent.removeAll();
+        parent.add(new LoginPanel(parent));
+        parent.validate();
+        parent.repaint();
     }
 }

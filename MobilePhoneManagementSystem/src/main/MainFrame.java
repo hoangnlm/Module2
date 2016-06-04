@@ -7,20 +7,30 @@ package main;
 
 import com.jtattoo.plaf.hifi.HiFiLookAndFeel;
 import java.awt.Color;
-import java.awt.GridLayout;
+import java.awt.Image;
+import java.awt.Point;
+import java.awt.Toolkit;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.io.IOException;
+import java.net.URL;
 import java.util.Properties;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javax.imageio.ImageIO;
 import javax.swing.ButtonGroup;
+import javax.swing.ImageIcon;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
 import javax.swing.UIManager;
 import order.OrderPanel;
+import utility.SwingUtils;
 
 /**
- *
+ * Main screen of the program
+ * 
  * @author Hoang
  */
 public final class MainFrame extends javax.swing.JFrame {
@@ -35,13 +45,15 @@ public final class MainFrame extends javax.swing.JFrame {
     private final Color hoverState = Color.CYAN;
     private final Color seletedState = Color.ORANGE;
 
+    private LoginConfig config;
+
     /**
      * Creates new form Main
      */
     public MainFrame() {
+        this.config = LoginFrame.config;
+        setLogo();
         initComponents();
-//        pnMain.setLayout(new GridLayout(1, 1));
-
         setSidebar();
         setSelected(0);
     }
@@ -133,12 +145,13 @@ public final class MainFrame extends javax.swing.JFrame {
     public void setSelected(int index) {
         // If user pressed "Exit"
         if (lb[index] == lbExit) {
+//            exit();
             System.exit(0);
         }
-                
+
         // If user pressed "Log out"
         if (lb[index] == lbLogout) {
-            logOut();
+            logout();
             return;
         }
         // If not, set selected item color & radio button
@@ -161,11 +174,15 @@ public final class MainFrame extends javax.swing.JFrame {
         pnMain.repaint();
     }
 
-    private void logOut() {
-        int ret = JOptionPane.showConfirmDialog(this, "Are you sure to sign out ?", "Confirm sign out", JOptionPane.YES_NO_OPTION);
-        if (ret == JOptionPane.YES_OPTION) {
-//            new Login().setVisible(true);
-            // Reset userID
+    private void logout() {
+        if (SwingUtils.showConfirmDialog("Are you sure to log out?") == JOptionPane.YES_OPTION) {
+            // Reset look and feel and open login frame
+            try {
+                UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+                new LoginFrame().setVisible(true);
+            } catch (Exception ex) {
+                Logger.getLogger(MainFrame.class.getName()).log(Level.SEVERE, null, ex);
+            }
             // Close the main form
             dispose();
         }
@@ -195,8 +212,11 @@ public final class MainFrame extends javax.swing.JFrame {
         lbExit = new javax.swing.JLabel();
         pnMain = new javax.swing.JPanel();
 
-        setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
-        setTitle("Mobile Phone Management System");
+        setDefaultCloseOperation(javax.swing.WindowConstants.DO_NOTHING_ON_CLOSE);
+        setTitle("Mobile Phone Shop Management System");
+        setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
+        setIconImage(getLogo());
+        setIconImages(null);
         setMinimumSize(new java.awt.Dimension(1000, 705));
         setPreferredSize(new java.awt.Dimension(1000, 705));
         setSize(new java.awt.Dimension(0, 0));
@@ -353,6 +373,7 @@ public final class MainFrame extends javax.swing.JFrame {
                 .addComponent(lbExit, javax.swing.GroupLayout.PREFERRED_SIZE, 55, javax.swing.GroupLayout.PREFERRED_SIZE))
         );
 
+        pnMain.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
         pnMain.setPreferredSize(new java.awt.Dimension(810, 680));
         pnMain.setLayout(new java.awt.GridLayout(1, 1));
 
@@ -379,12 +400,13 @@ public final class MainFrame extends javax.swing.JFrame {
     /**
      * @param args the command line arguments
      */
-    public static void main(String args[]) {
+    public static void main(String[] args) {
         try {
-            Properties properties = new Properties();
-            properties.put("logoString", "");
+            Properties props = new Properties();
+            props.put("logoString", "");
+            props.put("macStyleWindowDecoration", "off");
             HiFiLookAndFeel laf = new HiFiLookAndFeel();
-            laf.setCurrentTheme(properties);
+            laf.setTheme(props);
             UIManager.setLookAndFeel(laf);
         } catch (javax.swing.UnsupportedLookAndFeelException ex) {
             java.util.logging.Logger.getLogger(MainFrame.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
@@ -414,4 +436,26 @@ public final class MainFrame extends javax.swing.JFrame {
     private javax.swing.JPanel pnMain;
     private javax.swing.JPanel pnSidebar;
     // End of variables declaration//GEN-END:variables
+
+    private void setLogo() {
+        URL imgURL = getClass().getResource("/image/main/Logo.png");
+        Image img = new ImageIcon(imgURL).getImage();
+        setIconImage(img);
+    }
+
+    private Image getLogo() {
+        Image img = null;
+        try {
+            img = ImageIO.read(getClass().getResource("/image/main/Logo.png"));
+        } catch (IOException ex) {
+            Logger.getLogger(MainFrame.class.getName()).log(Level.SEVERE, null, ex);
+        }
+
+        return img;
+    }
+
+    private void exit() {
+        if(SwingUtils.showConfirmDialog("Are you sure to exit?")==JOptionPane.YES_OPTION)
+            System.exit(0);
+    }
 }
