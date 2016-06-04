@@ -12,6 +12,8 @@ import java.awt.Point;
 import java.awt.Toolkit;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.io.IOException;
 import java.net.URL;
 import java.util.Properties;
@@ -56,6 +58,13 @@ public final class MainFrame extends javax.swing.JFrame {
         initComponents();
         setSidebar();
         setSelected(0);
+        addWindowListener(new WindowAdapter() {
+            @Override
+            public void windowClosing(WindowEvent e) {
+                exit();
+            }
+            
+});
     }
 
     private void setSidebar() {
