@@ -163,7 +163,7 @@ public class OrderDialog extends javax.swing.JDialog {
                 {null, null, null, null, null, null}
             },
             new String [] {
-                "STT", "Name", "Qty", "Price1", "SalesOff", "Price2"
+                "STT", "Name", "Qty", "Price1", "Sales (%)", "Price2"
             }
         ));
         jTable1.setPreferredSize(new java.awt.Dimension(200, 100));

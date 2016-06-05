@@ -48,6 +48,7 @@ public class CustomerDialog extends javax.swing.JDialog {
         btCancel = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
+        setTitle("Add Customer");
         setMinimumSize(new java.awt.Dimension(712, 500));
         setModal(true);
 

@@ -27,6 +27,7 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
 import javax.swing.UIManager;
+import order.CustomerPanel;
 import order.OrderPanel;
 import utility.SwingUtils;
 
@@ -86,7 +87,7 @@ public final class MainFrame extends javax.swing.JFrame {
         pn[2] = new BlankPanel();
         pn[3] = new BlankPanel();
         pn[4] = new OrderPanel();
-        pn[5] = new BlankPanel();
+        pn[5] = new CustomerPanel();
         pn[6] = new BlankPanel();
         pn[7] = new BlankPanel();
         pn[8] = new BlankPanel();
