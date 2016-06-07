@@ -105,6 +105,10 @@ public class DBUtils {
     public String getDbUrl() {
         return dbType + dbHost + ":" + dbPort + ";DatabaseName=" + dbName;
     }
+    
+    public String getFullDbUrl() {
+        return dbType + dbHost + ":" + dbPort + ";DatabaseName=" + dbName + ";UID=" + dbUsername + ";Password=" + dbPassword;
+    }
 
     public String getDbHost() {
         return dbHost;
