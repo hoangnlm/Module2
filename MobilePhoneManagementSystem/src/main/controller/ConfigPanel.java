@@ -3,13 +3,13 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package main;
+package main.controller;
 
 import java.awt.Color;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 import org.jdesktop.xswingx.PromptSupport;
-import utility.DBUtils;
+import utility.DBProvider;
 import utility.SwingUtils;
 
 /**
@@ -234,7 +234,7 @@ public class ConfigPanel extends javax.swing.JPanel {
     // End of variables declaration//GEN-END:variables
 
     private void checkConnection() {
-        DBUtils db = new DBUtils(tfHost.getText(), tfPort.getText(), tfDBName.getText(), tfName.getText(), new String(tfPassword.getPassword()));
+        DBProvider db = new DBProvider(tfHost.getText(), tfPort.getText(), tfDBName.getText(), tfName.getText(), new String(tfPassword.getPassword()));
         if (!db.start()) { //Ket noi database that bai
             SwingUtils.showErrorDialog("Error: cannot connect database!");
             tfHost.requestFocus();

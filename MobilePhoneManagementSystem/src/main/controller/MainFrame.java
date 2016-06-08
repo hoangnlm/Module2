@@ -3,13 +3,11 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package main;
+package main.controller;
 
 import com.jtattoo.plaf.hifi.HiFiLookAndFeel;
 import java.awt.Color;
 import java.awt.Image;
-import java.awt.Point;
-import java.awt.Toolkit;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.WindowAdapter;
@@ -27,8 +25,9 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
 import javax.swing.UIManager;
-import order.CustomerPanel;
-import order.OrderPanel;
+import customer.controller.CustomerPanel;
+import home.controller.HomePanel;
+import order.controller.OrderPanel;
 import utility.SwingUtils;
 
 /**
@@ -82,7 +81,7 @@ public final class MainFrame extends javax.swing.JFrame {
         lb[10] = lbLogout;
         lb[11] = lbExit;
 
-        pn[0] = new BlankPanel();
+        pn[0] = new HomePanel();
         pn[1] = new BlankPanel();
         pn[2] = new BlankPanel();
         pn[3] = new BlankPanel();
@@ -228,7 +227,6 @@ public final class MainFrame extends javax.swing.JFrame {
         setIconImage(getLogo());
         setIconImages(null);
         setMinimumSize(new java.awt.Dimension(1000, 705));
-        setPreferredSize(new java.awt.Dimension(1000, 705));
         setSize(new java.awt.Dimension(0, 0));
 
         pnSidebar.setBackground(new java.awt.Color(51, 51, 51));
@@ -414,7 +412,8 @@ public final class MainFrame extends javax.swing.JFrame {
         try {
             Properties props = new Properties();
             props.put("logoString", "");
-            props.put("macStyleWindowDecoration", "off");
+            props.put("macStyleWindowDecoration", "on");
+            props.put("macStyleScrollBar", "on");
             HiFiLookAndFeel laf = new HiFiLookAndFeel();
             laf.setTheme(props);
             UIManager.setLookAndFeel(laf);

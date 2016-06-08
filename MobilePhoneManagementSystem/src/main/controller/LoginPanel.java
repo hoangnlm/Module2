@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package main;
+package main.controller;
 
 import com.jtattoo.plaf.hifi.HiFiLookAndFeel;
 import java.awt.Color;
@@ -14,7 +14,7 @@ import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.UIManager;
 import org.jdesktop.xswingx.PromptSupport;
-import utility.DBUtils;
+import utility.DBProvider;
 import utility.IOUtils;
 import utility.SwingUtils;
 

@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package main;
+package main.controller;
 
 import com.jtattoo.plaf.hifi.HiFiLookAndFeel;
 import java.awt.Color;

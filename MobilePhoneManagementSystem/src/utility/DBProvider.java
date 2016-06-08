@@ -10,7 +10,7 @@ import java.sql.Types;
 import javax.sql.rowset.CachedRowSet;
 import com.sun.rowset.CachedRowSetImpl;
 
-public class DBUtils {
+public class DBProvider {
 
     private final String dbType = "jdbc:sqlserver://";
     private String dbHost, dbPort, dbName, dbUsername, dbPassword;
@@ -21,9 +21,9 @@ public class DBUtils {
 
     public static void main(String[] args) throws SQLException {
         // Dung de test ket noi db
-        // Buoc 1: Khoi tao DBUtils instance va set DB URL, DB Name,
+        // Buoc 1: Khoi tao DBProvider instance va set DB URL, DB Name,
         // DB Username, DB Password (neu co thay doi) va start db
-        DBUtils db = new DBUtils();
+        DBProvider db = new DBProvider();
         db.start();
 
         // Buoc 2: Get ket qua (result set hoac prepared st hoac callable st
@@ -47,14 +47,14 @@ public class DBUtils {
 //		
 //		db.stop();
 //		
-//		CachedRowSet crs = DBUtils.getCachedRowSet("select student_id from student where student_id=?");
+//		CachedRowSet crs = DBProvider.getCRS("select student_id from student where student_id=?");
 //		crs.setString(1, "SV004");
 //		crs.execute();
 //		crs.first();
 //		System.out.println(crs.getString(1));
     }
 
-    public DBUtils() {
+    public DBProvider() {
         dbHost = "10.211.55.7";
         dbPort = "1433";
         dbName = "Mobile";
@@ -62,7 +62,7 @@ public class DBUtils {
         dbPassword = "111";
     }
 
-    public DBUtils(String dbHost, String dbPort, String dbName, String dbUsername, String dbPassword) {
+    public DBProvider(String dbHost, String dbPort, String dbName, String dbUsername, String dbPassword) {
         this.dbHost = dbHost;
         this.dbPort = (dbPort == null || dbPort == "") ? "1433" : dbPort;
         this.dbName = dbName;
@@ -181,7 +181,7 @@ public class DBUtils {
         return callableStatement;
     }
 
-    public CachedRowSet getCachedRowSet(String query) {
+    public CachedRowSet getCRS(String query) {
         CachedRowSet cachedRowSet = null;
         try {
             cachedRowSet = new CachedRowSetImpl();
