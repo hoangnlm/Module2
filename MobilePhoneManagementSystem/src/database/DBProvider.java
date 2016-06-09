@@ -1,14 +1,13 @@
 package database;
 
+import com.sun.rowset.CachedRowSetImpl;
 import java.sql.CallableStatement;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Types;
 import javax.sql.rowset.CachedRowSet;
-import com.sun.rowset.CachedRowSetImpl;
 
 public class DBProvider {
 
@@ -18,6 +17,15 @@ public class DBProvider {
     private PreparedStatement preparedStatement;
     private CallableStatement callableStatement;
     private ResultSet resultSet;
+    
+    // Define some string sentences
+    public static final String INSERT_SUCCESS = "Added new successfully!";
+    public static final String INSERT_FAIL = "Cannot add new due to some reasons!";
+    public static final String UPDATE_SUCCESS = "Updated successfully!";
+    public static final String UPDATE_FAIL = "Cannot update due to some reasons!";
+    public static final String DELETE_SUCCESS = "Deleted successfully!";
+    public static final String DELETE_FAIL = "Cannot delete due to some reasons!";
+    public static final String DB_REFRESH = "Data have been refreshed!";
 
     public static void main(String[] args) throws SQLException {
         // Dung de test ket noi db

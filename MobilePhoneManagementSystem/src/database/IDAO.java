@@ -5,14 +5,14 @@
  */
 package database;
 
-import customer.model.Customer;
 import java.util.List;
 import javax.sql.rowset.CachedRowSet;
-import database.DBProvider;
 
 /**
- *
+ * Apply DAO design pattern
+ * 
  * @author Hoang
+ * @param <T>
  */
 public interface IDAO<T> {
     List<T> getList();

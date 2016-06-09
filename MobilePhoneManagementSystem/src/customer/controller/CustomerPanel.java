@@ -10,10 +10,12 @@ import customer.model.CustomerLevel;
 import customer.model.CustomerLevelComboBoxModel;
 import customer.model.CustomerLevelComboBoxRenderer;
 import customer.model.CustomerTableModel;
+import database.DBProvider;
 import java.awt.Color;
 import java.awt.Cursor;
 import java.awt.Dimension;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import javax.swing.DefaultListSelectionModel;
 import javax.swing.JButton;
@@ -23,6 +25,7 @@ import javax.swing.event.DocumentListener;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.table.TableRowSorter;
 import order.controller.OrderDialog;
+import utility.SwingUtils;
 
 /**
  *
@@ -49,17 +52,23 @@ public class CustomerPanel extends javax.swing.JPanel {
      * Creates new form OrderPanel
      */
     public CustomerPanel() {
-        selectedCustomer = new Customer();
+        initComponents();
 
-        // Set data cho table
-        customerTableModel = new CustomerTableModel();
+        // Selecting customer in the table
+        selectedCustomer = new Customer();
 
         // Set data cho combobox
         customerLevelComboBoxModel1 = new CustomerLevelComboBoxModel();
         customerLevelComboBoxModel2 = new CustomerLevelComboBoxModel();
         customerLevelComboBoxRenderer = new CustomerLevelComboBoxRenderer();
+        cbLevelFilter.setModel(customerLevelComboBoxModel1);
+        cbLevelFilter.setRenderer(customerLevelComboBoxRenderer);
+        cbCusLevel.setModel(customerLevelComboBoxModel2);
+        cbCusLevel.setRenderer(customerLevelComboBoxRenderer);
 
-        initComponents();
+        // Set data cho table
+        customerTableModel = new CustomerTableModel();
+        tbCustomerList.setModel(customerTableModel);
 
         // Set sorter cho table
         sorter = new TableRowSorter<>(customerTableModel);
@@ -70,9 +79,10 @@ public class CustomerPanel extends javax.swing.JPanel {
             DefaultListSelectionModel model = (DefaultListSelectionModel) e.getSource();
             if (!model.isSelectionEmpty()) {
                 fetchCustomerDetails();
-                setUpdatable(false);
+                setButtonEnabled(true);
             } else {
                 resetCustomerDetails();
+                setButtonEnabled(false, btRefresh);
             }
         });
 
@@ -158,15 +168,15 @@ public class CustomerPanel extends javax.swing.JPanel {
             List<RowFilter<CustomerTableModel, Object>> filters = new ArrayList<>();
             filters.add(RowFilter.regexFilter("^" + tfIdFilter.getText(), 0));
             filters.add(RowFilter.regexFilter("^" + tfCusNameFilter.getText(), 1));
-            
+
             // Neu co chon cus level thi moi filter level
             if (cbLevelFilter.getSelectedIndex() > 0) {
                 filters.add(RowFilter.regexFilter("^" + ((CustomerLevel) cbLevelFilter.getSelectedItem()).getCusLevel(), 2));
             }
-            
+
             filters.add(RowFilter.regexFilter("^" + tfCusPhoneFilter.getText(), 3));
             filters.add(RowFilter.regexFilter("^" + tfCusAddressFilter.getText(), 4));
-            
+
             // Neu status khac "All" thi moi filter
             String statusFilter = cbStatusFilter.getSelectedItem().toString();
             if (!statusFilter.equals("All")) {
@@ -268,7 +278,6 @@ public class CustomerPanel extends javax.swing.JPanel {
             }
         });
 
-        cbLevelFilter.setModel(customerLevelComboBoxModel1);
         cbLevelFilter.setRenderer(customerLevelComboBoxRenderer);
         cbLevelFilter.addItemListener(new java.awt.event.ItemListener() {
             public void itemStateChanged(java.awt.event.ItemEvent evt) {
@@ -418,7 +427,6 @@ public class CustomerPanel extends javax.swing.JPanel {
 
         jLabel10.setText("Customer Level:");
 
-        cbCusLevel.setModel(customerLevelComboBoxModel2);
         cbCusLevel.setEnabled(false);
         cbCusLevel.setRenderer(customerLevelComboBoxRenderer);
 
@@ -485,7 +493,6 @@ public class CustomerPanel extends javax.swing.JPanel {
 
         jScrollPane2.setBorder(javax.swing.BorderFactory.createTitledBorder(javax.swing.BorderFactory.createEtchedBorder(), "Order Details"));
 
-        tbCustomerList.setModel(customerTableModel);
         tbCustomerList.setFillsViewportHeight(true);
         tbCustomerList.setRowHeight(25);
         tbCustomerList.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
@@ -612,6 +619,7 @@ public class CustomerPanel extends javax.swing.JPanel {
         customerLevelComboBoxModel1 = new CustomerLevelComboBoxModel();
         customerLevelComboBoxModel2 = new CustomerLevelComboBoxModel();
         setCursor(null);
+        SwingUtils.showMessageDialog(DBProvider.DB_REFRESH);
     }
 
     private void insertAction() {
@@ -673,11 +681,7 @@ public class CustomerPanel extends javax.swing.JPanel {
         cbCusEnabled.setEnabled(updatable);
 
         // Set disable cho may button update
-        btRefresh.setEnabled(!updatable);
-        btRemove.setEnabled(!updatable);
-        btUpdate.setEnabled(!updatable);
-        btAdd.setEnabled(!updatable);
-        btNewOrder.setEnabled(!updatable);
+        setButtonEnabled(!updatable, exclude);
 
         // Ngoai tru may component nay luon luon enable
         if (exclude.length != 0) {
@@ -692,6 +696,19 @@ public class CustomerPanel extends javax.swing.JPanel {
                 exclude[0].setForeground(null);
                 exclude[0].setText(buttonText);
             }
+        }
+    }
+
+    private void setButtonEnabled(boolean enabled, JButton... exclude) {
+        btRefresh.setEnabled(enabled);
+        btRemove.setEnabled(enabled);
+        btUpdate.setEnabled(enabled);
+        btAdd.setEnabled(enabled);
+        btNewOrder.setEnabled(enabled);
+
+        // Ngoai tru may button nay luon luon enable
+        if (exclude.length != 0) {
+            Arrays.stream(exclude).forEach(b -> b.setEnabled(true));
         }
     }
 }

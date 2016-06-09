@@ -23,7 +23,7 @@ public class CustomerLevelComboBoxModel extends DefaultComboBoxModel<CustomerLev
         super();
 
         // Them hien thi khi selectedIndex = -1
-        addElement(new CustomerLevel(-1,-1,""));
+        addElement(new CustomerLevel(-1,-1,"",0));
         
         // Them vao danh sach customer level
         crs = new DBProvider().getCRS("select * from CustomerLevels");
@@ -33,7 +33,8 @@ public class CustomerLevelComboBoxModel extends DefaultComboBoxModel<CustomerLev
                     addElement(new CustomerLevel(
                             crs.getInt(CustomerLevel.COL_CUSLEVELID), 
                             crs.getInt(CustomerLevel.COL_CUSLEVEL), 
-                            crs.getString(CustomerLevel.COL_CUSLEVELNAME)));
+                            crs.getString(CustomerLevel.COL_CUSLEVELNAME),
+                            crs.getFloat(CustomerLevel.COL_CUSDISCOUNT)));
                 } while (crs.next());
             }
         } catch (SQLException ex) {
