@@ -17,9 +17,9 @@ import database.DBProvider;
 public interface IDAO<T> {
     List<T> getList();
     T get(int position);
-    boolean insert(Customer customer);
-    boolean update(Customer customer);
-    boolean delete(Customer customer);
+    boolean insert(T model);
+    boolean update(T model);
+    boolean delete(T model);
     
     default CachedRowSet getCRS(String query){
         return new DBProvider().getCRS(query);
