@@ -3,8 +3,10 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package customer.model;
+package customer.dao;
 
+import customer.model.Customer;
+import database.IDAO;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
@@ -16,7 +18,7 @@ import javax.sql.rowset.CachedRowSet;
  *
  * @author Hoang
  */
-public class CustomerDAOImpl implements CustomerDAO {
+public class CustomerDAOImpl implements IDAO<Customer> {
 
     private CachedRowSet dbCrs;           //CRS for update database
     private final CachedRowSet tableCrs;  //CRS for update table

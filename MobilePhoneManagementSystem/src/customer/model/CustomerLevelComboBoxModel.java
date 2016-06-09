@@ -10,7 +10,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.sql.rowset.CachedRowSet;
 import javax.swing.DefaultComboBoxModel;
-import utility.DBProvider;
+import database.DBProvider;
 
 /**
  *

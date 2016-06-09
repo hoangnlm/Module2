@@ -14,7 +14,7 @@ import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.UIManager;
 import org.jdesktop.xswingx.PromptSupport;
-import utility.DBProvider;
+import database.DBProvider;
 import utility.IOUtils;
 import utility.SwingUtils;
 

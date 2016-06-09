@@ -9,7 +9,7 @@ import java.awt.Color;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 import org.jdesktop.xswingx.PromptSupport;
-import utility.DBProvider;
+import database.DBProvider;
 import utility.SwingUtils;
 
 /**

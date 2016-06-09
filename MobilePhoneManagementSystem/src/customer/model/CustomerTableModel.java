@@ -5,6 +5,7 @@
  */
 package customer.model;
 
+import customer.dao.CustomerDAOImpl;
 import java.util.List;
 import javax.swing.table.AbstractTableModel;
 import utility.SwingUtils;

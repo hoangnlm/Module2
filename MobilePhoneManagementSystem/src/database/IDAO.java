@@ -3,19 +3,20 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package customer.model;
+package database;
 
+import customer.model.Customer;
 import java.util.List;
 import javax.sql.rowset.CachedRowSet;
-import utility.DBProvider;
+import database.DBProvider;
 
 /**
  *
  * @author Hoang
  */
-public interface CustomerDAO {
-    List<Customer> getList();
-    Customer get(int position);
+public interface IDAO<T> {
+    List<T> getList();
+    T get(int position);
     boolean insert(Customer customer);
     boolean update(Customer customer);
     boolean delete(Customer customer);
