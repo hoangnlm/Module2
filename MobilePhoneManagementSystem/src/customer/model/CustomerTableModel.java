@@ -6,6 +6,7 @@
 package customer.model;
 
 import customer.dao.CustomerDAOImpl;
+import database.DBProvider;
 import java.util.List;
 import javax.swing.table.AbstractTableModel;
 import utility.SwingUtils;
@@ -19,20 +20,22 @@ public class CustomerTableModel extends AbstractTableModel {
 
     private List<Customer> customerList;
     private Customer customer;
-    private final CustomerDAOImpl customerDAOImpl;
+    private CustomerDAOImpl customerDAOImpl;
+    private String[] columnNames;
 
     public CustomerTableModel() {
         customerDAOImpl = new CustomerDAOImpl();
         customerList = customerDAOImpl.getList();
+        columnNames = new String[]{"ID", "Cus. Name", "Cus. Level", "Cus. Phone", "Cus. Address", "Status"};
     }
 
     public void insert(Customer customer) {
         if (customerDAOImpl.insert(customer)) {
             customerList = customerDAOImpl.getList();
             fireTableRowsInserted(customerList.indexOf(customer), customerList.indexOf(customer));
-            SwingUtils.showMessageDialog(SwingUtils.INSERT_SUCCESS);
+            SwingUtils.showMessageDialog(DBProvider.INSERT_SUCCESS);
         } else {
-            SwingUtils.showMessageDialog(SwingUtils.INSERT_FAIL);
+            SwingUtils.showMessageDialog(DBProvider.INSERT_FAIL);
         }
     }
 
@@ -40,9 +43,9 @@ public class CustomerTableModel extends AbstractTableModel {
         if (customerDAOImpl.update(customer)) {
             customerList = customerDAOImpl.getList();
             fireTableRowsUpdated(customerList.indexOf(customer), customerList.indexOf(customer));
-            SwingUtils.showMessageDialog(SwingUtils.UPDATE_SUCCESS);
+            SwingUtils.showMessageDialog(DBProvider.UPDATE_SUCCESS);
         } else {
-            SwingUtils.showMessageDialog(SwingUtils.UPDATE_FAIL);
+            SwingUtils.showMessageDialog(DBProvider.UPDATE_FAIL);
         }
     }
 
@@ -50,15 +53,14 @@ public class CustomerTableModel extends AbstractTableModel {
         if (customerDAOImpl.delete(customer)) {
             customerList = customerDAOImpl.getList();
             fireTableRowsDeleted(customerList.indexOf(customer), customerList.indexOf(customer));
-            SwingUtils.showMessageDialog(SwingUtils.DELETE_SUCCESS);
+            SwingUtils.showMessageDialog(DBProvider.DELETE_SUCCESS);
         } else {
-            SwingUtils.showMessageDialog(SwingUtils.DELETE_FAIL);
+            SwingUtils.showMessageDialog(DBProvider.DELETE_FAIL);
         }
     }
 
     @Override
     public String getColumnName(int column) {
-        String[] columnNames = {"ID", "Cus. Name", "Cus. Level", "Cus. Phone", "Cus. Address", "Status"};
         return columnNames[column];
     }
 
@@ -75,7 +77,7 @@ public class CustomerTableModel extends AbstractTableModel {
 
     @Override
     public int getColumnCount() {
-        return 6;
+        return columnNames.length;
     }
 
     @Override
