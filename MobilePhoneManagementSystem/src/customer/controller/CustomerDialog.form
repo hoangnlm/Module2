@@ -237,37 +237,12 @@
         <Component class="javax.swing.JTable" name="jTable1">
           <Properties>
             <Property name="model" type="javax.swing.table.TableModel" editor="org.netbeans.modules.form.editors2.TableModelEditor">
-              <Table columnCount="5" rowCount="4">
-                <Column editable="true" title="ID" type="java.lang.Object">
-                  <Data value="1"/>
-                  <Data value="2"/>
-                  <Data value="3"/>
-                  <Data value="null"/>
-                </Column>
-                <Column editable="true" title="Name" type="java.lang.Object">
-                  <Data value="Hoang"/>
-                  <Data value="Tri"/>
-                  <Data value="Son"/>
-                  <Data value="null"/>
-                </Column>
-                <Column editable="true" title="Level" type="java.lang.Object">
-                  <Data value="3"/>
-                  <Data value="2"/>
-                  <Data value="0"/>
-                  <Data value="null"/>
-                </Column>
-                <Column editable="true" title="Phone" type="java.lang.Object">
-                  <Data value="0936031044"/>
-                  <Data value="123123123"/>
-                  <Data value="3434343434"/>
-                  <Data value="null"/>
-                </Column>
-                <Column editable="true" title="Address" type="java.lang.Object">
-                  <Data value="121 ly te xuyen thu duc"/>
-                  <Data value="123123213dfffd"/>
-                  <Data value="null"/>
-                  <Data value="null"/>
-                </Column>
+              <Table columnCount="5" rowCount="0">
+                <Column editable="true" title="ID" type="java.lang.Object"/>
+                <Column editable="true" title="Name" type="java.lang.Object"/>
+                <Column editable="true" title="Level" type="java.lang.Object"/>
+                <Column editable="true" title="Phone" type="java.lang.Object"/>
+                <Column editable="true" title="Address" type="java.lang.Object"/>
               </Table>
             </Property>
             <Property name="rowHeight" type="int" value="20"/>

@@ -27,7 +27,34 @@ public class Customer {
     public static final String COL_CUSADDRESS = "CusAddress";
     public static final String COL_CUSENABLED = "CusEnabled";
     public static final String COL_CUSLEVELID = "CusLevelID";
-
+    public static final String QUERY_SHOW = "select "
+                + Customer.COL_CUSID + ", "
+                + Customer.COL_CUSNAME + ", "
+                + Customer.COL_CUSLEVEL + ", "
+                + Customer.COL_CUSPHONE + ", "
+                + Customer.COL_CUSADDRESS + ", "
+                + Customer.COL_CUSENABLED + ", "
+                + "a." + Customer.COL_CUSLEVELID + " "
+                + "from Customers a join CustomerLevels b on a."
+                + Customer.COL_CUSLEVELID+ "=b."+Customer.COL_CUSLEVELID;
+    public static final String QUERY_INSERT = "insert into CustomerLevels values(?,?,?)";
+    public static final String QUERY_UPDATE = "update CustomerLevels set "
+            + CustomerLevel.COL_CUSLEVEL + "=?, "
+            + CustomerLevel.COL_CUSLEVELNAME + "=?, "
+            + CustomerLevel.COL_CUSDISCOUNT + "=? "
+            + "where " + CustomerLevel.COL_CUSLEVELID + "=?";
+    public static final String QUERY_DELETE = "delete from CustomerLevels where CusLevelID=?";
+    public static final String QUERY_CHECK_INSERT = "select * from CustomerLevels where "
+            + CustomerLevel.COL_CUSLEVEL + "=? OR "
+            + CustomerLevel.COL_CUSLEVELNAME + " like ? OR "
+            + CustomerLevel.COL_CUSDISCOUNT + "=?";
+    public static final String QUERY_CHECK_UPDATE = "select * from CustomerLevels where "
+            + "(" + CustomerLevel.COL_CUSLEVEL + "=? OR "
+            + CustomerLevel.COL_CUSLEVELNAME + " like ? OR "
+            + CustomerLevel.COL_CUSDISCOUNT + "=?) AND "
+            + CustomerLevel.COL_CUSLEVELID + "!=?";
+    public static final String QUERY_CHECK_DELETE = "select * from Customers where CusLevelID=?";
+    
     public Customer() {
         
     }

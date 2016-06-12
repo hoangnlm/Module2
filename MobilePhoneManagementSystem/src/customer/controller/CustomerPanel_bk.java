@@ -16,14 +16,11 @@ import java.awt.Cursor;
 import java.awt.Dimension;
 import java.awt.Rectangle;
 import java.awt.Toolkit;
-import java.awt.event.ActionEvent;
 import java.awt.event.FocusAdapter;
 import java.awt.event.FocusEvent;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import javax.swing.AbstractAction;
-import javax.swing.Action;
 import javax.swing.DefaultCellEditor;
 import javax.swing.DefaultListSelectionModel;
 import javax.swing.InputVerifier;
@@ -42,21 +39,17 @@ import javax.swing.text.AttributeSet;
 import javax.swing.text.BadLocationException;
 import javax.swing.text.DocumentFilter;
 import order.controller.AddOrderDialog;
-import utility.IntegerCellEditor;
-import utility.StringCellEditor;
-import utility.StringCellEditor2;
-import utility.StringFormatter;
 import utility.SwingUtils;
-import utility.TableCellListener;
 
 /**
  *
  * @author Hoang
  */
-public class CustomerPanel extends javax.swing.JPanel {
+public class CustomerPanel_bk extends javax.swing.JPanel {
 
     private CustomerTableModel customerTableModel;
-    private CustomerLevelComboBoxModel customerLevelComboBoxModel;
+    private CustomerLevelComboBoxModel customerLevelComboBoxModel1;
+    private CustomerLevelComboBoxModel customerLevelComboBoxModel2;
     private final CustomerLevelComboBoxRenderer customerLevelComboBoxRenderer;
     private final TableRowSorter<CustomerTableModel> sorter;
 
@@ -74,21 +67,25 @@ public class CustomerPanel extends javax.swing.JPanel {
     /**
      * Creates new form OrderPanel
      */
-    public CustomerPanel() {
+    public CustomerPanel_bk() {
         initComponents();
 
         // Selecting customer in the table
         selectedCustomer = new Customer();
 
         // Set data cho combobox level filter
-        customerLevelComboBoxModel = new CustomerLevelComboBoxModel();
+        customerLevelComboBoxModel1 = new CustomerLevelComboBoxModel();
         filterLevel = new CustomerLevel(0, 0, "", 0);
-        customerLevelComboBoxModel.addElement(filterLevel);
+        customerLevelComboBoxModel1.addElement(filterLevel);
 
         // Set data cho combobox level update
+        customerLevelComboBoxModel2 = new CustomerLevelComboBoxModel();
         customerLevelComboBoxRenderer = new CustomerLevelComboBoxRenderer();
-        cbLevelFilter.setModel(customerLevelComboBoxModel);
+        cbLevelFilter.setModel(customerLevelComboBoxModel1);
         cbLevelFilter.setRenderer(customerLevelComboBoxRenderer);
+
+        cbCusLevel.setModel(customerLevelComboBoxModel2);
+        cbCusLevel.setRenderer(customerLevelComboBoxRenderer);
 
         // Set data cho table
         customerTableModel = new CustomerTableModel();
@@ -97,68 +94,38 @@ public class CustomerPanel extends javax.swing.JPanel {
         // Set sorter cho table
         sorter = new TableRowSorter<>(customerTableModel);
         tbCustomerList.setRowSorter(sorter);
-
+        
         // Select mac dinh cho level filter
-        cbLevelFilter.setSelectedIndex(cbLevelFilter.getItemCount() - 1);
-
-        // Col cus name
-        tbCustomerList.getColumnModel().getColumn(1).setCellEditor(new StringCellEditor(50, StringFormatter.PATTERN_CUSNAME));
+        cbLevelFilter.setSelectedIndex(cbLevelFilter.getItemCount()-1);
 
         // Col cus level
         tbCustomerList.getColumnModel().getColumn(2).setCellEditor(new ComboBoxCellEditor(new CustomerLevelComboBoxModel()));
 
-        // Col cus phone
-//JTextField tf = new JTextField();
-//        SwingUtils.validateStringInput(tf, 50, "[A-Za-z0-9 ]+");
-//        SwingUtils.validateStringValue(tf, "^\\p{Alpha}[A-Za-z0-9 ]{0,48}\\p{Alnum}$");
-//tbCustomerList.getColumnModel().getColumn(3).setCellEditor(new DefaultCellEditor(tf));
-        InputVerifier iv = new InputVerifier() {
-            @Override
-            public boolean verify(JComponent input) {
-                boolean verified = false;
-                String text = ((JTextField) input).getText();
-                try {
-                    int port = Integer.valueOf(text);
-                    if ((0 < port) && (port <= 10)) {
-                        input.setBackground(Color.WHITE);
-                        verified = true;
-                    } else {
-                        input.setBackground(Color.RED);
-                    }
-                } catch (NumberFormatException e) {
-                    input.setBackground(Color.RED);
-                }
-                return verified;
-            }
-        };
-//        tbCustomerList.getColumnModel().getColumn(3).setCellEditor(new StringCellEditor2());
-
+        // Set focus and cursor to table cell
+//        tbCustomerList.addFocusListener(new FocusAdapter() {
+//            @Override
+//            public void focusGained(FocusEvent e) {
+//
+//                tbCustomerList.editCellAt(tbCustomerList.getSelectedRow(), tbCustomerList.getSelectedColumn());
+//                tbCustomerList.setSurrendersFocusOnKeystroke(true);
+//                tbCustomerList.getEditorComponent().requestFocus();
+//            }
+//
+//        });
         // Bat su kien select row tren table
         tbCustomerList.getSelectionModel().addListSelectionListener((ListSelectionEvent e) -> {
             DefaultListSelectionModel model = (DefaultListSelectionModel) e.getSource();
             if (!model.isSelectionEmpty()) {
                 fetchCustomerDetails();
                 setButtonEnabled(true);
-                tbCustomerList.setSurrendersFocusOnKeystroke(false);
             } else {
+                resetCustomerDetails();
                 setButtonEnabled(false, btRefresh);
             }
         });
 
         // Set height cho table header
         tbCustomerList.getTableHeader().setPreferredSize(new Dimension(100, 30));
-
-        // Set cell listener cho updating
-        TableCellListener tcl = new TableCellListener(tbCustomerList, new AbstractAction() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                TableCellListener tcl = (TableCellListener) e.getSource();
-//                System.out.println("Row   : " + tcl.getRow());
-//                System.out.println("Column: " + tcl.getColumn());
-//                System.out.println("Old   : " + tcl.getOldValue());
-//                System.out.println("New   : " + tcl.getNewValue());
-            }
-        });
 
         // Bat su kien cho vung filter
         tfIdFilter.getDocument().addDocumentListener(
@@ -241,9 +208,9 @@ public class CustomerPanel extends javax.swing.JPanel {
             filters.add(RowFilter.regexFilter("^" + tfCusNameFilter.getText(), 1));
 
             // Neu co chon cus level thi moi filter level
-            if (cbLevelFilter.getSelectedIndex() != cbLevelFilter.getItemCount() - 1) {
-                filters.add(RowFilter.regexFilter("^" + ((CustomerLevel) cbLevelFilter.getSelectedItem()).getCusLevel(), 2));
-            }
+//            if (cbLevelFilter.getSelectedIndex() != cbLevelFilter.getItemCount()-1) {
+//                filters.add(RowFilter.regexFilter("^" + ((CustomerLevel) cbLevelFilter.getSelectedItem()).getCusLevel(), 2));
+//            }
 
             filters.add(RowFilter.regexFilter("^" + tfCusPhoneFilter.getText(), 3));
             filters.add(RowFilter.regexFilter("^" + tfCusAddressFilter.getText(), 4));
@@ -270,6 +237,20 @@ public class CustomerPanel extends javax.swing.JPanel {
         selectedCustomer.setCusPhone((String) tbCustomerList.getValueAt(selectedRowIndex, 3));
         selectedCustomer.setCusAddress((String) tbCustomerList.getValueAt(selectedRowIndex, 4));
         selectedCustomer.setCusEnabled((boolean) tbCustomerList.getValueAt(selectedRowIndex, 5));
+
+        tfCusName.setText(selectedCustomer.getCusName());
+        tfCusPhone.setText(selectedCustomer.getCusPhone());
+        tfCusAddress.setText(selectedCustomer.getCusAddress());
+        cbCusLevel.setSelectedIndex(customerLevelComboBoxModel2.getIndexOfCustomerLevel(selectedCustomer.getCusLevel()));
+        cbCusEnabled.setSelected(selectedCustomer.isCusEnabled());
+    }
+
+    private void resetCustomerDetails() {
+        tfCusName.setText(null);
+        tfCusPhone.setText(null);
+        tfCusAddress.setText(null);
+        cbCusLevel.setSelectedIndex(0);
+        cbCusEnabled.setSelected(true);
     }
 
     /**
@@ -295,11 +276,22 @@ public class CustomerPanel extends javax.swing.JPanel {
         jLabel11 = new javax.swing.JLabel();
         tfCusAddressFilter = new javax.swing.JTextField();
         btRemove = new javax.swing.JButton();
+        btUpdate = new javax.swing.JButton();
         btAdd = new javax.swing.JButton();
         btRefresh = new javax.swing.JButton();
         pnTitle = new javax.swing.JPanel();
         jLabel1 = new javax.swing.JLabel();
         btCusLevel = new javax.swing.JButton();
+        jPanel1 = new javax.swing.JPanel();
+        jLabel7 = new javax.swing.JLabel();
+        tfCusName = new javax.swing.JTextField();
+        jLabel8 = new javax.swing.JLabel();
+        tfCusPhone = new javax.swing.JTextField();
+        jLabel9 = new javax.swing.JLabel();
+        tfCusAddress = new javax.swing.JTextField();
+        jLabel10 = new javax.swing.JLabel();
+        cbCusLevel = new javax.swing.JComboBox<>();
+        cbCusEnabled = new javax.swing.JCheckBox();
         btNewOrder = new javax.swing.JButton();
         jScrollPane2 = new javax.swing.JScrollPane();
         tbCustomerList = new javax.swing.JTable();
@@ -394,6 +386,15 @@ public class CustomerPanel extends javax.swing.JPanel {
             }
         });
 
+        btUpdate.setFont(new java.awt.Font("Lucida Grande", 0, 14)); // NOI18N
+        btUpdate.setIcon(new javax.swing.ImageIcon(getClass().getResource("/image/order/Save.png"))); // NOI18N
+        btUpdate.setText("Update");
+        btUpdate.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btUpdateActionPerformed(evt);
+            }
+        });
+
         btAdd.setFont(new java.awt.Font("Lucida Grande", 0, 14)); // NOI18N
         btAdd.setIcon(new javax.swing.ImageIcon(getClass().getResource("/image/order/Add.png"))); // NOI18N
         btAdd.setText("Add New");
@@ -446,6 +447,77 @@ public class CustomerPanel extends javax.swing.JPanel {
                 .addComponent(btCusLevel, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE))
         );
 
+        jPanel1.setBorder(javax.swing.BorderFactory.createTitledBorder(javax.swing.BorderFactory.createEtchedBorder(), "Customer Details"));
+        jPanel1.setPreferredSize(new java.awt.Dimension(300, 103));
+
+        jLabel7.setText("Customer Name:");
+
+        tfCusName.setEnabled(false);
+
+        jLabel8.setText("Customer Phone:");
+
+        tfCusPhone.setEnabled(false);
+
+        jLabel9.setText("Customer Address:");
+
+        tfCusAddress.setEnabled(false);
+
+        jLabel10.setText("Customer Level:");
+
+        cbCusLevel.setEnabled(false);
+        cbCusLevel.setRenderer(customerLevelComboBoxRenderer);
+
+        cbCusEnabled.setSelected(true);
+        cbCusEnabled.setText("Enabled");
+        cbCusEnabled.setEnabled(false);
+
+        javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
+        jPanel1.setLayout(jPanel1Layout);
+        jPanel1Layout.setHorizontalGroup(
+            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel1Layout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addComponent(jLabel8, javax.swing.GroupLayout.PREFERRED_SIZE, 120, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(tfCusPhone, javax.swing.GroupLayout.PREFERRED_SIZE, 150, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addComponent(jLabel7, javax.swing.GroupLayout.PREFERRED_SIZE, 120, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(tfCusName, javax.swing.GroupLayout.PREFERRED_SIZE, 150, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jLabel10, javax.swing.GroupLayout.PREFERRED_SIZE, 130, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel9, javax.swing.GroupLayout.PREFERRED_SIZE, 130, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addComponent(tfCusAddress, javax.swing.GroupLayout.PREFERRED_SIZE, 274, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addComponent(cbCusLevel, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(cbCusEnabled)))
+                .addGap(3, 3, 3))
+        );
+        jPanel1Layout.setVerticalGroup(
+            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel1Layout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel9)
+                    .addComponent(tfCusAddress, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(tfCusName, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel7))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel10)
+                    .addComponent(cbCusLevel, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(cbCusEnabled, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(tfCusPhone, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel8))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+        );
+
         btNewOrder.setFont(new java.awt.Font("Lucida Grande", 3, 14)); // NOI18N
         btNewOrder.setForeground(new java.awt.Color(0, 255, 255));
         btNewOrder.setIcon(new javax.swing.ImageIcon(getClass().getResource("/image/order/NewOrder.png"))); // NOI18N
@@ -478,14 +550,17 @@ public class CustomerPanel extends javax.swing.JPanel {
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addComponent(pnFilter, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
             .addComponent(pnTitle, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, 790, Short.MAX_VALUE)
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(btAdd, javax.swing.GroupLayout.PREFERRED_SIZE, 150, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(btRemove, javax.swing.GroupLayout.PREFERRED_SIZE, 150, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(btRefresh, javax.swing.GroupLayout.PREFERRED_SIZE, 150, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(btRefresh, javax.swing.GroupLayout.PREFERRED_SIZE, 130, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(18, 18, 18)
+                .addComponent(btRemove, javax.swing.GroupLayout.PREFERRED_SIZE, 130, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(18, 18, 18)
+                .addComponent(btUpdate, javax.swing.GroupLayout.PREFERRED_SIZE, 130, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(18, 18, 18)
+                .addComponent(btAdd, javax.swing.GroupLayout.PREFERRED_SIZE, 130, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(18, 18, 18)
                 .addComponent(btNewOrder, javax.swing.GroupLayout.PREFERRED_SIZE, 150, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
             .addComponent(jScrollPane2)
@@ -498,10 +573,13 @@ public class CustomerPanel extends javax.swing.JPanel {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(pnFilter, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 432, Short.MAX_VALUE)
+                .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 323, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(btRemove, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(btUpdate, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(btAdd, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(btRefresh, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(btNewOrder, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE))
@@ -525,6 +603,10 @@ public class CustomerPanel extends javax.swing.JPanel {
         refreshAction();
     }//GEN-LAST:event_btRefreshActionPerformed
 
+    private void btUpdateActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btUpdateActionPerformed
+        updateAction();
+    }//GEN-LAST:event_btUpdateActionPerformed
+
     private void btRemoveActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btRemoveActionPerformed
         deleteAction();
     }//GEN-LAST:event_btRemoveActionPerformed
@@ -544,21 +626,32 @@ public class CustomerPanel extends javax.swing.JPanel {
     private javax.swing.JButton btNewOrder;
     private javax.swing.JButton btRefresh;
     private javax.swing.JButton btRemove;
+    private javax.swing.JButton btUpdate;
+    private javax.swing.JCheckBox cbCusEnabled;
+    private javax.swing.JComboBox<CustomerLevel> cbCusLevel;
     private javax.swing.JComboBox<CustomerLevel> cbLevelFilter;
     private javax.swing.JComboBox<String> cbStatusFilter;
     private javax.swing.JLabel jLabel1;
+    private javax.swing.JLabel jLabel10;
     private javax.swing.JLabel jLabel11;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabel5;
     private javax.swing.JLabel jLabel6;
+    private javax.swing.JLabel jLabel7;
+    private javax.swing.JLabel jLabel8;
+    private javax.swing.JLabel jLabel9;
+    private javax.swing.JPanel jPanel1;
     private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JPanel pnFilter;
     private javax.swing.JPanel pnTitle;
     private javax.swing.JTable tbCustomerList;
+    private javax.swing.JTextField tfCusAddress;
     private javax.swing.JTextField tfCusAddressFilter;
+    private javax.swing.JTextField tfCusName;
     private javax.swing.JTextField tfCusNameFilter;
+    private javax.swing.JTextField tfCusPhone;
     private javax.swing.JTextField tfCusPhoneFilter;
     private javax.swing.JTextField tfIdFilter;
     // End of variables declaration//GEN-END:variables
@@ -568,40 +661,67 @@ public class CustomerPanel extends javax.swing.JPanel {
         setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
         tbCustomerList.getSelectionModel().clearSelection();
         customerTableModel = new CustomerTableModel();
-        customerLevelComboBoxModel = new CustomerLevelComboBoxModel();
+        customerLevelComboBoxModel1 = new CustomerLevelComboBoxModel();
+        customerLevelComboBoxModel2 = new CustomerLevelComboBoxModel();
         setCursor(null);
         SwingUtils.showInfoDialog(DBProvider.DB_REFRESH);
     }
 
     private void insertAction() {
-        Customer customer = new Customer();
-        customer.setCusName("New Customer");
-        customer.setCusAddress("New Address");
-        customer.setCusPhone(System.currentTimeMillis() + "");
-        customer.setCusLevelID(1);
-        customer.setCusEnabled(true);
-
-        if (customerTableModel.insert(customer)) {
-            SwingUtils.showInfoDialog(DBProvider.INSERT_SUCCESS);
-
-            // Select row vua insert vao
-            moveScrollToRow(tbCustomerList.getRowCount() - 1);
-            tbCustomerList.editCellAt(tbCustomerList.getSelectedRow(), 1);
-            tbCustomerList.setSurrendersFocusOnKeystroke(true);
-            tbCustomerList.getEditorComponent().requestFocus();
+        if (!isFinished) {
+            resetCustomerDetails();
+            setUpdatable(true, btAdd);
+            tfCusName.requestFocus();
+            cbCusLevel.setSelectedIndex(1);
+            isFinished = true;
         } else {
-            SwingUtils.showErrorDialog(DBProvider.INSERT_FAIL);
+            setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
+            setUpdatable(false, btAdd);
+            Customer customer = new Customer();
+            customer.setCusName(tfCusName.getText());
+            customer.setCusAddress(tfCusAddress.getText());
+            customer.setCusPhone(tfCusPhone.getText());
+            customer.setCusLevelID(((CustomerLevel) cbCusLevel.getSelectedItem()).getCusLevelID());
+            customer.setCusEnabled(cbCusEnabled.isSelected());
+
+            if (customerTableModel.insert(customer)) {
+                SwingUtils.showInfoDialog(DBProvider.INSERT_SUCCESS);
+
+                // Select row vua insert vao
+                moveScrollToRow(tbCustomerList.getRowCount() - 1);
+            } else {
+                SwingUtils.showErrorDialog(DBProvider.INSERT_FAIL);
+            }
+
+            isFinished = false;
+            setCursor(null);
         }
     }
 
     private void updateAction() {
-        if (customerTableModel.update(selectedCustomer)) {
-            SwingUtils.showInfoDialog(DBProvider.UPDATE_SUCCESS);
+        if (!isFinished) {
+            setUpdatable(true, btUpdate);
+            tfCusName.requestFocus();
+            isFinished = true;
         } else {
-            SwingUtils.showErrorDialog(DBProvider.UPDATE_FAIL);
-        }
+            setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
+            setUpdatable(false, btUpdate);
+            selectedCustomer.setCusName(tfCusName.getText());
+            selectedCustomer.setCusAddress(tfCusAddress.getText());
+            selectedCustomer.setCusPhone(tfCusPhone.getText());
+            selectedCustomer.setCusLevelID(((CustomerLevel) cbCusLevel.getSelectedItem()).getCusLevelID());
+            selectedCustomer.setCusEnabled(cbCusEnabled.isSelected());
 
-        moveScrollToRow(selectedRowIndex);
+            if (customerTableModel.update(selectedCustomer)) {
+                SwingUtils.showInfoDialog(DBProvider.UPDATE_SUCCESS);
+            } else {
+                SwingUtils.showErrorDialog(DBProvider.UPDATE_FAIL);
+            }
+
+            moveScrollToRow(selectedRowIndex);
+            isFinished = false;
+            setCursor(null);
+        }
     }
 
     private void deleteAction() {
@@ -619,9 +739,37 @@ public class CustomerPanel extends javax.swing.JPanel {
         tbCustomerList.scrollRectToVisible(new Rectangle(tbCustomerList.getCellRect(row, 0, true)));
     }
 
+    private void setUpdatable(boolean updatable, JButton... exclude) {
+        // Set enable cho vung nhap lieu
+        tfCusName.setEnabled(updatable);
+        tfCusPhone.setEnabled(updatable);
+        tfCusAddress.setEnabled(updatable);
+        cbCusLevel.setEnabled(updatable);
+        cbCusEnabled.setEnabled(updatable);
+
+        // Set disable cho may button update
+        setButtonEnabled(!updatable, exclude);
+
+        // Ngoai tru may component nay luon luon enable
+        if (exclude.length != 0) {
+            exclude[0].setEnabled(true);
+            if (updatable) {
+                // Doi font color mau do khi dang update
+                exclude[0].setForeground(Color.RED);
+                buttonText = exclude[0].getText();
+                exclude[0].setText("Save");
+            } else {
+                // Doi font color ve mac dinh khi update xong
+                exclude[0].setForeground(null);
+                exclude[0].setText(buttonText);
+            }
+        }
+    }
+
     private void setButtonEnabled(boolean enabled, JButton... exclude) {
         btRefresh.setEnabled(enabled);
         btRemove.setEnabled(enabled);
+        btUpdate.setEnabled(enabled);
         btAdd.setEnabled(enabled);
         btNewOrder.setEnabled(enabled);
 
@@ -630,4 +778,5 @@ public class CustomerPanel extends javax.swing.JPanel {
             Arrays.stream(exclude).forEach(b -> b.setEnabled(true));
         }
     }
+    
 }

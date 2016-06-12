@@ -55,7 +55,7 @@ public class CustomerLevelDialog extends javax.swing.JDialog {
                 fetchCustomerLevelDetails();
                 setButtonEnabled(true);
             } else {
-                resetCustomerLevelDetails();
+//                resetCustomerLevelDetails();
                 setButtonEnabled(false, btRefresh, btCancel);
             }
         });
@@ -72,16 +72,16 @@ public class CustomerLevelDialog extends javax.swing.JDialog {
         selectedCustomerLevel.setCusLevelName((String) tbLevelList.getValueAt(selectedRow, 2));
         selectedCustomerLevel.setCusDiscount((float) tbLevelList.getValueAt(selectedRow, 3) / 100);
 
-        spLevel.setValue(selectedCustomerLevel.getCusLevel());
-        tfLevelName.setText(selectedCustomerLevel.getCusLevelName());
-        spDiscount.setValue(selectedCustomerLevel.getCusDiscount() * 100);
+//        spLevel.setValue(selectedCustomerLevel.getCusLevel());
+//        tfLevelName.setText(selectedCustomerLevel.getCusLevelName());
+//        spDiscount.setValue(selectedCustomerLevel.getCusDiscount() * 100);
     }
 
-    private void resetCustomerLevelDetails() {
-        spLevel.setValue(0);
-        tfLevelName.setText(null);
-        spDiscount.setValue(0);
-    }
+//    private void resetCustomerLevelDetails() {
+//        spLevel.setValue(0);
+//        tfLevelName.setText(null);
+//        spDiscount.setValue(0);
+//    }
 
     /**
      * This method is called from within the constructor to initialize the form.
@@ -92,81 +92,25 @@ public class CustomerLevelDialog extends javax.swing.JDialog {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        jPanel1 = new javax.swing.JPanel();
-        jLabel2 = new javax.swing.JLabel();
-        jLabel4 = new javax.swing.JLabel();
-        tfLevelName = new javax.swing.JTextField();
-        jLabel5 = new javax.swing.JLabel();
-        spLevel = new javax.swing.JSpinner();
-        spDiscount = new javax.swing.JSpinner();
         jScrollPane1 = new javax.swing.JScrollPane();
         tbLevelList = new javax.swing.JTable();
         btAdd = new javax.swing.JButton();
-        btUpdate = new javax.swing.JButton();
         btDelete = new javax.swing.JButton();
         btRefresh = new javax.swing.JButton();
         btCancel = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
+        setTitle("Customer Level Management");
         setMinimumSize(null);
         setModal(true);
         setResizable(false);
         setSize(new java.awt.Dimension(560, 400));
 
-        jPanel1.setBorder(javax.swing.BorderFactory.createTitledBorder(javax.swing.BorderFactory.createEtchedBorder(), "Level Details"));
-
-        jLabel2.setText("Discount (%):");
-
-        jLabel4.setText("Level Name:");
-
-        tfLevelName.setEnabled(false);
-
-        jLabel5.setText("Level:");
-
-        spLevel.setEnabled(false);
-
-        spDiscount.setEnabled(false);
-
-        javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
-        jPanel1.setLayout(jPanel1Layout);
-        jPanel1Layout.setHorizontalGroup(
-            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel1Layout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(jLabel5)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(spLevel, javax.swing.GroupLayout.PREFERRED_SIZE, 60, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jLabel4)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(tfLevelName, javax.swing.GroupLayout.PREFERRED_SIZE, 200, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jLabel2)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(spDiscount, javax.swing.GroupLayout.PREFERRED_SIZE, 60, javax.swing.GroupLayout.PREFERRED_SIZE))
-        );
-        jPanel1Layout.setVerticalGroup(
-            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel1Layout.createSequentialGroup()
-                .addGap(6, 6, 6)
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel5)
-                    .addComponent(spLevel, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel4)
-                    .addComponent(tfLevelName, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel2)
-                    .addComponent(spDiscount, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(6, 6, 6))
-        );
-
         jScrollPane1.setBorder(javax.swing.BorderFactory.createTitledBorder(javax.swing.BorderFactory.createEtchedBorder(), "Level List"));
 
         tbLevelList.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
-                {"1", "0", "Khach hang tiem nang", "0"},
-                {"2", "1", "Khach hang than thiet", "1"},
-                {"3", "2", "Khach hang trung thanh", "2"},
-                {"4", "3", "Khach hang VIP", "4"}
+
             },
             new String [] {
                 "ID", "Level", "Name", "Discount (%)"
@@ -184,15 +128,6 @@ public class CustomerLevelDialog extends javax.swing.JDialog {
         btAdd.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btAddActionPerformed(evt);
-            }
-        });
-
-        btUpdate.setFont(new java.awt.Font("Lucida Grande", 0, 14)); // NOI18N
-        btUpdate.setIcon(new javax.swing.ImageIcon(getClass().getResource("/image/order/Update3.png"))); // NOI18N
-        btUpdate.setText("Change");
-        btUpdate.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btUpdateActionPerformed(evt);
             }
         });
 
@@ -216,7 +151,7 @@ public class CustomerLevelDialog extends javax.swing.JDialog {
 
         btCancel.setFont(new java.awt.Font("Lucida Grande", 0, 14)); // NOI18N
         btCancel.setIcon(new javax.swing.ImageIcon(getClass().getResource("/image/order/Cancel2.png"))); // NOI18N
-        btCancel.setText("Cancel");
+        btCancel.setText("Close");
         btCancel.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btCancelActionPerformed(evt);
@@ -227,12 +162,10 @@ public class CustomerLevelDialog extends javax.swing.JDialog {
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-            .addGroup(layout.createSequentialGroup()
+            .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 562, Short.MAX_VALUE)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addComponent(btAdd, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(btUpdate, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(btDelete, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -240,21 +173,19 @@ public class CustomerLevelDialog extends javax.swing.JDialog {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(btCancel, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-            .addComponent(jScrollPane1)
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGap(12, 12, 12)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(btAdd, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(btUpdate, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(btDelete, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(btRefresh, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(btCancel, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 280, Short.MAX_VALUE))
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 327, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
         pack();
@@ -267,10 +198,6 @@ public class CustomerLevelDialog extends javax.swing.JDialog {
     private void btAddActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btAddActionPerformed
         insertAction();
     }//GEN-LAST:event_btAddActionPerformed
-
-    private void btUpdateActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btUpdateActionPerformed
-        updateAction();
-    }//GEN-LAST:event_btUpdateActionPerformed
 
     private void btDeleteActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btDeleteActionPerformed
         deleteAction();
@@ -285,26 +212,26 @@ public class CustomerLevelDialog extends javax.swing.JDialog {
         tbLevelList.getSelectionModel().clearSelection();
         customerLevelTableModel = new CustomerLevelTableModel();
         setCursor(null);
-        SwingUtils.showMessageDialog(DBProvider.DB_REFRESH);
+        SwingUtils.showInfoDialog(DBProvider.DB_REFRESH);
     }
 
     private void insertAction() {
         if (!isFinished) {
             setUpdatable(true, btAdd);
-            resetCustomerLevelDetails();
-            spLevel.requestFocus();
+//            resetCustomerLevelDetails();
+//            spLevel.requestFocus();
             isFinished = true;
         } else {
             setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
             setUpdatable(false, btAdd);
             
             CustomerLevel customerLevel = new CustomerLevel();
-            customerLevel.setCusLevel((int) spLevel.getValue());
-            customerLevel.setCusLevelName(tfLevelName.getText());
-            // Convert from int to float
-            int tmp = (int) spDiscount.getValue();
-            float discount = (float) tmp / 100;
-            customerLevel.setCusDiscount(discount);
+//            customerLevel.setCusLevel((int) spLevel.getValue());
+//            customerLevel.setCusLevelName(tfLevelName.getText());
+//            // Convert from int to float
+//            int tmp = (int) spDiscount.getValue();
+//            float discount = (float) tmp / 100;
+//            customerLevel.setCusDiscount(discount);
             
             customerLevelTableModel.insert(customerLevel);
             isFinished = false;
@@ -313,23 +240,23 @@ public class CustomerLevelDialog extends javax.swing.JDialog {
     }
 
     private void updateAction() {
-        if (!isFinished) {
-            setUpdatable(true, btUpdate);
-            spLevel.requestFocus();
-            isFinished = true;
-        } else {
-            setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
-            setUpdatable(false, btUpdate);
-            selectedCustomerLevel.setCusLevel((int) spLevel.getValue());
-            selectedCustomerLevel.setCusLevelName(tfLevelName.getText());
-            // Convert from int to float
-            int tmp = (int) spDiscount.getValue();
-            float discount = (float) tmp / 100;
-            selectedCustomerLevel.setCusDiscount(discount);
-            customerLevelTableModel.update(selectedCustomerLevel);
-            isFinished = false;
-            setCursor(null);
-        }
+//        if (!isFinished) {
+//            setUpdatable(true, btUpdate);
+//            spLevel.requestFocus();
+//            isFinished = true;
+//        } else {
+//            setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
+//            setUpdatable(false, btUpdate);
+//            selectedCustomerLevel.setCusLevel((int) spLevel.getValue());
+//            selectedCustomerLevel.setCusLevelName(tfLevelName.getText());
+//            // Convert from int to float
+//            int tmp = (int) spDiscount.getValue();
+//            float discount = (float) tmp / 100;
+//            selectedCustomerLevel.setCusDiscount(discount);
+//            customerLevelTableModel.update(selectedCustomerLevel);
+//            isFinished = false;
+//            setCursor(null);
+//        }
     }
 
     private void deleteAction() {
@@ -341,9 +268,9 @@ public class CustomerLevelDialog extends javax.swing.JDialog {
 
     private void setUpdatable(boolean updatable, JButton... exclude) {
         // Set enable cho vung nhap lieu
-        spLevel.setEnabled(updatable);
-        tfLevelName.setEnabled(updatable);
-        spDiscount.setEnabled(updatable);
+//        spLevel.setEnabled(updatable);
+//        tfLevelName.setEnabled(updatable);
+//        spDiscount.setEnabled(updatable);
 
         // Set disable cho may button update
         setButtonEnabled(!updatable, exclude);
@@ -367,7 +294,7 @@ public class CustomerLevelDialog extends javax.swing.JDialog {
     private void setButtonEnabled(boolean enabled, JButton... exclude) {
         btRefresh.setEnabled(enabled);
         btDelete.setEnabled(enabled);
-        btUpdate.setEnabled(enabled);
+//        btUpdate.setEnabled(enabled);
         btAdd.setEnabled(enabled);
         btCancel.setEnabled(enabled);
 
@@ -382,15 +309,7 @@ public class CustomerLevelDialog extends javax.swing.JDialog {
     private javax.swing.JButton btCancel;
     private javax.swing.JButton btDelete;
     private javax.swing.JButton btRefresh;
-    private javax.swing.JButton btUpdate;
-    private javax.swing.JLabel jLabel2;
-    private javax.swing.JLabel jLabel4;
-    private javax.swing.JLabel jLabel5;
-    private javax.swing.JPanel jPanel1;
     private javax.swing.JScrollPane jScrollPane1;
-    private javax.swing.JSpinner spDiscount;
-    private javax.swing.JSpinner spLevel;
     private javax.swing.JTable tbLevelList;
-    private javax.swing.JTextField tfLevelName;
     // End of variables declaration//GEN-END:variables
 }

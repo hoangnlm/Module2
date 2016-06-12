@@ -3,8 +3,9 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package customer.model;
+package customer.controller;
 
+import customer.model.CustomerLevel;
 import java.awt.Color;
 import java.awt.Component;
 import javax.swing.JLabel;
@@ -31,14 +32,7 @@ public class CustomerLevelComboBoxRenderer extends JLabel implements ListCellRen
             setBackground(list.getBackground());
             setForeground(list.getForeground());
         }
-
-        if (value != null) {
-            if (value.getCusLevel() == -1) {
-                setText("--");
-            } else {
-                setText(value.getCusLevel() + "");
-            }
-        }
+        setText(value.getCusLevel() + "");
         return this;
     }
 }

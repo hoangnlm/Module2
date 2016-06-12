@@ -239,7 +239,7 @@ public class ConfigPanel extends javax.swing.JPanel {
             SwingUtils.showErrorDialog("Error: cannot connect database!");
             tfHost.requestFocus();
         } else { // Ket noi database thanh cong
-            SwingUtils.showMessageDialog("Connected database successfully!");
+            SwingUtils.showInfoDialog("Connected database successfully!");
             db.stop();
             config.host = tfHost.getText();
             config.port = tfPort.getText();

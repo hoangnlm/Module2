@@ -33,9 +33,9 @@ public class CustomerLevelTableModel extends AbstractTableModel {
         if (customerLevelDAOImpl.insert(customerLevel)) {
             customerLevelList = customerLevelDAOImpl.getList();
             fireTableRowsInserted(customerLevelList.indexOf(customerLevel), customerLevelList.indexOf(customerLevel));
-            SwingUtils.showMessageDialog(DBProvider.INSERT_SUCCESS);
+            SwingUtils.showInfoDialog(DBProvider.INSERT_SUCCESS);
         } else {
-            SwingUtils.showMessageDialog(DBProvider.INSERT_FAIL);
+            SwingUtils.showInfoDialog(DBProvider.INSERT_FAIL);
         }
     }
 
@@ -43,9 +43,9 @@ public class CustomerLevelTableModel extends AbstractTableModel {
         if (customerLevelDAOImpl.update(customerLevel)) {
             customerLevelList = customerLevelDAOImpl.getList();
             fireTableRowsUpdated(customerLevelList.indexOf(customerLevel), customerLevelList.indexOf(customerLevel));
-            SwingUtils.showMessageDialog(DBProvider.UPDATE_SUCCESS);
+            SwingUtils.showInfoDialog(DBProvider.UPDATE_SUCCESS);
         } else {
-            SwingUtils.showMessageDialog(DBProvider.UPDATE_FAIL);
+            SwingUtils.showInfoDialog(DBProvider.UPDATE_FAIL);
         }
     }
 
@@ -53,9 +53,9 @@ public class CustomerLevelTableModel extends AbstractTableModel {
         if (customerLevelDAOImpl.delete(customerLevel)) {
             customerLevelList = customerLevelDAOImpl.getList();
             fireTableRowsDeleted(customerLevelList.indexOf(customerLevel), customerLevelList.indexOf(customerLevel));
-            SwingUtils.showMessageDialog(DBProvider.DELETE_SUCCESS);
+            SwingUtils.showInfoDialog(DBProvider.DELETE_SUCCESS);
         } else {
-            SwingUtils.showMessageDialog(DBProvider.DELETE_FAIL);
+            SwingUtils.showInfoDialog(DBProvider.DELETE_FAIL);
         }
     }
 

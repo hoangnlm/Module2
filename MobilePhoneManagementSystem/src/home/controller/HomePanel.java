@@ -31,11 +31,19 @@ public class HomePanel extends javax.swing.JPanel {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
+        btStatistics = new javax.swing.JButton();
         jLabel5 = new javax.swing.JLabel();
 
         setBackground(new java.awt.Color(0, 0, 0));
         setPreferredSize(new java.awt.Dimension(810, 680));
         setLayout(null);
+
+        btStatistics.setFont(new java.awt.Font("Lucida Grande", 2, 13)); // NOI18N
+        btStatistics.setForeground(new java.awt.Color(255, 153, 0));
+        btStatistics.setText("Mobile Phone Shop Management System...");
+        btStatistics.setFocusPainted(false);
+        add(btStatistics);
+        btStatistics.setBounds(10, 640, 290, 30);
 
         jLabel5.setIcon(new javax.swing.ImageIcon(getClass().getResource("/image/home/HomeBG.jpg"))); // NOI18N
         jLabel5.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
@@ -45,6 +53,7 @@ public class HomePanel extends javax.swing.JPanel {
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton btStatistics;
     private javax.swing.JLabel jLabel5;
     // End of variables declaration//GEN-END:variables
 }

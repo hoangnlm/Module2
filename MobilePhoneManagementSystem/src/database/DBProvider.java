@@ -19,8 +19,8 @@ public class DBProvider {
     private ResultSet resultSet;
     
     // Define some string sentences
-    public static final String INSERT_SUCCESS = "Added new successfully!";
-    public static final String INSERT_FAIL = "Cannot add new due to some reasons!";
+    public static final String INSERT_SUCCESS = "You have insert a new row!";
+    public static final String INSERT_FAIL = "Cannot insert due to some reasons!";
     public static final String UPDATE_SUCCESS = "Updated successfully!";
     public static final String UPDATE_FAIL = "Cannot update due to some reasons!";
     public static final String DELETE_SUCCESS = "Deleted successfully!";

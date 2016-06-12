@@ -6,6 +6,7 @@
 package customer.dao;
 
 import customer.model.Customer;
+import customer.model.CustomerLevel;
 import database.IDAO;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -29,15 +30,7 @@ public class CustomerDAOImpl implements IDAO<Customer> {
     }
 
     public CustomerDAOImpl() {
-        tableCrs = getCRS("select "
-                + Customer.COL_CUSID + ", "
-                + Customer.COL_CUSNAME + ", "
-                + Customer.COL_CUSLEVEL + ", "
-                + Customer.COL_CUSPHONE + ", "
-                + Customer.COL_CUSADDRESS + ", "
-                + Customer.COL_CUSENABLED + ", "
-                + "a." + Customer.COL_CUSLEVELID + " "
-                + "from Customers a join CustomerLevels b on a.CusLevelID=b.CusLevelID");
+        tableCrs = getCRS(Customer.QUERY_SHOW);
     }
 
     @Override
@@ -71,12 +64,13 @@ public class CustomerDAOImpl implements IDAO<Customer> {
     @Override
     public boolean insert(Customer customer) {
         boolean result = false;
-        dbCrs = getCRS("insert into Customers values(?,?,?,?,1)");
+        dbCrs = getCRS("insert into Customers values(?,?,?,?,?)");
         try {
             dbCrs.setString(1, customer.getCusName());
             dbCrs.setString(2, customer.getCusAddress());
             dbCrs.setString(3, customer.getCusPhone());
             dbCrs.setInt(4, customer.getCusLevelID());
+            dbCrs.setBoolean(5, customer.isCusEnabled());
             dbCrs.execute();
 
             // Refresh lai cachedrowset hien thi table

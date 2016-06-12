@@ -139,10 +139,7 @@ public class CustomerDialog extends javax.swing.JDialog {
 
         jTable1.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
-                {"1", "Hoang", "3", "0936031044", "121 ly te xuyen thu duc"},
-                {"2", "Tri", "2", "123123123", "123123213dfffd"},
-                {"3", "Son", "0", "3434343434", null},
-                {null, null, null, null, null}
+
             },
             new String [] {
                 "ID", "Name", "Level", "Phone", "Address"

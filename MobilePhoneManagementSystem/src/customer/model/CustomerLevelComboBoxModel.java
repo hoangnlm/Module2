@@ -22,9 +22,6 @@ public class CustomerLevelComboBoxModel extends DefaultComboBoxModel<CustomerLev
     public CustomerLevelComboBoxModel() {
         super();
 
-        // Them hien thi khi selectedIndex = -1
-        addElement(new CustomerLevel(-1,-1,"",0));
-        
         // Them vao danh sach customer level
         crs = new DBProvider().getCRS("select * from CustomerLevels");
         try {
@@ -51,8 +48,7 @@ public class CustomerLevelComboBoxModel extends DefaultComboBoxModel<CustomerLev
     public int getIndexOfCustomerLevel(int cusLevel){
         int result = -1;
         
-        // Search thi bo qua phan tu dau tien
-        for (int i=1; i<= crs.size(); i++) {
+        for (int i=0; i< crs.size(); i++) {
             if(getElementAt(i).getCusLevel()==cusLevel){
                 result = i;
                 break;

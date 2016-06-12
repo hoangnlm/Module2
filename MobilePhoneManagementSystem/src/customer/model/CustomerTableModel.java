@@ -6,10 +6,8 @@
 package customer.model;
 
 import customer.dao.CustomerDAOImpl;
-import database.DBProvider;
 import java.util.List;
 import javax.swing.table.AbstractTableModel;
-import utility.SwingUtils;
 
 /**
  * Data model for table Customer List
@@ -29,33 +27,42 @@ public class CustomerTableModel extends AbstractTableModel {
         columnNames = new String[]{"ID", "Cus. Name", "Cus. Level", "Cus. Phone", "Cus. Address", "Status"};
     }
 
-    public void insert(Customer customer) {
+    public boolean insert(Customer customer) {
+        boolean result = false;
         if (customerDAOImpl.insert(customer)) {
             customerList = customerDAOImpl.getList();
             fireTableRowsInserted(customerList.indexOf(customer), customerList.indexOf(customer));
-            SwingUtils.showMessageDialog(DBProvider.INSERT_SUCCESS);
-        } else {
-            SwingUtils.showMessageDialog(DBProvider.INSERT_FAIL);
+            result = true;
         }
+        return result;
     }
 
-    public void update(Customer customer) {
+    public boolean update(Customer customer) {
+        boolean result = false;
         if (customerDAOImpl.update(customer)) {
             customerList = customerDAOImpl.getList();
             fireTableRowsUpdated(customerList.indexOf(customer), customerList.indexOf(customer));
-            SwingUtils.showMessageDialog(DBProvider.UPDATE_SUCCESS);
-        } else {
-            SwingUtils.showMessageDialog(DBProvider.UPDATE_FAIL);
+            result = true;
         }
+        return result;
     }
 
-    public void delete(Customer customer) {
+    public boolean delete(Customer customer) {
+        boolean result = false;
         if (customerDAOImpl.delete(customer)) {
             customerList = customerDAOImpl.getList();
             fireTableRowsDeleted(customerList.indexOf(customer), customerList.indexOf(customer));
-            SwingUtils.showMessageDialog(DBProvider.DELETE_SUCCESS);
+            result = true;
+        }
+        return result;
+    }
+
+    @Override
+    public boolean isCellEditable(int rowIndex, int columnIndex) {
+        if (columnIndex == 0) { //Khong cho sua column ID
+            return false;
         } else {
-            SwingUtils.showMessageDialog(DBProvider.DELETE_FAIL);
+            return true;
         }
     }
 
@@ -98,5 +105,31 @@ public class CustomerTableModel extends AbstractTableModel {
                 return customer.isCusEnabled();
         }
         return null;
+    }
+
+    @Override
+    public void setValueAt(Object aValue, int rowIndex, int columnIndex) {
+        Customer customer = customerList.get(rowIndex);
+        switch (columnIndex) {
+            case 0:
+                customer.setCusID((int) aValue);
+                break;
+            case 1:
+                customer.setCusName((String) aValue);
+                break;
+            case 2:
+                customer.setCusLevel(((CustomerLevel) aValue).getCusLevel());
+                break;
+            case 3:
+                customer.setCusPhone((String) aValue);
+                break;
+            case 4:
+                customer.setCusAddress((String) aValue);
+                break;
+            case 5:
+                customer.setCusEnabled((boolean) aValue);
+                break;
+        }
+        fireTableCellUpdated(rowIndex, columnIndex);
     }
 }
