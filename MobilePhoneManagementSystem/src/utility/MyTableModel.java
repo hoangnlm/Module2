@@ -12,14 +12,14 @@ import javax.swing.table.AbstractTableModel;
  * @author Hoang
  * @param <M>
  */
-public abstract class TableModel<M> extends AbstractTableModel {
+public abstract class MyTableModel<M> extends AbstractTableModel {
 
     protected List<M> list;
-    protected M item;
+    protected M item;   //Dung cho get/setValueAt
     protected IDAO<M> daoImpl;
     protected String[] columnNames;
 
-    public TableModel(IDAO<M> daoImpl, String[] columnNames) {
+    public MyTableModel(IDAO<M> daoImpl, String[] columnNames) {
         this.daoImpl = daoImpl;
         this.columnNames = columnNames;
         list = daoImpl.getList();
@@ -59,7 +59,7 @@ public abstract class TableModel<M> extends AbstractTableModel {
         try {
             daoImpl = daoImpl.getClass().newInstance();
         } catch (Exception ex) {
-            Logger.getLogger(TableModel.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(MyTableModel.class.getName()).log(Level.SEVERE, null, ex);
         }
         list = daoImpl.getList();
         fireTableDataChanged();

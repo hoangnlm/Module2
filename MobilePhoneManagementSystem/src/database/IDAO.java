@@ -23,8 +23,6 @@ public interface IDAO<T> {
 
     List<T> getList();
 
-    T get(int position);
-
     boolean insert(T model);
 
     boolean update(T model);

@@ -1,14 +1,16 @@
-package customer.model;
+package customer.controller;
 
-import customer.dao.CustomerDAOImpl;
-import utility.TableModel;
+import customer.model.CustomerDAOImpl;
+import customer.model.Customer;
+import customer.model.CustomerLevel;
+import utility.MyTableModel;
 
 /**
  * Data model for table Customer List
  *
  * @author Hoang
  */
-public class CustomerTableModel extends TableModel<Customer> {
+public class CustomerTableModel extends MyTableModel<Customer> {
 
     public CustomerTableModel() {
         super(new CustomerDAOImpl(), new String[]{"ID", "Cus. Name", "Cus. Level", "Cus. Phone", "Cus. Address", "Status"});

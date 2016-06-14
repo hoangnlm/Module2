@@ -20,24 +20,11 @@ public class CustomerLevel {
     public static final String COL_CUSLEVEL = "CusLevel";
     public static final String COL_CUSLEVELNAME = "CusLevelName";
     public static final String COL_CUSDISCOUNT = "CusDiscount";
-    public static final String QUERY_SHOW = "select * from CustomerLevels";
-    public static final String QUERY_INSERT = "insert into CustomerLevels values(?,?,?)";
-    public static final String QUERY_UPDATE = "update CustomerLevels set "
-            + CustomerLevel.COL_CUSLEVEL + "=?, "
-            + CustomerLevel.COL_CUSLEVELNAME + "=?, "
-            + CustomerLevel.COL_CUSDISCOUNT + "=? "
-            + "where " + CustomerLevel.COL_CUSLEVELID + "=?";
-    public static final String QUERY_DELETE = "delete from CustomerLevels where CusLevelID=?";
-    public static final String QUERY_CHECK_INSERT = "select * from CustomerLevels where "
-            + CustomerLevel.COL_CUSLEVEL + "=? OR "
-            + CustomerLevel.COL_CUSLEVELNAME + " like ? OR "
-            + CustomerLevel.COL_CUSDISCOUNT + "=?";
-    public static final String QUERY_CHECK_UPDATE = "select * from CustomerLevels where "
-            + "(" + CustomerLevel.COL_CUSLEVEL + "=? OR "
-            + CustomerLevel.COL_CUSLEVELNAME + " like ? OR "
-            + CustomerLevel.COL_CUSDISCOUNT + "=?) AND "
-            + CustomerLevel.COL_CUSLEVELID + "!=?";
-    public static final String QUERY_CHECK_DELETE = "select * from Customers where CusLevelID=?";
+    
+    public static final int MIN_DISCOUNT = 0;
+    public static final int MAX_DISCOUNT = 50;
+    public static final int MIN_LEVEL = 1;
+    public static final int MAX_LEVEL = 10;
 
     public CustomerLevel() {
     }
@@ -49,11 +36,6 @@ public class CustomerLevel {
         this.cusDiscount = cusDiscount;
     }
 
-    public Object getCustomerLevelFromValue(int customerLevel){
-        CustomerLevel cl = null;
-        
-        return cl;
-    }
     public int getCusLevelID() {
         return cusLevelID;
     }

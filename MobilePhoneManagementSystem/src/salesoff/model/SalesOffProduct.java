@@ -9,16 +9,16 @@ package salesoff.model;
  *
  * @author Hoang
  */
-public class ProductOfSales {
+public class SalesOffProduct {
     int proID;
     String braName;
     String proName;
     boolean salesOff;
 
-    public ProductOfSales() {
+    public SalesOffProduct() {
     }
 
-    public ProductOfSales(int proID, String braName, String proName, boolean salesOff) {
+    public SalesOffProduct(int proID, String braName, String proName, boolean salesOff) {
         this.proID = proID;
         this.braName = braName;
         this.proName = proName;

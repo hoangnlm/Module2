@@ -12,13 +12,13 @@ import javax.swing.text.PlainDocument;
 public class SwingUtils {
 
     // Define some string sentences
-    public static final String INSERT_SUCCESS = "You have inserted a new row!";
-    public static final String INSERT_FAIL = "Cannot insert due to some reason!";
-    public static final String UPDATE_SUCCESS = "Updated successfully!";
-    public static final String UPDATE_FAIL = "Cannot update due to some reason!";
-    public static final String DELETE_SUCCESS = "Deleted successfully!";
-    public static final String DELETE_FAIL = "Cannot delete due to some reason!";
-    public static final String DB_REFRESH = "Data have been refreshed!";
+    public static final String INSERT_SUCCESS = "Inserted successfully !";
+    public static final String INSERT_FAIL = "Insertion has failed !";
+    public static final String UPDATE_SUCCESS = "Updated successfully !";
+    public static final String UPDATE_FAIL = "Updation has failed !";
+    public static final String DELETE_SUCCESS = "Deleted successfully !";
+    public static final String DELETE_FAIL = "Deletion has failed !";
+    public static final String DB_REFRESH = "Data have been refreshed !";
     
     // Declare some regex constants
     public static final String PATTERN_CUSNAME = "[A-Za-z0-9 ]+";

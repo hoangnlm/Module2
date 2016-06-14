@@ -41,7 +41,7 @@
               <EmptySpace max="-2" attributes="0"/>
               <Component id="btRefresh" min="-2" pref="100" max="-2" attributes="0"/>
               <EmptySpace max="-2" attributes="0"/>
-              <Component id="btCancel" min="-2" pref="100" max="-2" attributes="0"/>
+              <Component id="btClose" min="-2" pref="100" max="-2" attributes="0"/>
               <EmptySpace max="32767" attributes="0"/>
           </Group>
       </Group>
@@ -54,7 +54,7 @@
                   <Component id="btAdd" alignment="3" min="-2" pref="30" max="-2" attributes="0"/>
                   <Component id="btDelete" alignment="3" min="-2" pref="30" max="-2" attributes="0"/>
                   <Component id="btRefresh" alignment="3" min="-2" pref="30" max="-2" attributes="0"/>
-                  <Component id="btCancel" alignment="3" min="-2" pref="30" max="-2" attributes="0"/>
+                  <Component id="btClose" alignment="3" min="-2" pref="30" max="-2" attributes="0"/>
               </Group>
               <EmptySpace type="unrelated" max="-2" attributes="0"/>
               <Component id="jScrollPane1" min="-2" pref="327" max="-2" attributes="0"/>
@@ -146,7 +146,7 @@
         <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="btRefreshActionPerformed"/>
       </Events>
     </Component>
-    <Component class="javax.swing.JButton" name="btCancel">
+    <Component class="javax.swing.JButton" name="btClose">
       <Properties>
         <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
           <Font name="Lucida Grande" size="14" style="0"/>
@@ -157,7 +157,7 @@
         <Property name="text" type="java.lang.String" value="Close"/>
       </Properties>
       <Events>
-        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="btCancelActionPerformed"/>
+        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="btCloseActionPerformed"/>
       </Events>
     </Component>
   </SubComponents>

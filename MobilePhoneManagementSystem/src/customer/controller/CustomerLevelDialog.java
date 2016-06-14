@@ -6,15 +6,19 @@
 package customer.controller;
 
 import customer.model.CustomerLevel;
-import customer.model.CustomerLevelTableModel;
-import java.awt.Color;
 import java.awt.Cursor;
 import java.awt.Dimension;
+import java.awt.Rectangle;
+import java.awt.event.ActionEvent;
 import java.util.Arrays;
+import javax.swing.AbstractAction;
 import javax.swing.DefaultListSelectionModel;
 import javax.swing.JButton;
 import javax.swing.event.ListSelectionEvent;
+import utility.SpinnerCellEditor;
+import utility.StringCellEditor;
 import utility.SwingUtils;
+import utility.TableCellListener;
 
 /**
  *
@@ -23,14 +27,15 @@ import utility.SwingUtils;
 public class CustomerLevelDialog extends javax.swing.JDialog {
 
     private CustomerLevelTableModel customerLevelTableModel;
-    // Text cua button thay doi khi update du lieu
-    private String buttonText;
-
-    // Flag de biet insert, update action da finish chua
-    private boolean isFinished;
 
     // Customer level dang duoc chon trong table
     private CustomerLevel selectedCustomerLevel;
+    private int selectedRowIndex;
+
+    private static final int COL_CUSLEVELID = 0;
+    private static final int COL_CUSLEVEL = 1;
+    private static final int COL_CUSLEVELNAME = 2;
+    private static final int COL_CUSDISCOUNT = 3;
 
     /**
      * Creates new form CustomerDialog
@@ -38,7 +43,7 @@ public class CustomerLevelDialog extends javax.swing.JDialog {
     public CustomerLevelDialog() {
         initComponents();
         setLocationRelativeTo(null);
-        setButtonEnabled(false, btRefresh, btCancel);
+//        setButtonEnabled(false, btRefresh, btClose);
 
         // Selecting customer level in the table
         selectedCustomerLevel = new CustomerLevel();
@@ -47,40 +52,59 @@ public class CustomerLevelDialog extends javax.swing.JDialog {
         customerLevelTableModel = new CustomerLevelTableModel();
         tbLevelList.setModel(customerLevelTableModel);
 
+        // Set auto define column from model to false to stop create column again
+        tbLevelList.setAutoCreateColumnsFromModel(false);
+        tbLevelList.setAutoCreateRowSorter(true);
+
+        // Col cus level ID
+        tbLevelList.getColumnModel().getColumn(COL_CUSLEVELID).setMaxWidth(40);
+
+        // Col cus level
+        tbLevelList.getColumnModel().getColumn(COL_CUSLEVEL).setCellEditor(new SpinnerCellEditor(CustomerLevel.MIN_LEVEL, CustomerLevel.MAX_LEVEL));
+        tbLevelList.getColumnModel().getColumn(COL_CUSLEVEL).setMaxWidth(50);
+
+        // Col cus level name
+        tbLevelList.getColumnModel().getColumn(COL_CUSLEVELNAME).setCellEditor(new StringCellEditor(1, 50, SwingUtils.PATTERN_CUSNAME));
+
+        // Col cus discount
+        tbLevelList.getColumnModel().getColumn(COL_CUSDISCOUNT).setCellEditor(new SpinnerCellEditor(CustomerLevel.MIN_DISCOUNT, CustomerLevel.MAX_DISCOUNT));
+        tbLevelList.getColumnModel().getColumn(COL_CUSDISCOUNT).setMinWidth(100);
+        tbLevelList.getColumnModel().getColumn(COL_CUSDISCOUNT).setMaxWidth(150);
+
         // Bat su kien select row tren table
         tbLevelList.getSelectionModel().addListSelectionListener((ListSelectionEvent e) -> {
             DefaultListSelectionModel model = (DefaultListSelectionModel) e.getSource();
             if (!model.isSelectionEmpty()) {
-                fetchCustomerLevelDetails();
+                fetchAction();
                 setButtonEnabled(true);
             } else {
-//                resetCustomerLevelDetails();
-                setButtonEnabled(false, btRefresh, btCancel);
+                setButtonEnabled(false, btRefresh, btClose);
             }
         });
 
         // Set height cho table header
-        tbLevelList.getTableHeader().setPreferredSize(new Dimension(100, 30));
+        tbLevelList.getTableHeader().setPreferredSize(new Dimension(300, 30));
+
+        // Set table cell listener to update
+        TableCellListener tcl = new TableCellListener(tbLevelList, new AbstractAction() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                TableCellListener tcl = (TableCellListener) e.getSource();
+                switch (tcl.getColumn()) {
+                    case COL_CUSLEVEL:
+                        selectedCustomerLevel.setCusLevel((int) tcl.getNewValue());
+                        break;
+                    case COL_CUSLEVELNAME:
+                        selectedCustomerLevel.setCusLevelName((String) tcl.getNewValue());
+                        break;
+                    case COL_CUSDISCOUNT:
+                        selectedCustomerLevel.setCusDiscount((float) tcl.getNewValue() / 100);
+                        break;
+                }
+                updateAction();
+            }
+        });
     }
-
-    private void fetchCustomerLevelDetails() {
-        int selectedRow = tbLevelList.getSelectedRow();
-
-        selectedCustomerLevel.setCusLevelID((int) tbLevelList.getValueAt(selectedRow, 0));
-        selectedCustomerLevel.setCusLevel((int) tbLevelList.getValueAt(selectedRow, 1));
-        selectedCustomerLevel.setCusLevelName((String) tbLevelList.getValueAt(selectedRow, 2));
-        selectedCustomerLevel.setCusDiscount((float) tbLevelList.getValueAt(selectedRow, 3) / 100);
-
-//        spLevel.setValue(selectedCustomerLevel.getCusLevel());
-//        tfLevelName.setText(selectedCustomerLevel.getCusLevelName());
-//        spDiscount.setValue(selectedCustomerLevel.getCusDiscount() * 100);
-    }
-
-//    private void resetCustomerLevelDetails() {
-//        spLevel.setValue(0);
-//        tfLevelName.setText(null);
-//        spDiscount.setValue(0);
-//    }
 
     /**
      * This method is called from within the constructor to initialize the form.
@@ -96,7 +120,7 @@ public class CustomerLevelDialog extends javax.swing.JDialog {
         btAdd = new javax.swing.JButton();
         btDelete = new javax.swing.JButton();
         btRefresh = new javax.swing.JButton();
-        btCancel = new javax.swing.JButton();
+        btClose = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setTitle("Customer Level Management");
@@ -148,12 +172,12 @@ public class CustomerLevelDialog extends javax.swing.JDialog {
             }
         });
 
-        btCancel.setFont(new java.awt.Font("Lucida Grande", 0, 14)); // NOI18N
-        btCancel.setIcon(new javax.swing.ImageIcon(getClass().getResource("/image/order/Cancel2.png"))); // NOI18N
-        btCancel.setText("Close");
-        btCancel.addActionListener(new java.awt.event.ActionListener() {
+        btClose.setFont(new java.awt.Font("Lucida Grande", 0, 14)); // NOI18N
+        btClose.setIcon(new javax.swing.ImageIcon(getClass().getResource("/image/order/Cancel2.png"))); // NOI18N
+        btClose.setText("Close");
+        btClose.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btCancelActionPerformed(evt);
+                btCloseActionPerformed(evt);
             }
         });
 
@@ -170,7 +194,7 @@ public class CustomerLevelDialog extends javax.swing.JDialog {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(btRefresh, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(btCancel, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(btClose, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
@@ -181,7 +205,7 @@ public class CustomerLevelDialog extends javax.swing.JDialog {
                     .addComponent(btAdd, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(btDelete, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(btRefresh, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(btCancel, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(btClose, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 327, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
@@ -189,10 +213,10 @@ public class CustomerLevelDialog extends javax.swing.JDialog {
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
-
-    private void btCancelActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btCancelActionPerformed
+//<editor-fold defaultstate="collapsed" desc="bat su kien">
+    private void btCloseActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btCloseActionPerformed
         dispose();
-    }//GEN-LAST:event_btCancelActionPerformed
+    }//GEN-LAST:event_btCloseActionPerformed
 
     private void btAddActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btAddActionPerformed
         insertAction();
@@ -203,112 +227,84 @@ public class CustomerLevelDialog extends javax.swing.JDialog {
     }//GEN-LAST:event_btDeleteActionPerformed
 
     private void btRefreshActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btRefreshActionPerformed
-        refreshAction();
+        refreshAction(true);
     }//GEN-LAST:event_btRefreshActionPerformed
+//</editor-fold>
 
-    private void refreshAction() {
+    // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton btAdd;
+    private javax.swing.JButton btClose;
+    private javax.swing.JButton btDelete;
+    private javax.swing.JButton btRefresh;
+    private javax.swing.JScrollPane jScrollPane1;
+    private javax.swing.JTable tbLevelList;
+    // End of variables declaration//GEN-END:variables
+
+    private void fetchAction() {
+        selectedRowIndex = tbLevelList.getSelectedRow();
+        selectedCustomerLevel.setCusLevelID((int) tbLevelList.getValueAt(selectedRowIndex, 0));
+        selectedCustomerLevel.setCusLevel((int) tbLevelList.getValueAt(selectedRowIndex, 1));
+        selectedCustomerLevel.setCusLevelName(((String) tbLevelList.getValueAt(selectedRowIndex, 2)).trim());
+        selectedCustomerLevel.setCusDiscount((float) tbLevelList.getValueAt(selectedRowIndex, 3) / 100);
+
+    }
+
+    private void refreshAction(boolean mustInfo) {
         setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
-        tbLevelList.getSelectionModel().clearSelection();
-        customerLevelTableModel = new CustomerLevelTableModel();
+        customerLevelTableModel.refresh();
         setCursor(null);
-        SwingUtils.showInfoDialog(SwingUtils.DB_REFRESH);
+        if (mustInfo) {
+            SwingUtils.showInfoDialog(SwingUtils.DB_REFRESH);
+        }
+        scrollToRow(selectedRowIndex);
     }
 
     private void insertAction() {
-        if (!isFinished) {
-            setUpdatable(true, btAdd);
-//            resetCustomerLevelDetails();
-//            spLevel.requestFocus();
-            isFinished = true;
-        } else {
-            setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
-            setUpdatable(false, btAdd);
-            
-            CustomerLevel customerLevel = new CustomerLevel();
-//            customerLevel.setCusLevel((int) spLevel.getValue());
-//            customerLevel.setCusLevelName(tfLevelName.getText());
-//            // Convert from int to float
-//            int tmp = (int) spDiscount.getValue();
-//            float discount = (float) tmp / 100;
-//            customerLevel.setCusDiscount(discount);
-            
-            customerLevelTableModel.insert(customerLevel);
-            isFinished = false;
-            setCursor(null);
-        }
+        setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
+        boolean result = customerLevelTableModel.insert(new CustomerLevel());
+        setCursor(null);
+        SwingUtils.showInfoDialog(result ? SwingUtils.INSERT_SUCCESS : SwingUtils.INSERT_FAIL);
+        // Select row vua insert vao
+        selectedRowIndex = tbLevelList.getRowCount() - 1;
+        scrollToRow(selectedRowIndex);
+        tbLevelList.editCellAt(tbLevelList.getSelectedRow(), 1);
+        tbLevelList.getEditorComponent().requestFocus();
     }
 
     private void updateAction() {
-//        if (!isFinished) {
-//            setUpdatable(true, btUpdate);
-//            spLevel.requestFocus();
-//            isFinished = true;
-//        } else {
-//            setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
-//            setUpdatable(false, btUpdate);
-//            selectedCustomerLevel.setCusLevel((int) spLevel.getValue());
-//            selectedCustomerLevel.setCusLevelName(tfLevelName.getText());
-//            // Convert from int to float
-//            int tmp = (int) spDiscount.getValue();
-//            float discount = (float) tmp / 100;
-//            selectedCustomerLevel.setCusDiscount(discount);
-//            customerLevelTableModel.update(selectedCustomerLevel);
-//            isFinished = false;
-//            setCursor(null);
-//        }
+        setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
+        boolean result = customerLevelTableModel.update(selectedCustomerLevel);
+        refreshAction(false);
+        setCursor(null);
+        SwingUtils.showInfoDialog(result ? SwingUtils.UPDATE_SUCCESS : SwingUtils.UPDATE_FAIL);
     }
 
     private void deleteAction() {
         setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
-        customerLevelTableModel.delete(selectedCustomerLevel);
-        tbLevelList.getSelectionModel().clearSelection();
+        boolean result = customerLevelTableModel.delete(selectedCustomerLevel);
         setCursor(null);
+        SwingUtils.showInfoDialog(result ? SwingUtils.DELETE_SUCCESS : SwingUtils.DELETE_FAIL);
+
+        // Neu row xoa la row cuoi thi lui cursor ve
+        // Neu row xoa la row khac cuoi thi tien cursor ve truoc
+        selectedRowIndex = (selectedRowIndex == tbLevelList.getRowCount() ? tbLevelList.getRowCount() - 1 : selectedRowIndex++);
+        scrollToRow(selectedRowIndex);
     }
 
-    private void setUpdatable(boolean updatable, JButton... exclude) {
-        // Set enable cho vung nhap lieu
-//        spLevel.setEnabled(updatable);
-//        tfLevelName.setEnabled(updatable);
-//        spDiscount.setEnabled(updatable);
-
-        // Set disable cho may button update
-        setButtonEnabled(!updatable, exclude);
-
-        // Chinh giao dien cho may button excluded
-        if (exclude.length != 0) {
-            exclude[0].setEnabled(true);
-            if (updatable) {
-                // Doi font color mau do khi dang update
-                exclude[0].setForeground(Color.RED);
-                buttonText = exclude[0].getText();
-                exclude[0].setText("Save");
-            } else {
-                // Doi font color ve mac dinh khi update xong
-                exclude[0].setForeground(null);
-                exclude[0].setText(buttonText);
-            }
-        }
+    private void scrollToRow(int row) {
+        tbLevelList.getSelectionModel().setSelectionInterval(row, row);
+        tbLevelList.scrollRectToVisible(new Rectangle(tbLevelList.getCellRect(row, 0, true)));
     }
 
     private void setButtonEnabled(boolean enabled, JButton... exclude) {
         btRefresh.setEnabled(enabled);
         btDelete.setEnabled(enabled);
-//        btUpdate.setEnabled(enabled);
         btAdd.setEnabled(enabled);
-        btCancel.setEnabled(enabled);
+        btClose.setEnabled(enabled);
 
         // Ngoai tru may button nay luon luon enable
         if (exclude.length != 0) {
             Arrays.stream(exclude).forEach(b -> b.setEnabled(true));
         }
     }
-
-    // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JButton btAdd;
-    private javax.swing.JButton btCancel;
-    private javax.swing.JButton btDelete;
-    private javax.swing.JButton btRefresh;
-    private javax.swing.JScrollPane jScrollPane1;
-    private javax.swing.JTable tbLevelList;
-    // End of variables declaration//GEN-END:variables
 }

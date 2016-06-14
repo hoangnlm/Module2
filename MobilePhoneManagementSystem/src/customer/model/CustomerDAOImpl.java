@@ -3,9 +3,8 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package customer.dao;
+package customer.model;
 
-import customer.model.Customer;
 import database.IDAO;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -21,8 +20,7 @@ import utility.SwingUtils;
  */
 public class CustomerDAOImpl implements IDAO<Customer> {
 
-    //CRS for update table
-    private CachedRowSet crs;
+    private CachedRowSet crs;   //CRS to update table
 
     public CustomerDAOImpl() {
         crs = getCRS("select CusID, CusName, CusLevel, CusPhone, CusAddress, CusEnabled, a.CusLevelID from Customers a join CustomerLevels b on a.CusLevelID=b.CusLevelID");
@@ -51,14 +49,15 @@ public class CustomerDAOImpl implements IDAO<Customer> {
     }
 
     @Override
-    public Customer get(int position) {
-
-        return null;
-    }
-
-    @Override
     public boolean insert(Customer customer) {
         boolean result = false;
+
+        // Khoi tao tri default de insert vao db
+        customer.setCusName("New Customer");
+        customer.setCusAddress("New Address");
+        customer.setCusPhone(System.currentTimeMillis() + "");
+        customer.setCusLevel(1);
+        customer.setCusEnabled(true);
         try {
             runPS("insert into Customers(CusName, CusLevelID, CusPhone, CusAddress, CusEnabled) values(?,(select CusLevelID from CustomerLevels where CusLevel=?),?,?,?)",
                     customer.getCusName(),
@@ -84,7 +83,7 @@ public class CustomerDAOImpl implements IDAO<Customer> {
             // Check cus phone khong duoc trung
             CachedRowSet crs2 = getCRS("select * from Customers where CusPhone=? AND CusID!=?", customer.getCusPhone(), customer.getCusID());
             if (crs2.first()) {
-                SwingUtils.showErrorDialog("Customer phone cannot be duplicated!");
+                SwingUtils.showErrorDialog("Customer phone cannot be duplicated !");
             } else {
                 runPS("update Customers set CusName=?, CusLevelID=(select CusLevelID from CustomerLevels where CusLevel=?), CusPhone=?, CusAddress=?, CusEnabled=? where CusID=?",
                         customer.getCusName(),
@@ -110,12 +109,12 @@ public class CustomerDAOImpl implements IDAO<Customer> {
         boolean result = false;
         try {
             //Check customer co order hoac service khong, neu co thi khong cho delete
-            CachedRowSet crs2 = getCRS("select * from Orders where CusID=?", customer.getCusID());
-            CachedRowSet crs3 = getCRS("select * from Service where CusID=?", customer.getCusID());
-            if (crs2.first()) {
-                SwingUtils.showErrorDialog("Customer is now in ORDER. Cannot delete!");
-            } else if (crs3.first()) {
-                SwingUtils.showErrorDialog("Customer is now in SERVICE. Cannot delete!");
+            CachedRowSet crs1 = getCRS("select * from Orders where CusID=?", customer.getCusID());
+            CachedRowSet crs2 = getCRS("select * from Service where CusID=?", customer.getCusID());
+            if (crs1.first()) {
+                SwingUtils.showErrorDialog("Customer is now in ORDER !");
+            } else if (crs2.first()) {
+                SwingUtils.showErrorDialog("Customer is now in SERVICE !");
             } else {
                 runPS("delete from Customers where CusID=?", customer.getCusID());
 
