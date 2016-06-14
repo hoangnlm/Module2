@@ -17,49 +17,9 @@ public class DBProvider {
     private PreparedStatement preparedStatement;
     private CallableStatement callableStatement;
     private ResultSet resultSet;
-    
-    // Define some string sentences
-    public static final String INSERT_SUCCESS = "You have insert a new row!";
-    public static final String INSERT_FAIL = "Cannot insert due to some reasons!";
-    public static final String UPDATE_SUCCESS = "Updated successfully!";
-    public static final String UPDATE_FAIL = "Cannot update due to some reasons!";
-    public static final String DELETE_SUCCESS = "Deleted successfully!";
-    public static final String DELETE_FAIL = "Cannot delete due to some reasons!";
-    public static final String DB_REFRESH = "Data have been refreshed!";
 
     public static void main(String[] args) throws SQLException {
         // Dung de test ket noi db
-        // Buoc 1: Khoi tao DBProvider instance va set DB URL, DB Name,
-        // DB Username, DB Password (neu co thay doi) va start db
-        DBProvider db = new DBProvider();
-        db.start();
-
-        // Buoc 2: Get ket qua (result set hoac prepared st hoac callable st
-        // hoac cached rowset) va xu ly ket qua
-//        ResultSet rs = db.getResultSet("select * from CustomerLevels");
-//        rs.next();
-        // Xu ly ket qua ...
-        // Buoc 3: Stop db util
-        // db.stop();
-//        System.out.println(rs.getString(3));
-//		PreparedStatement ps = db.getPreparedStatement("update class set class_name=? where class_id=?");
-//		ps.setString(1, "ten class moi sua");
-//		ps.setString(2, "3343422");
-//		ps.executeUpdate();
-//
-//		CallableStatement cs = db.getCallableStatement("{?=call sp_CheckExist(?)}");
-//		cs.registerOutParameter(1, Types.INTEGER);
-//		cs.setString(2, "F51508S1");
-//		cs.execute();
-//		System.out.println(cs.getInt(1));
-//		
-//		db.stop();
-//		
-//		CachedRowSet crs = DBProvider.getCRS("select student_id from student where student_id=?");
-//		crs.setString(1, "SV004");
-//		crs.execute();
-//		crs.first();
-//		System.out.println(crs.getString(1));
     }
 
     public DBProvider() {
@@ -81,9 +41,7 @@ public class DBProvider {
     public boolean start() {
         boolean result = false;
         try {
-//            System.out.println(getDbUrl());
             connection = DriverManager.getConnection(getDbUrl(), dbUsername, dbPassword);
-//            connection = DriverManager.getConnection("jdbc:sqlserver://10.211.55.7:1433;DatabaseName=", "sa", "111");
             result = true;
         } catch (SQLException e) {
             e.printStackTrace();
@@ -113,7 +71,7 @@ public class DBProvider {
     public String getDbUrl() {
         return dbType + dbHost + ":" + dbPort + ";DatabaseName=" + dbName;
     }
-    
+
     public String getFullDbUrl() {
         return dbType + dbHost + ":" + dbPort + ";DatabaseName=" + dbName + ";UID=" + dbUsername + ";Password=" + dbPassword;
     }
@@ -197,9 +155,6 @@ public class DBProvider {
             cachedRowSet.setUsername(dbUsername);
             cachedRowSet.setPassword(dbPassword);
             cachedRowSet.setCommand(query);
-            if (!query.matches(".*\\?.*")) {
-                cachedRowSet.execute();
-            }
         } catch (SQLException e) {
             e.printStackTrace();
         }

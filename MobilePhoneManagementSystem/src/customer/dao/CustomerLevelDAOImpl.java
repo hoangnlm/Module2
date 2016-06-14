@@ -73,7 +73,7 @@ public class CustomerLevelDAOImpl implements IDAO<CustomerLevel> {
                 dbCrs.setInt(1, customerLevel.getCusLevel());
                 dbCrs.setString(2, customerLevel.getCusLevelName());
                 dbCrs.setFloat(3, customerLevel.getCusDiscount());
-                dbCrs.execute();
+//                dbCrs.execute();
 
                 // Refresh lai cachedrowset hien thi table
                 tableCrs.execute();
@@ -104,7 +104,7 @@ public class CustomerLevelDAOImpl implements IDAO<CustomerLevel> {
                 dbCrs.setString(2, customerLevel.getCusLevelName());
                 dbCrs.setFloat(3, customerLevel.getCusDiscount());
                 dbCrs.setInt(4, customerLevel.getCusLevelID());
-                dbCrs.execute();
+//                dbCrs.execute();
 
                 // Refresh lai cachedrowset hien thi table
                 tableCrs.execute();
@@ -125,9 +125,9 @@ public class CustomerLevelDAOImpl implements IDAO<CustomerLevel> {
             //Check customerLevel co customer khong, neu khong thi delete
             dbCrs = getCRS(CustomerLevel.QUERY_CHECK_DELETE);
             dbCrs.setInt(1, customerLevel.getCusLevelID());
-            dbCrs.execute();
+//            dbCrs.execute();
             if (!dbCrs.first()) {   //Khong co record nao
-                dbCrs = getCRS(CustomerLevel.QUERY_DELETE);
+//                dbCrs = getCRS(CustomerLevel.QUERY_DELETE);
 
                 // Refresh lai cachedrowset hien thi table
                 tableCrs.execute();

@@ -7,7 +7,6 @@ package customer.controller;
 
 import customer.model.CustomerLevel;
 import customer.model.CustomerLevelTableModel;
-import database.DBProvider;
 import java.awt.Color;
 import java.awt.Cursor;
 import java.awt.Dimension;
@@ -212,7 +211,7 @@ public class CustomerLevelDialog extends javax.swing.JDialog {
         tbLevelList.getSelectionModel().clearSelection();
         customerLevelTableModel = new CustomerLevelTableModel();
         setCursor(null);
-        SwingUtils.showInfoDialog(DBProvider.DB_REFRESH);
+        SwingUtils.showInfoDialog(SwingUtils.DB_REFRESH);
     }
 
     private void insertAction() {

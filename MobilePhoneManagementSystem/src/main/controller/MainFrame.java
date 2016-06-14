@@ -32,7 +32,7 @@ import utility.SwingUtils;
 
 /**
  * Main screen of the program
- * 
+ *
  * @author Hoang
  */
 public final class MainFrame extends javax.swing.JFrame {
@@ -63,8 +63,8 @@ public final class MainFrame extends javax.swing.JFrame {
             public void windowClosing(WindowEvent e) {
                 exit();
             }
-            
-});
+
+        });
     }
 
     private void setSidebar() {
@@ -464,7 +464,8 @@ public final class MainFrame extends javax.swing.JFrame {
     }
 
     private void exit() {
-        if(SwingUtils.showConfirmDialog("Are you sure to exit?")==JOptionPane.YES_OPTION)
+        if (SwingUtils.showConfirmDialog("Are you sure to exit?") == JOptionPane.YES_OPTION) {
             System.exit(0);
+        }
     }
 }

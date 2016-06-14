@@ -664,7 +664,7 @@ public class CustomerPanel_bk extends javax.swing.JPanel {
         customerLevelComboBoxModel1 = new CustomerLevelComboBoxModel();
         customerLevelComboBoxModel2 = new CustomerLevelComboBoxModel();
         setCursor(null);
-        SwingUtils.showInfoDialog(DBProvider.DB_REFRESH);
+        SwingUtils.showInfoDialog(SwingUtils.DB_REFRESH);
     }
 
     private void insertAction() {
@@ -685,12 +685,12 @@ public class CustomerPanel_bk extends javax.swing.JPanel {
             customer.setCusEnabled(cbCusEnabled.isSelected());
 
             if (customerTableModel.insert(customer)) {
-                SwingUtils.showInfoDialog(DBProvider.INSERT_SUCCESS);
+                SwingUtils.showInfoDialog(SwingUtils.INSERT_SUCCESS);
 
                 // Select row vua insert vao
                 moveScrollToRow(tbCustomerList.getRowCount() - 1);
             } else {
-                SwingUtils.showErrorDialog(DBProvider.INSERT_FAIL);
+                SwingUtils.showErrorDialog(SwingUtils.INSERT_FAIL);
             }
 
             isFinished = false;
@@ -713,9 +713,9 @@ public class CustomerPanel_bk extends javax.swing.JPanel {
             selectedCustomer.setCusEnabled(cbCusEnabled.isSelected());
 
             if (customerTableModel.update(selectedCustomer)) {
-                SwingUtils.showInfoDialog(DBProvider.UPDATE_SUCCESS);
+                SwingUtils.showInfoDialog(SwingUtils.UPDATE_SUCCESS);
             } else {
-                SwingUtils.showErrorDialog(DBProvider.UPDATE_FAIL);
+                SwingUtils.showErrorDialog(SwingUtils.UPDATE_FAIL);
             }
 
             moveScrollToRow(selectedRowIndex);
@@ -727,9 +727,9 @@ public class CustomerPanel_bk extends javax.swing.JPanel {
     private void deleteAction() {
         setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
         if (customerTableModel.delete(selectedCustomer)) {
-            SwingUtils.showInfoDialog(DBProvider.DELETE_SUCCESS);
+            SwingUtils.showInfoDialog(SwingUtils.DELETE_SUCCESS);
         } else {
-            SwingUtils.showErrorDialog(DBProvider.DELETE_FAIL);
+            SwingUtils.showErrorDialog(SwingUtils.DELETE_FAIL);
         }
         setCursor(null);
     }

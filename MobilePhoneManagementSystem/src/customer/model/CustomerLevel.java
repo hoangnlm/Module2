@@ -49,6 +49,11 @@ public class CustomerLevel {
         this.cusDiscount = cusDiscount;
     }
 
+    public Object getCustomerLevelFromValue(int customerLevel){
+        CustomerLevel cl = null;
+        
+        return cl;
+    }
     public int getCusLevelID() {
         return cusLevelID;
     }
@@ -81,4 +86,8 @@ public class CustomerLevel {
         this.cusDiscount = cusDiscount;
     }
 
+    @Override
+    public String toString() {
+        return "CusLevelID: "+cusLevelID+", CusLevel: "+cusLevel;
+    }
 }

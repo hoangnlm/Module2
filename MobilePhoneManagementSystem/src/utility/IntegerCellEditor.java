@@ -1,24 +1,19 @@
 package utility;
 
-/*
- * IntegerEditor is used by TableFTFEditDemo.java.
- */
 import java.awt.Component;
-import javax.swing.AbstractAction;
 import javax.swing.DefaultCellEditor;
 import javax.swing.JFormattedTextField;
 import javax.swing.JOptionPane;
 import javax.swing.JTextField;
-import javax.swing.KeyStroke;
-import java.awt.event.ActionEvent;
-import java.awt.event.KeyEvent;
 import java.awt.Toolkit;
 import java.text.NumberFormat;
 import java.text.ParseException;
 import javax.swing.JTable;
+import javax.swing.text.AttributeSet;
+import javax.swing.text.BadLocationException;
 import javax.swing.text.DefaultFormatterFactory;
+import javax.swing.text.DocumentFilter;
 import javax.swing.text.NumberFormatter;
-import utility.SwingUtils;
 
 /**
  * Implements a cell editor that uses a formatted text field to edit Integer
@@ -48,28 +43,6 @@ public class IntegerCellEditor extends DefaultCellEditor {
         ftf.setHorizontalAlignment(JTextField.LEFT);
         ftf.setFocusLostBehavior(JFormattedTextField.PERSIST);
 
-        //React when the user presses Enter while the editor is
-        //active.  (Tab is handled as specified by
-        //JFormattedTextField's focusLostBehavior property.)
-        ftf.getInputMap().put(KeyStroke.getKeyStroke(
-                KeyEvent.VK_ENTER, 0),
-                "check");
-        ftf.getActionMap().put("check", new AbstractAction() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                if (!ftf.isEditValid()) { //The text is invalid.
-                    if (userSaysRevert()) { //reverted
-                        ftf.postActionEvent(); //inform the editor
-                    }
-                } else {
-                    try {              //The text is valid,
-                        ftf.commitEdit();     //so use it.
-                        ftf.postActionEvent(); //stop editing
-                    } catch (java.text.ParseException exc) {
-                    }
-                }
-            }
-        });
     }
 
     //Override to ensure that the value remains an Integer.
@@ -96,9 +69,6 @@ public class IntegerCellEditor extends DefaultCellEditor {
     public Component getTableCellEditorComponent(JTable table, Object value, boolean isSelected, int row, int column) {
         JFormattedTextField ftf2 = (JFormattedTextField) super.getTableCellEditorComponent(table, value, isSelected, row, column);
         ftf2.setValue(value);
-        
-        // Validate input
-        SwingUtils.validateNumericInput(ftf2, "\\d+");
         return ftf2;
     }
 
@@ -109,17 +79,23 @@ public class IntegerCellEditor extends DefaultCellEditor {
     //of this method so that everything gets cleaned up.
     @Override
     public boolean stopCellEditing() {
+        System.out.println("stopcelledit");
         JFormattedTextField ftf2 = (JFormattedTextField) getComponent();
         if (ftf2.isEditValid()) {
+            System.out.println("stopcelledit:isValid");
+//               userSaysRevert();
             try {
                 ftf2.commitEdit();
             } catch (java.text.ParseException exc) {
             }
 
-        } else //text is invalid
-         if (!userSaysRevert()) { //user wants to edit
+        } else { //text is invalid
+            System.out.println("stopcelledit:notValid");
+
+            if (!userSaysRevert()) { //user wants to edit
                 return false; //don't let the editor go away
             }
+        }
         return super.stopCellEditing();
     }
 
@@ -132,16 +108,42 @@ public class IntegerCellEditor extends DefaultCellEditor {
      */
     protected boolean userSaysRevert() {
         Toolkit.getDefaultToolkit().beep();
+        System.out.println("userSaysRevert1: " + ftf.getValue());
+
         if (SwingUtils.showInputValidationDialog(
                 "The value must be an integer between "
                 + minimum + " and "
                 + maximum + ".\n"
                 + "You can either reinput or "
                 + "revert to the last valid value.") == JOptionPane.NO_OPTION) { //Revert!
+            System.out.println("userSaysRevert2: " + ftf.getValue());
             ftf.setValue(ftf.getValue());
             return true;
         }
         ftf.selectAll();
         return false;
+    }
+    
+    private static class MyDocumentFilter extends DocumentFilter {
+
+        @Override
+        public void insertString(DocumentFilter.FilterBypass fb, int offset, String string, AttributeSet attr) throws BadLocationException {
+            System.out.println("insert");
+            if (string.matches("\\d+")) {
+                super.insertString(fb, offset, string, attr);
+            }
+        }
+
+        @Override
+        public void remove(DocumentFilter.FilterBypass fb, int offset, int length) throws BadLocationException {
+            super.remove(fb, offset, length);
+        }
+
+        @Override
+        public void replace(DocumentFilter.FilterBypass fb, int offset, int length, String text, AttributeSet attrs) throws BadLocationException {
+            if (text.matches("\\d+")) {
+                super.replace(fb, offset, length, text, attrs);
+            }
+        }
     }
 }

@@ -17,19 +17,20 @@ import database.DBProvider;
  * @author Hoang
  */
 public class CustomerLevelComboBoxModel extends DefaultComboBoxModel<CustomerLevel> {
+
     private CachedRowSet crs;
 
     public CustomerLevelComboBoxModel() {
         super();
-
-        // Them vao danh sach customer level
-        crs = new DBProvider().getCRS("select * from CustomerLevels");
         try {
+            // Them vao danh sach customer level
+            crs = new DBProvider().getCRS("select * from CustomerLevels");
+            crs.execute();
             if (crs.first()) {
                 do {
                     addElement(new CustomerLevel(
-                            crs.getInt(CustomerLevel.COL_CUSLEVELID), 
-                            crs.getInt(CustomerLevel.COL_CUSLEVEL), 
+                            crs.getInt(CustomerLevel.COL_CUSLEVELID),
+                            crs.getInt(CustomerLevel.COL_CUSLEVEL),
                             crs.getString(CustomerLevel.COL_CUSLEVELNAME),
                             crs.getFloat(CustomerLevel.COL_CUSDISCOUNT)));
                 } while (crs.next());
@@ -38,19 +39,37 @@ public class CustomerLevelComboBoxModel extends DefaultComboBoxModel<CustomerLev
             Logger.getLogger(CustomerLevelComboBoxModel.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
-    
+
     /**
      * Tim chi so cua doi tuong customer level trong list
-     * 
+     *
      * @param cusLevel
      * @return index in list
      */
-    public int getIndexOfCustomerLevel(int cusLevel){
+    public int getIndexOfCustomerLevel(int cusLevel) {
         int result = -1;
-        
-        for (int i=0; i< crs.size(); i++) {
-            if(getElementAt(i).getCusLevel()==cusLevel){
+
+        for (int i = 0; i < crs.size(); i++) {
+            if (getElementAt(i).getCusLevel() == cusLevel) {
                 result = i;
+                break;
+            }
+        }
+        return result;
+    }
+
+    /**
+     * Tim customer level object tu customer level
+     *
+     * @param cusLevel
+     * @return
+     */
+    public CustomerLevel getCustomerLevelFromValue(int cusLevel) {
+        CustomerLevel result = null;
+
+        for (int i = 0; i < crs.size(); i++) {
+            if (getElementAt(i).getCusLevel() == cusLevel) {
+                result = getElementAt(i);
                 break;
             }
         }

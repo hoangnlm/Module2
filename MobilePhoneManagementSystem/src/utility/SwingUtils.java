@@ -1,16 +1,29 @@
 package utility;
 
 import java.awt.Toolkit;
-import javax.swing.InputVerifier;
-import javax.swing.JComponent;
 import javax.swing.JOptionPane;
 import javax.swing.JTextField;
 import javax.swing.text.AbstractDocument;
 import javax.swing.text.AttributeSet;
 import javax.swing.text.BadLocationException;
 import javax.swing.text.DocumentFilter;
+import javax.swing.text.PlainDocument;
 
 public class SwingUtils {
+
+    // Define some string sentences
+    public static final String INSERT_SUCCESS = "You have inserted a new row!";
+    public static final String INSERT_FAIL = "Cannot insert due to some reason!";
+    public static final String UPDATE_SUCCESS = "Updated successfully!";
+    public static final String UPDATE_FAIL = "Cannot update due to some reason!";
+    public static final String DELETE_SUCCESS = "Deleted successfully!";
+    public static final String DELETE_FAIL = "Cannot delete due to some reason!";
+    public static final String DB_REFRESH = "Data have been refreshed!";
+    
+    // Declare some regex constants
+    public static final String PATTERN_CUSNAME = "[A-Za-z0-9 ]+";
+    public static final String PATTERN_CUSPHONE = "\\d+";
+    public static final String PATTERN_CUSADDRESS = "[A-Za-z0-9 .\\/-]+";
 
     public static int showConfirmDialog(String message) {
         return JOptionPane.showConfirmDialog(null, message, "Confirm:", JOptionPane.YES_NO_OPTION);
@@ -41,72 +54,63 @@ public class SwingUtils {
                 options[1]);    //Mac dinh la NO (or Revert)
     }
 
-    public static void validateNumericInput(JTextField tf, String regex) {
-        AbstractDocument abstractDocument = (AbstractDocument) tf.getDocument();
-        abstractDocument.setDocumentFilter(new DocumentFilter() {
-            @Override
-            public void insertString(DocumentFilter.FilterBypass fb, int offset, String string, AttributeSet attr) throws BadLocationException {
-                if (string.matches(regex)) {
-                    super.insertString(fb, offset, string, attr);
-                } else {
-                    Toolkit.getDefaultToolkit().beep();
-                    SwingUtils.showInfoDialog("Invalid input!");
-                }
-            }
+    public static void validateIntegerInput(JTextField tf) {
+        AbstractDocument doc = new PlainDocument() {
+
+            private static final long serialVersionUID = 1L;
 
             @Override
-            public void replace(DocumentFilter.FilterBypass fb, int offset, int length, String text, AttributeSet attrs) throws BadLocationException {
-                if (text.matches(regex)) {
-                    super.replace(fb, offset, length, text, attrs);
-                } else {
-                    Toolkit.getDefaultToolkit().beep();
-                    SwingUtils.showInfoDialog("Invalid input!");
+            public void setDocumentFilter(DocumentFilter filter) {
+
+                if (filter instanceof IntegerDocumentFilter) {
+                    super.setDocumentFilter(filter);
                 }
             }
-        });
+        };
+        doc.setDocumentFilter(new IntegerDocumentFilter());
+        tf.setDocument(doc);
     }
 
     public static void validateStringInput(JTextField tf, int maxLength, String regex) {
         AbstractDocument abstractDocument = (AbstractDocument) tf.getDocument();
-        abstractDocument.setDocumentFilter(new DocumentFilter() {
-            @Override
-            public void insertString(DocumentFilter.FilterBypass fb, int offset, String string, AttributeSet attr) throws BadLocationException {
-                int totalLength = fb.getDocument().getLength() + string.length();
-                if (totalLength <= maxLength && string.matches(regex)) {
-                    super.insertString(fb, offset, string, attr);
-                } else {
-                    Toolkit.getDefaultToolkit().beep();
-                    SwingUtils.showInfoDialog("Invalid input!");
-                }
-            }
-
-            @Override
-            public void replace(DocumentFilter.FilterBypass fb, int offset, int length, String text, AttributeSet attrs) throws BadLocationException {
-                int totalLength = fb.getDocument().getLength() + text.length();
-                if (totalLength <= maxLength && text.matches(regex)) {
-                    super.replace(fb, offset, length, text, attrs);
-                } else {
-                    Toolkit.getDefaultToolkit().beep();
-                    SwingUtils.showInfoDialog("Invalid input!");
-                }
-            }
-        });
+        abstractDocument.setDocumentFilter(new StringDocumentFilter(maxLength, regex));
     }
 
-    public static void validateStringValue(JTextField tf, String regex) {
-        System.out.println("verifier");
-        tf.setInputVerifier(new InputVerifier() {
-            @Override
-            public boolean shouldYieldFocus(JComponent input) {
-                System.out.println("should");
-                return false;
-            }
+    public static class IntegerDocumentFilter extends DocumentFilter {
 
-            @Override
-            public boolean verify(JComponent input) {
-                System.out.println("verify");
-                return true;
+        @Override
+        public void replace(DocumentFilter.FilterBypass fb, int offset, int length, String text, AttributeSet attrs) throws BadLocationException {
+            if (text.matches(PATTERN_CUSPHONE)) {
+                super.replace(fb, offset, length, text, attrs);
+            } else {
+                SwingUtils.showErrorDialog("Invalid input!");
             }
-        });
+        }
+    }
+
+    public static class StringDocumentFilter extends DocumentFilter {
+
+        private int maxLength;
+        private String regex;
+
+        public StringDocumentFilter(int maxLength, String regex) {
+            this.maxLength = maxLength;
+            this.regex = regex;
+        }
+
+        @Override
+        public void replace(DocumentFilter.FilterBypass fb, int offset, int length, String text, AttributeSet attrs) throws BadLocationException {
+            if (text.matches(regex)) {
+                int totalLength = fb.getDocument().getLength() + text.length();
+                if (totalLength <= maxLength) {
+                    super.replace(fb, offset, length, text, attrs);
+                } else {
+                    SwingUtils.showErrorDialog("Maximum length: " + maxLength + " characters!");
+                }
+            } else {
+                Toolkit.getDefaultToolkit().beep();
+                SwingUtils.showErrorDialog("Invalid input!");
+            }
+        }
     }
 }

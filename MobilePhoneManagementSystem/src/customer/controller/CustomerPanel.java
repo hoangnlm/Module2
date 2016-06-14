@@ -10,44 +10,25 @@ import customer.model.Customer;
 import customer.model.CustomerLevel;
 import customer.model.CustomerLevelComboBoxModel;
 import customer.model.CustomerTableModel;
-import database.DBProvider;
-import java.awt.Color;
 import java.awt.Cursor;
 import java.awt.Dimension;
 import java.awt.Rectangle;
-import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
-import java.awt.event.FocusAdapter;
-import java.awt.event.FocusEvent;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import javax.swing.AbstractAction;
-import javax.swing.Action;
-import javax.swing.DefaultCellEditor;
 import javax.swing.DefaultListSelectionModel;
-import javax.swing.InputVerifier;
 import javax.swing.JButton;
-import javax.swing.JComponent;
-import javax.swing.JLabel;
-import javax.swing.JOptionPane;
-import javax.swing.JTextField;
 import javax.swing.RowFilter;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.table.TableRowSorter;
-import javax.swing.text.AbstractDocument;
-import javax.swing.text.AttributeSet;
-import javax.swing.text.BadLocationException;
-import javax.swing.text.DocumentFilter;
 import order.controller.AddOrderDialog;
-import utility.IntegerCellEditor;
 import utility.StringCellEditor;
-import utility.StringCellEditor2;
-import utility.StringFormatter;
-import utility.SwingUtils;
 import utility.TableCellListener;
+import utility.SwingUtils;
 
 /**
  *
@@ -56,7 +37,8 @@ import utility.TableCellListener;
 public class CustomerPanel extends javax.swing.JPanel {
 
     private CustomerTableModel customerTableModel;
-    private CustomerLevelComboBoxModel customerLevelComboBoxModel;
+    private CustomerLevelComboBoxModel customerLevelComboBoxModel1;
+    private CustomerLevelComboBoxModel customerLevelComboBoxModel2;
     private final CustomerLevelComboBoxRenderer customerLevelComboBoxRenderer;
     private final TableRowSorter<CustomerTableModel> sorter;
 
@@ -71,6 +53,14 @@ public class CustomerPanel extends javax.swing.JPanel {
     private int selectedRowIndex;
     private CustomerLevel filterLevel;
 
+    // Define some column constants
+    private static final int COL_CUSID = 0;
+    private static final int COL_CUSNAME = 1;
+    private static final int COL_CUSLEVEL = 2;
+    private static final int COL_CUSPHONE = 3;
+    private static final int COL_CUSADDRESS = 4;
+    private static final int COL_STATUS = 5;
+
     /**
      * Creates new form OrderPanel
      */
@@ -81,18 +71,24 @@ public class CustomerPanel extends javax.swing.JPanel {
         selectedCustomer = new Customer();
 
         // Set data cho combobox level filter
-        customerLevelComboBoxModel = new CustomerLevelComboBoxModel();
+        customerLevelComboBoxModel1 = new CustomerLevelComboBoxModel();
         filterLevel = new CustomerLevel(0, 0, "", 0);
-        customerLevelComboBoxModel.addElement(filterLevel);
+        customerLevelComboBoxModel1.addElement(filterLevel);
+
+        // Set data cho column customer level combobox
+        customerLevelComboBoxModel2 = new CustomerLevelComboBoxModel();
 
         // Set data cho combobox level update
         customerLevelComboBoxRenderer = new CustomerLevelComboBoxRenderer();
-        cbLevelFilter.setModel(customerLevelComboBoxModel);
+        cbLevelFilter.setModel(customerLevelComboBoxModel1);
         cbLevelFilter.setRenderer(customerLevelComboBoxRenderer);
 
         // Set data cho table
         customerTableModel = new CustomerTableModel();
         tbCustomerList.setModel(customerTableModel);
+
+        // Set auto define column from model to false to stop create column again
+        tbCustomerList.setAutoCreateColumnsFromModel(false);
 
         // Set sorter cho table
         sorter = new TableRowSorter<>(customerTableModel);
@@ -102,36 +98,16 @@ public class CustomerPanel extends javax.swing.JPanel {
         cbLevelFilter.setSelectedIndex(cbLevelFilter.getItemCount() - 1);
 
         // Col cus name
-        tbCustomerList.getColumnModel().getColumn(1).setCellEditor(new StringCellEditor(50, StringFormatter.PATTERN_CUSNAME));
+        tbCustomerList.getColumnModel().getColumn(COL_CUSNAME).setCellEditor(new StringCellEditor(1, 50, SwingUtils.PATTERN_CUSNAME));
 
         // Col cus level
-        tbCustomerList.getColumnModel().getColumn(2).setCellEditor(new ComboBoxCellEditor(new CustomerLevelComboBoxModel()));
+        tbCustomerList.getColumnModel().getColumn(COL_CUSLEVEL).setCellEditor(new ComboBoxCellEditor(customerLevelComboBoxModel2));
 
         // Col cus phone
-//JTextField tf = new JTextField();
-//        SwingUtils.validateStringInput(tf, 50, "[A-Za-z0-9 ]+");
-//        SwingUtils.validateStringValue(tf, "^\\p{Alpha}[A-Za-z0-9 ]{0,48}\\p{Alnum}$");
-//tbCustomerList.getColumnModel().getColumn(3).setCellEditor(new DefaultCellEditor(tf));
-        InputVerifier iv = new InputVerifier() {
-            @Override
-            public boolean verify(JComponent input) {
-                boolean verified = false;
-                String text = ((JTextField) input).getText();
-                try {
-                    int port = Integer.valueOf(text);
-                    if ((0 < port) && (port <= 10)) {
-                        input.setBackground(Color.WHITE);
-                        verified = true;
-                    } else {
-                        input.setBackground(Color.RED);
-                    }
-                } catch (NumberFormatException e) {
-                    input.setBackground(Color.RED);
-                }
-                return verified;
-            }
-        };
-//        tbCustomerList.getColumnModel().getColumn(3).setCellEditor(new StringCellEditor2());
+        tbCustomerList.getColumnModel().getColumn(COL_CUSPHONE).setCellEditor(new StringCellEditor(1, 15, SwingUtils.PATTERN_CUSPHONE));
+
+        // Col cus address
+        tbCustomerList.getColumnModel().getColumn(COL_CUSADDRESS).setCellEditor(new StringCellEditor(1, 200, SwingUtils.PATTERN_CUSADDRESS));
 
         // Bat su kien select row tren table
         tbCustomerList.getSelectionModel().addListSelectionListener((ListSelectionEvent e) -> {
@@ -139,7 +115,6 @@ public class CustomerPanel extends javax.swing.JPanel {
             if (!model.isSelectionEmpty()) {
                 fetchCustomerDetails();
                 setButtonEnabled(true);
-                tbCustomerList.setSurrendersFocusOnKeystroke(false);
             } else {
                 setButtonEnabled(false, btRefresh);
             }
@@ -153,14 +128,34 @@ public class CustomerPanel extends javax.swing.JPanel {
             @Override
             public void actionPerformed(ActionEvent e) {
                 TableCellListener tcl = (TableCellListener) e.getSource();
-//                System.out.println("Row   : " + tcl.getRow());
-//                System.out.println("Column: " + tcl.getColumn());
-//                System.out.println("Old   : " + tcl.getOldValue());
-//                System.out.println("New   : " + tcl.getNewValue());
+                System.out.println("Row   : " + tcl.getRow());
+                System.out.println("Column: " + tcl.getColumn());
+                System.out.println("Old   : " + tcl.getOldValue());
+                System.out.println("New   : " + tcl.getNewValue());
+
+                switch (tcl.getColumn()) {
+                    case COL_CUSNAME:
+                        selectedCustomer.setCusName((String) tcl.getNewValue());
+                        break;
+                    case COL_CUSLEVEL:
+                        selectedCustomer.setCusLevel((int) tcl.getNewValue());
+                        break;
+                    case COL_CUSPHONE:
+                        selectedCustomer.setCusPhone((String) tcl.getNewValue());
+                        break;
+                    case COL_CUSADDRESS:
+                        selectedCustomer.setCusAddress((String) tcl.getNewValue());
+                        break;
+                    case COL_STATUS:
+                        selectedCustomer.setCusEnabled((boolean) tcl.getNewValue());
+                        break;
+                }
+
+                updateAction();
             }
         });
 
-        // Bat su kien cho vung filter
+//<editor-fold defaultstate="collapsed" desc="Bat su kien cho vung filter">
         tfIdFilter.getDocument().addDocumentListener(
                 new DocumentListener() {
             @Override
@@ -229,8 +224,10 @@ public class CustomerPanel extends javax.swing.JPanel {
                 doFilter();
             }
         });
+//</editor-fold>
     }
 
+    //<editor-fold defaultstate="collapsed" desc="doFilter">
     private void doFilter() {
         RowFilter<CustomerTableModel, Object> rf = null;
 
@@ -261,6 +258,7 @@ public class CustomerPanel extends javax.swing.JPanel {
         }
         sorter.setRowFilter(rf);
     }
+//</editor-fold>
 
     private void fetchCustomerDetails() {
         selectedRowIndex = tbCustomerList.getSelectedRow();
@@ -509,6 +507,7 @@ public class CustomerPanel extends javax.swing.JPanel {
         );
     }// </editor-fold>//GEN-END:initComponents
 
+    // <editor-fold defaultstate="collapsed" desc="Khai bao event">    
     private void btAddActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btAddActionPerformed
         insertAction();
     }//GEN-LAST:event_btAddActionPerformed
@@ -536,7 +535,7 @@ public class CustomerPanel extends javax.swing.JPanel {
     private void cbLevelFilterItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_cbLevelFilterItemStateChanged
         doFilter();
     }//GEN-LAST:event_cbLevelFilterItemStateChanged
-
+    //// </editor-fold>
     //<editor-fold defaultstate="collapsed" desc="khai bao component">
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btAdd;
@@ -566,52 +565,57 @@ public class CustomerPanel extends javax.swing.JPanel {
 
     private void refreshAction() {
         setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
-        tbCustomerList.getSelectionModel().clearSelection();
-        customerTableModel = new CustomerTableModel();
-        customerLevelComboBoxModel = new CustomerLevelComboBoxModel();
+        
+        // Refresh table
+        customerTableModel.refresh();
+        
+        // Refresh combobox filter
+        customerLevelComboBoxModel1 = new CustomerLevelComboBoxModel();
+        customerLevelComboBoxModel1.addElement(filterLevel);
+        
+        // Refresh combobox column table
+        customerLevelComboBoxModel2 = new CustomerLevelComboBoxModel();
         setCursor(null);
-        SwingUtils.showInfoDialog(DBProvider.DB_REFRESH);
+        SwingUtils.showInfoDialog(SwingUtils.DB_REFRESH);
     }
 
     private void insertAction() {
+        setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
+        // Khoi tao customer default de insert vao db
         Customer customer = new Customer();
         customer.setCusName("New Customer");
         customer.setCusAddress("New Address");
         customer.setCusPhone(System.currentTimeMillis() + "");
-        customer.setCusLevelID(1);
+        customer.setCusLevel(1);
         customer.setCusEnabled(true);
-
-        if (customerTableModel.insert(customer)) {
-            SwingUtils.showInfoDialog(DBProvider.INSERT_SUCCESS);
-
-            // Select row vua insert vao
-            moveScrollToRow(tbCustomerList.getRowCount() - 1);
-            tbCustomerList.editCellAt(tbCustomerList.getSelectedRow(), 1);
-            tbCustomerList.setSurrendersFocusOnKeystroke(true);
-            tbCustomerList.getEditorComponent().requestFocus();
-        } else {
-            SwingUtils.showErrorDialog(DBProvider.INSERT_FAIL);
-        }
+        boolean result = customerTableModel.insert(customer);
+        setCursor(null);
+        SwingUtils.showInfoDialog(result ? SwingUtils.INSERT_SUCCESS : SwingUtils.INSERT_FAIL);
+        // Select row vua insert vao
+        selectedRowIndex = tbCustomerList.getRowCount() - 1;
+        moveScrollToRow(selectedRowIndex);
+        tbCustomerList.editCellAt(tbCustomerList.getSelectedRow(), 1);
+        tbCustomerList.getEditorComponent().requestFocus();
     }
 
     private void updateAction() {
-        if (customerTableModel.update(selectedCustomer)) {
-            SwingUtils.showInfoDialog(DBProvider.UPDATE_SUCCESS);
-        } else {
-            SwingUtils.showErrorDialog(DBProvider.UPDATE_FAIL);
-        }
-
+        setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
+        boolean result = customerTableModel.update(selectedCustomer);
+        setCursor(null);
+        SwingUtils.showInfoDialog(result ? SwingUtils.UPDATE_SUCCESS : SwingUtils.UPDATE_FAIL);
         moveScrollToRow(selectedRowIndex);
     }
 
     private void deleteAction() {
         setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
-        if (customerTableModel.delete(selectedCustomer)) {
-            SwingUtils.showInfoDialog(DBProvider.DELETE_SUCCESS);
-        } else {
-            SwingUtils.showErrorDialog(DBProvider.DELETE_FAIL);
-        }
+        boolean result = customerTableModel.delete(selectedCustomer);
         setCursor(null);
+        SwingUtils.showInfoDialog(result ? SwingUtils.DELETE_SUCCESS : SwingUtils.DELETE_FAIL);
+        
+        // Neu row xoa la row cuoi thi lui cursor ve
+        // Neu row xoa la row khac cuoi thi tien cursor ve truoc
+        selectedRowIndex = (selectedRowIndex==tbCustomerList.getRowCount()?tbCustomerList.getRowCount()-1:selectedRowIndex++);
+        moveScrollToRow(selectedRowIndex);
     }
 
     private void moveScrollToRow(int row) {
