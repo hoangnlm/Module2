@@ -15,26 +15,24 @@ public class SalesOffProduct {
     private String proName;
     private String braName;
     private boolean salesOff;
-    private int braID;
     private int saleID;
 
     public static final String COL_PROID = "ProID";
     public static final String COL_PRONAME = "ProName";
     public static final String COL_BRANAME = "BraName";
-    public static final String COL_BRAID = "BraID";
     public static final String COL_SALEID = "SalesOffID";
 
     public SalesOffProduct() {
     }
 
-    public SalesOffProduct(int proID, String proName, String braName, boolean salesOff, int braID, int saleID) {
+    public SalesOffProduct(int proID, String proName, String braName, boolean salesOff, int saleID) {
         this.proID = proID;
         this.proName = proName;
         this.braName = braName;
         this.salesOff = salesOff;
-        this.braID = braID;
         this.saleID = saleID;
     }
+
 
     public int getProID() {
         return proID;
@@ -66,14 +64,6 @@ public class SalesOffProduct {
 
     public void setSalesOff(boolean salesOff) {
         this.salesOff = salesOff;
-    }
-
-    public int getBraID() {
-        return braID;
-    }
-
-    public void setBraID(int braID) {
-        this.braID = braID;
     }
 
     public int getSaleID() {

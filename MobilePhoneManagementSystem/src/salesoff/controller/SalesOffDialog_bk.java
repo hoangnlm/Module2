@@ -27,8 +27,7 @@ import utility.TableCellListener;
  *
  * @author Hoang
  */
-public class SalesOffDialog extends javax.swing.JDialog {
-
+public class SalesOffDialog_bk extends javax.swing.JDialog {
     // Khai bao 2 cai table model
     private SalesOffTableModel salesOffTableModel;
     private SalesOffProductTableModel salesOffProductTableModel;
@@ -36,7 +35,7 @@ public class SalesOffDialog extends javax.swing.JDialog {
     // Sales off dang duoc chon trong table
     private SalesOff selectedSale;
     private int selectedSaleRowIndex;
-
+    
     private static final int COL_SALEID = 0;
     private static final int COL_SALENAME = 1;
     private static final int COL_SALESTART = 2;
@@ -55,12 +54,13 @@ public class SalesOffDialog extends javax.swing.JDialog {
     /**
      * Creates new form CustomerDialog
      */
-    public SalesOffDialog() {
+    public SalesOffDialog_bk() {
         initComponents();
         setLocationRelativeTo(null);
-
+        
         //Disable button khi moi khoi dong len
-        setButtonEnabled(false);
+        setButtonEnabled(tbSaleList, false);
+        setButtonEnabled(tbProList, false);
 
         // Selecting sales off in the table
         selectedSale = new SalesOff();
@@ -77,10 +77,6 @@ public class SalesOffDialog extends javax.swing.JDialog {
         tbProList.setAutoCreateColumnsFromModel(false);
         tbSaleList.setAutoCreateRowSorter(true);
         tbProList.setAutoCreateRowSorter(true);
-
-        // Set height cho table header
-        tbSaleList.getTableHeader().setPreferredSize(new Dimension(300, 30));
-        tbProList.getTableHeader().setPreferredSize(new Dimension(300, 30));
 
         // Col sale ID
         tbSaleList.getColumnModel().getColumn(COL_SALEID).setMinWidth(20);
@@ -104,43 +100,39 @@ public class SalesOffDialog extends javax.swing.JDialog {
         tbSaleList.getColumnModel().getColumn(COL_SALEAMOUNT).setCellEditor(new SpinnerCellEditor(SalesOff.MIN_SALE, SalesOff.MAX_SALE));
         tbSaleList.getColumnModel().getColumn(COL_SALEAMOUNT).setMinWidth(90);
         tbSaleList.getColumnModel().getColumn(COL_SALEAMOUNT).setMaxWidth(90);
-
+        
         // Col pro ID
-        tbProList.getColumnModel().getColumn(COL_PROID).setMinWidth(20);
-        tbProList.getColumnModel().getColumn(COL_PROID).setMaxWidth(40);
+         tbProList.getColumnModel().getColumn(COL_PROID).setMinWidth(20);
+        tbProList.getColumnModel().getColumn(COL_PROID).setMaxWidth(40);       
 
         // Col pro name
-        tbProList.getColumnModel().getColumn(COL_PRONAME).setMinWidth(150);
-
+       tbProList.getColumnModel().getColumn(COL_PRONAME).setMinWidth(150); 
+        
         // Col branch
-        tbProList.getColumnModel().getColumn(COL_BRANAME).setMinWidth(120);
+        tbProList.getColumnModel().getColumn(COL_BRANAME).setMinWidth(120);        
         tbProList.getColumnModel().getColumn(COL_BRANAME).setMaxWidth(120);
-
+        
         // Col sales off enable
-        tbProList.getColumnModel().getColumn(COL_PROSALE).setMinWidth(90);
+        tbProList.getColumnModel().getColumn(COL_PROSALE).setMinWidth(90);        
         tbProList.getColumnModel().getColumn(COL_PROSALE).setMaxWidth(90);
-
+        
         // Bat su kien select row tren table sales off
         tbSaleList.getSelectionModel().addListSelectionListener((ListSelectionEvent e) -> {
             DefaultListSelectionModel model = (DefaultListSelectionModel) e.getSource();
             if (!model.isSelectionEmpty()) {
                 fetchSaleAction();
-                setButtonEnabled(true);
+                setButtonEnabled(tbSaleList, true);
             } else {
-                setButtonEnabled(false);
+                setButtonEnabled(tbSaleList, false);
             }
         });
 
-        // Bat su kien select row tren table product
-        tbProList.getSelectionModel().addListSelectionListener((ListSelectionEvent e) -> {
-            DefaultListSelectionModel model = (DefaultListSelectionModel) e.getSource();
-            if (!model.isSelectionEmpty()) {
-                fetchProAction();
-            }
-        });
+        // Set height cho table header
+        tbSaleList.getTableHeader().setPreferredSize(new Dimension(300, 30));
+        tbProList.getTableHeader().setPreferredSize(new Dimension(300, 30));
 
-        // Set table cell listener to update table sales off
-        TableCellListener tcl1 = new TableCellListener(tbSaleList, new AbstractAction() {
+        // Set table cell listener to update
+        TableCellListener tcl = new TableCellListener(tbSaleList, new AbstractAction() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 TableCellListener tcl = (TableCellListener) e.getSource();
@@ -161,24 +153,6 @@ public class SalesOffDialog extends javax.swing.JDialog {
                 updateSaleAction();
             }
         });
-
-        // Set table cell listener to update table product
-        TableCellListener tcl2 = new TableCellListener(tbProList, new AbstractAction() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                TableCellListener tcl = (TableCellListener) e.getSource();
-//                scrollToRow(tbProList, tcl.getRow());
-
-                switch (tcl.getColumn()) {
-                    case COL_PROSALE:
-                        selectedPro.setSalesOff((boolean) tcl.getNewValue());
-                        selectedPro.setSaleID(selectedPro.isSalesOff() ? selectedSale.getSaleID() : 0);
-                        break;
-                }
-                updateProAction();
-            }
-        });
-
     }
 
     /**
@@ -203,6 +177,7 @@ public class SalesOffDialog extends javax.swing.JDialog {
         setTitle("SalesOff Management");
         setMinimumSize(new java.awt.Dimension(712, 600));
         setModal(true);
+        setResizable(false);
 
         jScrollPane1.setBorder(javax.swing.BorderFactory.createTitledBorder(javax.swing.BorderFactory.createEtchedBorder(), "SalesOff List"));
 
@@ -217,7 +192,7 @@ public class SalesOffDialog extends javax.swing.JDialog {
                 "ID", "Name", "Start", "End", "Amount(%)"
             }
         ));
-        tbSaleList.setRowHeight(25);
+        tbSaleList.setRowHeight(20);
         tbSaleList.getTableHeader().setReorderingAllowed(false);
         jScrollPane1.setViewportView(tbSaleList);
 
@@ -270,7 +245,7 @@ public class SalesOffDialog extends javax.swing.JDialog {
                 "ID", "Product Name", "Branch", "Sales Off"
             }
         ));
-        tbProList.setRowHeight(25);
+        tbProList.setRowHeight(20);
         tbProList.getTableHeader().setReorderingAllowed(false);
         jScrollPane2.setViewportView(tbProList);
 
@@ -301,9 +276,9 @@ public class SalesOffDialog extends javax.swing.JDialog {
                     .addComponent(btRefresh, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(btClose, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 171, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 171, Short.MAX_VALUE)
                 .addGap(18, 18, 18)
-                .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 317, Short.MAX_VALUE))
+                .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 317, javax.swing.GroupLayout.PREFERRED_SIZE))
         );
 
         pack();
@@ -337,7 +312,6 @@ public class SalesOffDialog extends javax.swing.JDialog {
     // End of variables declaration//GEN-END:variables
 //</editor-fold>
 
-    //<editor-fold defaultstate="collapsed" desc="xu ly cho table salesoff">
     private void fetchSaleAction() {
         selectedSaleRowIndex = tbSaleList.getSelectedRow();
         selectedSale.setSaleID((int) tbSaleList.getValueAt(selectedSaleRowIndex, 0));
@@ -345,7 +319,7 @@ public class SalesOffDialog extends javax.swing.JDialog {
         selectedSale.setSaleStartDate((Date) tbSaleList.getValueAt(selectedSaleRowIndex, 2));
         selectedSale.setSaleEndDate((Date) tbSaleList.getValueAt(selectedSaleRowIndex, 3));
         selectedSale.setSaleAmount((float) tbSaleList.getValueAt(selectedSaleRowIndex, 4) / 100);
-
+        
         // Reload table product list voi SalesOff moi chon
         salesOffProductTableModel.load(selectedSale.getSaleID());
     }
@@ -379,25 +353,37 @@ public class SalesOffDialog extends javax.swing.JDialog {
         selectedSaleRowIndex = (selectedSaleRowIndex == tbSaleList.getRowCount() ? tbSaleList.getRowCount() - 1 : selectedSaleRowIndex++);
         scrollToRow(tbSaleList, selectedSaleRowIndex);
     }
-//</editor-fold>
 
-    //<editor-fold defaultstate="collapsed" desc="xu ly cho table product list">
-    private void fetchProAction() {
-        selectedProRowIndex = tbProList.getSelectedRow();
-        selectedPro.setProID((int) tbProList.getValueAt(selectedProRowIndex, 0));
-        selectedPro.setProName(((String) tbProList.getValueAt(selectedProRowIndex, 1)).trim());
-        selectedPro.setBraName((String) tbProList.getValueAt(selectedProRowIndex, 2));
-        selectedPro.setSalesOff((boolean) tbProList.getValueAt(selectedProRowIndex, 3));
+    private void insertProAction() {
+//        setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
+//        boolean result = salesOffTableModel.insert(new SalesOff());
+//        setCursor(null);
+//        SwingUtils.showInfoDialog(result ? SwingUtils.INSERT_SUCCESS : SwingUtils.INSERT_FAIL);
+//        // Select row vua insert vao
+//        selectedSaleRowIndex = tbSaleList.getRowCount() - 1;
+//        scrollToRow(selectedSaleRowIndex);
     }
-    
+
     private void updateProAction() {
-        setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
-        boolean result = salesOffProductTableModel.update(selectedPro);
-        setCursor(null);
-        SwingUtils.showInfoDialog(result ? SwingUtils.UPDATE_SUCCESS : SwingUtils.UPDATE_FAIL);
-//        scrollToRow(tbSaleList, selectedSaleRowIndex);
+//        setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
+//        boolean result = salesOffTableModel.update(selectedSale);
+//        refreshAction(false);
+//        setCursor(null);
+//        SwingUtils.showInfoDialog(result ? SwingUtils.UPDATE_SUCCESS : SwingUtils.UPDATE_FAIL);
     }
-    
+
+    private void deleteProAction() {
+//        setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
+//        boolean result = salesOffTableModel.delete(selectedSale);
+//        setCursor(null);
+//        SwingUtils.showInfoDialog(result ? SwingUtils.DELETE_SUCCESS : SwingUtils.DELETE_FAIL);
+//
+//        // Neu row xoa la row cuoi thi lui cursor ve
+//        // Neu row xoa la row khac cuoi thi tien cursor ve truoc
+//        selectedSaleRowIndex = (selectedSaleRowIndex == tbSaleList.getRowCount() ? tbSaleList.getRowCount() - 1 : selectedSaleRowIndex++);
+//        scrollToRow(selectedSaleRowIndex);
+    }
+
     private void refreshAction(boolean mustInfo) {
         if (mustInfo) {
             setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
@@ -409,16 +395,17 @@ public class SalesOffDialog extends javax.swing.JDialog {
         }
         scrollToRow(tbSaleList, selectedSaleRowIndex);
     }
-    
+
     private void scrollToRow(JTable table, int row) {
         table.getSelectionModel().setSelectionInterval(row, row);
         table.scrollRectToVisible(new Rectangle(table.getCellRect(row, 0, true)));
     }
-//</editor-fold>
 
-    private void setButtonEnabled(boolean enabled, JButton... exclude) {
-        btAddSale.setEnabled(enabled);
-        btRemoveSale.setEnabled(enabled);
+    private void setButtonEnabled(JTable table, boolean enabled, JButton... exclude) {
+        if (table == tbSaleList) {
+            btAddSale.setEnabled(enabled);
+            btRemoveSale.setEnabled(enabled);
+        }
 
         // Ngoai tru may button nay luon luon enable
         if (exclude.length != 0) {

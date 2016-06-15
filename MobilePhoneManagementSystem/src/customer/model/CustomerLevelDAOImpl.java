@@ -5,7 +5,6 @@
  */
 package customer.model;
 
-import customer.model.CustomerLevel;
 import database.IDAO;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -22,7 +21,6 @@ import utility.SwingUtils;
 public class CustomerLevelDAOImpl implements IDAO<CustomerLevel> {
 
     private CachedRowSet crs;  //CRS to update table
-    private int filter;
 
     public CustomerLevelDAOImpl() {
         crs = getCRS("select * from CustomerLevels");
