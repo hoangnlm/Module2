@@ -59,6 +59,9 @@ public class CustomerPanel extends javax.swing.JPanel {
      */
     public CustomerPanel() {
         initComponents();
+        
+        // Disable button khi moi khoi dong len
+        setButtonEnabled(false);
 
         // Selecting customer in the table
         selectedCustomer = new Customer();
@@ -109,7 +112,7 @@ public class CustomerPanel extends javax.swing.JPanel {
                 fetchAction();
                 setButtonEnabled(true);
             } else {
-                setButtonEnabled(false, btRefresh);
+                setButtonEnabled(false);
             }
         });
 
@@ -296,7 +299,7 @@ public class CustomerPanel extends javax.swing.JPanel {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jLabel3)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(tfCusNameFilter, javax.swing.GroupLayout.PREFERRED_SIZE, 80, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(tfCusNameFilter, javax.swing.GroupLayout.PREFERRED_SIZE, 74, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jLabel4)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -304,15 +307,15 @@ public class CustomerPanel extends javax.swing.JPanel {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jLabel5)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(tfCusPhoneFilter, javax.swing.GroupLayout.PREFERRED_SIZE, 83, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(tfCusPhoneFilter, javax.swing.GroupLayout.PREFERRED_SIZE, 77, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jLabel11)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(tfCusAddressFilter, javax.swing.GroupLayout.PREFERRED_SIZE, 101, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(tfCusAddressFilter, javax.swing.GroupLayout.PREFERRED_SIZE, 83, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jLabel6)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(cbStatusFilter, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addComponent(cbStatusFilter, 0, 141, Short.MAX_VALUE))
         );
         pnFilterLayout.setVerticalGroup(
             pnFilterLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -559,20 +562,30 @@ public class CustomerPanel extends javax.swing.JPanel {
     }
 
     private void refreshAction(boolean mustInfo) {
-        setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
-
-        // Refresh table
-        customerTableModel.refresh();
-
-        // Refresh combobox filter
-        customerLevelComboBoxModel1.refresh();
-        customerLevelComboBoxModel1.addElement(filterLevel);
-
-        // Refresh combobox column table
-        customerLevelComboBoxModel2.refresh();
-        setCursor(null);
         if (mustInfo) {
+            setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
+
+            // Refresh table
+            customerTableModel.refresh();
+
+            // Refresh combobox filter
+            customerLevelComboBoxModel1.refresh();
+            customerLevelComboBoxModel1.addElement(filterLevel);
+
+            // Refresh combobox column table
+            customerLevelComboBoxModel2.refresh();
+            setCursor(null);
             SwingUtils.showInfoDialog(SwingUtils.DB_REFRESH);
+        } else {
+            // Refresh table
+            customerTableModel.refresh();
+
+            // Refresh combobox filter
+            customerLevelComboBoxModel1.refresh();
+            customerLevelComboBoxModel1.addElement(filterLevel);
+
+            // Refresh combobox column table
+            customerLevelComboBoxModel2.refresh();
         }
         scrollToRow(selectedRowIndex);
     }
@@ -616,7 +629,6 @@ public class CustomerPanel extends javax.swing.JPanel {
     }
 
     private void setButtonEnabled(boolean enabled, JButton... exclude) {
-        btRefresh.setEnabled(enabled);
         btRemove.setEnabled(enabled);
         btAdd.setEnabled(enabled);
         btNewOrder.setEnabled(enabled);

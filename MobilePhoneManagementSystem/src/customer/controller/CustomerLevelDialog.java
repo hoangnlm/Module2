@@ -43,7 +43,9 @@ public class CustomerLevelDialog extends javax.swing.JDialog {
     public CustomerLevelDialog() {
         initComponents();
         setLocationRelativeTo(null);
-//        setButtonEnabled(false, btRefresh, btClose);
+        
+        // Disable button khi moi khoi dong len
+        setButtonEnabled(false);
 
         // Selecting customer level in the table
         selectedCustomerLevel = new CustomerLevel();
@@ -78,7 +80,7 @@ public class CustomerLevelDialog extends javax.swing.JDialog {
                 fetchAction();
                 setButtonEnabled(true);
             } else {
-                setButtonEnabled(false, btRefresh, btClose);
+                setButtonEnabled(false);
             }
         });
 
@@ -246,15 +248,16 @@ public class CustomerLevelDialog extends javax.swing.JDialog {
         selectedCustomerLevel.setCusLevel((int) tbLevelList.getValueAt(selectedRowIndex, 1));
         selectedCustomerLevel.setCusLevelName(((String) tbLevelList.getValueAt(selectedRowIndex, 2)).trim());
         selectedCustomerLevel.setCusDiscount((float) tbLevelList.getValueAt(selectedRowIndex, 3) / 100);
-
     }
 
     private void refreshAction(boolean mustInfo) {
-        setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
-        customerLevelTableModel.refresh();
-        setCursor(null);
         if (mustInfo) {
+            setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
+            customerLevelTableModel.refresh();
+            setCursor(null);
             SwingUtils.showInfoDialog(SwingUtils.DB_REFRESH);
+        } else {
+            customerLevelTableModel.refresh();
         }
         scrollToRow(selectedRowIndex);
     }
@@ -267,8 +270,6 @@ public class CustomerLevelDialog extends javax.swing.JDialog {
         // Select row vua insert vao
         selectedRowIndex = tbLevelList.getRowCount() - 1;
         scrollToRow(selectedRowIndex);
-        tbLevelList.editCellAt(tbLevelList.getSelectedRow(), 1);
-        tbLevelList.getEditorComponent().requestFocus();
     }
 
     private void updateAction() {
@@ -297,10 +298,8 @@ public class CustomerLevelDialog extends javax.swing.JDialog {
     }
 
     private void setButtonEnabled(boolean enabled, JButton... exclude) {
-        btRefresh.setEnabled(enabled);
         btDelete.setEnabled(enabled);
         btAdd.setEnabled(enabled);
-        btClose.setEnabled(enabled);
 
         // Ngoai tru may button nay luon luon enable
         if (exclude.length != 0) {

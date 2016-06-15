@@ -96,7 +96,13 @@ public interface IDAO<T> {
                     ps.setBoolean(i + 1, (boolean) args[i]);
                 }
 
-                if (args[i].getClass() == Date.class) {
+                if (args[i].getClass() == java.util.Date.class) {
+                    java.util.Date origin = (java.util.Date) args[i];
+                    java.sql.Date convert = new java.sql.Date(origin.getTime());
+                    ps.setDate(i + 1, convert);
+                }
+
+                if (args[i].getClass() == java.sql.Date.class) {
                     ps.setDate(i + 1, (java.sql.Date) args[i]);
                 }
             }

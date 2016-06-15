@@ -10,52 +10,77 @@ package salesoff.model;
  * @author Hoang
  */
 public class SalesOffProduct {
-    int proID;
-    String braName;
-    String proName;
-    boolean salesOff;
+
+    private int proID;
+    private String proName;
+    private String braName;
+    private boolean salesOff;
+    private int braID;
+    private int saleID;
+
+    public static final String COL_PROID = "ProID";
+    public static final String COL_PRONAME = "ProName";
+    public static final String COL_BRANAME = "BraName";
+    public static final String COL_BRAID = "BraID";
+    public static final String COL_SALEID = "SalesOffID";
 
     public SalesOffProduct() {
     }
 
-    public SalesOffProduct(int proID, String braName, String proName, boolean salesOff) {
+    public SalesOffProduct(int proID, String proName, String braName, boolean salesOff, int braID, int saleID) {
         this.proID = proID;
-        this.braName = braName;
         this.proName = proName;
+        this.braName = braName;
         this.salesOff = salesOff;
+        this.braID = braID;
+        this.saleID = saleID;
     }
-    
-    // Getters
+
     public int getProID() {
         return proID;
     }
 
-    public String getBraName() {
-        return braName;
+    public void setProID(int proID) {
+        this.proID = proID;
     }
 
     public String getProName() {
         return proName;
     }
 
-    public boolean isSalesOff() {
-        return salesOff;
+    public void setProName(String proName) {
+        this.proName = proName;
     }
-    
-    // Setters
-    public void setProID(int proID) {
-        this.proID = proID;
+
+    public String getBraName() {
+        return braName;
     }
 
     public void setBraName(String braName) {
         this.braName = braName;
     }
 
-    public void setProName(String proName) {
-        this.proName = proName;
+    public boolean isSalesOff() {
+        return salesOff;
     }
 
     public void setSalesOff(boolean salesOff) {
         this.salesOff = salesOff;
+    }
+
+    public int getBraID() {
+        return braID;
+    }
+
+    public void setBraID(int braID) {
+        this.braID = braID;
+    }
+
+    public int getSaleID() {
+        return saleID;
+    }
+
+    public void setSaleID(int saleID) {
+        this.saleID = saleID;
     }
 }

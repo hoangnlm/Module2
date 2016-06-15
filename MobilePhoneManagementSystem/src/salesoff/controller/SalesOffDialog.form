@@ -33,20 +33,20 @@
           <Component id="jScrollPane2" alignment="0" max="32767" attributes="0"/>
           <Group type="102" attributes="0">
               <EmptySpace max="32767" attributes="0"/>
-              <Component id="btAdd" min="-2" pref="100" max="-2" attributes="0"/>
+              <Component id="btAddSale" min="-2" pref="100" max="-2" attributes="0"/>
               <EmptySpace type="unrelated" max="-2" attributes="0"/>
-              <Component id="btRemove" min="-2" pref="100" max="-2" attributes="0"/>
+              <Component id="btRemoveSale" min="-2" pref="100" max="-2" attributes="0"/>
               <EmptySpace type="unrelated" max="-2" attributes="0"/>
               <Component id="btRefresh" min="-2" pref="100" max="-2" attributes="0"/>
               <EmptySpace type="unrelated" max="-2" attributes="0"/>
-              <Component id="btCancel" min="-2" pref="100" max="-2" attributes="0"/>
+              <Component id="btClose" min="-2" pref="100" max="-2" attributes="0"/>
               <EmptySpace max="32767" attributes="0"/>
           </Group>
           <Group type="102" alignment="0" attributes="0">
               <EmptySpace max="32767" attributes="0"/>
-              <Component id="btAdd1" min="-2" pref="100" max="-2" attributes="0"/>
+              <Component id="btAddPro" min="-2" pref="100" max="-2" attributes="0"/>
               <EmptySpace type="unrelated" max="-2" attributes="0"/>
-              <Component id="btRemove1" min="-2" pref="100" max="-2" attributes="0"/>
+              <Component id="btRemovePro" min="-2" pref="100" max="-2" attributes="0"/>
               <EmptySpace max="32767" attributes="0"/>
           </Group>
       </Group>
@@ -56,17 +56,17 @@
           <Group type="102" alignment="0" attributes="0">
               <EmptySpace min="-2" pref="12" max="-2" attributes="0"/>
               <Group type="103" groupAlignment="3" attributes="0">
-                  <Component id="btAdd" alignment="3" min="-2" pref="30" max="-2" attributes="0"/>
-                  <Component id="btRemove" alignment="3" min="-2" pref="30" max="-2" attributes="0"/>
+                  <Component id="btAddSale" alignment="3" min="-2" pref="30" max="-2" attributes="0"/>
+                  <Component id="btRemoveSale" alignment="3" min="-2" pref="30" max="-2" attributes="0"/>
                   <Component id="btRefresh" alignment="3" min="-2" pref="30" max="-2" attributes="0"/>
-                  <Component id="btCancel" alignment="3" min="-2" pref="30" max="-2" attributes="0"/>
+                  <Component id="btClose" alignment="3" min="-2" pref="30" max="-2" attributes="0"/>
               </Group>
               <EmptySpace type="unrelated" max="-2" attributes="0"/>
               <Component id="jScrollPane1" pref="135" max="32767" attributes="0"/>
               <EmptySpace type="unrelated" max="-2" attributes="0"/>
               <Group type="103" groupAlignment="3" attributes="0">
-                  <Component id="btAdd1" alignment="3" min="-2" pref="30" max="-2" attributes="0"/>
-                  <Component id="btRemove1" alignment="3" min="-2" pref="30" max="-2" attributes="0"/>
+                  <Component id="btAddPro" alignment="3" min="-2" pref="30" max="-2" attributes="0"/>
+                  <Component id="btRemovePro" alignment="3" min="-2" pref="30" max="-2" attributes="0"/>
               </Group>
               <EmptySpace type="unrelated" max="-2" attributes="0"/>
               <Component id="jScrollPane2" min="-2" pref="317" max="-2" attributes="0"/>
@@ -93,7 +93,7 @@
 
       <Layout class="org.netbeans.modules.form.compat2.layouts.support.JScrollPaneSupportLayout"/>
       <SubComponents>
-        <Component class="javax.swing.JTable" name="tbSalesList">
+        <Component class="javax.swing.JTable" name="tbSaleList">
           <Properties>
             <Property name="model" type="javax.swing.table.TableModel" editor="org.netbeans.modules.form.editors2.TableModelEditor">
               <Table columnCount="5" rowCount="4">
@@ -137,7 +137,7 @@
         </Component>
       </SubComponents>
     </Container>
-    <Component class="javax.swing.JButton" name="btAdd">
+    <Component class="javax.swing.JButton" name="btAddSale">
       <Properties>
         <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
           <Font name="Lucida Grande" size="14" style="0"/>
@@ -147,8 +147,11 @@
         </Property>
         <Property name="text" type="java.lang.String" value="Add"/>
       </Properties>
+      <Events>
+        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="btAddSaleActionPerformed"/>
+      </Events>
     </Component>
-    <Component class="javax.swing.JButton" name="btRemove">
+    <Component class="javax.swing.JButton" name="btRemoveSale">
       <Properties>
         <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
           <Font name="Lucida Grande" size="14" style="0"/>
@@ -158,6 +161,9 @@
         </Property>
         <Property name="text" type="java.lang.String" value="Remove"/>
       </Properties>
+      <Events>
+        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="btRemoveSaleActionPerformed"/>
+      </Events>
     </Component>
     <Component class="javax.swing.JButton" name="btRefresh">
       <Properties>
@@ -169,8 +175,11 @@
         </Property>
         <Property name="text" type="java.lang.String" value="Refresh"/>
       </Properties>
+      <Events>
+        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="btRefreshActionPerformed"/>
+      </Events>
     </Component>
-    <Component class="javax.swing.JButton" name="btCancel">
+    <Component class="javax.swing.JButton" name="btClose">
       <Properties>
         <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
           <Font name="Lucida Grande" size="14" style="0"/>
@@ -181,7 +190,7 @@
         <Property name="text" type="java.lang.String" value="Close"/>
       </Properties>
       <Events>
-        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="btCancelActionPerformed"/>
+        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="btCloseActionPerformed"/>
       </Events>
     </Component>
     <Container class="javax.swing.JScrollPane" name="jScrollPane2">
@@ -205,7 +214,7 @@
         <Component class="javax.swing.JTable" name="tbProList">
           <Properties>
             <Property name="model" type="javax.swing.table.TableModel" editor="org.netbeans.modules.form.editors2.TableModelEditor">
-              <Table columnCount="3" rowCount="4">
+              <Table columnCount="4" rowCount="4">
                 <Column editable="true" title="ID" type="java.lang.Object">
                   <Data value="1"/>
                   <Data value="2"/>
@@ -216,6 +225,12 @@
                   <Data value="Nokia Lumia 920"/>
                   <Data value="Samsung Note 3"/>
                   <Data value="LG One"/>
+                  <Data value="null"/>
+                </Column>
+                <Column editable="true" title="Branch" type="java.lang.Object">
+                  <Data value="Nokia"/>
+                  <Data value="Samsung"/>
+                  <Data value="LG"/>
                   <Data value="null"/>
                 </Column>
                 <Column editable="true" title="Sales Off" type="java.lang.Object">
@@ -234,7 +249,7 @@
         </Component>
       </SubComponents>
     </Container>
-    <Component class="javax.swing.JButton" name="btAdd1">
+    <Component class="javax.swing.JButton" name="btAddPro">
       <Properties>
         <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
           <Font name="Lucida Grande" size="14" style="0"/>
@@ -244,8 +259,11 @@
         </Property>
         <Property name="text" type="java.lang.String" value="Add"/>
       </Properties>
+      <Events>
+        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="btAddProActionPerformed"/>
+      </Events>
     </Component>
-    <Component class="javax.swing.JButton" name="btRemove1">
+    <Component class="javax.swing.JButton" name="btRemovePro">
       <Properties>
         <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
           <Font name="Lucida Grande" size="14" style="0"/>
@@ -255,6 +273,9 @@
         </Property>
         <Property name="text" type="java.lang.String" value="Remove"/>
       </Properties>
+      <Events>
+        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="btRemoveProActionPerformed"/>
+      </Events>
     </Component>
   </SubComponents>
 </Form>

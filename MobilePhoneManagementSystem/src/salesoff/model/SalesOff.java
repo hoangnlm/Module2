@@ -18,6 +18,15 @@ public class SalesOff {
     private Date saleEndDate;
     private float saleAmount;
 
+    public static final String COL_SALEID = "SalesOffID";
+    public static final String COL_SALENAME = "SalesOffName";
+    public static final String COL_SALESTART = "SalesOffStartDate";
+    public static final String COL_SALEEND = "SalesOffEndDate";
+    public static final String COL_SALEAMOUNT = "SalesOffAmount";
+    
+    public static final int MIN_SALE = 0;
+    public static final int MAX_SALE = 50;
+    
     public SalesOff() {
     }
     

@@ -81,7 +81,7 @@ public class CustomerDAOImpl implements IDAO<Customer> {
         boolean result = false;
         try {
             // Check cus phone khong duoc trung
-            CachedRowSet crs2 = getCRS("select * from Customers where CusPhone=? AND CusID!=?", customer.getCusPhone(), customer.getCusID());
+            CachedRowSet crs2 = getCRS("select * from Customers where CusPhone like ? AND CusID!=?", customer.getCusPhone(), customer.getCusID());
             if (crs2.first()) {
                 SwingUtils.showErrorDialog("Customer phone cannot be duplicated !");
             } else {

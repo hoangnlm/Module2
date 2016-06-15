@@ -56,9 +56,18 @@ public class CustomerLevelDAOImpl implements IDAO<CustomerLevel> {
         int tmpLevel = 0;   // Toi thieu bang 1
         if (list.size() > 0) {  // Neu table khong rong
             for (int i = CustomerLevel.MIN_LEVEL; i <= CustomerLevel.MAX_LEVEL; i++) {
+                boolean found = false;
+                // Tim phan tu i trong mang list, neu tim thay thi thoat
                 for (CustomerLevel cl : list) {
                     int level = cl.getCusLevel();
-                    tmpLevel = i != level ? i : 0;
+                    if (i == level) {
+                        found = true;
+                        break;
+                    }
+                }
+                if (!found) { //Co nghia la khong duplicate
+                    tmpLevel = i;
+                    break;
                 }
             }
         } else {
@@ -69,9 +78,18 @@ public class CustomerLevelDAOImpl implements IDAO<CustomerLevel> {
         int tmpDiscount = -1;   // Toi thieu bang 0
         if (list.size() > 0) {
             for (int i = CustomerLevel.MIN_DISCOUNT; i <= CustomerLevel.MAX_DISCOUNT; i++) {
+                boolean found = false;
+                // Tim phan tu i trong mang list, neu tim thay thi thoat
                 for (CustomerLevel cl : list) {
-                    int discount = (int) cl.getCusDiscount() * 100;
-                    tmpDiscount = i != discount ? i : -1;
+                    int discount = (int) (cl.getCusDiscount() * 100);
+                    if (i == discount) {
+                        found = true;
+                        break;
+                    }
+                }
+                if (!found) { //Co nghia la khong duplicate
+                    tmpDiscount = i;
+                    break;
                 }
             }
         } else {
@@ -110,7 +128,7 @@ public class CustomerLevelDAOImpl implements IDAO<CustomerLevel> {
             // Check duplicate level
             CachedRowSet crs1 = getCRS("select * from CustomerLevels where CusLevel=? AND CusLevelID!=?", customerLevel.getCusLevel(), customerLevel.getCusLevelID());
             // Check duplicate level name
-            CachedRowSet crs2 = getCRS("select * from CustomerLevels where CusLevelName=? AND CusLevelID!=?", customerLevel.getCusLevelName(), customerLevel.getCusLevelID());
+            CachedRowSet crs2 = getCRS("select * from CustomerLevels where CusLevelName like ? AND CusLevelID!=?", customerLevel.getCusLevelName(), customerLevel.getCusLevelID());
             // Check duplicate level discount
             CachedRowSet crs3 = getCRS("select * from CustomerLevels where CusDiscount=? AND CusLevelID!=?", customerLevel.getCusDiscount(), customerLevel.getCusLevelID());
 
@@ -143,6 +161,8 @@ public class CustomerLevelDAOImpl implements IDAO<CustomerLevel> {
             CachedRowSet crs1 = getCRS("select * from Customers where CusLevelID=?", customerLevel.getCusLevelID());
             if (crs1.first()) {
                 SwingUtils.showErrorDialog("Customer level is now in use with some customer(s) !");
+            } else {
+                runPS("delete CustomerLevels where CusLevelID=?", customerLevel.getCusLevelID());
 
                 // Refresh lai cachedrowset hien thi table
                 crs.execute();
