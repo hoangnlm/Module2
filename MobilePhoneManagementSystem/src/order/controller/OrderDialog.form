@@ -136,7 +136,6 @@
         </Component>
         <Component class="javax.swing.JComboBox" name="cbCustomer">
           <Properties>
-            <Property name="editable" type="boolean" value="true"/>
             <Property name="model" type="javax.swing.ComboBoxModel" editor="org.netbeans.modules.form.editors2.ComboBoxModelEditor">
               <StringArray count="0"/>
             </Property>
@@ -230,7 +229,7 @@
               <Properties>
                 <Property name="model" type="javax.swing.table.TableModel" editor="org.netbeans.modules.form.editors2.TableModelEditor">
                   <Table columnCount="6" rowCount="4">
-                    <Column editable="true" title="STT" type="java.lang.Object"/>
+                    <Column editable="true" title="No." type="java.lang.Object"/>
                     <Column editable="true" title="Name" type="java.lang.Object"/>
                     <Column editable="true" title="Qty" type="java.lang.Object"/>
                     <Column editable="true" title="Price1" type="java.lang.Object"/>

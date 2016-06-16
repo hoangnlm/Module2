@@ -25,6 +25,11 @@ public class OrderProductTableModel extends CustomizedTableModel<OrderProduct> {
     }
 
     @Override
+    public boolean isCellEditable(int rowIndex, int columnIndex) {
+        return false;
+    }
+
+    @Override
     public Class<?> getColumnClass(int column) {
         Class[] columnClasses = {Integer.class, String.class, Integer.class, Float.class, Float.class, Float.class};
         return columnClasses[column];
