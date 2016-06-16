@@ -7,14 +7,14 @@ package customer.controller;
 
 import customer.model.CustomerLevelDAOImpl;
 import customer.model.CustomerLevel;
-import utility.MyTableModel;
+import utility.CustomizedTableModel;
 
 /**
  * Data model for table CustomerLevel List
  *
  * @author Hoang
  */
-public class CustomerLevelTableModel extends MyTableModel<CustomerLevel> {
+public class CustomerLevelTableModel extends CustomizedTableModel<CustomerLevel> {
     
     public CustomerLevelTableModel() {
         super(new CustomerLevelDAOImpl(), new String[]{"ID", "Level", "Level Name", "Discount (%)"});

@@ -1,7 +1,5 @@
 package salesoff.controller;
 
-import com.toedter.calendar.JDateChooser;
-import java.awt.Color;
 import java.awt.Cursor;
 import java.awt.Dimension;
 import java.awt.Rectangle;
@@ -13,8 +11,6 @@ import javax.swing.DefaultListSelectionModel;
 import javax.swing.JButton;
 import javax.swing.JTable;
 import javax.swing.event.ListSelectionEvent;
-import javax.swing.table.DefaultTableCellRenderer;
-import javax.swing.table.TableCellRenderer;
 import salesoff.model.SalesOff;
 import salesoff.model.SalesOffProduct;
 import utility.DateCellEditor;
@@ -257,7 +253,7 @@ public class SalesOffDialog extends javax.swing.JDialog {
             }
         });
 
-        jScrollPane2.setBorder(javax.swing.BorderFactory.createTitledBorder(javax.swing.BorderFactory.createEtchedBorder(), "Product List Of SalesOff"));
+        jScrollPane2.setBorder(javax.swing.BorderFactory.createTitledBorder(javax.swing.BorderFactory.createEtchedBorder(), "SalesOff Details"));
 
         tbProList.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
@@ -397,6 +393,7 @@ public class SalesOffDialog extends javax.swing.JDialog {
         SwingUtils.showInfoDialog(result ? SwingUtils.UPDATE_SUCCESS : SwingUtils.UPDATE_FAIL);
 //        scrollToRow(tbSaleList, selectedSaleRowIndex);
     }
+//</editor-fold>
     
     private void refreshAction(boolean mustInfo) {
         if (mustInfo) {

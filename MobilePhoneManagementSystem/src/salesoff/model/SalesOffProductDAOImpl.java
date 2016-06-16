@@ -12,7 +12,6 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.sql.rowset.CachedRowSet;
-import utility.SwingUtils;
 
 /**
  *
@@ -21,11 +20,6 @@ import utility.SwingUtils;
 public class SalesOffProductDAOImpl implements IDAO<SalesOffProduct> {
 
     private CachedRowSet crs;  //CRS to update table
-    private int filter;
-
-    public SalesOffProductDAOImpl() {
-
-    }
 
     /**
      * Dung load du lieu theo yeu cau, khong tu dong load

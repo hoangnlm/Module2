@@ -11,7 +11,7 @@ import javax.swing.JTable;
 import javax.swing.JTextField;
 
 /**
- * Implements a cell editor that uses a spinner to edit Integer values.
+ * Implements a cell editor that uses a JDateChooser to edit Date values.
  */
 public class DateCellEditor extends DefaultCellEditor {
 
@@ -20,7 +20,6 @@ public class DateCellEditor extends DefaultCellEditor {
     public DateCellEditor() {
         super(new JTextField());
         dc = new JDateChooser();
-        dc.setBounds(0, 0, 120, 30);
         dc.getDateEditor().setEnabled(false);
     }
 

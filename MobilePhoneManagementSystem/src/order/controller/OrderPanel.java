@@ -5,9 +5,32 @@
  */
 package order.controller;
 
-import salesoff.controller.SalesOffDialog;
 import com.toedter.calendar.JDateChooser;
+import java.awt.Cursor;
+import java.awt.Dimension;
+import java.awt.Rectangle;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Calendar;
 import java.util.Date;
+import java.util.List;
+import javax.swing.DefaultListSelectionModel;
+import javax.swing.JButton;
+import javax.swing.RowFilter;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.table.TableRowSorter;
+import order.model.Order;
+import order.model.Status;
+import salesoff.controller.SalesOffDialog;
+import utility.CurrencyCellRenderer;
+import utility.PercentCellRenderer;
+import utility.SwingUtils;
 
 /**
  *
@@ -15,22 +38,202 @@ import java.util.Date;
  */
 public class OrderPanel extends javax.swing.JPanel {
 
-    private JDateChooser date;
+    private JDateChooser dcFilter;
 
-    /**
-     * Creates new form OrderPanel
-     */
+    // Khai bao 2 cai table model
+    private OrderTableModel orderTableModel;
+    private OrderProductTableModel orderProductTableModel;
+    private OrderStatusComboBoxModel orderStatusComboBoxModel;
+    private OrderStatusComboBoxRenderer orderStatusComboBoxRenderer;
+    private TableRowSorter<OrderTableModel> sorter;
+
+    // Order dang duoc chon trong table order list
+    private Order selectedOrder;
+    private int selectedRowIndex;
+    private Status filterStatus;
+
+    private static final int COL_ORDID = 0;
+    private static final int COL_USERNAME = 1;
+    private static final int COL_CUSNAME = 2;
+    private static final int COL_ORDDATE = 3;
+    private static final int COL_DISCOUNT = 4;
+    private static final int COL_STATUS = 5;
+
+    private static final int COL_PROID = 0;
+    private static final int COL_PRONAME = 1;
+    private static final int COL_PROQTY = 2;
+    private static final int COL_PROPRICE1 = 3;
+    private static final int COL_SALEAMOUNT = 4;
+    private static final int COL_PROPRICE2 = 5;
+
+//<editor-fold defaultstate="collapsed" desc="constructor">
     public OrderPanel() {
         initComponents();
-        
+
         // Set date picker len giao dien
-        date = new JDateChooser();
-        date.setBounds(0, 0, 130, 30);
-        date.setDateFormatString("dd/MM/yyyy");
-        date.getDateEditor().setEnabled(false);
-        date.setDate(new Date());
-        pnDateChooser.add(date);
+        dcFilter = new JDateChooser();
+        dcFilter.setBounds(0, 0, 130, 30);
+        dcFilter.setDateFormatString("dd/MM/yyyy");
+        dcFilter.setDate(null);
+        pnDateChooser.add(dcFilter);
+
+        //Disable button khi moi khoi dong len
+        setButtonEnabled(false);
+
+        // Selecting order in the table
+        selectedOrder = new Order();
+
+        // Set data cho combobox level filter
+        orderStatusComboBoxModel = new OrderStatusComboBoxModel();
+        filterStatus = new Status(0, "All", "Order");
+        orderStatusComboBoxModel.addElement(filterStatus);
+        orderStatusComboBoxRenderer = new OrderStatusComboBoxRenderer();
+        cbStatusFilter.setModel(orderStatusComboBoxModel);
+        cbStatusFilter.setRenderer(orderStatusComboBoxRenderer);
+
+        // Set data cho table
+        orderTableModel = new OrderTableModel();
+        orderProductTableModel = new OrderProductTableModel();
+        tbOrderList.setModel(orderTableModel);
+        tbProductList.setModel(orderProductTableModel);
+
+        // Set sorter cho table
+        sorter = new TableRowSorter<>(orderTableModel);
+        tbOrderList.setRowSorter(sorter);
+
+        // Select mac dinh cho level filter
+        cbStatusFilter.setSelectedIndex(cbStatusFilter.getItemCount() - 1);
+
+        // Set auto define column from model to false to stop create column again
+        tbOrderList.setAutoCreateColumnsFromModel(false);
+        tbProductList.setAutoCreateColumnsFromModel(false);
+
+        // Set height cho table header
+        tbOrderList.getTableHeader().setPreferredSize(new Dimension(300, 30));
+        tbProductList.getTableHeader().setPreferredSize(new Dimension(300, 30));
+
+        // Col order ID
+        tbOrderList.getColumnModel().getColumn(COL_ORDID).setMinWidth(40);
+        tbOrderList.getColumnModel().getColumn(COL_ORDID).setMaxWidth(40);
+
+        // Col user name
+        tbOrderList.getColumnModel().getColumn(COL_USERNAME).setMinWidth(120);
+        tbOrderList.getColumnModel().getColumn(COL_USERNAME).setMaxWidth(120);
+
+        // Col cus name
+        tbOrderList.getColumnModel().getColumn(COL_CUSNAME).setMinWidth(150);
+
+        // Col order date
+        tbOrderList.getColumnModel().getColumn(COL_ORDDATE).setMinWidth(120);
+        tbOrderList.getColumnModel().getColumn(COL_ORDDATE).setMaxWidth(120);
+
+        // Col discount
+        tbOrderList.getColumnModel().getColumn(COL_DISCOUNT).setMinWidth(120);
+        tbOrderList.getColumnModel().getColumn(COL_DISCOUNT).setMaxWidth(120);
+
+        // Col status
+        tbOrderList.getColumnModel().getColumn(COL_STATUS).setMinWidth(120);
+
+        // Col pro ID
+        tbProductList.getColumnModel().getColumn(COL_PROID).setMinWidth(40);
+        tbProductList.getColumnModel().getColumn(COL_PROID).setMaxWidth(40);
+
+        // Col pro name
+        tbProductList.getColumnModel().getColumn(COL_PRONAME).setMinWidth(150);
+
+        // Col quantity
+        tbProductList.getColumnModel().getColumn(COL_PROQTY).setMinWidth(120);
+        tbProductList.getColumnModel().getColumn(COL_PROQTY).setMaxWidth(120);
+
+        // Col price 1
+        tbProductList.getColumnModel().getColumn(COL_PROPRICE1).setMinWidth(125);
+        tbProductList.getColumnModel().getColumn(COL_PROPRICE1).setCellRenderer(new CurrencyCellRenderer());
+
+        // Col salesoff
+        tbProductList.getColumnModel().getColumn(COL_SALEAMOUNT).setMinWidth(125);
+        tbProductList.getColumnModel().getColumn(COL_SALEAMOUNT).setCellRenderer(new PercentCellRenderer());
+
+        // Col price 2
+        tbProductList.getColumnModel().getColumn(COL_PROPRICE2).setMinWidth(125);
+        tbProductList.getColumnModel().getColumn(COL_PROPRICE2).setCellRenderer(new CurrencyCellRenderer());
+        
+        // Bat su kien select row tren table sales off
+        tbOrderList.getSelectionModel().addListSelectionListener((ListSelectionEvent e) -> {
+            DefaultListSelectionModel model = (DefaultListSelectionModel) e.getSource();
+            if (!model.isSelectionEmpty()) {
+                fetchAction();
+                setButtonEnabled(true);
+            } else {
+                setButtonEnabled(false);
+            }
+        });
+
+        //<editor-fold defaultstate="collapsed" desc="Bat su kien cho vung filter">
+        tfIdFilter.getDocument().addDocumentListener(new DocumentListener() {
+            @Override
+            public void changedUpdate(DocumentEvent e) {
+                doFilter();
+            }
+
+            @Override
+            public void insertUpdate(DocumentEvent e) {
+                doFilter();
+            }
+
+            @Override
+            public void removeUpdate(DocumentEvent e) {
+                doFilter();
+            }
+        });
+        tfUserFilter.getDocument().addDocumentListener(new DocumentListener() {
+            @Override
+            public void changedUpdate(DocumentEvent e) {
+                doFilter();
+            }
+
+            @Override
+            public void insertUpdate(DocumentEvent e) {
+                doFilter();
+            }
+
+            @Override
+            public void removeUpdate(DocumentEvent e) {
+                doFilter();
+            }
+        });
+        tfCusFilter.getDocument().addDocumentListener(
+                new DocumentListener() {
+            @Override
+            public void changedUpdate(DocumentEvent e) {
+                doFilter();
+            }
+
+            @Override
+            public void insertUpdate(DocumentEvent e) {
+                doFilter();
+            }
+
+            @Override
+            public void removeUpdate(DocumentEvent e) {
+                doFilter();
+            }
+        });
+        dcFilter.getDateEditor().addPropertyChangeListener(new PropertyChangeListener() {
+            @Override
+            public void propertyChange(PropertyChangeEvent evt) {
+                doFilter();
+            }
+        });
+        cbStatusFilter.addItemListener(new ItemListener() {
+            @Override
+            public void itemStateChanged(ItemEvent e) {
+                doFilter();
+            }
+        });
+//</editor-fold>
+
     }
+//</editor-fold>
 
     /**
      * This method is called from within the constructor to initialize the form.
@@ -43,20 +246,20 @@ public class OrderPanel extends javax.swing.JPanel {
 
         pnFilter = new javax.swing.JPanel();
         jLabel2 = new javax.swing.JLabel();
-        tfId = new javax.swing.JTextField();
+        tfIdFilter = new javax.swing.JTextField();
         jLabel3 = new javax.swing.JLabel();
-        tfCusName = new javax.swing.JTextField();
+        tfUserFilter = new javax.swing.JTextField();
         jLabel4 = new javax.swing.JLabel();
-        tfUserName = new javax.swing.JTextField();
+        tfCusFilter = new javax.swing.JTextField();
         lbOrderDate = new javax.swing.JLabel();
         jLabel6 = new javax.swing.JLabel();
-        cbStatus = new javax.swing.JComboBox<>();
+        cbStatusFilter = new javax.swing.JComboBox<>();
         pnDateChooser = new javax.swing.JPanel();
         jScrollPane1 = new javax.swing.JScrollPane();
         tbOrderList = new javax.swing.JTable();
         jScrollPane2 = new javax.swing.JScrollPane();
-        tbOrderDetails = new javax.swing.JTable();
-        btDelete = new javax.swing.JButton();
+        tbProductList = new javax.swing.JTable();
+        btRemove = new javax.swing.JButton();
         btUpdate = new javax.swing.JButton();
         btAdd = new javax.swing.JButton();
         btRefresh = new javax.swing.JButton();
@@ -70,38 +273,13 @@ public class OrderPanel extends javax.swing.JPanel {
 
         jLabel2.setText("ID:");
 
-        tfId.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                tfIdActionPerformed(evt);
-            }
-        });
-
         jLabel3.setText("Sell. User:");
 
-        tfCusName.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                tfCusNameActionPerformed(evt);
-            }
-        });
-
         jLabel4.setText("Cus. Name:");
-
-        tfUserName.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                tfUserNameActionPerformed(evt);
-            }
-        });
 
         lbOrderDate.setText("Order Date:");
 
         jLabel6.setText("Status:");
-
-        cbStatus.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
-        cbStatus.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                cbStatusActionPerformed(evt);
-            }
-        });
 
         pnDateChooser.setPreferredSize(new java.awt.Dimension(110, 30));
 
@@ -124,23 +302,23 @@ public class OrderPanel extends javax.swing.JPanel {
                 .addContainerGap()
                 .addComponent(jLabel2)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(tfId, javax.swing.GroupLayout.PREFERRED_SIZE, 39, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 48, Short.MAX_VALUE)
+                .addComponent(tfIdFilter, javax.swing.GroupLayout.PREFERRED_SIZE, 39, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addComponent(jLabel3)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(tfCusName, javax.swing.GroupLayout.PREFERRED_SIZE, 62, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(tfUserFilter, javax.swing.GroupLayout.PREFERRED_SIZE, 62, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addComponent(jLabel4)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(tfUserName, javax.swing.GroupLayout.PREFERRED_SIZE, 70, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(tfCusFilter, javax.swing.GroupLayout.PREFERRED_SIZE, 70, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addComponent(lbOrderDate)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(pnDateChooser, javax.swing.GroupLayout.PREFERRED_SIZE, 130, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 8, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addComponent(jLabel6)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(cbStatus, javax.swing.GroupLayout.PREFERRED_SIZE, 106, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addComponent(cbStatusFilter, javax.swing.GroupLayout.PREFERRED_SIZE, 150, javax.swing.GroupLayout.PREFERRED_SIZE))
         );
         pnFilterLayout.setVerticalGroup(
             pnFilterLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -150,14 +328,14 @@ public class OrderPanel extends javax.swing.JPanel {
                     .addComponent(pnDateChooser, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addGroup(pnFilterLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                         .addComponent(jLabel2)
-                        .addComponent(tfId, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(tfIdFilter, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addComponent(jLabel3)
-                        .addComponent(tfCusName, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(tfUserFilter, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addComponent(jLabel4)
-                        .addComponent(tfUserName, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(tfCusFilter, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addComponent(lbOrderDate)
                         .addComponent(jLabel6)
-                        .addComponent(cbStatus, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .addComponent(cbStatusFilter, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addContainerGap())
         );
 
@@ -168,7 +346,7 @@ public class OrderPanel extends javax.swing.JPanel {
 
             },
             new String [] {
-                "ID", "Cus. Name", "User Name", "Order Date", "Discount", "Status"
+                "ID", "User Name", "Cus. Name", "Order Date", "Discount", "Status"
             }
         ));
         tbOrderList.setFillsViewportHeight(true);
@@ -178,22 +356,27 @@ public class OrderPanel extends javax.swing.JPanel {
 
         jScrollPane2.setBorder(javax.swing.BorderFactory.createTitledBorder(javax.swing.BorderFactory.createEtchedBorder(), "Order Details"));
 
-        tbOrderDetails.setModel(new javax.swing.table.DefaultTableModel(
+        tbProductList.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
 
             },
             new String [] {
-                "ID", "Product Name", "Quantity", "Price"
+                "ID", "Product Name", "Quantity", "Price1", "SalesOff", "Price2"
             }
         ));
-        tbOrderDetails.setFillsViewportHeight(true);
-        tbOrderDetails.setRowHeight(25);
-        tbOrderDetails.getTableHeader().setReorderingAllowed(false);
-        jScrollPane2.setViewportView(tbOrderDetails);
+        tbProductList.setFillsViewportHeight(true);
+        tbProductList.setRowHeight(25);
+        tbProductList.getTableHeader().setReorderingAllowed(false);
+        jScrollPane2.setViewportView(tbProductList);
 
-        btDelete.setFont(new java.awt.Font("Lucida Grande", 0, 14)); // NOI18N
-        btDelete.setIcon(new javax.swing.ImageIcon(getClass().getResource("/image/order/Delete.png"))); // NOI18N
-        btDelete.setText("Remove");
+        btRemove.setFont(new java.awt.Font("Lucida Grande", 0, 14)); // NOI18N
+        btRemove.setIcon(new javax.swing.ImageIcon(getClass().getResource("/image/order/Delete.png"))); // NOI18N
+        btRemove.setText("Remove");
+        btRemove.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btRemoveActionPerformed(evt);
+            }
+        });
 
         btUpdate.setFont(new java.awt.Font("Lucida Grande", 0, 14)); // NOI18N
         btUpdate.setIcon(new javax.swing.ImageIcon(getClass().getResource("/image/order/Save.png"))); // NOI18N
@@ -216,6 +399,11 @@ public class OrderPanel extends javax.swing.JPanel {
         btRefresh.setFont(new java.awt.Font("Lucida Grande", 0, 14)); // NOI18N
         btRefresh.setIcon(new javax.swing.ImageIcon(getClass().getResource("/image/order/Refresh.png"))); // NOI18N
         btRefresh.setText("Refresh");
+        btRefresh.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btRefreshActionPerformed(evt);
+            }
+        });
 
         pnTitle.setBorder(javax.swing.BorderFactory.createEtchedBorder());
 
@@ -265,7 +453,7 @@ public class OrderPanel extends javax.swing.JPanel {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(btUpdate, javax.swing.GroupLayout.PREFERRED_SIZE, 150, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(btDelete, javax.swing.GroupLayout.PREFERRED_SIZE, 150, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(btRemove, javax.swing.GroupLayout.PREFERRED_SIZE, 150, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(btRefresh, javax.swing.GroupLayout.PREFERRED_SIZE, 150, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
@@ -283,50 +471,41 @@ public class OrderPanel extends javax.swing.JPanel {
                 .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 147, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(btDelete, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(btRemove, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(btUpdate, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(btAdd, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(btRefresh, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addContainerGap())
         );
     }// </editor-fold>//GEN-END:initComponents
-
-    private void tfIdActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_tfIdActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_tfIdActionPerformed
-
-    private void tfCusNameActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_tfCusNameActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_tfCusNameActionPerformed
-
-    private void tfUserNameActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_tfUserNameActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_tfUserNameActionPerformed
-
+//<editor-fold defaultstate="collapsed" desc="Bat su kien">
     private void btAddActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btAddActionPerformed
-        new AddOrderDialog().setVisible(true);
+        new OrderDialog(null).setVisible(true);
     }//GEN-LAST:event_btAddActionPerformed
-
-    private void cbStatusActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cbStatusActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_cbStatusActionPerformed
 
     private void btSalesOffActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btSalesOffActionPerformed
         new SalesOffDialog().setVisible(true);
     }//GEN-LAST:event_btSalesOffActionPerformed
 
     private void btUpdateActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btUpdateActionPerformed
-        new UpdateOrderDialog().setVisible(true);
+        new OrderDialog(selectedOrder).setVisible(true);
     }//GEN-LAST:event_btUpdateActionPerformed
 
+    private void btRemoveActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btRemoveActionPerformed
+        deleteAction();
+    }//GEN-LAST:event_btRemoveActionPerformed
+
+    private void btRefreshActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btRefreshActionPerformed
+        refreshAction(true);
+    }//GEN-LAST:event_btRefreshActionPerformed
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btAdd;
-    private javax.swing.JButton btDelete;
     private javax.swing.JButton btRefresh;
+    private javax.swing.JButton btRemove;
     private javax.swing.JButton btSalesOff;
     private javax.swing.JButton btUpdate;
-    private javax.swing.JComboBox<String> cbStatus;
+    private javax.swing.JComboBox<Status> cbStatusFilter;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
@@ -338,10 +517,116 @@ public class OrderPanel extends javax.swing.JPanel {
     private javax.swing.JPanel pnDateChooser;
     private javax.swing.JPanel pnFilter;
     private javax.swing.JPanel pnTitle;
-    private javax.swing.JTable tbOrderDetails;
     private javax.swing.JTable tbOrderList;
-    private javax.swing.JTextField tfCusName;
-    private javax.swing.JTextField tfId;
-    private javax.swing.JTextField tfUserName;
+    private javax.swing.JTable tbProductList;
+    private javax.swing.JTextField tfCusFilter;
+    private javax.swing.JTextField tfIdFilter;
+    private javax.swing.JTextField tfUserFilter;
     // End of variables declaration//GEN-END:variables
+//</editor-fold>
+
+//<editor-fold defaultstate="collapsed" desc="doFilter">
+    private void doFilter() {
+        RowFilter<OrderTableModel, Object> rf = null;
+        //Filter theo regex, neu parse bi loi thi khong filter
+        try {
+            List<RowFilter<OrderTableModel, Object>> filters = new ArrayList<>();
+            filters.add(RowFilter.regexFilter("^" + tfIdFilter.getText(), 0));
+            filters.add(RowFilter.regexFilter("^" + tfUserFilter.getText(), 1));
+            filters.add(RowFilter.regexFilter("^" + tfCusFilter.getText(), 1));
+
+            // Chi filter date khi date khac null
+            if (dcFilter.getDate() != null) {
+                // dcFilter khac voi date cua table o GIO, PHUT, GIAY nen phai dung Calendar de so sanh chi nam, thang, ngay.... oh vai~.
+                // Magic here....
+                RowFilter<OrderTableModel, Object> dateFilter = new RowFilter<OrderTableModel, Object>() {
+                    @Override
+                    public boolean include(RowFilter.Entry<? extends OrderTableModel, ? extends Object> entry) {
+                        OrderTableModel model = entry.getModel();
+                        Order o = model.getOrderAtIndex((Integer) entry.getIdentifier());
+
+                        Calendar origin = Calendar.getInstance();
+                        origin.setTime(o.getOrdDate());
+
+                        Calendar filter = Calendar.getInstance();
+                        filter.setTime(dcFilter.getDate());
+
+                        if (origin.get(Calendar.YEAR) == filter.get(Calendar.YEAR) && origin.get(Calendar.MONTH) == filter.get(Calendar.MONTH) && origin.get(Calendar.DATE) == filter.get(Calendar.DATE)) {
+                            return true;
+                        }
+
+                        return false;
+                    }
+                };
+
+                filters.add(dateFilter);
+            }
+
+            // Chi filter status khi status khac "All"
+            String stt = ((Status) cbStatusFilter.getSelectedItem()).getSttName();
+            if (!stt.equals("All")) {
+                filters.add(RowFilter.regexFilter("^" + stt, 5));
+            }
+
+            rf = RowFilter.andFilter(filters);
+        } catch (java.util.regex.PatternSyntaxException e) {
+            return;
+        }
+        sorter.setRowFilter(rf);
+    }
+//</editor-fold>
+
+    //<editor-fold defaultstate="collapsed" desc="xu ly cho table order">
+    private void fetchAction() {
+        selectedRowIndex = tbOrderList.getSelectedRow();
+        selectedOrder.setOrdID((int) tbOrderList.getValueAt(selectedRowIndex, 0));
+        selectedOrder.setUserName(((String) tbOrderList.getValueAt(selectedRowIndex, 1)));
+        selectedOrder.setCusName((String) tbOrderList.getValueAt(selectedRowIndex, 2));
+        selectedOrder.setOrdDate((Date) tbOrderList.getValueAt(selectedRowIndex, 3));
+        selectedOrder.setCusDiscount((float) tbOrderList.getValueAt(selectedRowIndex, 4));
+        selectedOrder.setOrdStatus((String) tbOrderList.getValueAt(selectedRowIndex, 5));
+
+        // Reload table product list voi Order moi chon
+        orderProductTableModel.load(selectedOrder.getOrdID());
+    }
+
+    private void deleteAction() {
+        setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
+        boolean result = orderTableModel.delete(selectedOrder);
+        setCursor(null);
+        SwingUtils.showInfoDialog(result ? SwingUtils.DELETE_SUCCESS : SwingUtils.DELETE_FAIL);
+
+        // Neu row xoa la row cuoi thi lui cursor ve
+        // Neu row xoa la row khac cuoi thi tien cursor ve truoc
+        selectedRowIndex = (selectedRowIndex == tbOrderList.getRowCount() ? tbOrderList.getRowCount() - 1 : selectedRowIndex++);
+        scrollToRow(selectedRowIndex);
+    }
+//</editor-fold>
+
+    private void refreshAction(boolean mustInfo) {
+        if (mustInfo) {
+            setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
+            orderTableModel.refresh();
+            setCursor(null);
+            SwingUtils.showInfoDialog(SwingUtils.DB_REFRESH);
+        } else {
+            orderTableModel.refresh();
+        }
+        scrollToRow(selectedRowIndex);
+    }
+
+    private void scrollToRow(int row) {
+        tbOrderList.getSelectionModel().setSelectionInterval(row, row);
+        tbOrderList.scrollRectToVisible(new Rectangle(tbOrderList.getCellRect(row, 0, true)));
+    }
+
+    private void setButtonEnabled(boolean enabled, JButton... exclude) {
+        btUpdate.setEnabled(enabled);
+        btRemove.setEnabled(enabled);
+
+        // Ngoai tru may button nay luon luon enable
+        if (exclude.length != 0) {
+            Arrays.stream(exclude).forEach(b -> b.setEnabled(true));
+        }
+    }
 }

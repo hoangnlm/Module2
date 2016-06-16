@@ -3,14 +3,14 @@ package customer.controller;
 import customer.model.CustomerDAOImpl;
 import customer.model.Customer;
 import customer.model.CustomerLevel;
-import utility.MyTableModel;
+import utility.CustomizedTableModel;
 
 /**
  * Data model for table Customer List
  *
  * @author Hoang
  */
-public class CustomerTableModel extends MyTableModel<Customer> {
+public class CustomerTableModel extends CustomizedTableModel<Customer> {
 
     public CustomerTableModel() {
         super(new CustomerDAOImpl(), new String[]{"ID", "Cus. Name", "Cus. Level", "Cus. Phone", "Cus. Address", "Status"});

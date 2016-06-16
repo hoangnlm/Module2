@@ -82,16 +82,19 @@ public class CustomerPanel extends javax.swing.JPanel {
         // Set data cho table
         customerTableModel = new CustomerTableModel();
         tbCustomerList.setModel(customerTableModel);
-
-        // Set auto define column from model to false to stop create column again
-        tbCustomerList.setAutoCreateColumnsFromModel(false);
-
+        
         // Set sorter cho table
         sorter = new TableRowSorter<>(customerTableModel);
         tbCustomerList.setRowSorter(sorter);
 
         // Select mac dinh cho level filter
         cbLevelFilter.setSelectedIndex(cbLevelFilter.getItemCount() - 1);
+
+        // Set auto define column from model to false to stop create column again
+        tbCustomerList.setAutoCreateColumnsFromModel(false);
+
+        // Set height cho table header
+        tbCustomerList.getTableHeader().setPreferredSize(new Dimension(100, 30));
 
         // Col cus name
         tbCustomerList.getColumnModel().getColumn(COL_CUSNAME).setCellEditor(new StringCellEditor(1, 50, SwingUtils.PATTERN_CUSNAME));
@@ -115,9 +118,6 @@ public class CustomerPanel extends javax.swing.JPanel {
                 setButtonEnabled(false);
             }
         });
-
-        // Set height cho table header
-        tbCustomerList.getTableHeader().setPreferredSize(new Dimension(100, 30));
 //</editor-fold>
 
 //<editor-fold defaultstate="collapsed" desc="Set cell listener cho updating">

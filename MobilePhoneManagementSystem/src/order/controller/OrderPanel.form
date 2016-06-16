@@ -31,7 +31,7 @@
               <EmptySpace max="-2" attributes="0"/>
               <Component id="btUpdate" min="-2" pref="150" max="-2" attributes="0"/>
               <EmptySpace max="-2" attributes="0"/>
-              <Component id="btDelete" min="-2" pref="150" max="-2" attributes="0"/>
+              <Component id="btRemove" min="-2" pref="150" max="-2" attributes="0"/>
               <EmptySpace max="-2" attributes="0"/>
               <Component id="btRefresh" min="-2" pref="150" max="-2" attributes="0"/>
               <EmptySpace max="32767" attributes="0"/>
@@ -51,7 +51,7 @@
               <Component id="jScrollPane2" pref="147" max="32767" attributes="0"/>
               <EmptySpace type="unrelated" max="-2" attributes="0"/>
               <Group type="103" groupAlignment="3" attributes="0">
-                  <Component id="btDelete" alignment="3" min="-2" pref="40" max="-2" attributes="0"/>
+                  <Component id="btRemove" alignment="3" min="-2" pref="40" max="-2" attributes="0"/>
                   <Component id="btUpdate" alignment="3" min="-2" pref="40" max="-2" attributes="0"/>
                   <Component id="btAdd" alignment="3" min="-2" pref="40" max="-2" attributes="0"/>
                   <Component id="btRefresh" alignment="3" min="-2" pref="40" max="-2" attributes="0"/>
@@ -82,23 +82,23 @@
                   <EmptySpace max="-2" attributes="0"/>
                   <Component id="jLabel2" min="-2" max="-2" attributes="0"/>
                   <EmptySpace max="-2" attributes="0"/>
-                  <Component id="tfId" min="-2" pref="39" max="-2" attributes="0"/>
-                  <EmptySpace pref="48" max="32767" attributes="0"/>
+                  <Component id="tfIdFilter" min="-2" pref="39" max="-2" attributes="0"/>
+                  <EmptySpace max="32767" attributes="0"/>
                   <Component id="jLabel3" min="-2" max="-2" attributes="0"/>
                   <EmptySpace max="-2" attributes="0"/>
-                  <Component id="tfCusName" min="-2" pref="62" max="-2" attributes="0"/>
-                  <EmptySpace max="-2" attributes="0"/>
+                  <Component id="tfUserFilter" min="-2" pref="62" max="-2" attributes="0"/>
+                  <EmptySpace max="32767" attributes="0"/>
                   <Component id="jLabel4" min="-2" max="-2" attributes="0"/>
                   <EmptySpace max="-2" attributes="0"/>
-                  <Component id="tfUserName" min="-2" pref="70" max="-2" attributes="0"/>
-                  <EmptySpace max="-2" attributes="0"/>
+                  <Component id="tfCusFilter" min="-2" pref="70" max="-2" attributes="0"/>
+                  <EmptySpace max="32767" attributes="0"/>
                   <Component id="lbOrderDate" min="-2" max="-2" attributes="0"/>
                   <EmptySpace max="-2" attributes="0"/>
                   <Component id="pnDateChooser" min="-2" pref="130" max="-2" attributes="0"/>
-                  <EmptySpace pref="8" max="32767" attributes="0"/>
+                  <EmptySpace max="32767" attributes="0"/>
                   <Component id="jLabel6" min="-2" max="-2" attributes="0"/>
                   <EmptySpace max="-2" attributes="0"/>
-                  <Component id="cbStatus" min="-2" pref="106" max="-2" attributes="0"/>
+                  <Component id="cbStatusFilter" min="-2" pref="150" max="-2" attributes="0"/>
               </Group>
           </Group>
         </DimensionLayout>
@@ -110,14 +110,14 @@
                       <Component id="pnDateChooser" alignment="0" min="-2" max="-2" attributes="0"/>
                       <Group type="103" alignment="0" groupAlignment="3" attributes="0">
                           <Component id="jLabel2" alignment="3" min="-2" max="-2" attributes="0"/>
-                          <Component id="tfId" alignment="3" min="-2" pref="30" max="-2" attributes="0"/>
+                          <Component id="tfIdFilter" alignment="3" min="-2" pref="30" max="-2" attributes="0"/>
                           <Component id="jLabel3" alignment="3" min="-2" max="-2" attributes="0"/>
-                          <Component id="tfCusName" alignment="3" min="-2" pref="30" max="-2" attributes="0"/>
+                          <Component id="tfUserFilter" alignment="3" min="-2" pref="30" max="-2" attributes="0"/>
                           <Component id="jLabel4" alignment="3" min="-2" max="-2" attributes="0"/>
-                          <Component id="tfUserName" alignment="3" min="-2" pref="30" max="-2" attributes="0"/>
+                          <Component id="tfCusFilter" alignment="3" min="-2" pref="30" max="-2" attributes="0"/>
                           <Component id="lbOrderDate" alignment="3" min="-2" max="-2" attributes="0"/>
                           <Component id="jLabel6" alignment="3" min="-2" max="-2" attributes="0"/>
-                          <Component id="cbStatus" alignment="3" min="-2" pref="30" max="-2" attributes="0"/>
+                          <Component id="cbStatusFilter" alignment="3" min="-2" pref="30" max="-2" attributes="0"/>
                       </Group>
                   </Group>
                   <EmptySpace max="-2" attributes="0"/>
@@ -131,30 +131,21 @@
             <Property name="text" type="java.lang.String" value="ID:"/>
           </Properties>
         </Component>
-        <Component class="javax.swing.JTextField" name="tfId">
-          <Events>
-            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="tfIdActionPerformed"/>
-          </Events>
+        <Component class="javax.swing.JTextField" name="tfIdFilter">
         </Component>
         <Component class="javax.swing.JLabel" name="jLabel3">
           <Properties>
             <Property name="text" type="java.lang.String" value="Sell. User:"/>
           </Properties>
         </Component>
-        <Component class="javax.swing.JTextField" name="tfCusName">
-          <Events>
-            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="tfCusNameActionPerformed"/>
-          </Events>
+        <Component class="javax.swing.JTextField" name="tfUserFilter">
         </Component>
         <Component class="javax.swing.JLabel" name="jLabel4">
           <Properties>
             <Property name="text" type="java.lang.String" value="Cus. Name:"/>
           </Properties>
         </Component>
-        <Component class="javax.swing.JTextField" name="tfUserName">
-          <Events>
-            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="tfUserNameActionPerformed"/>
-          </Events>
+        <Component class="javax.swing.JTextField" name="tfCusFilter">
         </Component>
         <Component class="javax.swing.JLabel" name="lbOrderDate">
           <Properties>
@@ -166,22 +157,14 @@
             <Property name="text" type="java.lang.String" value="Status:"/>
           </Properties>
         </Component>
-        <Component class="javax.swing.JComboBox" name="cbStatus">
+        <Component class="javax.swing.JComboBox" name="cbStatusFilter">
           <Properties>
             <Property name="model" type="javax.swing.ComboBoxModel" editor="org.netbeans.modules.form.editors2.ComboBoxModelEditor">
-              <StringArray count="4">
-                <StringItem index="0" value="Item 1"/>
-                <StringItem index="1" value="Item 2"/>
-                <StringItem index="2" value="Item 3"/>
-                <StringItem index="3" value="Item 4"/>
-              </StringArray>
+              <StringArray count="0"/>
             </Property>
           </Properties>
-          <Events>
-            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="cbStatusActionPerformed"/>
-          </Events>
           <AuxValues>
-            <AuxValue name="JavaCodeGenerator_TypeParameters" type="java.lang.String" value="&lt;String&gt;"/>
+            <AuxValue name="JavaCodeGenerator_TypeParameters" type="java.lang.String" value="&lt;Status&gt;"/>
           </AuxValues>
         </Component>
         <Container class="javax.swing.JPanel" name="pnDateChooser">
@@ -229,8 +212,8 @@
             <Property name="model" type="javax.swing.table.TableModel" editor="org.netbeans.modules.form.editors2.TableModelEditor">
               <Table columnCount="6" rowCount="0">
                 <Column editable="true" title="ID" type="java.lang.Object"/>
-                <Column editable="true" title="Cus. Name" type="java.lang.Object"/>
                 <Column editable="true" title="User Name" type="java.lang.Object"/>
+                <Column editable="true" title="Cus. Name" type="java.lang.Object"/>
                 <Column editable="true" title="Order Date" type="java.lang.Object"/>
                 <Column editable="true" title="Discount" type="java.lang.Object"/>
                 <Column editable="true" title="Status" type="java.lang.Object"/>
@@ -263,14 +246,16 @@
 
       <Layout class="org.netbeans.modules.form.compat2.layouts.support.JScrollPaneSupportLayout"/>
       <SubComponents>
-        <Component class="javax.swing.JTable" name="tbOrderDetails">
+        <Component class="javax.swing.JTable" name="tbProductList">
           <Properties>
             <Property name="model" type="javax.swing.table.TableModel" editor="org.netbeans.modules.form.editors2.TableModelEditor">
-              <Table columnCount="4" rowCount="0">
+              <Table columnCount="6" rowCount="0">
                 <Column editable="true" title="ID" type="java.lang.Object"/>
                 <Column editable="true" title="Product Name" type="java.lang.Object"/>
                 <Column editable="true" title="Quantity" type="java.lang.Object"/>
-                <Column editable="true" title="Price" type="java.lang.Object"/>
+                <Column editable="true" title="Price1" type="java.lang.Object"/>
+                <Column editable="true" title="SalesOff" type="java.lang.Object"/>
+                <Column editable="true" title="Price2" type="java.lang.Object"/>
               </Table>
             </Property>
             <Property name="fillsViewportHeight" type="boolean" value="true"/>
@@ -282,7 +267,7 @@
         </Component>
       </SubComponents>
     </Container>
-    <Component class="javax.swing.JButton" name="btDelete">
+    <Component class="javax.swing.JButton" name="btRemove">
       <Properties>
         <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
           <Font name="Lucida Grande" size="14" style="0"/>
@@ -292,6 +277,9 @@
         </Property>
         <Property name="text" type="java.lang.String" value="Remove"/>
       </Properties>
+      <Events>
+        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="btRemoveActionPerformed"/>
+      </Events>
     </Component>
     <Component class="javax.swing.JButton" name="btUpdate">
       <Properties>
@@ -331,6 +319,9 @@
         </Property>
         <Property name="text" type="java.lang.String" value="Refresh"/>
       </Properties>
+      <Events>
+        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="btRefreshActionPerformed"/>
+      </Events>
     </Component>
     <Container class="javax.swing.JPanel" name="pnTitle">
       <Properties>
@@ -396,6 +387,9 @@
           <Events>
             <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="btSalesOffActionPerformed"/>
           </Events>
+          <AuxValues>
+            <AuxValue name="JavaCodeGenerator_TypeParameters" type="java.lang.String" value=""/>
+          </AuxValues>
         </Component>
       </SubComponents>
     </Container>

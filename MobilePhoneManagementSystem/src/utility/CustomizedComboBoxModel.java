@@ -17,7 +17,7 @@ import javax.swing.MutableComboBoxModel;
  * @author Hoang
  * @param <M>
  */
-public class MyComboBoxModel<M> extends AbstractListModel<M> implements MutableComboBoxModel<M> {
+public class CustomizedComboBoxModel<M> extends AbstractListModel<M> implements MutableComboBoxModel<M> {
 
     protected List<M> list;
     protected M selectedItem;
@@ -28,7 +28,7 @@ public class MyComboBoxModel<M> extends AbstractListModel<M> implements MutableC
      *
      * @param daoImpl
      */
-    public MyComboBoxModel(IDAO<M> daoImpl) {
+    public CustomizedComboBoxModel(IDAO<M> daoImpl) {
         this.daoImpl = daoImpl;
         list = daoImpl.getList();
     }
@@ -37,7 +37,7 @@ public class MyComboBoxModel<M> extends AbstractListModel<M> implements MutableC
         try {
             daoImpl = daoImpl.getClass().newInstance();
         } catch (Exception ex) {
-            Logger.getLogger(MyComboBoxModel.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(CustomizedComboBoxModel.class.getName()).log(Level.SEVERE, null, ex);
         }
         list = daoImpl.getList();
         fireContentsChanged(this, 0, list.size()-1);

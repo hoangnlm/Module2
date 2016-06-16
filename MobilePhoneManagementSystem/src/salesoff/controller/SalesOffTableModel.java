@@ -8,13 +8,13 @@ package salesoff.controller;
 import java.util.Date;
 import salesoff.model.SalesOff;
 import salesoff.model.SalesOffDAOImpl;
-import utility.MyTableModel;
+import utility.CustomizedTableModel;
 
 /**
  *
  * @author Hoang
  */
-public class SalesOffTableModel extends MyTableModel<SalesOff> {
+public class SalesOffTableModel extends CustomizedTableModel<SalesOff> {
 
     public SalesOffTableModel() {
         super(new SalesOffDAOImpl(), new String[]{"ID", "Name", "Start Date", "End Date", "Amount (%)"});

@@ -2,13 +2,13 @@ package salesoff.controller;
 
 import salesoff.model.SalesOffProduct;
 import salesoff.model.SalesOffProductDAOImpl;
-import utility.MyTableModel;
+import utility.CustomizedTableModel;
 
 /**
  *
  * @author Hoang
  */
-public class SalesOffProductTableModel extends MyTableModel<SalesOffProduct> {
+public class SalesOffProductTableModel extends CustomizedTableModel<SalesOffProduct> {
 
     public SalesOffProductTableModel() {
         super(new SalesOffProductDAOImpl(), new String[]{"ID", "Product Name", "Branch", "SalesOff"});

@@ -415,11 +415,11 @@ public final class MainFrame extends javax.swing.JFrame {
             props.put("logoString", "");
             props.put("macStyleWindowDecoration", "on");
             props.put("macStyleScrollBar", "on");
-//            props.put("TableHeader.foreground", Color.RED);
 
             HiFiLookAndFeel laf = new HiFiLookAndFeel();
             laf.setTheme(props);
             UIManager.setLookAndFeel(laf);
+            
             UIManager.getLookAndFeelDefaults().put("TableHeader.foreground", Color.ORANGE);
             UIManager.getLookAndFeelDefaults().put("TableHeader.font", new Font("Calibri", Font.BOLD, 15));
         } catch (javax.swing.UnsupportedLookAndFeelException ex) {

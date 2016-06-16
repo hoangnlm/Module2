@@ -1,117 +1,119 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package order.model;
 
-import java.util.ArrayList;
 import java.util.Date;
-import java.util.List;
 
 /**
- * Define order class for model
- * 
+ * Define order class model
+ *
  * @author Hoang
  */
 public class Order {
+
     private int ordID;
-    private Date ordDate;
-    private String ordStatusID;
-    private String ordStatus;
-    
-    private int cusID;
-    private String cusName;
-    private float cusDiscount;
-    
-    private int userID;
     private String userName;
+    private String cusName;
+    private Date ordDate;
+    private float cusDiscount;
+    private String ordStatus;
+    private int userID;
+    private int cusID;
+    private int ordStatusID;
     
-    private List<OrderDetails> orderDetailsList;
+    public static final String COL_ORDID = "OrdID";
+    public static final String COL_USERNAME = "UserName";
+    public static final String COL_CUSNAME = "CusName";
+    public static final String COL_ORDDATE = "OrdDate";
+    public static final String COL_CUSDISCOUNT = "OrdCusDiscount";
+    public static final String COL_ORDSTATUS = "SttName";
+    public static final String COL_USERID = "UserID";
+    public static final String COL_CUSID = "CusID";
+    public static final String COL_ORDSTATUSID = "SttID";
 
     public Order() {
-        orderDetailsList = new ArrayList<>();
+        
     }
-    
-    // Getters
+
+    public Order(int ordID, String userName, String cusName, Date ordDate, float cusDiscount, String ordStatus, int userID, int cusID, int ordStatusID) {
+        this.ordID = ordID;
+        this.userName = userName;
+        this.cusName = cusName;
+        this.ordDate = ordDate;
+        this.cusDiscount = cusDiscount;
+        this.ordStatus = ordStatus;
+        this.userID = userID;
+        this.cusID = cusID;
+        this.ordStatusID = ordStatusID;
+    }
+
     public int getOrdID() {
         return ordID;
     }
 
-    public Date getOrdDate() {
-        return ordDate;
-    }
-
-    public String getOrdStatusID() {
-        return ordStatusID;
-    }
-
-    public String getOrdStatus() {
-        return ordStatus;
-    }
-
-    public int getCusID() {
-        return cusID;
-    }
-
-    public String getCusName() {
-        return cusName;
-    }
-
-    public float getCusDiscount() {
-        return cusDiscount;
-    }
-
-    public int getUserID() {
-        return userID;
+    public void setOrdID(int ordID) {
+        this.ordID = ordID;
     }
 
     public String getUserName() {
         return userName;
     }
 
-    public List<OrderDetails> getOrderDetailsList() {
-        return orderDetailsList;
-    }
-    
-    // Setters
-    public void setOrdID(int ordID) {
-        this.ordID = ordID;
+    public void setUserName(String userName) {
+        this.userName = userName;
     }
 
-    public void setOrdDate(Date ordDate) {
-        this.ordDate = ordDate;
-    }
-
-    public void setOrdStatusID(String ordStatusID) {
-        this.ordStatusID = ordStatusID;
-    }
-
-    public void setOrdStatus(String ordStatus) {
-        this.ordStatus = ordStatus;
-    }
-
-    public void setCusID(int cusID) {
-        this.cusID = cusID;
+    public String getCusName() {
+        return cusName;
     }
 
     public void setCusName(String cusName) {
         this.cusName = cusName;
     }
 
+    public Date getOrdDate() {
+        return ordDate;
+    }
+
+    public void setOrdDate(Date ordDate) {
+        this.ordDate = ordDate;
+    }
+
+    public float getCusDiscount() {
+        return cusDiscount;
+    }
+
     public void setCusDiscount(float cusDiscount) {
         this.cusDiscount = cusDiscount;
+    }
+
+    public String getOrdStatus() {
+        return ordStatus;
+    }
+
+    public void setOrdStatus(String ordStatus) {
+        this.ordStatus = ordStatus;
+    }
+
+    public int getUserID() {
+        return userID;
     }
 
     public void setUserID(int userID) {
         this.userID = userID;
     }
 
-    public void setUserName(String userName) {
-        this.userName = userName;
+    public int getCusID() {
+        return cusID;
     }
 
-    public void setOrderDetailsList(List<OrderDetails> orderDetailsList) {
-        this.orderDetailsList = orderDetailsList;
+    public void setCusID(int cusID) {
+        this.cusID = cusID;
+    }
+
+    public int getOrdStatusID() {
+        return ordStatusID;
+    }
+
+    public void setOrdStatusID(int ordStatusID) {
+        this.ordStatusID = ordStatusID;
     }
 }

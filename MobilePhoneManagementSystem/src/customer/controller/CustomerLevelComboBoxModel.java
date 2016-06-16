@@ -2,13 +2,13 @@ package customer.controller;
 
 import customer.model.CustomerLevel;
 import customer.model.CustomerLevelDAOImpl;
-import utility.MyComboBoxModel;
+import utility.CustomizedComboBoxModel;
 
 /**
  *
  * @author Hoang
  */
-public class CustomerLevelComboBoxModel extends MyComboBoxModel<CustomerLevel> {
+public class CustomerLevelComboBoxModel extends CustomizedComboBoxModel<CustomerLevel> {
 
     public CustomerLevelComboBoxModel() {
         super(new CustomerLevelDAOImpl());
