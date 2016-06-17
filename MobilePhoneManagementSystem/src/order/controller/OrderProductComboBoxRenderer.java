@@ -16,7 +16,7 @@ import order.model.OrderProduct;
  *
  * @author Hoang
  */
-public class OrderProductComboBoxRenderer extends JPanel implements ListCellRenderer<OrderProduct>{
+public class OrderProductComboBoxRenderer extends JPanel implements ListCellRenderer<OrderProduct> {
 
     /**
      * Creates new form NewJPanel
@@ -34,21 +34,21 @@ public class OrderProductComboBoxRenderer extends JPanel implements ListCellRend
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        lbId = new javax.swing.JLabel();
         lbBranch = new javax.swing.JLabel();
         lbName = new javax.swing.JLabel();
         lbStock = new javax.swing.JLabel();
 
         setBackground(new java.awt.Color(51, 51, 51));
-        setPreferredSize(new java.awt.Dimension(700, 30));
-
-        lbId.setText("123");
+        setPreferredSize(new java.awt.Dimension(500, 25));
 
         lbBranch.setText("Nokia");
+        lbBranch.setPreferredSize(new java.awt.Dimension(138, 25));
 
         lbName.setText("Nokia Lumia 910 multimedia");
+        lbName.setPreferredSize(new java.awt.Dimension(182, 25));
 
         lbStock.setText("Stock: 0");
+        lbStock.setPreferredSize(new java.awt.Dimension(51, 25));
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
@@ -56,58 +56,71 @@ public class OrderProductComboBoxRenderer extends JPanel implements ListCellRend
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(lbId, javax.swing.GroupLayout.PREFERRED_SIZE, 48, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(lbBranch, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(lbBranch, javax.swing.GroupLayout.PREFERRED_SIZE, 145, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(lbName, javax.swing.GroupLayout.DEFAULT_SIZE, 273, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(lbName, javax.swing.GroupLayout.DEFAULT_SIZE, 404, Short.MAX_VALUE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(lbStock, javax.swing.GroupLayout.PREFERRED_SIZE, 85, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addComponent(lbStock, javax.swing.GroupLayout.PREFERRED_SIZE, 71, javax.swing.GroupLayout.PREFERRED_SIZE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                .addComponent(lbBranch, javax.swing.GroupLayout.DEFAULT_SIZE, 30, Short.MAX_VALUE)
-                .addComponent(lbName, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-            .addComponent(lbId, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-            .addComponent(lbStock, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(lbBranch, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(lbName, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(lbStock, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE))
         );
     }// </editor-fold>//GEN-END:initComponents
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JLabel lbBranch;
-    private javax.swing.JLabel lbId;
     private javax.swing.JLabel lbName;
     private javax.swing.JLabel lbStock;
     // End of variables declaration//GEN-END:variables
 
     @Override
     public Component getListCellRendererComponent(JList<? extends OrderProduct> list, OrderProduct value, int index, boolean isSelected, boolean cellHasFocus) {
-        if (isSelected) {
-            setBackground(Color.CYAN);
-            lbId.setForeground(Color.RED);
-            lbBranch.setForeground(Color.RED);
-            lbName.setForeground(Color.RED);
-            lbStock.setForeground(Color.RED);
-        } else {
-            setBackground(new java.awt.Color(51, 51, 51));
-            lbId.setForeground(list.getForeground());
-            lbBranch.setForeground(list.getForeground());
-            lbName.setForeground(list.getForeground());
-            lbStock.setForeground(list.getForeground());
-        }
         if (value != null) {
-            lbId.setText(value.getProID()+ "");
+            int stock = value.getProStock();
+            if (isSelected) {
+                setBackground(Color.ORANGE);
+                if (stock == 0) {
+                    lbBranch.setForeground(Color.RED);
+                    lbName.setForeground(Color.RED);
+                    lbStock.setForeground(Color.RED);
+                } else {
+                    lbBranch.setForeground(Color.BLACK);
+                    lbName.setForeground(Color.BLACK);
+                    lbStock.setForeground(Color.BLACK);
+                }
+            } else {
+                setBackground(new java.awt.Color(51, 51, 51));
+                if (stock == 0) {
+                    lbBranch.setForeground(Color.RED);
+                    lbName.setForeground(Color.RED);
+                    lbStock.setForeground(Color.RED);
+                } else {
+                    lbBranch.setForeground(list.getForeground());
+                    lbName.setForeground(list.getForeground());
+                    lbStock.setForeground(list.getForeground());
+                }
+            }
+
             lbBranch.setText(value.getBraName());
             lbName.setText(value.getProName());
-            lbStock.setText(value.getProQty()+"");
-        }
-        if(index==-1){
-            lbId.setForeground(Color.RED);
-            lbBranch.setForeground(Color.RED);
-            lbName.setForeground(Color.RED);
-            lbStock.setForeground(Color.RED);            
+            lbStock.setText("Stock: " + value.getProStock());
+
+            if (index == -1) {
+                if (stock == 0) {
+                    lbBranch.setForeground(Color.RED);
+                    lbName.setForeground(Color.RED);
+                    lbStock.setForeground(Color.RED);
+                } else {
+                    lbBranch.setForeground(Color.ORANGE);
+                    lbName.setForeground(Color.ORANGE);
+                    lbStock.setForeground(Color.ORANGE);
+                }
+            }
         }
         return this;
     }

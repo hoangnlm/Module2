@@ -22,6 +22,7 @@ public class OrderProduct {
     private int proNo;
     private String braName;
     private int braID;
+    private int proStock;
 
     public static final String COL_PROID = "ProID";
     public static final String COL_PRONAME = "ProName";
@@ -33,12 +34,13 @@ public class OrderProduct {
     public static final String COL_PRONO = "ProNo";
     public static final String COL_BRANAME = "BraName";
     public static final String COL_BRAID = "BraID";
+    public static final String COL_PROSTOCK = "ProStock";
 
     public OrderProduct() {
 
     }
 
-    public OrderProduct(int proID, String proName, int proQty, float proPrice1, float salesOffAmount, float proPrice2, int salesOffID, int proNo, String braName, int braID) {
+    public OrderProduct(int proID, String proName, int proQty, float proPrice1, float salesOffAmount, float proPrice2, int salesOffID, int proNo, String braName, int braID, int proStock) {
         this.proID = proID;
         this.proName = proName;
         this.proQty = proQty;
@@ -49,6 +51,7 @@ public class OrderProduct {
         this.proNo = proNo;
         this.braName = braName;
         this.braID = braID;
+        this.proStock = proStock;
     }
 
     public int getProID() {
@@ -131,10 +134,17 @@ public class OrderProduct {
         this.braID = braID;
     }
 
+    public int getProStock() {
+        return proStock;
+    }
+
+    public void setProStock(int proStock) {
+        this.proStock = proStock;
+    }
+
     @Override
     public String toString() {
-//        return "OrderProduct{" + "proID=" + proID + ", proName=" + proName + ", proQty=" + proQty + ", proPrice1=" + proPrice1 + ", salesOffAmount=" + salesOffAmount + ", proPrice2=" + proPrice2 + ", salesOffID=" + salesOffID + ", proNo=" + proNo + ", braName=" + braName + ", braID=" + braID + '}';
-        return proID+"";
+        return "OrderProduct{" + "proID=" + proID + ", proName=" + proName + ", proQty=" + proQty + ", proPrice1=" + proPrice1 + ", salesOffAmount=" + salesOffAmount + ", proPrice2=" + proPrice2 + ", salesOffID=" + salesOffID + ", proNo=" + proNo + ", braName=" + braName + ", braID=" + braID + ", proStock=" + proStock + '}';
     }
 
 }

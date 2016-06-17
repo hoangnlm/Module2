@@ -25,6 +25,21 @@ public class OrderProductTableModelDialog extends CustomizedTableModel<OrderProd
     }
 
     @Override
+    public boolean insert(OrderProduct item) {
+        return super.insert(item); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public boolean update(OrderProduct item) {
+        return super.update(item); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public boolean delete(OrderProduct item) {
+        return super.delete(item); //To change body of generated methods, choose Tools | Templates.
+    }
+    
+    @Override
     public boolean isCellEditable(int rowIndex, int columnIndex) {
         return columnIndex==1 || columnIndex==2; //Chi sua name va qty
     }
@@ -70,7 +85,7 @@ public class OrderProductTableModelDialog extends CustomizedTableModel<OrderProd
                 item.setProNo((int) aValue);
                 break;
             case 1:
-                item.setProName((String) aValue);
+                item.setProName(((OrderProduct) aValue).getProName());
                 break;
             case 2:
                 item.setProQty((int) aValue);

@@ -14,21 +14,19 @@ import java.util.logging.Logger;
 import javax.sql.rowset.CachedRowSet;
 
 /**
+ * Dung cho combo box cua column product trong table product list cua 
+ * OrderDialog.
  *
  * @author Hoang
  */
-public class OrderProductDAOImpl implements IDAO<OrderProduct> {
+public class OrderProductDAOImplDialog implements IDAO<OrderProduct> {
 
     private CachedRowSet crs;  //CRS to update table
     private int selectingIndex;
 
-    /**
-     * Dung load du lieu theo yeu cau, khong tu dong load
-     *
-     * @param ordID
-     */
-    public void load(int ordID) {
-        crs = getCRS("select p.ProID, ProName, OrdProQty, ProPrice, SalesOffAmount, OrdProPrice, s.SalesOffID, RANK() OVER(ORDER BY OrdDetailsID) ProNo, BraName, p.BraID, ProStock from OrderDetails o join Products p on o.ProID=p.ProID left join SalesOff s on p.SalesOffID=s.SalesOffID join Branches b on p.BraID=b.BraID where OrdID=?", ordID);
+    public OrderProductDAOImplDialog() {
+        // Chi thao tac voi product dang enable
+        crs = getCRS("select ProID, BraName, ProName, ProStock, ProPrice, SalesOffAmount from Products p join Branches b on p.BraID=b.BraID left join SalesOff s on p.SalesOffID=s.SalesOffID where ProEnabled=1 order by BraName");
     }
 
     @Override
@@ -40,19 +38,20 @@ public class OrderProductDAOImpl implements IDAO<OrderProduct> {
                     list.add(new OrderProduct(
                             crs.getInt(OrderProduct.COL_PROID),
                             crs.getString(OrderProduct.COL_PRONAME),
-                            crs.getInt(OrderProduct.COL_PROQTY),
+                            0,
                             crs.getFloat(OrderProduct.COL_PROPRICE1),
                             crs.getFloat(OrderProduct.COL_SALEAMOUNT),
-                            crs.getFloat(OrderProduct.COL_PROPRICE2),
-                            crs.getInt(OrderProduct.COL_SALEID),
-                            crs.getInt(OrderProduct.COL_PRONO),
+                            // Price2 = Price1*(1-SalesOff)                           
+                            crs.getFloat(OrderProduct.COL_PROPRICE1) * (1 - crs.getFloat(OrderProduct.COL_SALEAMOUNT)),
+                            0,
+                            0,
                             crs.getString(OrderProduct.COL_BRANAME),
-                            crs.getInt(OrderProduct.COL_BRAID),
+                            0,
                             crs.getInt(OrderProduct.COL_PROSTOCK)));
                 } while (crs.next());
             }
         } catch (SQLException ex) {
-            Logger.getLogger(OrderProductDAOImpl.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(OrderProductDAOImplDialog.class.getName()).log(Level.SEVERE, null, ex);
         }
         return list;
     }

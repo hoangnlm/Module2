@@ -36,7 +36,7 @@ public class OrderDialog extends javax.swing.JDialog {
     private Order order;
 
     // Khai bao model
-    private OrderProductTableModelDialog orderProductTableModel;
+    private OrderProductTableModelDialog orderProductTableModelDialog;
     private OrderStatusComboBoxModel orderStatusComboBoxModel;
     private OrderStatusComboBoxRenderer orderStatusComboBoxRenderer;
     private OrderCustomerComboBoxModel orderCustomerComboBoxModel;
@@ -78,13 +78,13 @@ public class OrderDialog extends javax.swing.JDialog {
         orderCustomerComboBoxRenderer = new OrderCustomerComboBoxRenderer();
         cbCustomer.setModel(orderCustomerComboBoxModel);
         cbCustomer.setRenderer(orderCustomerComboBoxRenderer);
-        
+
         // Set data cho combobox product name
         orderProductComboBoxModel = new OrderProductComboBoxModel();
 
         // Set data cho table
-        orderProductTableModel = new OrderProductTableModelDialog();
-        tbProduct.setModel(orderProductTableModel);
+        orderProductTableModelDialog = new OrderProductTableModelDialog();
+        tbProduct.setModel(orderProductTableModelDialog);
 
         // Set auto define column from model to false to stop create column again
         tbProduct.setAutoCreateColumnsFromModel(false);
@@ -98,12 +98,12 @@ public class OrderDialog extends javax.swing.JDialog {
         tbProduct.getColumnModel().getColumn(COL_PRONO).setMaxWidth(50);
 
         // Col pro name
-        tbProduct.getColumnModel().getColumn(COL_PRONAME).setMinWidth(350);
+        tbProduct.getColumnModel().getColumn(COL_PRONAME).setMinWidth(500);
         tbProduct.getColumnModel().getColumn(COL_PRONAME).setCellEditor(new OrderProductComboBoxCellEditor(orderProductComboBoxModel));
 
         // Col quantity
         tbProduct.getColumnModel().getColumn(COL_PROQTY).setMinWidth(50);
-        tbProduct.getColumnModel().getColumn(COL_PROQTY).setCellEditor(new SpinnerCellEditor(1,10));
+        tbProduct.getColumnModel().getColumn(COL_PROQTY).setCellEditor(new SpinnerCellEditor(1, 10));
 
         // Col price 1
         tbProduct.getColumnModel().getColumn(COL_PROPRICE1).setMinWidth(100);
@@ -127,7 +127,7 @@ public class OrderDialog extends javax.swing.JDialog {
                 btRemove.setEnabled(false);
             }
         });
-        
+
         // Xu ly mode
         if (insertMode) { // Mode insert
             setTitle("New Order");
@@ -136,19 +136,22 @@ public class OrderDialog extends javax.swing.JDialog {
             tfDate.setText(dateFormat.format(new Date()));
             tfUser.setText(LoginConfig.USER_NAME);
             cbStatus.setSelectedIndex(0);
-            cbCustomer.setSelectedIndex(cbCustomer.getItemCount()-1);
-                        orderProductTableModel.load(-1);
+            cbCustomer.setSelectedIndex(cbCustomer.getItemCount() - 1);
+            orderProductTableModelDialog.load(-1);    //Emply list
+
+            // Load data cho combobox col product name trong table
+//            orderProductComboBoxModel.load(order.getOrdID());
         } else { // Mode update
             setTitle("Update Order");
             this.order = order;
-             SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
+            SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
             tfDate.setText(dateFormat.format(order.getOrdDate()));
             tfUser.setText(order.getUserName());
             cbStatus.setSelectedItem(orderStatusComboBoxModel.getStatusFromValue(order.getOrdStatus()));
 //            System.out.println("cusID: "+order.getCusID());
 //            System.out.println("cus: "+orderCustomerComboBoxModel.getCustomerFromID(order.getCusID()));
             cbCustomer.setSelectedItem(orderCustomerComboBoxModel.getCustomerFromID(order.getCusID()));
-            orderProductTableModel.load(order.getOrdID());
+            orderProductTableModelDialog.load(order.getOrdID());
         }
     }
 
@@ -188,7 +191,7 @@ public class OrderDialog extends javax.swing.JDialog {
         setTitle("Add Order");
         setMaximumSize(new java.awt.Dimension(9999, 9999));
         setMinimumSize(new java.awt.Dimension(800, 607));
-        setPreferredSize(new java.awt.Dimension(800, 607));
+        setPreferredSize(new java.awt.Dimension(900, 607));
         setSize(new java.awt.Dimension(800, 607));
 
         jPanel1.setBorder(javax.swing.BorderFactory.createTitledBorder(javax.swing.BorderFactory.createEtchedBorder(), "Order Details"));
@@ -200,7 +203,7 @@ public class OrderDialog extends javax.swing.JDialog {
 
         jLabel4.setText("Customer:");
 
-        cbCustomer.setPreferredSize(new java.awt.Dimension(730, 27));
+        cbCustomer.setPreferredSize(new java.awt.Dimension(800, 30));
 
         jLabel6.setText("Status:");
 
@@ -230,7 +233,7 @@ public class OrderDialog extends javax.swing.JDialog {
                         .addComponent(jLabel6)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(cbStatus, javax.swing.GroupLayout.PREFERRED_SIZE, 160, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addComponent(cbCustomer, 0, 700, Short.MAX_VALUE)))
+                    .addComponent(cbCustomer, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -302,7 +305,7 @@ public class OrderDialog extends javax.swing.JDialog {
         jPanel2.setLayout(jPanel2Layout);
         jPanel2Layout.setHorizontalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 788, Short.MAX_VALUE)
+            .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addComponent(btAdd, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -381,7 +384,7 @@ public class OrderDialog extends javax.swing.JDialog {
                         .addComponent(jLabel12, javax.swing.GroupLayout.PREFERRED_SIZE, 80, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(lbDiscount, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 354, Short.MAX_VALUE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addComponent(jLabel14)))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
@@ -510,19 +513,19 @@ public class OrderDialog extends javax.swing.JDialog {
     private void fetchAction() {
         if (tbProduct.getSelectedRow() >= 0) {
             selectedRowIndex = tbProduct.convertRowIndexToModel(tbProduct.getSelectedRow());
-            selectedProduct = orderProductTableModel.getOrderProductFromIndex(selectedRowIndex);
-            orderProductTableModel.setSelectingIndex(selectedRowIndex);
+            selectedProduct = orderProductTableModelDialog.getOrderProductFromIndex(selectedRowIndex);
+            orderProductTableModelDialog.setSelectingIndex(selectedRowIndex);
         }
     }
 
     private void refreshAction(boolean mustInfo) {
         if (mustInfo) {
             setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
-            orderProductTableModel.refresh();
+            orderProductTableModelDialog.refresh();
             setCursor(null);
             SwingUtils.showInfoDialog(SwingUtils.DB_REFRESH);
         } else {
-            orderProductTableModel.refresh();
+            orderProductTableModelDialog.refresh();
         }
 
         scrollToRow(selectedRowIndex);

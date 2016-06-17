@@ -405,7 +405,7 @@ public class OrderPanel extends javax.swing.JPanel {
 
             },
             new String [] {
-                "ID", "Product Name", "Quantity", "Price1", "SalesOff", "Price2"
+                "ID", "Product Name", "Quantity", "Sold Price"
             }
         ));
         tbProductList.setFillsViewportHeight(true);
@@ -556,7 +556,7 @@ public class OrderPanel extends javax.swing.JPanel {
     private javax.swing.JButton btRemove;
     private javax.swing.JButton btSalesOff;
     private javax.swing.JButton btUpdate;
-    private javax.swing.JComboBox<OrderStatus> cbStatusFilter;
+    private javax.swing.JComboBox<order.model.OrderStatus> cbStatusFilter;
     private javax.swing.JComboBox<String> cbValueFilter;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;

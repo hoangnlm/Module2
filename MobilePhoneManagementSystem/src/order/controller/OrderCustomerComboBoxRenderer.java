@@ -16,7 +16,7 @@ import order.model.OrderCustomer;
  *
  * @author Hoang
  */
-public class OrderCustomerComboBoxRenderer extends JPanel implements ListCellRenderer<OrderCustomer>{
+public class OrderCustomerComboBoxRenderer extends JPanel implements ListCellRenderer<OrderCustomer> {
 
     /**
      * Creates new form NewJPanel
@@ -40,7 +40,7 @@ public class OrderCustomerComboBoxRenderer extends JPanel implements ListCellRen
         lbAddress = new javax.swing.JLabel();
 
         setBackground(new java.awt.Color(51, 51, 51));
-        setPreferredSize(new java.awt.Dimension(700, 30));
+        setPreferredSize(new java.awt.Dimension(800, 30));
 
         lbId.setText("123");
 
@@ -58,11 +58,11 @@ public class OrderCustomerComboBoxRenderer extends JPanel implements ListCellRen
                 .addContainerGap()
                 .addComponent(lbId, javax.swing.GroupLayout.PREFERRED_SIZE, 48, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(lbName, javax.swing.GroupLayout.PREFERRED_SIZE, 167, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(lbName, javax.swing.GroupLayout.DEFAULT_SIZE, 217, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(lbPhone, javax.swing.GroupLayout.PREFERRED_SIZE, 129, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(lbAddress, javax.swing.GroupLayout.DEFAULT_SIZE, 332, Short.MAX_VALUE))
+                .addComponent(lbAddress, javax.swing.GroupLayout.DEFAULT_SIZE, 382, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -83,30 +83,32 @@ public class OrderCustomerComboBoxRenderer extends JPanel implements ListCellRen
 
     @Override
     public Component getListCellRendererComponent(JList<? extends OrderCustomer> list, OrderCustomer value, int index, boolean isSelected, boolean cellHasFocus) {
-        if (isSelected) {
-            setBackground(Color.CYAN);
-            lbId.setForeground(Color.RED);
-            lbName.setForeground(Color.RED);
-            lbPhone.setForeground(Color.RED);
-            lbAddress.setForeground(Color.RED);
-        } else {
-            setBackground(new java.awt.Color(51, 51, 51));
-            lbId.setForeground(list.getForeground());
-            lbName.setForeground(list.getForeground());
-            lbPhone.setForeground(list.getForeground());
-            lbAddress.setForeground(list.getForeground());
-        }
         if (value != null) {
+            if (isSelected) {
+                setBackground(Color.ORANGE);
+                lbId.setForeground(Color.BLACK);
+                lbName.setForeground(Color.BLACK);
+                lbPhone.setForeground(Color.BLACK);
+                lbAddress.setForeground(Color.BLACK);
+            } else {
+                setBackground(new java.awt.Color(51, 51, 51));
+                lbId.setForeground(list.getForeground());
+                lbName.setForeground(list.getForeground());
+                lbPhone.setForeground(list.getForeground());
+                lbAddress.setForeground(list.getForeground());
+            }
+            
             lbId.setText(value.getCusID() + "");
             lbName.setText(value.getCusName());
             lbPhone.setText(value.getCusPhone());
             lbAddress.setText(value.getCusAddress());
-        }
-        if(index==-1){
-            lbId.setForeground(Color.RED);
-            lbName.setForeground(Color.RED);
-            lbPhone.setForeground(Color.RED);
-            lbAddress.setForeground(Color.RED);            
+            
+            if (index == -1) {
+                lbId.setForeground(Color.ORANGE);
+                lbName.setForeground(Color.ORANGE);
+                lbPhone.setForeground(Color.ORANGE);
+                lbAddress.setForeground(Color.ORANGE);
+            }
         }
         return this;
     }

@@ -1,17 +1,24 @@
 package order.controller;
 
 import order.model.OrderProduct;
-import order.model.OrderProductDAOImpl;
+import order.model.OrderProductDAOImplDialog;
 import utility.CustomizedComboBoxModel;
 
 /**
- *
+ * Dung cho combo box column product trong table product list
+ * cua OrderDialog.
+ * 
  * @author Hoang
  */
 public class OrderProductComboBoxModel extends CustomizedComboBoxModel<OrderProduct> {
 
     public OrderProductComboBoxModel() {
-        super(new OrderProductDAOImpl());
+        super(new OrderProductDAOImplDialog());
+    }
+        
+    public void load(int proID){
+        list = daoImpl.getList();
+        fireContentsChanged(this, 0, list.size()-1);
     }
 
     /**
@@ -34,7 +41,7 @@ public class OrderProductComboBoxModel extends CustomizedComboBoxModel<OrderProd
         public OrderProduct getProductFromName(String proName) {
         OrderProduct result = null;
         for (int i = 0; i < list.size(); i++) {
-            if (list.get(i).getProName()==proID) {
+            if (list.get(i).getProName().equals(proName)) {
                 result = list.get(i);
                 break;
             }
