@@ -44,7 +44,7 @@ public class OrderDAOImpl implements IDAO<Order> {
                 } while (crs.next());
             }
         } catch (SQLException ex) {
-            Logger.getLogger(StatusDAOImpl.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(OrderStatusDAOImpl.class.getName()).log(Level.SEVERE, null, ex);
         }
         return list;
     }
@@ -65,6 +65,15 @@ public class OrderDAOImpl implements IDAO<Order> {
         // Neu order da thanh toan (DONE) thi khong cho xoa
         return false;
 
+    }
+
+    @Override
+    public int getSelectingIndex(int idx) {
+        return 0;
+    }
+
+    @Override
+    public void setSelectingIndex(int idx) {
     }
 
 }

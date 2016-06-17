@@ -154,4 +154,13 @@ public class SalesOffDAOImpl implements IDAO<SalesOff> {
         return result;
     }
 
+    @Override
+    public int getSelectingIndex(int idx) {
+        return 0;
+    }
+
+    @Override
+    public void setSelectingIndex(int idx) {
+    }
+
 }

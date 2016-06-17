@@ -20,6 +20,7 @@ import javax.sql.rowset.CachedRowSet;
 public class OrderProductDAOImpl implements IDAO<OrderProduct> {
 
     private CachedRowSet crs;  //CRS to update table
+    private int selectingIndex;
 
     /**
      * Dung load du lieu theo yeu cau, khong tu dong load
@@ -28,7 +29,7 @@ public class OrderProductDAOImpl implements IDAO<OrderProduct> {
      */
     public void load(int ordID) {
         // Chi thao tac voi product dang enable
-        crs = getCRS("select p.ProID, ProName, OrdProQty, ProPrice, SalesOffAmount, OrdProPrice, s.SalesOffID from OrderDetails o join Products p on o.ProID=p.ProID left join SalesOff s on p.SalesOffID=s.SalesOffID where OrdID=?", ordID);
+        crs = getCRS("select p.ProID, ProName, OrdProQty, ProPrice, SalesOffAmount, OrdProPrice, s.SalesOffID, RANK() OVER(ORDER BY OrdDetailsID) ProNo from OrderDetails o join Products p on o.ProID=p.ProID left join SalesOff s on p.SalesOffID=s.SalesOffID where OrdID=?", ordID);
     }
 
     @Override
@@ -44,7 +45,8 @@ public class OrderProductDAOImpl implements IDAO<OrderProduct> {
                             crs.getFloat(OrderProduct.COL_PROPRICE1),
                             crs.getFloat(OrderProduct.COL_SALEAMOUNT),
                             crs.getFloat(OrderProduct.COL_PROPRICE2),
-                            crs.getInt(OrderProduct.COL_SALEID)));
+                            crs.getInt(OrderProduct.COL_SALEID),
+                            crs.getInt(OrderProduct.COL_PRONO)));
                 } while (crs.next());
             }
         } catch (SQLException ex) {
@@ -68,6 +70,16 @@ public class OrderProductDAOImpl implements IDAO<OrderProduct> {
     @Override
     public boolean delete(OrderProduct model) {
         return false;
+    }
+
+    @Override
+    public int getSelectingIndex(int idx) {
+        return selectingIndex;
+    }
+
+    @Override
+    public void setSelectingIndex(int idx) {
+        selectingIndex = idx;
     }
 
 }

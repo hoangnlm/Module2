@@ -19,6 +19,7 @@ public class OrderProduct {
     private float salesOffAmount;
     private float proPrice2;
     private int salesOffID;
+    private int proNo;
 
     public static final String COL_PROID = "ProID";
     public static final String COL_PRONAME = "ProName";
@@ -27,12 +28,13 @@ public class OrderProduct {
     public static final String COL_SALEAMOUNT = "SalesOffAmount";
     public static final String COL_PROPRICE2 = "OrdProPrice";
     public static final String COL_SALEID = "SalesOffID";
+    public static final String COL_PRONO = "ProNo";
 
     public OrderProduct() {
 
     }
 
-    public OrderProduct(int proID, String proName, int proQty, float proPrice1, float salesOffAmount, float proPrice2, int salesOffID) {
+    public OrderProduct(int proID, String proName, int proQty, float proPrice1, float salesOffAmount, float proPrice2, int salesOffID, int proNo) {
         this.proID = proID;
         this.proName = proName;
         this.proQty = proQty;
@@ -40,6 +42,7 @@ public class OrderProduct {
         this.salesOffAmount = salesOffAmount;
         this.proPrice2 = proPrice2;
         this.salesOffID = salesOffID;
+        this.proNo = proNo;
     }
 
     public int getProID() {
@@ -96,5 +99,18 @@ public class OrderProduct {
 
     public void setSalesOffID(int salesOffID) {
         this.salesOffID = salesOffID;
+    }
+
+    public int getProNo() {
+        return proNo;
+    }
+
+    public void setProNo(int proNo) {
+        this.proNo = proNo;
+    }
+
+    @Override
+    public String toString() {
+        return "OrderProduct{" + "proID=" + proID + ", proName=" + proName + ", proQty=" + proQty + ", proPrice1=" + proPrice1 + ", salesOffAmount=" + salesOffAmount + ", proPrice2=" + proPrice2 + ", salesOffID=" + salesOffID + ", proNo=" + proNo + '}';
     }
 }

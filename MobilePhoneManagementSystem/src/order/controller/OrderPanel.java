@@ -26,7 +26,7 @@ import javax.swing.event.DocumentListener;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.table.TableRowSorter;
 import order.model.Order;
-import order.model.Status;
+import order.model.OrderStatus;
 import salesoff.controller.SalesOffDialog;
 import utility.CurrencyCellRenderer;
 import utility.PercentCellRenderer;
@@ -50,7 +50,7 @@ public class OrderPanel extends javax.swing.JPanel {
     // Order dang duoc chon trong table order list
     private Order selectedOrder;
     private int selectedRowIndex;
-    private Status filterStatus;
+    private OrderStatus filterStatus;
 
     private static final int COL_ORDID = 0;
     private static final int COL_USERNAME = 1;
@@ -85,7 +85,7 @@ public class OrderPanel extends javax.swing.JPanel {
 
         // Set data cho combobox level filter
         orderStatusComboBoxModel = new OrderStatusComboBoxModel();
-        filterStatus = new Status(0, "All", "Order");
+        filterStatus = new OrderStatus(0, "All", "Order");
         orderStatusComboBoxModel.addElement(filterStatus);
         orderStatusComboBoxRenderer = new OrderStatusComboBoxRenderer();
         cbStatusFilter.setModel(orderStatusComboBoxModel);
@@ -556,7 +556,7 @@ public class OrderPanel extends javax.swing.JPanel {
     private javax.swing.JButton btRemove;
     private javax.swing.JButton btSalesOff;
     private javax.swing.JButton btUpdate;
-    private javax.swing.JComboBox<Status> cbStatusFilter;
+    private javax.swing.JComboBox<OrderStatus> cbStatusFilter;
     private javax.swing.JComboBox<String> cbValueFilter;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
@@ -616,7 +616,7 @@ public class OrderPanel extends javax.swing.JPanel {
             }
 
             // Chi filter status khi status khac "All"
-            String stt = ((Status) cbStatusFilter.getSelectedItem()).getSttName();
+            String stt = ((OrderStatus) cbStatusFilter.getSelectedItem()).getSttName();
             if (!stt.equals("All")) {
                 filters.add(RowFilter.regexFilter("^" + stt, 5));
             }

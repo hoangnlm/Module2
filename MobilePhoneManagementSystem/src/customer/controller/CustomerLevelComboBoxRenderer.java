@@ -20,7 +20,7 @@ import static javax.swing.SwingConstants.CENTER;
 public class CustomerLevelComboBoxRenderer extends JLabel implements ListCellRenderer<CustomerLevel> {
 
     public CustomerLevelComboBoxRenderer() {
-        setHorizontalAlignment(CENTER);
+        setHorizontalAlignment(LEFT);
     }
 
     @Override

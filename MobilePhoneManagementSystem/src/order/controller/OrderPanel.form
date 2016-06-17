@@ -210,7 +210,7 @@
             </Property>
           </Properties>
           <AuxValues>
-            <AuxValue name="JavaCodeGenerator_TypeParameters" type="java.lang.String" value="&lt;Status&gt;"/>
+            <AuxValue name="JavaCodeGenerator_TypeParameters" type="java.lang.String" value="&lt;order.model.OrderStatus&gt;"/>
           </AuxValues>
         </Component>
         <Container class="javax.swing.JPanel" name="pnDateChooser">

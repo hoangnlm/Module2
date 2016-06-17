@@ -172,4 +172,13 @@ public class CustomerLevelDAOImpl implements IDAO<CustomerLevel> {
         return result;
     }
 
+    @Override
+    public int getSelectingIndex(int idx) {
+        return 0;
+    }
+
+    @Override
+    public void setSelectingIndex(int idx) {
+    }
+
 }

@@ -1,17 +1,17 @@
 package order.controller;
 
-import order.model.Status;
-import order.model.StatusDAOImpl;
+import order.model.OrderStatus;
+import order.model.OrderStatusDAOImpl;
 import utility.CustomizedComboBoxModel;
 
 /**
  *
  * @author Hoang
  */
-public class OrderStatusComboBoxModel extends CustomizedComboBoxModel<Status> {
+public class OrderStatusComboBoxModel extends CustomizedComboBoxModel<OrderStatus> {
 
     public OrderStatusComboBoxModel() {
-        super(new StatusDAOImpl());
+        super(new OrderStatusDAOImpl());
     }
 
     /**
@@ -20,8 +20,8 @@ public class OrderStatusComboBoxModel extends CustomizedComboBoxModel<Status> {
      * @param sttName
      * @return
      */
-    public Status getStatusFromValue(String sttName) {
-        Status result = null;
+    public OrderStatus getStatusFromValue(String sttName) {
+        OrderStatus result = null;
         for (int i = 0; i < list.size(); i++) {
             if (list.get(i).getSttName().equals(sttName)) {
                 result = list.get(i);

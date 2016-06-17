@@ -4,7 +4,7 @@ package order.model;
  *
  * @author Hoang
  */
-public class Status {
+public class OrderStatus {
     private int sttID;
     private String sttName;
     private String sttType;
@@ -13,10 +13,10 @@ public class Status {
     public static final String COL_NAME = "SttName";
     public static final String COL_TYPE = "SttType";
 
-    public Status() {
+    public OrderStatus() {
     }
 
-    public Status(int sttID, String sttName, String sttType) {
+    public OrderStatus(int sttID, String sttName, String sttType) {
         this.sttID = sttID;
         this.sttName = sttName;
         this.sttType = sttType;
@@ -44,5 +44,10 @@ public class Status {
 
     public void setSttType(String sttType) {
         this.sttType = sttType;
+    }
+
+    @Override
+    public String toString() {
+        return "OrderStatus{" + "sttID=" + sttID + ", sttName=" + sttName + ", sttType=" + sttType + '}';
     }
 }

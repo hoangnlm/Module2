@@ -7,10 +7,10 @@ import java.util.logging.Logger;
 import javax.swing.table.AbstractTableModel;
 
 /**
- * Class table model dung chung cho cac table trong app
+ * Class table model dung chung cho cac table trong app.
  *
  * @author Hoang
- * @param <M>
+ * @param <M> Model
  */
 public abstract class CustomizedTableModel<M> extends AbstractTableModel {
 
@@ -18,6 +18,7 @@ public abstract class CustomizedTableModel<M> extends AbstractTableModel {
     protected M item;   //Dung cho get/setValueAt
     protected IDAO<M> daoImpl;
     protected String[] columnNames;
+    protected int selectingIndex;
 
     public CustomizedTableModel(IDAO<M> daoImpl, String[] columnNames) {
         this.daoImpl = daoImpl;
@@ -25,6 +26,15 @@ public abstract class CustomizedTableModel<M> extends AbstractTableModel {
         list = daoImpl.getList();
     }
 
+    public int getSelectingIndex() {
+        return selectingIndex;
+    }
+
+    public void setSelectingIndex(int selectingIndex) {
+        this.selectingIndex = selectingIndex;          // Table model tinh tu 0
+        daoImpl.setSelectingIndex(selectingIndex + 1); // ResultSet tinh tu 1
+    }
+    
     public boolean insert(M item) {
         boolean result = false;
         if (daoImpl.insert(item)) {
@@ -58,7 +68,7 @@ public abstract class CustomizedTableModel<M> extends AbstractTableModel {
     public void refresh() {
         try {
             daoImpl = daoImpl.getClass().newInstance();
-        } catch (Exception ex) {
+        } catch (InstantiationException | IllegalAccessException ex) {
             Logger.getLogger(CustomizedTableModel.class.getName()).log(Level.SEVERE, null, ex);
         }
         list = daoImpl.getList();
@@ -67,11 +77,7 @@ public abstract class CustomizedTableModel<M> extends AbstractTableModel {
 
     @Override
     public boolean isCellEditable(int rowIndex, int columnIndex) {
-        if (columnIndex == 0) { //Khong cho sua column ID
-            return false;
-        } else {
-            return true;
-        }
+        return columnIndex != 0; //Khong cho sua column ID
     }
 
     @Override

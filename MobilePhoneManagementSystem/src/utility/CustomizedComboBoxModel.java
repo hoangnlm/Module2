@@ -36,7 +36,7 @@ public class CustomizedComboBoxModel<M> extends AbstractListModel<M> implements 
     public void refresh(){
         try {
             daoImpl = daoImpl.getClass().newInstance();
-        } catch (Exception ex) {
+        } catch (InstantiationException | IllegalAccessException ex) {
             Logger.getLogger(CustomizedComboBoxModel.class.getName()).log(Level.SEVERE, null, ex);
         }
         list = daoImpl.getList();

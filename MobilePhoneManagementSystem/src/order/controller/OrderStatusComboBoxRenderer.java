@@ -12,20 +12,20 @@ import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.ListCellRenderer;
 import static javax.swing.SwingConstants.CENTER;
-import order.model.Status;
+import order.model.OrderStatus;
 
 /**
  *
  * @author Hoang
  */
-public class OrderStatusComboBoxRenderer extends JLabel implements ListCellRenderer<Status> {
+public class OrderStatusComboBoxRenderer extends JLabel implements ListCellRenderer<OrderStatus> {
 
     public OrderStatusComboBoxRenderer() {
-        setHorizontalAlignment(CENTER);
+        setHorizontalAlignment(LEFT);
     }
 
     @Override
-    public Component getListCellRendererComponent(JList<? extends Status> list, Status value, int index, boolean isSelected, boolean cellHasFocus) {
+    public Component getListCellRendererComponent(JList<? extends OrderStatus> list, OrderStatus value, int index, boolean isSelected, boolean cellHasFocus) {
         if (isSelected) {
             setBackground(list.getSelectionBackground());
             setForeground(Color.RED);
@@ -33,7 +33,9 @@ public class OrderStatusComboBoxRenderer extends JLabel implements ListCellRende
             setBackground(list.getBackground());
             setForeground(list.getForeground());
         }
-        setText(value.getSttName()+ "");
+        if (value != null) {
+            setText(value.getSttName() + "");
+        }
         return this;
     }
 }

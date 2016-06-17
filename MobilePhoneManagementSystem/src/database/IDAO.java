@@ -28,6 +28,10 @@ public interface IDAO<T> {
     boolean update(T model);
 
     boolean delete(T model);
+    
+    int getSelectingIndex(int idx);
+    
+    void setSelectingIndex(int idx);
 
     // Chay CRS de lay ve ket qua query select
     default CachedRowSet getCRS(String query, Object... args) {

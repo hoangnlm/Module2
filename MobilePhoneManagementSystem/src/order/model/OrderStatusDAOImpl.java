@@ -17,45 +17,54 @@ import javax.sql.rowset.CachedRowSet;
  *
  * @author Hoang
  */
-public class StatusDAOImpl implements IDAO<Status> {
+public class OrderStatusDAOImpl implements IDAO<OrderStatus> {
 
     private CachedRowSet crs;  //CRS to update table
 
-    public StatusDAOImpl() {
+    public OrderStatusDAOImpl() {
         crs = getCRS("select * from Status where SttType like 'Order'");
     }
 
     @Override
-    public List<Status> getList() {
-        List<Status> list = new ArrayList<>();
+    public List<OrderStatus> getList() {
+        List<OrderStatus> list = new ArrayList<>();
         try {
             if (crs.first()) {
                 do {
-                    list.add(new Status(
-                            crs.getInt(Status.COL_ID),
-                            crs.getString(Status.COL_NAME),
-                            crs.getString(Status.COL_TYPE)));
+                    list.add(new OrderStatus(
+                            crs.getInt(OrderStatus.COL_ID),
+                            crs.getString(OrderStatus.COL_NAME),
+                            crs.getString(OrderStatus.COL_TYPE)));
                 } while (crs.next());
             }
         } catch (SQLException ex) {
-            Logger.getLogger(StatusDAOImpl.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(OrderStatusDAOImpl.class.getName()).log(Level.SEVERE, null, ex);
         }
         return list;
     }
 
     @Override
-    public boolean insert(Status model) {
+    public boolean insert(OrderStatus model) {
         return false;
     }
 
     @Override
-    public boolean update(Status model) {
+    public boolean update(OrderStatus model) {
         return false;
     }
 
     @Override
-    public boolean delete(Status model) {
+    public boolean delete(OrderStatus model) {
         return false;
+    }
+
+    @Override
+    public int getSelectingIndex(int idx) {
+        return 0;
+    }
+
+    @Override
+    public void setSelectingIndex(int idx) {
     }
 
 }

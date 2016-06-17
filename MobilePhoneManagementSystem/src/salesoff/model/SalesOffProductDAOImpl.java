@@ -83,4 +83,13 @@ public class SalesOffProductDAOImpl implements IDAO<SalesOffProduct> {
     public boolean delete(SalesOffProduct salesOffProduct) {
         return false;
     }
+
+    @Override
+    public int getSelectingIndex(int idx) {
+        return 0;
+    }
+
+    @Override
+    public void setSelectingIndex(int idx) {
+    }
 }

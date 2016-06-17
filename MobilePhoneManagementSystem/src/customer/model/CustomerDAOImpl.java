@@ -127,4 +127,13 @@ public class CustomerDAOImpl implements IDAO<Customer> {
         }
         return result;
     }
+
+    @Override
+    public int getSelectingIndex(int idx) {
+        return 0;
+    }
+
+    @Override
+    public void setSelectingIndex(int idx) {
+    }
 }
