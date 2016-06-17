@@ -11,7 +11,6 @@ import java.awt.Component;
 import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.ListCellRenderer;
-import static javax.swing.SwingConstants.CENTER;
 
 /**
  *
@@ -32,7 +31,9 @@ public class CustomerLevelComboBoxRenderer extends JLabel implements ListCellRen
             setBackground(list.getBackground());
             setForeground(list.getForeground());
         }
-        setText(value.getCusLevel() + "");
+        if (value != null) {
+            setText(value.getCusLevel() + "");
+        }
         return this;
     }
 }

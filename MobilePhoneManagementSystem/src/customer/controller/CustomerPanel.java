@@ -5,7 +5,6 @@
  */
 package customer.controller;
 
-import utility.ComboBoxCellEditor;
 import customer.model.Customer;
 import customer.model.CustomerLevel;
 import java.awt.Cursor;
@@ -100,7 +99,7 @@ public class CustomerPanel extends javax.swing.JPanel {
         tbCustomerList.getColumnModel().getColumn(COL_CUSNAME).setCellEditor(new StringCellEditor(1, 50, SwingUtils.PATTERN_CUSNAME));
 
         // Col cus level
-        tbCustomerList.getColumnModel().getColumn(COL_CUSLEVEL).setCellEditor(new ComboBoxCellEditor(customerLevelComboBoxModel2));
+        tbCustomerList.getColumnModel().getColumn(COL_CUSLEVEL).setCellEditor(new CustomerLevelComboBoxCellEditor(customerLevelComboBoxModel2));
 
         // Col cus phone
         tbCustomerList.getColumnModel().getColumn(COL_CUSPHONE).setCellEditor(new StringCellEditor(1, 20, SwingUtils.PATTERN_CUSPHONE));

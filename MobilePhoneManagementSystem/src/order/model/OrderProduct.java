@@ -20,6 +20,8 @@ public class OrderProduct {
     private float proPrice2;
     private int salesOffID;
     private int proNo;
+    private String braName;
+    private int braID;
 
     public static final String COL_PROID = "ProID";
     public static final String COL_PRONAME = "ProName";
@@ -29,12 +31,14 @@ public class OrderProduct {
     public static final String COL_PROPRICE2 = "OrdProPrice";
     public static final String COL_SALEID = "SalesOffID";
     public static final String COL_PRONO = "ProNo";
+    public static final String COL_BRANAME = "BraName";
+    public static final String COL_BRAID = "BraID";
 
     public OrderProduct() {
 
     }
 
-    public OrderProduct(int proID, String proName, int proQty, float proPrice1, float salesOffAmount, float proPrice2, int salesOffID, int proNo) {
+    public OrderProduct(int proID, String proName, int proQty, float proPrice1, float salesOffAmount, float proPrice2, int salesOffID, int proNo, String braName, int braID) {
         this.proID = proID;
         this.proName = proName;
         this.proQty = proQty;
@@ -43,6 +47,8 @@ public class OrderProduct {
         this.proPrice2 = proPrice2;
         this.salesOffID = salesOffID;
         this.proNo = proNo;
+        this.braName = braName;
+        this.braID = braID;
     }
 
     public int getProID() {
@@ -109,8 +115,26 @@ public class OrderProduct {
         this.proNo = proNo;
     }
 
+    public String getBraName() {
+        return braName;
+    }
+
+    public void setBraName(String braName) {
+        this.braName = braName;
+    }
+
+    public int getBraID() {
+        return braID;
+    }
+
+    public void setBraID(int braID) {
+        this.braID = braID;
+    }
+
     @Override
     public String toString() {
-        return "OrderProduct{" + "proID=" + proID + ", proName=" + proName + ", proQty=" + proQty + ", proPrice1=" + proPrice1 + ", salesOffAmount=" + salesOffAmount + ", proPrice2=" + proPrice2 + ", salesOffID=" + salesOffID + ", proNo=" + proNo + '}';
+//        return "OrderProduct{" + "proID=" + proID + ", proName=" + proName + ", proQty=" + proQty + ", proPrice1=" + proPrice1 + ", salesOffAmount=" + salesOffAmount + ", proPrice2=" + proPrice2 + ", salesOffID=" + salesOffID + ", proNo=" + proNo + ", braName=" + braName + ", braID=" + braID + '}';
+        return proID+"";
     }
+
 }

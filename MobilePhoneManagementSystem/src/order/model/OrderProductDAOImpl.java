@@ -29,7 +29,7 @@ public class OrderProductDAOImpl implements IDAO<OrderProduct> {
      */
     public void load(int ordID) {
         // Chi thao tac voi product dang enable
-        crs = getCRS("select p.ProID, ProName, OrdProQty, ProPrice, SalesOffAmount, OrdProPrice, s.SalesOffID, RANK() OVER(ORDER BY OrdDetailsID) ProNo from OrderDetails o join Products p on o.ProID=p.ProID left join SalesOff s on p.SalesOffID=s.SalesOffID where OrdID=?", ordID);
+        crs = getCRS("select p.ProID, ProName, OrdProQty, ProPrice, SalesOffAmount, OrdProPrice, s.SalesOffID, RANK() OVER(ORDER BY OrdDetailsID) ProNo, BraName, p.BraID from OrderDetails o join Products p on o.ProID=p.ProID left join SalesOff s on p.SalesOffID=s.SalesOffID join Branches b on p.BraID=b.BraID where OrdID=?", ordID);
     }
 
     @Override
@@ -46,7 +46,9 @@ public class OrderProductDAOImpl implements IDAO<OrderProduct> {
                             crs.getFloat(OrderProduct.COL_SALEAMOUNT),
                             crs.getFloat(OrderProduct.COL_PROPRICE2),
                             crs.getInt(OrderProduct.COL_SALEID),
-                            crs.getInt(OrderProduct.COL_PRONO)));
+                            crs.getInt(OrderProduct.COL_PRONO),
+                            crs.getString(OrderProduct.COL_BRANAME),
+                            crs.getInt(OrderProduct.COL_BRAID)));
                 } while (crs.next());
             }
         } catch (SQLException ex) {

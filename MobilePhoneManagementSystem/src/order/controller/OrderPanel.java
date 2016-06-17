@@ -640,14 +640,8 @@ public class OrderPanel extends javax.swing.JPanel {
     
     //<editor-fold defaultstate="collapsed" desc="xu ly cho table order">
     private void fetchAction() {
-        selectedRowIndex = tbOrderList.getSelectedRow();
-        selectedOrder.setOrdID((int) tbOrderList.getValueAt(selectedRowIndex, 0));
-        selectedOrder.setUserName(((String) tbOrderList.getValueAt(selectedRowIndex, 1)));
-        selectedOrder.setCusName((String) tbOrderList.getValueAt(selectedRowIndex, 2));
-        selectedOrder.setOrdDate((Date) tbOrderList.getValueAt(selectedRowIndex, 3));
-        selectedOrder.setCusDiscount((float) tbOrderList.getValueAt(selectedRowIndex, 4));
-        selectedOrder.setOrdStatus((String) tbOrderList.getValueAt(selectedRowIndex, 5));
-
+        selectedRowIndex = tbOrderList.convertRowIndexToModel(tbOrderList.getSelectedRow());
+        selectedOrder = orderTableModel.getOrderAtIndex(selectedRowIndex);
         // Reload table product list voi Order moi chon
         orderProductTableModel.load(selectedOrder.getOrdID());
     }

@@ -8,10 +8,10 @@ import utility.CustomizedTableModel;
  *
  * @author Hoang
  */
-public class OrderProductTableModel2 extends CustomizedTableModel<OrderProduct> {
+public class OrderProductTableModelDialog extends CustomizedTableModel<OrderProduct> {
 
-    public OrderProductTableModel2() {
-        super(new OrderProductDAOImpl(), new String[]{"No.", "Product Name", "Quantity", "Price 1", "SalesOff", "Price 2"});
+    public OrderProductTableModelDialog() {
+        super(new OrderProductDAOImpl(), new String[]{"No.", "Product Name", "Qty", "Price 1", "SalesOff", "Price 2"});
     }
     
     public OrderProduct getOrderProductFromIndex(int index){
