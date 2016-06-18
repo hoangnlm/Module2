@@ -48,7 +48,7 @@ public class ServicePanel extends javax.swing.JPanel {
     private ServiceStatusComboBoxModel serviceStatusComboBoxModel;
     private ServiceStatusComboBoxRenderer serviceStatusComboBoxRenderer;
     private ServiceTypeComboBoxModel serviceTypeComboBoxModel;
-//    private ServiceTypeComboBoxRenderer serviceTypeComboBoxRenderer;
+    private ServiceTypeComboBoxRenderer serviceTypeComboBoxRenderer;
     private TableRowSorter<ServiceTableModel> sorter;
 
     // Order dang duoc chon trong table order list
@@ -90,18 +90,16 @@ public class ServicePanel extends javax.swing.JPanel {
         serviceStatusComboBoxModel = new ServiceStatusComboBoxModel();
         filterStatus = new ServiceStatus(0, "All", "Service");
         serviceStatusComboBoxModel.addElement(filterStatus);
-        
-        serviceStatusComboBoxRenderer = new ServiceStatusComboBoxRenderer();
         cbStatusFilter.setModel(serviceStatusComboBoxModel);
+        serviceStatusComboBoxRenderer = new ServiceStatusComboBoxRenderer();        
         cbStatusFilter.setRenderer(serviceStatusComboBoxRenderer);
         // Set data cho combobox service type filter
         serviceTypeComboBoxModel = new ServiceTypeComboBoxModel();
         filterType = new ServiceType(0, "All");
         serviceTypeComboBoxModel.addElement(filterType);
-        
-//        serviceTypeComboBoxRenderer = new ServiceTypeComboBoxRenderer();
-//        cbTypeFilter.setModel(serviceTypeComboBoxModel);
-//        cbTypeFilter.setRenderer(serviceTypeComboBoxRenderer);
+        cbTypeFilter.setModel(serviceTypeComboBoxModel);
+        serviceTypeComboBoxRenderer = new ServiceTypeComboBoxRenderer();        
+        cbTypeFilter.setRenderer(serviceTypeComboBoxRenderer);
         // Set data cho table
         serviceTableModel = new ServiceTableModel();
         serviceDetailsTableModel = new ServiceDetailsTableModel();
@@ -125,25 +123,25 @@ public class ServicePanel extends javax.swing.JPanel {
 
         // Col order ID
         tbServiceList.getColumnModel().getColumn(COL_SERID).setMinWidth(30);
-        tbServiceList.getColumnModel().getColumn(COL_SERID).setMaxWidth(30);
-
+        tbServiceList.getColumnModel().getColumn(COL_SERID).setMaxWidth(50);
+tbServiceList.getColumnModel().getColumn(COL_SERID).sizeWidthToFit();
         // Col user name
         tbServiceList.getColumnModel().getColumn(COL_USERNAME).setMinWidth(120);
-        tbServiceList.getColumnModel().getColumn(COL_USERNAME).setMaxWidth(120);
+//        tbServiceList.getColumnModel().getColumn(COL_USERNAME).setMaxWidth(120);
 
         // Col receivedate
         tbServiceList.getColumnModel().getColumn(COL_RECEIVEDATE).setCellEditor(new DateCellEditor());
-        tbServiceList.getColumnModel().getColumn(COL_RECEIVEDATE).setMinWidth(90);
-        tbServiceList.getColumnModel().getColumn(COL_RECEIVEDATE).setMaxWidth(90);
+        tbServiceList.getColumnModel().getColumn(COL_RECEIVEDATE).setMinWidth(120);
+//        tbServiceList.getColumnModel().getColumn(COL_RECEIVEDATE).setMaxWidth(120);
         // Col receive date
         tbServiceList.getColumnModel().getColumn(COL_RETURNDATE).setCellEditor(new DateCellEditor());
-        tbServiceList.getColumnModel().getColumn(COL_RETURNDATE).setMinWidth(90);
-        tbServiceList.getColumnModel().getColumn(COL_RETURNDATE).setMaxWidth(90);
+        tbServiceList.getColumnModel().getColumn(COL_RETURNDATE).setMinWidth(120);
+//        tbServiceList.getColumnModel().getColumn(COL_RETURNDATE).setMaxWidth(120);
         // Col type
         tbServiceList.getColumnModel().getColumn(COL_SERTYPENAME).setMinWidth(90);
 //        tbServiceList.getColumnModel().getColumn(COL_SERTYPENAME).setMaxWidth(90);
         // Col status
-        tbServiceList.getColumnModel().getColumn(COL_STATUS).setMinWidth(9);
+        tbServiceList.getColumnModel().getColumn(COL_STATUS).setMinWidth(90);
 
 
         // Bat su kien select row tren table service list
@@ -225,12 +223,12 @@ public class ServicePanel extends javax.swing.JPanel {
                 doFilter();
             }
         });
-//        dcFilter1.getDateEditor().addPropertyChangeListener(new PropertyChangeListener() {
-//            @Override
-//            public void propertyChange(PropertyChangeEvent evt) {
-//                doFilter();
-//            }
-//        });
+        dcFilter1.getDateEditor().addPropertyChangeListener(new PropertyChangeListener() {
+            @Override
+            public void propertyChange(PropertyChangeEvent evt) {
+                doFilter();
+            }
+        });
         cbStatusFilter.addItemListener(new ItemListener() {
             @Override
             public void itemStateChanged(ItemEvent e) {
@@ -518,9 +516,9 @@ public class ServicePanel extends javax.swing.JPanel {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(pnFilter, javax.swing.GroupLayout.PREFERRED_SIZE, 76, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 198, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 210, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 210, Short.MAX_VALUE)
+                .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 198, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(btRemove, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -611,16 +609,46 @@ public class ServicePanel extends javax.swing.JPanel {
                         return false;
                     }
                 };
-
+                
                 filters.add(dateFilter);
             }
+            // Chi filter date khi date khac null
+            if (dcFilter1.getDate() != null) {
+                // dcFilter khac voi date cua table o GIO, PHUT, GIAY nen phai dung Calendar de so sanh chi nam, thang, ngay.... oh vai~.
+                // Magic here....
+                RowFilter<ServiceTableModel, Object> dateFilter1 = new RowFilter<ServiceTableModel, Object>() {
+                    @Override
+                    public boolean include(RowFilter.Entry<? extends ServiceTableModel, ? extends Object> entry) {
+                        ServiceTableModel model = entry.getModel();
+                        Service o = model.getServiceAtIndex((Integer) entry.getIdentifier());
 
+                        Calendar origin = Calendar.getInstance();
+                        origin.setTime(o.getReceiveDate());
+
+                        Calendar filter = Calendar.getInstance();
+                        filter.setTime(dcFilter1.getDate());
+
+                        if (origin.get(Calendar.YEAR) == filter.get(Calendar.YEAR) && origin.get(Calendar.MONTH) == filter.get(Calendar.MONTH) && origin.get(Calendar.DATE) == filter.get(Calendar.DATE)) {
+                            return true;
+                        }
+
+                        return false;
+                    }
+                };
+                
+                filters.add(dateFilter1);
+            }
             // Chi filter status khi status khac "All"
             String stt = ((ServiceStatus) cbStatusFilter.getSelectedItem()).getSttName();
             if (!stt.equals("All")) {
                 filters.add(RowFilter.regexFilter("^" + stt, 5));
             }
-
+            
+//            String stt1 = ((ServiceType) cbTypeFilter.getSelectedItem()).getSerTypeName();
+//            if (!stt1.equals("All")) {
+//                filters.add(RowFilter.regexFilter("^" + stt, 6));
+//            }
+            
             rf = RowFilter.andFilter(filters);
         } catch (java.util.regex.PatternSyntaxException e) {
             return;

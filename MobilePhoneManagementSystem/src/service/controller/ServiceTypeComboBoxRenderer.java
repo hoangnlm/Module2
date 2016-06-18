@@ -20,7 +20,7 @@ import service.model.ServiceType;
 public class ServiceTypeComboBoxRenderer extends JLabel implements ListCellRenderer<ServiceType> {
 
     public ServiceTypeComboBoxRenderer() {
-        setHorizontalAlignment(CENTER);
+        setHorizontalAlignment(LEFT);
     }
 
 
@@ -33,7 +33,9 @@ public class ServiceTypeComboBoxRenderer extends JLabel implements ListCellRende
             setBackground(list.getBackground());
             setForeground(list.getForeground());
         }
-        setText(value.getSerTypeName()+ "");
+        if (value != null) {
+            setText(value.getSerTypeName()+ "");
+        }
         return this;
 
     }

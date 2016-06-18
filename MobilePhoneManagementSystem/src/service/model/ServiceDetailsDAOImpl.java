@@ -26,7 +26,7 @@ public class ServiceDetailsDAOImpl implements IDAO<ServiceDetails>{
      */
     public void load(int serID) {
 //    public ServiceDetailsDAOImpl(){
-        crs = getCRS("select a.ServiceID,p.ProName,b.BraName,a.ServiceContent,a.ProQty,a.OrdID,a.ProID,p.BraID from ServiceDetails a join Products p on a.ProID=p.ProID left join Branches b on p.BraID=b.BraID");
+        crs = getCRS("select a.ServiceID,p.ProName,b.BraName,a.ServiceContent,a.ProQty,a.OrdID,a.ProID,p.BraID from ServiceDetails a join Products p on a.ProID=p.ProID left join Branches b on p.BraID=b.BraID WHERE a.ServiceID=?",serID);
     
     }
     
@@ -42,11 +42,11 @@ public class ServiceDetailsDAOImpl implements IDAO<ServiceDetails>{
                             crs.getString(ServiceDetails.COL_BRANCH),
                             crs.getString(ServiceDetails.COL_CONTENT),
                             crs.getInt(ServiceDetails.COL_QUANTITY),
-                            crs.getInt(ServiceDetails.COL_ORDERID)!=0?crs.getInt(ServiceDetails.COL_ORDERID):0,
+                            crs.getInt(ServiceDetails.COL_ORDERID),//!=0?crs.getInt(ServiceDetails.COL_ORDERID):0,
                             crs.getInt(ServiceDetails.COL_PROID),
                             crs.getInt(ServiceDetails.COL_BRAID)
                     ));
-                } while (crs.next());
+                } while (crs.next());                
             }
         } catch (SQLException ex) {
             Logger.getLogger(ServiceDetailsDAOImpl.class.getName()).log(Level.SEVERE, null, ex);
