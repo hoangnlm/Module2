@@ -16,7 +16,6 @@ import java.beans.PropertyChangeListener;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
-import java.util.Date;
 import java.util.List;
 import javax.swing.DefaultListSelectionModel;
 import javax.swing.JButton;

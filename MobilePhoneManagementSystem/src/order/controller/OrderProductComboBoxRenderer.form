@@ -6,7 +6,7 @@
       <Color blue="33" green="33" red="33" type="rgb"/>
     </Property>
     <Property name="preferredSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
-      <Dimension value="[500, 25]"/>
+      <Dimension value="[450, 25]"/>
     </Property>
   </Properties>
   <AuxValues>
@@ -26,11 +26,12 @@
       <Group type="103" groupAlignment="0" attributes="0">
           <Group type="102" alignment="0" attributes="0">
               <EmptySpace max="-2" attributes="0"/>
-              <Component id="lbBranch" max="32767" attributes="0"/>
+              <Component id="lbBranch" min="-2" pref="114" max="-2" attributes="0"/>
               <EmptySpace max="-2" attributes="0"/>
-              <Component id="lbName" pref="273" max="32767" attributes="0"/>
+              <Component id="lbName" min="-2" pref="251" max="-2" attributes="0"/>
               <EmptySpace max="-2" attributes="0"/>
-              <Component id="lbStock" min="-2" pref="71" max="-2" attributes="0"/>
+              <Component id="lbStock" pref="63" max="32767" attributes="0"/>
+              <EmptySpace max="-2" attributes="0"/>
           </Group>
       </Group>
     </DimensionLayout>

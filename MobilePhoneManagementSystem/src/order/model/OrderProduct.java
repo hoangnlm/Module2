@@ -35,6 +35,8 @@ public class OrderProduct {
     public static final String COL_BRANAME = "BraName";
     public static final String COL_BRAID = "BraID";
     public static final String COL_PROSTOCK = "ProStock";
+    
+    public static final String DEFAULT_PRONAME = "<html><font color='red'>Please choose item...</font></html>";
 
     public OrderProduct() {
 

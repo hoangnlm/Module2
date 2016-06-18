@@ -1,5 +1,7 @@
 package order.controller;
 
+import java.util.ArrayList;
+import java.util.List;
 import order.model.OrderProduct;
 import order.model.OrderProductDAOImpl;
 import utility.CustomizedTableModel;
@@ -14,7 +16,11 @@ public class OrderProductTableModelDialog extends CustomizedTableModel<OrderProd
         super(new OrderProductDAOImpl(), new String[]{"No.", "Product Name", "Qty", "Price 1", "SalesOff", "Price 2"});
     }
     
-    public OrderProduct getOrderProductFromIndex(int index){
+    public List<OrderProduct> getList(){
+        return list;
+    }
+
+    public OrderProduct getOrderProductFromIndex(int index) {
         return list.get(index);
     }
 
@@ -26,22 +32,38 @@ public class OrderProductTableModelDialog extends CustomizedTableModel<OrderProd
 
     @Override
     public boolean insert(OrderProduct item) {
-        return super.insert(item); //To change body of generated methods, choose Tools | Templates.
+        list.add(item);
+        fireTableRowsInserted(list.size() - 1, list.size() - 1);
+        return true;
     }
 
     @Override
     public boolean update(OrderProduct item) {
-        return super.update(item); //To change body of generated methods, choose Tools | Templates.
+//        OrderProduct current = list.get(selectingIndex);
+//        current = item;
+//
+//        List<OrderProduct> tmp = new ArrayList();
+//        for (int i = 0; i < list.size(); i++) {
+//            tmp.add(i == selectingIndex ? item : list.get(i));
+//        }
+//
+//        // Phai doi nguyen cai list moi kich hoat fire duoc
+//        // Doi 1 phan tu trong list khong kich hoat duoc
+//        list = new ArrayList(tmp);
+//        fireTableRowsUpdated(selectingIndex, selectingIndex);
+        return true;
     }
 
     @Override
     public boolean delete(OrderProduct item) {
-        return super.delete(item); //To change body of generated methods, choose Tools | Templates.
+        list.remove(selectingIndex);
+        fireTableRowsDeleted(selectingIndex, selectingIndex);
+        return true;
     }
-    
+
     @Override
     public boolean isCellEditable(int rowIndex, int columnIndex) {
-        return columnIndex==1 || columnIndex==2; //Chi sua name va qty
+        return columnIndex == 1 || columnIndex == 2; //Chi sua name va qty
     }
 
     @Override
@@ -54,25 +76,27 @@ public class OrderProductTableModelDialog extends CustomizedTableModel<OrderProd
     public Object getValueAt(int rowIndex, int columnIndex) {
         item = list.get(rowIndex);
         Object result = null;
-        switch (columnIndex) {
-            case 0:
-                result = item.getProNo();
-                break;
-            case 1:
-                result = item.getProName();
-                break;
-            case 2:
-                result = item.getProQty();
-                break;
-            case 3:
-                result = item.getProPrice1();
-                break;
-            case 4:
-                result = item.getSalesOffAmount();
-                break;
-            case 5:
-                result = item.getProPrice2();
-                break;
+        if (item != null) {
+            switch (columnIndex) {
+                case 0:
+                    result = item.getProNo();
+                    break;
+                case 1:
+                    result = item.getProName();
+                    break;
+                case 2:
+                    result = item.getProQty();
+                    break;
+                case 3:
+                    result = item.getProPrice1();
+                    break;
+                case 4:
+                    result = item.getSalesOffAmount();
+                    break;
+                case 5:
+                    result = item.getProPrice2();
+                    break;
+            }
         }
         return result;
     }
@@ -85,7 +109,11 @@ public class OrderProductTableModelDialog extends CustomizedTableModel<OrderProd
                 item.setProNo((int) aValue);
                 break;
             case 1:
-                item.setProName(((OrderProduct) aValue).getProName());
+                if (aValue != null) {
+                    item.setProName(((OrderProduct) aValue).getProName());
+                } else {
+                    item.setProName(OrderProduct.DEFAULT_PRONAME);
+                }
                 break;
             case 2:
                 item.setProQty((int) aValue);

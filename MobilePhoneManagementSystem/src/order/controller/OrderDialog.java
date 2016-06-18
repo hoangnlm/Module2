@@ -3,20 +3,39 @@ package order.controller;
 import java.awt.Cursor;
 import java.awt.Dimension;
 import java.awt.Rectangle;
+import java.awt.event.ActionEvent;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.text.NumberFormat;
 import java.text.SimpleDateFormat;
+import java.util.Arrays;
 import java.util.Date;
+import java.util.List;
+import java.util.Vector;
+import javax.swing.AbstractAction;
 import javax.swing.DefaultListSelectionModel;
+import javax.swing.JCheckBox;
 import javax.swing.JFrame;
+import javax.swing.JOptionPane;
+import javax.swing.ListModel;
 import javax.swing.SwingUtilities;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
 import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
 import main.controller.LoginConfig;
 import order.model.Order;
+import order.model.OrderBranch;
 import order.model.OrderCustomer;
 import order.model.OrderProduct;
+import utility.CheckBoxListCellRenderer;
 import utility.CurrencyCellRenderer;
 import utility.PercentCellRenderer;
 import utility.SpinnerCellEditor;
 import utility.SwingUtils;
+import utility.TableCellListener;
 
 /**
  *
@@ -45,7 +64,7 @@ public class OrderDialog extends javax.swing.JDialog {
 
     // Product dang duoc chon trong table product list
     private OrderProduct selectedProduct;
-    private int selectedRowIndex;
+    private int selectedRowIndex = -1;
 
     private static final int COL_PRONO = 0;
     private static final int COL_PRONAME = 1;
@@ -57,13 +76,19 @@ public class OrderDialog extends javax.swing.JDialog {
     // Two mode: insert va update
     private boolean insertMode;
 
+    // Flag de theo doi co thay doi noi dung gi khong
+    private boolean trackChanges;
+
+    // List de save vao database
+    private List<OrderProduct> proList;
+
     public OrderDialog(Order order) {
         super((JFrame) null, true);
         initComponents();
         setLocationRelativeTo(null);
         insertMode = order == null;
 
-        //Disable button khi moi khoi dong len
+        // Disable button khi moi khoi dong len
         btRemove.setEnabled(false);
         btSave.setEnabled(false);
 
@@ -78,6 +103,14 @@ public class OrderDialog extends javax.swing.JDialog {
         orderCustomerComboBoxRenderer = new OrderCustomerComboBoxRenderer();
         cbCustomer.setModel(orderCustomerComboBoxModel);
         cbCustomer.setRenderer(orderCustomerComboBoxRenderer);
+        cbCustomer.addItemListener(new ItemListener() {
+            @Override
+            public void itemStateChanged(ItemEvent e) {
+                if (e.getStateChange() == ItemEvent.SELECTED) {
+                    updateDiscountLabel();
+                }
+            }
+        });
 
         // Set data cho combobox product name
         orderProductComboBoxModel = new OrderProductComboBoxModel();
@@ -85,10 +118,6 @@ public class OrderDialog extends javax.swing.JDialog {
         // Set data cho table
         orderProductTableModelDialog = new OrderProductTableModelDialog();
         tbProduct.setModel(orderProductTableModelDialog);
-
-        // Set auto define column from model to false to stop create column again
-        tbProduct.setAutoCreateColumnsFromModel(false);
-        tbProduct.setAutoCreateRowSorter(true);
 
         // Set height cho table header
         tbProduct.getTableHeader().setPreferredSize(new Dimension(300, 30));
@@ -98,7 +127,7 @@ public class OrderDialog extends javax.swing.JDialog {
         tbProduct.getColumnModel().getColumn(COL_PRONO).setMaxWidth(50);
 
         // Col pro name
-        tbProduct.getColumnModel().getColumn(COL_PRONAME).setMinWidth(500);
+        tbProduct.getColumnModel().getColumn(COL_PRONAME).setMinWidth(450);
         tbProduct.getColumnModel().getColumn(COL_PRONAME).setCellEditor(new OrderProductComboBoxCellEditor(orderProductComboBoxModel));
 
         // Col quantity
@@ -114,7 +143,7 @@ public class OrderDialog extends javax.swing.JDialog {
         tbProduct.getColumnModel().getColumn(COL_SALEAMOUNT).setCellRenderer(new PercentCellRenderer());
 
         // Col price 2
-        tbProduct.getColumnModel().getColumn(COL_PROPRICE2).setMinWidth(100);
+        tbProduct.getColumnModel().getColumn(COL_PROPRICE2).setMinWidth(110);
         tbProduct.getColumnModel().getColumn(COL_PROPRICE2).setCellRenderer(new CurrencyCellRenderer());
 
         // Bat su kien select row tren table product
@@ -122,25 +151,64 @@ public class OrderDialog extends javax.swing.JDialog {
             DefaultListSelectionModel model = (DefaultListSelectionModel) e.getSource();
             if (!model.isSelectionEmpty()) {
                 fetchAction();
-                btRemove.setEnabled(true);
+                if (orderProductTableModelDialog.getRowCount() > 1) {
+                    btRemove.setEnabled(true);
+                }
             } else {
                 btRemove.setEnabled(false);
             }
         });
 
+        //<editor-fold defaultstate="collapsed" desc="Set cell listener cho updating">
+        TableCellListener tcl = new TableCellListener(tbProduct, new AbstractAction() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                TableCellListener tcl = (TableCellListener) e.getSource();
+//                System.out.println("Row   : " + tcl.getRow());
+//                System.out.println("Column: " + tcl.getColumn());
+//                System.out.println("Old   : " + tcl.getOldValue());
+//                System.out.println("New   : " + tcl.getNewValue());
+
+                switch (tcl.getColumn()) {
+                    case COL_PRONAME:
+                        // Check duplicate product
+                        if (checkDuplicate((String) tcl.getNewValue())) {
+                            SwingUtils.showErrorDialog("Duplicated item is not allowed in an order !");
+                            tbProduct.setValueAt(tcl.getOldValue(), tbProduct.getSelectedRow(), tbProduct.getSelectedColumn());
+                        } else {
+
+                            // Lay product moi tu combo box gan cho product
+                            // hien tai
+                            selectedProduct = orderProductComboBoxModel.getOrderProductFromName((String) tcl.getNewValue());
+                            tbProduct.setValueAt(selectedProduct.getProPrice1(), tbProduct.getSelectedRow(), COL_PROPRICE1);
+                            tbProduct.setValueAt(selectedProduct.getSalesOffAmount(), tbProduct.getSelectedRow(), COL_SALEAMOUNT);
+                            tbProduct.setValueAt(selectedProduct.getProPrice1() * (1 - selectedProduct.getSalesOffAmount()), tbProduct.getSelectedRow(), COL_PROPRICE2);
+
+                            // Gan quantity moi cho product hien tai
+                            selectedProduct.setProQty((int) tbProduct.getValueAt(tbProduct.getSelectedRow(), COL_PROQTY));
+
+                            // Update label
+                            updateTotalLabel();
+                        }
+                        break;
+                }
+
+                trackChanges = true;
+                btSave.setEnabled(true);
+            }
+        });
+//</editor-fold>
+
         // Xu ly mode
         if (insertMode) { // Mode insert
             setTitle("New Order");
             this.order = new Order();
+            this.order.setOrdID(-1);
             SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
             tfDate.setText(dateFormat.format(new Date()));
             tfUser.setText(LoginConfig.USER_NAME);
             cbStatus.setSelectedIndex(0);
             cbCustomer.setSelectedIndex(cbCustomer.getItemCount() - 1);
-            orderProductTableModelDialog.load(-1);    //Emply list
-
-            // Load data cho combobox col product name trong table
-//            orderProductComboBoxModel.load(order.getOrdID());
         } else { // Mode update
             setTitle("Update Order");
             this.order = order;
@@ -148,11 +216,59 @@ public class OrderDialog extends javax.swing.JDialog {
             tfDate.setText(dateFormat.format(order.getOrdDate()));
             tfUser.setText(order.getUserName());
             cbStatus.setSelectedItem(orderStatusComboBoxModel.getStatusFromValue(order.getOrdStatus()));
-//            System.out.println("cusID: "+order.getCusID());
-//            System.out.println("cus: "+orderCustomerComboBoxModel.getCustomerFromID(order.getCusID()));
             cbCustomer.setSelectedItem(orderCustomerComboBoxModel.getCustomerFromID(order.getCusID()));
-            orderProductTableModelDialog.load(order.getOrdID());
         }
+
+        // Set data cho table chinh
+        orderProductTableModelDialog.load(this.order.getOrdID());    //Emply list
+
+        // Set data cho cac label
+        updateItemsLabel();
+        updateDiscountLabel();
+
+//<editor-fold defaultstate="collapsed" desc="xu ly cho vung filter">
+// Set data cho list filter
+        list.setModel(new OrderBranchListModel());
+        list.setCellRenderer(new OrderBranchListCellRenderer());
+        list.setSelectionModel(new DefaultListSelectionModel() {
+            @Override
+            public void setSelectionInterval(int index0, int index1) {
+                if (super.isSelectedIndex(index0)) {
+                    super.removeSelectionInterval(index0, index1);
+                } else {
+                    super.addSelectionInterval(index0, index1);
+                }
+            }
+        });
+        list.addListSelectionListener(new ListSelectionListener() {
+            @Override
+            public void valueChanged(ListSelectionEvent e) {
+                orderProductComboBoxModel.setBraList((List<OrderBranch>) list.getSelectedValuesList());
+                orderProductComboBoxModel.filter();
+            }
+        });
+
+// Su kien cho filter name
+        tfNameFilter.getDocument().addDocumentListener(new DocumentListener() {
+            @Override
+            public void insertUpdate(DocumentEvent e) {
+                orderProductComboBoxModel.setProName(tfNameFilter.getText().trim());
+                orderProductComboBoxModel.filter();
+            }
+
+            @Override
+            public void removeUpdate(DocumentEvent e) {
+                orderProductComboBoxModel.setProName(tfNameFilter.getText().trim());
+                orderProductComboBoxModel.filter();
+            }
+
+            @Override
+            public void changedUpdate(DocumentEvent e) {
+                orderProductComboBoxModel.setProName(tfNameFilter.getText().trim());
+                orderProductComboBoxModel.filter();
+            }
+        });
+//</editor-fold>
     }
 
 //<editor-fold defaultstate="collapsed" desc="Bat su kien">
@@ -170,11 +286,16 @@ public class OrderDialog extends javax.swing.JDialog {
         jLabel7 = new javax.swing.JLabel();
         tfUser = new javax.swing.JTextField();
         jPanel2 = new javax.swing.JPanel();
-        jScrollPane1 = new javax.swing.JScrollPane();
-        tbProduct = new javax.swing.JTable();
         btAdd = new javax.swing.JButton();
         btRemove = new javax.swing.JButton();
         btReset = new javax.swing.JButton();
+        jScrollPane2 = new javax.swing.JScrollPane();
+        tbProduct = new javax.swing.JTable();
+        jLabel1 = new javax.swing.JLabel();
+        btClear = new javax.swing.JButton();
+        tfNameFilter = new javax.swing.JTextField();
+        jScrollPane3 = new javax.swing.JScrollPane();
+        list = new javax.swing.JList<>();
         btSave = new javax.swing.JButton();
         btCancel = new javax.swing.JButton();
         jPanel4 = new javax.swing.JPanel();
@@ -190,9 +311,9 @@ public class OrderDialog extends javax.swing.JDialog {
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setTitle("Add Order");
         setMaximumSize(new java.awt.Dimension(9999, 9999));
-        setMinimumSize(new java.awt.Dimension(800, 607));
-        setPreferredSize(new java.awt.Dimension(900, 607));
-        setSize(new java.awt.Dimension(800, 607));
+        setMinimumSize(new java.awt.Dimension(900, 700));
+        setPreferredSize(new java.awt.Dimension(900, 700));
+        setSize(new java.awt.Dimension(900, 700));
 
         jPanel1.setBorder(javax.swing.BorderFactory.createTitledBorder(javax.swing.BorderFactory.createEtchedBorder(), "Order Details"));
 
@@ -255,25 +376,6 @@ public class OrderDialog extends javax.swing.JDialog {
 
         jPanel2.setBorder(javax.swing.BorderFactory.createTitledBorder(javax.swing.BorderFactory.createEtchedBorder(), "Product Details"));
 
-        jScrollPane1.setPreferredSize(new java.awt.Dimension(250, 404));
-
-        tbProduct.setModel(new javax.swing.table.DefaultTableModel(
-            new Object [][] {
-                {null, null, null, null, null, null},
-                {null, null, null, null, null, null},
-                {null, null, null, null, null, null},
-                {null, null, null, null, null, null}
-            },
-            new String [] {
-                "No.", "Name", "Qty", "Price1", "Sales (%)", "Price2"
-            }
-        ));
-        tbProduct.setPreferredSize(new java.awt.Dimension(200, 100));
-        tbProduct.setRowHeight(25);
-        tbProduct.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
-        tbProduct.getTableHeader().setReorderingAllowed(false);
-        jScrollPane1.setViewportView(tbProduct);
-
         btAdd.setFont(new java.awt.Font("Lucida Grande", 0, 14)); // NOI18N
         btAdd.setIcon(new javax.swing.ImageIcon(getClass().getResource("/image/order/Add3.png"))); // NOI18N
         btAdd.setText("Add");
@@ -301,31 +403,94 @@ public class OrderDialog extends javax.swing.JDialog {
             }
         });
 
+        jScrollPane2.setBorder(javax.swing.BorderFactory.createTitledBorder(javax.swing.BorderFactory.createEtchedBorder(), "Order Details"));
+
+        tbProduct.setAutoCreateRowSorter(true);
+        tbProduct.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+
+            },
+            new String [] {
+                "No.", "Product Name", "Quantity", "Price 1", "SalesOff", "Price 2"
+            }
+        ));
+        tbProduct.setFillsViewportHeight(true);
+        tbProduct.setRowHeight(25);
+        tbProduct.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
+        tbProduct.getTableHeader().setReorderingAllowed(false);
+        jScrollPane2.setViewportView(tbProduct);
+
+        jLabel1.setText("Name:");
+        jLabel1.setPreferredSize(new java.awt.Dimension(95, 20));
+
+        btClear.setFont(new java.awt.Font("Lucida Grande", 0, 12)); // NOI18N
+        btClear.setIcon(new javax.swing.ImageIcon(getClass().getResource("/image/order/trash_full.png"))); // NOI18N
+        btClear.setText("Clear Filter");
+        btClear.setPreferredSize(new java.awt.Dimension(100, 20));
+        btClear.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btClearActionPerformed(evt);
+            }
+        });
+
+        tfNameFilter.setPreferredSize(new java.awt.Dimension(250, 20));
+
+        jScrollPane3.setMinimumSize(new java.awt.Dimension(200, 30));
+        jScrollPane3.setPreferredSize(new java.awt.Dimension(604, 50));
+        jScrollPane3.setViewportView(list);
+
+        list.setBackground(new java.awt.Color(51, 51, 51));
+        list.setLayoutOrientation(javax.swing.JList.HORIZONTAL_WRAP);
+        list.setMaximumSize(new java.awt.Dimension(99999, 9999));
+        list.setMinimumSize(new java.awt.Dimension(600, 30));
+        list.setPreferredSize(new java.awt.Dimension(600, 80));
+        list.setSize(new java.awt.Dimension(600, 30));
+        list.setVisibleRowCount(-1);
+        jScrollPane3.setViewportView(list);
+
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
         jPanel2.setLayout(jPanel2Layout);
         jPanel2Layout.setHorizontalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(btAdd, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(btRemove, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(btReset, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+            .addComponent(jScrollPane2, javax.swing.GroupLayout.Alignment.TRAILING)
+            .addGroup(jPanel2Layout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(jPanel2Layout.createSequentialGroup()
+                        .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 45, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(tfNameFilter, javax.swing.GroupLayout.PREFERRED_SIZE, 231, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(btClear, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(btAdd, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(18, 18, 18)
+                        .addComponent(btRemove, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(18, 18, 18)
+                        .addComponent(btReset, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(jScrollPane3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
         );
         jPanel2Layout.setVerticalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel2Layout.createSequentialGroup()
-                .addGap(6, 6, 6)
-                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(btAdd, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(btRemove, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(btReset, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 263, Short.MAX_VALUE)
-                .addGap(3, 3, 3))
+                .addComponent(jScrollPane3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(jPanel2Layout.createSequentialGroup()
+                        .addGap(8, 8, 8)
+                        .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(jPanel2Layout.createSequentialGroup()
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(btRemove, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(btAdd, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(btReset, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                    .addGroup(jPanel2Layout.createSequentialGroup()
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(tfNameFilter, javax.swing.GroupLayout.PREFERRED_SIZE, 28, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(btClear, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE))))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 311, Short.MAX_VALUE))
         );
 
         btSave.setFont(new java.awt.Font("Lucida Grande", 0, 14)); // NOI18N
@@ -375,33 +540,34 @@ public class OrderDialog extends javax.swing.JDialog {
                 .addContainerGap()
                 .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jPanel4Layout.createSequentialGroup()
-                        .addComponent(jLabel5, javax.swing.GroupLayout.PREFERRED_SIZE, 80, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(lbItems, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(jLabel10))
-                    .addGroup(jPanel4Layout.createSequentialGroup()
                         .addComponent(jLabel12, javax.swing.GroupLayout.PREFERRED_SIZE, 80, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(lbDiscount, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(jLabel14)))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(lbTotal, javax.swing.GroupLayout.DEFAULT_SIZE, 150, Short.MAX_VALUE)
-                    .addComponent(lbFinal, javax.swing.GroupLayout.DEFAULT_SIZE, 150, Short.MAX_VALUE))
+                        .addComponent(jLabel14)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(lbFinal, javax.swing.GroupLayout.PREFERRED_SIZE, 150, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(jPanel4Layout.createSequentialGroup()
+                        .addComponent(jLabel5, javax.swing.GroupLayout.PREFERRED_SIZE, 80, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(lbItems, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(jLabel10)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(lbTotal, javax.swing.GroupLayout.PREFERRED_SIZE, 150, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addContainerGap())
         );
         jPanel4Layout.setVerticalGroup(
             jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel4Layout.createSequentialGroup()
-                .addContainerGap()
+                .addGap(6, 6, 6)
                 .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel5)
-                    .addComponent(lbItems)
                     .addComponent(jLabel10)
-                    .addComponent(lbTotal))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                    .addComponent(lbTotal)
+                    .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                        .addComponent(jLabel5)
+                        .addComponent(lbItems)))
+                .addGap(4, 4, 4)
                 .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                         .addComponent(jLabel12)
@@ -409,7 +575,7 @@ public class OrderDialog extends javax.swing.JDialog {
                     .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                         .addComponent(jLabel14)
                         .addComponent(lbFinal)))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addContainerGap())
         );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
@@ -431,7 +597,7 @@ public class OrderDialog extends javax.swing.JDialog {
             .addGroup(layout.createSequentialGroup()
                 .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, 103, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jPanel4, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -457,21 +623,27 @@ public class OrderDialog extends javax.swing.JDialog {
     }//GEN-LAST:event_btRemoveActionPerformed
 
     private void btResetActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btResetActionPerformed
-        refreshAction(true);
+        resetAction(true);
     }//GEN-LAST:event_btResetActionPerformed
 
     private void btSaveActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btSaveActionPerformed
-        saveAction();
+        updateAction();
     }//GEN-LAST:event_btSaveActionPerformed
+
+    private void btClearActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btClearActionPerformed
+        clearFilter();
+    }//GEN-LAST:event_btClearActionPerformed
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btAdd;
     private javax.swing.JButton btCancel;
+    private javax.swing.JButton btClear;
     private javax.swing.JButton btRemove;
     private javax.swing.JButton btReset;
     private javax.swing.JButton btSave;
     private javax.swing.JComboBox<OrderCustomer> cbCustomer;
     private javax.swing.JComboBox<order.model.OrderStatus> cbStatus;
+    private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel10;
     private javax.swing.JLabel jLabel12;
     private javax.swing.JLabel jLabel14;
@@ -483,52 +655,150 @@ public class OrderDialog extends javax.swing.JDialog {
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JPanel jPanel4;
-    private javax.swing.JScrollPane jScrollPane1;
+    private javax.swing.JScrollPane jScrollPane2;
+    private javax.swing.JScrollPane jScrollPane3;
     private javax.swing.JLabel lbDiscount;
     private javax.swing.JLabel lbFinal;
     private javax.swing.JLabel lbItems;
     private javax.swing.JLabel lbTotal;
+    private javax.swing.JList<OrderBranch> list;
     private javax.swing.JTable tbProduct;
     private javax.swing.JTextField tfDate;
+    private javax.swing.JTextField tfNameFilter;
     private javax.swing.JTextField tfUser;
     // End of variables declaration//GEN-END:variables
 //</editor-fold>
 
     private void insertAction() {
-
+        // Toi da 20 items
+        if (orderProductTableModelDialog.getRowCount() == 19) {
+            SwingUtils.showInfoDialog("Maximum 20 item in 01 order !");
+            btAdd.setEnabled(false);
+        }
+        OrderProduct product = new OrderProduct();
+        product.setProNo(orderProductTableModelDialog.getRowCount() + 1);
+        product.setProQty(1);
+        product.setProName(OrderProduct.DEFAULT_PRONAME);
+        orderProductTableModelDialog.insert(product);
+        scrollToRow(tbProduct.getRowCount() - 1);
+        trackChanges = true;
+        btSave.setEnabled(true);
+        updateItemsLabel();
     }
 
     private void deleteAction() {
+        btAdd.setEnabled(true);
 
+        // Toi thieu 01 item
+        if (orderProductTableModelDialog.getRowCount() == 2) {
+            SwingUtils.showInfoDialog("At least 01 item in 01 order !");
+            btRemove.setEnabled(false);
+        }
+
+        orderProductTableModelDialog.delete(selectedProduct);
+        // Neu row xoa la row cuoi thi lui cursor ve
+        // Neu row xoa la row khac cuoi thi tien cursor ve truoc
+        selectedRowIndex = (selectedRowIndex == tbProduct.getRowCount() ? tbProduct.getRowCount() - 1 : selectedRowIndex++);
+        scrollToRow(selectedRowIndex);
+        trackChanges = true;
+        btSave.setEnabled(true);
+        updateItemsLabel();
     }
 
-    private void saveAction() {
+    private void updateAction() {
+        if (checkValidate()) {
+            System.out.println("list size: " + orderProductTableModelDialog.getList().size());
+            System.out.println("list: " + orderProductTableModelDialog.getList());
 
+        } else {
+            SwingUtils.showInfoDialog("Save dang xu ly!");
+        }
     }
 
     private void cancelAction() {
-        dispose();
+        if (trackChanges) {
+            if (SwingUtils.showConfirmDialog("Discard change(s) and quit ?") == JOptionPane.YES_OPTION) {
+                dispose();
+            }
+        } else {
+            dispose();
+        }
     }
 
     private void fetchAction() {
-        if (tbProduct.getSelectedRow() >= 0) {
-            selectedRowIndex = tbProduct.convertRowIndexToModel(tbProduct.getSelectedRow());
-            selectedProduct = orderProductTableModelDialog.getOrderProductFromIndex(selectedRowIndex);
-            orderProductTableModelDialog.setSelectingIndex(selectedRowIndex);
+        selectedRowIndex = tbProduct.getSelectedRow();
+        if (selectedRowIndex >= 0) {
+            int idx = tbProduct.convertRowIndexToModel(selectedRowIndex);
+            selectedProduct = orderProductTableModelDialog.getOrderProductFromIndex(idx);
+            orderProductTableModelDialog.setSelectingIndex(idx);
+        } else {
+            selectedProduct = null;
+            orderProductTableModelDialog.setSelectingIndex(-1);
         }
     }
 
-    private void refreshAction(boolean mustInfo) {
+    private void resetAction(boolean mustInfo) {
+        orderProductTableModelDialog.load(order.getOrdID());
         if (mustInfo) {
-            setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
-            orderProductTableModelDialog.refresh();
-            setCursor(null);
-            SwingUtils.showInfoDialog(SwingUtils.DB_REFRESH);
-        } else {
-            orderProductTableModelDialog.refresh();
+            SwingUtils.showInfoDialog(SwingUtils.DB_RESET);
         }
+        if (insertMode) {
+            btSave.setEnabled(false);
+        }
+    }
 
-        scrollToRow(selectedRowIndex);
+    private boolean checkValidate() {
+
+        return true;
+    }
+
+    private boolean checkDuplicate(String proName) {
+        
+        return false;
+    }
+
+    private void updateItemsLabel() {
+        if (tbProduct.getRowCount() > 0) {
+            lbItems.setText(String.format("%02d", tbProduct.getRowCount()));
+        } else {
+            lbItems.setText("0");
+        }
+        updateTotalLabel();
+    }
+
+    private void updateDiscountLabel() {
+        OrderCustomer oc = (OrderCustomer) cbCustomer.getSelectedItem();
+        NumberFormat format = NumberFormat.getPercentInstance();
+        lbDiscount.setText(format.format(oc.getCusDiscount()));
+        updateFinalLabel();
+    }
+
+    private void updateTotalLabel() {
+        float sum = 0;
+        if (tbProduct.getRowCount() > 0) {
+            for (int i = 0; i < tbProduct.getRowCount(); i++) {
+                sum += (float) tbProduct.getValueAt(i, COL_PROPRICE2);
+            }
+        }
+        lbTotal.setText(String.format("%,.0f Đ", (float) sum));
+        updateFinalLabel();
+    }
+
+    private void updateFinalLabel() {
+        float sum = 0;
+        if (tbProduct.getRowCount() > 0) {
+            for (int i = 0; i < tbProduct.getRowCount(); i++) {
+                sum += (float) tbProduct.getValueAt(i, COL_PROPRICE2);
+            }
+            OrderCustomer oc = (OrderCustomer) cbCustomer.getSelectedItem();
+            sum = sum * (1 - oc.getCusDiscount());
+        }
+        lbFinal.setText(String.format("%,.0f Đ", (float) sum));
+    }
+
+    private void clearFilter() {
+        list.getSelectionModel().clearSelection();
+        tfNameFilter.setText(null);
     }
 
     private void scrollToRow(int row) {

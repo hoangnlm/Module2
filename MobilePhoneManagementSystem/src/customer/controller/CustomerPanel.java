@@ -22,7 +22,7 @@ import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.table.TableRowSorter;
-import order.controller.AddOrderDialog;
+import order.controller.OrderDialog;
 import utility.StringCellEditor;
 import utility.TableCellListener;
 import utility.SwingUtils;
@@ -501,7 +501,7 @@ public class CustomerPanel extends javax.swing.JPanel {
     }//GEN-LAST:event_btCusLevelActionPerformed
 
     private void btNewOrderActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btNewOrderActionPerformed
-        new AddOrderDialog().setVisible(true);
+        new OrderDialog(null).setVisible(true);
     }//GEN-LAST:event_btNewOrderActionPerformed
 
     private void btRefreshActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btRefreshActionPerformed

@@ -42,7 +42,8 @@ public class OrderProductDAOImpl implements IDAO<OrderProduct> {
                             crs.getString(OrderProduct.COL_PRONAME),
                             crs.getInt(OrderProduct.COL_PROQTY),
                             crs.getFloat(OrderProduct.COL_PROPRICE1),
-                            crs.getFloat(OrderProduct.COL_SALEAMOUNT),
+        // SalesOff = (Price1 - Price2)/Price1
+(crs.getFloat(OrderProduct.COL_PROPRICE1)-crs.getFloat(OrderProduct.COL_PROPRICE2))/crs.getFloat(OrderProduct.COL_PROPRICE1)                            ,
                             crs.getFloat(OrderProduct.COL_PROPRICE2),
                             crs.getInt(OrderProduct.COL_SALEID),
                             crs.getInt(OrderProduct.COL_PRONO),

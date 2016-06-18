@@ -19,6 +19,7 @@ public class SwingUtils {
     public static final String DELETE_SUCCESS = "Deleted successfully !";
     public static final String DELETE_FAIL = "Deletion has failed !";
     public static final String DB_REFRESH = "Data have been refreshed !";
+    public static final String DB_RESET = "Data have been reset !";
     
     // Declare some regex constants
     public static final String PATTERN_CUSNAME = "[A-Za-z0-9 ]+";

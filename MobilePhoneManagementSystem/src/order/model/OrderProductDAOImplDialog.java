@@ -26,7 +26,7 @@ public class OrderProductDAOImplDialog implements IDAO<OrderProduct> {
 
     public OrderProductDAOImplDialog() {
         // Chi thao tac voi product dang enable
-        crs = getCRS("select ProID, BraName, ProName, ProStock, ProPrice, SalesOffAmount from Products p join Branches b on p.BraID=b.BraID left join SalesOff s on p.SalesOffID=s.SalesOffID where ProEnabled=1 order by BraName");
+        crs = getCRS("select ProID, p.BraID, BraName, ProName, ProStock, ProPrice, SalesOffAmount from Products p join Branches b on p.BraID=b.BraID left join SalesOff s on p.SalesOffID=s.SalesOffID where ProEnabled=1 order by BraName");
     }
 
     @Override
@@ -46,7 +46,7 @@ public class OrderProductDAOImplDialog implements IDAO<OrderProduct> {
                             0,
                             0,
                             crs.getString(OrderProduct.COL_BRANAME),
-                            0,
+                            crs.getInt(OrderProduct.COL_BRAID),
                             crs.getInt(OrderProduct.COL_PROSTOCK)));
                 } while (crs.next());
             }
