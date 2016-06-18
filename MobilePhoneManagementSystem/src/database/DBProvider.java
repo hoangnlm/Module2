@@ -23,11 +23,11 @@ public class DBProvider {
     }
 
     public DBProvider() {
-        dbHost = "10.211.55.7";
+        dbHost = "localhost";
         dbPort = "1433";
-        dbName = "Mobile";
+        dbName = "Mobile3";
         dbUsername = "sa";
-        dbPassword = "111";
+        dbPassword = "1";
     }
 
     public DBProvider(String dbHost, String dbPort, String dbName, String dbUsername, String dbPassword) {

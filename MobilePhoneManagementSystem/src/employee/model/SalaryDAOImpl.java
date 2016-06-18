@@ -3,14 +3,12 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package service;
+package employee.model;
 
 /**
  *
  * @author BonBon
  */
-public class Service {
-    public static void main(String[] args) {
-        System.out.println("hohoh");
-    }
+public class SalaryDAOImpl {
+    
 }
