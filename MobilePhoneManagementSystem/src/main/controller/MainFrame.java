@@ -26,9 +26,12 @@ import javax.swing.JPanel;
 import javax.swing.JRadioButton;
 import javax.swing.UIManager;
 import customer.controller.CustomerPanel;
+import employee.controller.EmployeePanel;
 import home.controller.HomePanel;
 import java.awt.Font;
 import order.controller.OrderPanel;
+import service.controller.ServicePanel;
+import user.controller.UserPanel;
 import utility.SwingUtils;
 
 /**
@@ -82,16 +85,16 @@ public final class MainFrame extends javax.swing.JFrame {
         lb[10] = lbLogout;
         lb[11] = lbExit;
 
-        pn[0] = new HomePanel();
+        pn[0] = new ServicePanel();
         pn[1] = new BlankPanel();
         pn[2] = new BlankPanel();
         pn[3] = new BlankPanel();
         pn[4] = new OrderPanel();
         pn[5] = new CustomerPanel();
         pn[6] = new BlankPanel();
-        pn[7] = new BlankPanel();
-        pn[8] = new BlankPanel();
-        pn[9] = new BlankPanel();
+        pn[7] = new ServicePanel();
+        pn[8] = new EmployeePanel();
+        pn[9] = new UserPanel();
 
         for (int i = 0; i < sidebarTotal; i++) {
             setSidebarItem(lb[i]);
