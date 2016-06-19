@@ -21,6 +21,7 @@ public class OrderProductDAOImpl implements IDAO<OrderProduct> {
 
     private CachedRowSet crs;  //CRS to update table
     private int selectingIndex;
+    private Order currentOrder;
 
     /**
      * Dung load du lieu theo yeu cau, khong tu dong load
@@ -42,8 +43,8 @@ public class OrderProductDAOImpl implements IDAO<OrderProduct> {
                             crs.getString(OrderProduct.COL_PRONAME),
                             crs.getInt(OrderProduct.COL_PROQTY),
                             crs.getFloat(OrderProduct.COL_PROPRICE1),
-        // SalesOff = (Price1 - Price2)/Price1
-(crs.getFloat(OrderProduct.COL_PROPRICE1)-crs.getFloat(OrderProduct.COL_PROPRICE2))/crs.getFloat(OrderProduct.COL_PROPRICE1)                            ,
+                            // SalesOff = (Price1 - Price2)/Price1
+                            (crs.getFloat(OrderProduct.COL_PROPRICE1) - crs.getFloat(OrderProduct.COL_PROPRICE2)) / crs.getFloat(OrderProduct.COL_PROPRICE1),
                             crs.getFloat(OrderProduct.COL_PROPRICE2),
                             crs.getInt(OrderProduct.COL_SALEID),
                             crs.getInt(OrderProduct.COL_PRONO),
@@ -63,11 +64,39 @@ public class OrderProductDAOImpl implements IDAO<OrderProduct> {
         return false;
 
     }
+    
+    public boolean insert(List<OrderProduct> list){
+        boolean result = false;
+        if (currentOrder == null) { // Chua set current order cho DAO
+            return result;
+        }
+
+        return result;
+    }
 
     @Override
     public boolean update(OrderProduct model) {
         return false;
 
+    }
+        
+    public boolean update(List<OrderProduct> list) {
+        boolean result = false;
+        if (currentOrder == null) { // Chua set current order cho DAO
+            return result;
+        }
+        if(currentOrder.getOrdID()==-1){ //Insert new Order
+            return insert(list);
+        }
+        try {
+            runPS("update Orders set CusID=?, OrdCusDiscount=?, SttID=?",currentOrder.getCusID(), currentOrder.getCusDiscount(),currentOrder.getOrdStatusID());
+
+            result = true;
+        } catch (SQLException ex) {
+            Logger.getLogger(OrderProductDAOImpl.class.getName()).log(Level.SEVERE, null, ex);
+        }
+
+        return result;
     }
 
     @Override
@@ -83,6 +112,14 @@ public class OrderProductDAOImpl implements IDAO<OrderProduct> {
     @Override
     public void setSelectingIndex(int idx) {
         selectingIndex = idx;
+    }
+
+    public Order getCurrentOrder() {
+        return currentOrder;
+    }
+
+    public void setCurrentOrder(Order currentOrder) {
+        this.currentOrder = currentOrder;
     }
 
 }

@@ -2,9 +2,11 @@ package order.controller;
 
 import java.util.ArrayList;
 import java.util.List;
+import order.model.Order;
 import order.model.OrderProduct;
 import order.model.OrderProductDAOImpl;
 import utility.CustomizedTableModel;
+import utility.SwingUtils;
 
 /**
  *
@@ -15,8 +17,8 @@ public class OrderProductTableModelDialog extends CustomizedTableModel<OrderProd
     public OrderProductTableModelDialog() {
         super(new OrderProductDAOImpl(), new String[]{"No.", "Product Name", "Qty", "Price 1", "SalesOff", "Price 2"});
     }
-    
-    public List<OrderProduct> getList(){
+
+    public List<OrderProduct> getList() {
         return list;
     }
 
@@ -30,6 +32,19 @@ public class OrderProductTableModelDialog extends CustomizedTableModel<OrderProd
         fireTableDataChanged();
     }
 
+    public boolean insert(Order order) {
+        boolean result = false;
+        if (checkOrderProduct()) { //Da chon product day du
+            ((OrderProductDAOImpl) super.daoImpl).setCurrentOrder(order);
+            if (((OrderProductDAOImpl) super.daoImpl).insert(list)) {
+                result = true;
+            }
+        } else {
+            SwingUtils.showErrorDialog("Please choose all product items !");
+        }
+        return result;
+    }
+
     @Override
     public boolean insert(OrderProduct item) {
         list.add(item);
@@ -37,21 +52,22 @@ public class OrderProductTableModelDialog extends CustomizedTableModel<OrderProd
         return true;
     }
 
+    public boolean update(Order order) {
+        boolean result = false;
+        if (checkOrderProduct()) { //Da chon product day du
+            ((OrderProductDAOImpl) super.daoImpl).setCurrentOrder(order);
+            if (((OrderProductDAOImpl) super.daoImpl).update(list)) {
+                result = true;
+            }
+        } else {
+            SwingUtils.showErrorDialog("Please choose all product items !");
+        }
+        return result;
+    }
+
     @Override
     public boolean update(OrderProduct item) {
-//        OrderProduct current = list.get(selectingIndex);
-//        current = item;
-//
-//        List<OrderProduct> tmp = new ArrayList();
-//        for (int i = 0; i < list.size(); i++) {
-//            tmp.add(i == selectingIndex ? item : list.get(i));
-//        }
-//
-//        // Phai doi nguyen cai list moi kich hoat fire duoc
-//        // Doi 1 phan tu trong list khong kich hoat duoc
-//        list = new ArrayList(tmp);
-//        fireTableRowsUpdated(selectingIndex, selectingIndex);
-        return true;
+        return false;
     }
 
     @Override
@@ -59,6 +75,14 @@ public class OrderProductTableModelDialog extends CustomizedTableModel<OrderProd
         list.remove(selectingIndex);
         fireTableRowsDeleted(selectingIndex, selectingIndex);
         return true;
+    }
+
+    public boolean checkOrderProduct() {
+        // Check product name co khac empty
+        // (co chon product het khong)
+        List<OrderProduct> tmp = new ArrayList();
+        list.stream().filter(op -> op.getProName().equals(OrderProduct.DEFAULT_PRONAME)).forEach(op -> tmp.add(op));
+        return tmp.size() == 0; //Da chon product day du
     }
 
     @Override
@@ -110,7 +134,11 @@ public class OrderProductTableModelDialog extends CustomizedTableModel<OrderProd
                 break;
             case 1:
                 if (aValue != null) {
-                    item.setProName(((OrderProduct) aValue).getProName());
+                    if (aValue instanceof OrderProduct) {
+                        item.setProName(((OrderProduct) aValue).getProName());
+                    } else {
+                        item.setProName((String) aValue);
+                    }
                 } else {
                     item.setProName(OrderProduct.DEFAULT_PRONAME);
                 }

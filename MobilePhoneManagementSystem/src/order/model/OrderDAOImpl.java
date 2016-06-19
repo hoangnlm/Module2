@@ -22,7 +22,7 @@ public class OrderDAOImpl implements IDAO<Order> {
     private CachedRowSet crs;  //CRS to update table
 
     public OrderDAOImpl() {
-        crs = getCRS("select OrdID, u.UserName, c.CusName, OrdDate, OrdCusDiscount, s.SttName, o.UserID, o.CusID, o.SttID from Orders o join Users u on o.UserID=u.UserID join Customers c on o.CusID=c.CusID join Status s on o.SttID=s.SttID");
+        crs = getCRS("select o.OrdID, u.UserName, c.CusName, OrdDate, OrdCusDiscount, s.SttName, o.UserID, o.CusID, o.SttID, OrdValue from Orders o join Users u on o.UserID=u.UserID join Customers c on o.CusID=c.CusID join Status s on o.SttID=s.SttID left join (select OrdID, sum(OrdProQty*OrdProPrice) OrdValue from OrderDetails group by OrdID) tmp on o.OrdID=tmp.OrdID");
     }
 
     @Override
@@ -40,7 +40,8 @@ public class OrderDAOImpl implements IDAO<Order> {
                             crs.getString(Order.COL_ORDSTATUS),
                             crs.getInt(Order.COL_USERID),
                             crs.getInt(Order.COL_CUSID),
-                            crs.getInt(Order.COL_ORDSTATUSID)));
+                            crs.getInt(Order.COL_ORDSTATUSID),
+                            crs.getFloat(Order.COL_ORDVALUE)));
                 } while (crs.next());
             }
         } catch (SQLException ex) {

@@ -1,9 +1,7 @@
 package order.controller;
 
-import utility.*;
 import java.awt.Component;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
+import java.awt.Dimension;
 import javax.swing.JCheckBox;
 import javax.swing.JList;
 import javax.swing.ListCellRenderer;
@@ -27,6 +25,7 @@ public class OrderBranchListCellRenderer implements ListCellRenderer {
         checkbox.setBorderPainted(true);
         checkbox.setBorder(null);
         checkbox.setSelected(isSelected);
+        checkbox.setPreferredSize(new Dimension(150,30));
         return checkbox;
     }
 

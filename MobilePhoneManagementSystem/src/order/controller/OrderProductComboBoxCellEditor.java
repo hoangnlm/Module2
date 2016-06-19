@@ -4,6 +4,7 @@ import java.awt.Component;
 import javax.swing.DefaultCellEditor;
 import javax.swing.JComboBox;
 import javax.swing.JTable;
+import order.model.OrderProduct;
 
 public class OrderProductComboBoxCellEditor extends DefaultCellEditor {
 
@@ -19,7 +20,8 @@ public class OrderProductComboBoxCellEditor extends DefaultCellEditor {
     @Override
     public Component getTableCellEditorComponent(JTable table, Object value, boolean isSelected, int row, int column) {
         JComboBox cb2 = (JComboBox) super.getTableCellEditorComponent(table, value, isSelected, row, column);
-        cb2.setSelectedItem(((OrderProductComboBoxModel) cb2.getModel()).getProductFromName((String) value));
+        OrderProduct op = ((OrderProductComboBoxModel) cb2.getModel()).getProductFromName((String) value);
+        cb2.setSelectedItem(op);
         return cb2;
     }
 }

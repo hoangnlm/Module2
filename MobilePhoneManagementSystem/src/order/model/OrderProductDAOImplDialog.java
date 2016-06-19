@@ -14,7 +14,7 @@ import java.util.logging.Logger;
 import javax.sql.rowset.CachedRowSet;
 
 /**
- * Dung cho combo box cua column product trong table product list cua 
+ * Dung cho COMBOBOX cua column product trong table product list cua 
  * OrderDialog.
  *
  * @author Hoang

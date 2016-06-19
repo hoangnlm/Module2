@@ -90,7 +90,7 @@ public class OrderPanel extends javax.swing.JPanel {
         cbStatusFilter.setModel(orderStatusComboBoxModel);
         cbStatusFilter.setRenderer(orderStatusComboBoxRenderer);
 
-        // Set data cho table
+        // Set data cho 2 table
         orderTableModel = new OrderTableModel();
         orderProductTableModel = new OrderProductTableModel();
         tbOrderList.setModel(orderTableModel);

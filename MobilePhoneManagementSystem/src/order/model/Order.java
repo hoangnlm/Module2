@@ -18,6 +18,7 @@ public class Order {
     private int userID;
     private int cusID;
     private int ordStatusID;
+    private float ordValue;
     
     public static final String COL_ORDID = "OrdID";
     public static final String COL_USERNAME = "UserName";
@@ -28,12 +29,13 @@ public class Order {
     public static final String COL_USERID = "UserID";
     public static final String COL_CUSID = "CusID";
     public static final String COL_ORDSTATUSID = "SttID";
+    public static final String COL_ORDVALUE = "OrdValue";
 
     public Order() {
         
     }
 
-    public Order(int ordID, String userName, String cusName, Date ordDate, float cusDiscount, String ordStatus, int userID, int cusID, int ordStatusID) {
+    public Order(int ordID, String userName, String cusName, Date ordDate, float cusDiscount, String ordStatus, int userID, int cusID, int ordStatusID, float ordValue) {
         this.ordID = ordID;
         this.userName = userName;
         this.cusName = cusName;
@@ -43,6 +45,7 @@ public class Order {
         this.userID = userID;
         this.cusID = cusID;
         this.ordStatusID = ordStatusID;
+        this.ordValue = ordValue;
     }
 
     public int getOrdID() {
@@ -115,5 +118,13 @@ public class Order {
 
     public void setOrdStatusID(int ordStatusID) {
         this.ordStatusID = ordStatusID;
+    }
+
+    public float getOrdValue() {
+        return ordValue;
+    }
+
+    public void setOrdValue(float ordValue) {
+        this.ordValue = ordValue;
     }
 }

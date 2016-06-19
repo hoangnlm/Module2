@@ -10,6 +10,7 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.text.NumberFormat;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
@@ -107,7 +108,8 @@ public class OrderDialog extends javax.swing.JDialog {
             @Override
             public void itemStateChanged(ItemEvent e) {
                 if (e.getStateChange() == ItemEvent.SELECTED) {
-                    updateDiscountLabel();
+                    updateDiscountLabel(((OrderCustomer) e.getItem()).getCusDiscount());
+                    updateTotalLabel();
                 }
             }
         });
@@ -171,25 +173,36 @@ public class OrderDialog extends javax.swing.JDialog {
 
                 switch (tcl.getColumn()) {
                     case COL_PRONAME:
-                        // Check duplicate product
-                        if (checkDuplicate((String) tcl.getNewValue())) {
-                            SwingUtils.showErrorDialog("Duplicated item is not allowed in an order !");
-                            tbProduct.setValueAt(tcl.getOldValue(), tbProduct.getSelectedRow(), tbProduct.getSelectedColumn());
-                        } else {
-
-                            // Lay product moi tu combo box gan cho product
-                            // hien tai
-                            selectedProduct = orderProductComboBoxModel.getOrderProductFromName((String) tcl.getNewValue());
-                            tbProduct.setValueAt(selectedProduct.getProPrice1(), tbProduct.getSelectedRow(), COL_PROPRICE1);
-                            tbProduct.setValueAt(selectedProduct.getSalesOffAmount(), tbProduct.getSelectedRow(), COL_SALEAMOUNT);
-                            tbProduct.setValueAt(selectedProduct.getProPrice1() * (1 - selectedProduct.getSalesOffAmount()), tbProduct.getSelectedRow(), COL_PROPRICE2);
-
-                            // Gan quantity moi cho product hien tai
-                            selectedProduct.setProQty((int) tbProduct.getValueAt(tbProduct.getSelectedRow(), COL_PROQTY));
-
-                            // Update label
-                            updateTotalLabel();
+                        String oldValue = (String) tcl.getOldValue();
+                        String newValue = (String) tcl.getNewValue();
+                        if (!newValue.equals(OrderProduct.DEFAULT_PRONAME)) {
+                            // Check duplicate product
+                            if (checkDuplicate((String) tcl.getNewValue())) {
+                                SwingUtils.showErrorDialog("Duplicated item is not allowed in an order !");
+                                tbProduct.setValueAt(oldValue, tbProduct.getSelectedRow(), COL_PRONAME);
+                            } else {
+                                // Lay product moi tu combo box gan cho product
+                                // trong row cua table
+                                selectedProduct = orderProductComboBoxModel.getOrderProductFromName((String) tcl.getNewValue());
+                                // Gan quantity moi cho product hien tai
+                                selectedProduct.setProQty((int) tbProduct.getValueAt(tbProduct.getSelectedRow(), COL_PROQTY));
+                                // Set gia tri len table row
+                                tbProduct.setValueAt(selectedProduct.getProPrice1(), tbProduct.getSelectedRow(), COL_PROPRICE1);
+                                tbProduct.setValueAt(selectedProduct.getSalesOffAmount(), tbProduct.getSelectedRow(), COL_SALEAMOUNT);
+                                tbProduct.setValueAt(selectedProduct.getProPrice1() * (1 - selectedProduct.getSalesOffAmount()), tbProduct.getSelectedRow(), COL_PROPRICE2);
+                                // Update label
+                                updateTotalLabel();
+                            }
+                        } else if (!newValue.equals(oldValue)) {
+                            tbProduct.setValueAt(oldValue, tbProduct.getSelectedRow(), COL_PRONAME);
                         }
+                        break;
+                    case COL_PROQTY:
+                        // Gan quantity moi cho product tren row
+                        selectedProduct.setProQty((int) tbProduct.getValueAt(tbProduct.getSelectedRow(), COL_PROQTY));
+                        // Update label
+                        updateItemsLabel();
+                        updateTotalLabel();
                         break;
                 }
 
@@ -209,6 +222,12 @@ public class OrderDialog extends javax.swing.JDialog {
             tfUser.setText(LoginConfig.USER_NAME);
             cbStatus.setSelectedIndex(0);
             cbCustomer.setSelectedIndex(cbCustomer.getItemCount() - 1);
+
+            // Set data cho cac label
+            updateItemsLabel();
+            updateDiscountLabel(((OrderCustomer) cbCustomer.getSelectedItem()).getCusDiscount());
+            updateTotalLabel();
+
         } else { // Mode update
             setTitle("Update Order");
             this.order = order;
@@ -217,14 +236,15 @@ public class OrderDialog extends javax.swing.JDialog {
             tfUser.setText(order.getUserName());
             cbStatus.setSelectedItem(orderStatusComboBoxModel.getStatusFromValue(order.getOrdStatus()));
             cbCustomer.setSelectedItem(orderCustomerComboBoxModel.getCustomerFromID(order.getCusID()));
+
+            // Set data cho cac label
+            updateItemsLabel();
+            updateDiscountLabel(order.getCusDiscount());
+            updateTotalLabel();
         }
 
         // Set data cho table chinh
         orderProductTableModelDialog.load(this.order.getOrdID());    //Emply list
-
-        // Set data cho cac label
-        updateItemsLabel();
-        updateDiscountLabel();
 
 //<editor-fold defaultstate="collapsed" desc="xu ly cho vung filter">
 // Set data cho list filter
@@ -305,8 +325,6 @@ public class OrderDialog extends javax.swing.JDialog {
         jLabel10 = new javax.swing.JLabel();
         lbDiscount = new javax.swing.JLabel();
         jLabel12 = new javax.swing.JLabel();
-        lbFinal = new javax.swing.JLabel();
-        jLabel14 = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setTitle("Add Order");
@@ -436,15 +454,15 @@ public class OrderDialog extends javax.swing.JDialog {
         tfNameFilter.setPreferredSize(new java.awt.Dimension(250, 20));
 
         jScrollPane3.setMinimumSize(new java.awt.Dimension(200, 30));
-        jScrollPane3.setPreferredSize(new java.awt.Dimension(604, 50));
+        jScrollPane3.setPreferredSize(new java.awt.Dimension(604, 82));
         jScrollPane3.setViewportView(list);
 
         list.setBackground(new java.awt.Color(51, 51, 51));
         list.setLayoutOrientation(javax.swing.JList.HORIZONTAL_WRAP);
         list.setMaximumSize(new java.awt.Dimension(99999, 9999));
         list.setMinimumSize(new java.awt.Dimension(600, 30));
-        list.setPreferredSize(new java.awt.Dimension(600, 80));
-        list.setSize(new java.awt.Dimension(600, 30));
+        list.setPreferredSize(new java.awt.Dimension(600, 200));
+        list.setSize(new java.awt.Dimension(600, 200));
         list.setVisibleRowCount(-1);
         jScrollPane3.setViewportView(list);
 
@@ -473,24 +491,19 @@ public class OrderDialog extends javax.swing.JDialog {
         jPanel2Layout.setVerticalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel2Layout.createSequentialGroup()
-                .addComponent(jScrollPane3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, 82, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(jPanel2Layout.createSequentialGroup()
-                        .addGap(8, 8, 8)
-                        .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addGroup(jPanel2Layout.createSequentialGroup()
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(btRemove, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(btAdd, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(btReset, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                    .addGroup(jPanel2Layout.createSequentialGroup()
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(tfNameFilter, javax.swing.GroupLayout.PREFERRED_SIZE, 28, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(btClear, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE))))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 311, Short.MAX_VALUE))
+                    .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                        .addComponent(btRemove, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(btAdd, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(btReset, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                        .addComponent(tfNameFilter, javax.swing.GroupLayout.PREFERRED_SIZE, 28, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(btClear, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 305, Short.MAX_VALUE))
         );
 
         btSave.setFont(new java.awt.Font("Lucida Grande", 0, 14)); // NOI18N
@@ -526,56 +539,39 @@ public class OrderDialog extends javax.swing.JDialog {
 
         jLabel12.setText("Discount:");
 
-        lbFinal.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
-        lbFinal.setText("10,000,000 VND");
-        lbFinal.setHorizontalTextPosition(javax.swing.SwingConstants.RIGHT);
-
-        jLabel14.setText("Final money:");
-
         javax.swing.GroupLayout jPanel4Layout = new javax.swing.GroupLayout(jPanel4);
         jPanel4.setLayout(jPanel4Layout);
         jPanel4Layout.setHorizontalGroup(
             jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel4Layout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(jPanel4Layout.createSequentialGroup()
-                        .addComponent(jLabel12, javax.swing.GroupLayout.PREFERRED_SIZE, 80, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(lbDiscount, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(jLabel14)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(lbFinal, javax.swing.GroupLayout.PREFERRED_SIZE, 150, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addGroup(jPanel4Layout.createSequentialGroup()
-                        .addComponent(jLabel5, javax.swing.GroupLayout.PREFERRED_SIZE, 80, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(lbItems, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(jLabel10)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(lbTotal, javax.swing.GroupLayout.PREFERRED_SIZE, 150, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addComponent(jLabel5, javax.swing.GroupLayout.PREFERRED_SIZE, 80, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(lbItems, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(jLabel12, javax.swing.GroupLayout.PREFERRED_SIZE, 80, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(lbDiscount, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(jLabel10)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(lbTotal, javax.swing.GroupLayout.PREFERRED_SIZE, 150, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap())
         );
         jPanel4Layout.setVerticalGroup(
             jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel4Layout.createSequentialGroup()
                 .addGap(6, 6, 6)
-                .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel10)
-                    .addComponent(lbTotal)
-                    .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                        .addComponent(jLabel5)
-                        .addComponent(lbItems)))
-                .addGap(4, 4, 4)
                 .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                        .addComponent(jLabel12)
-                        .addComponent(lbDiscount))
+                        .addComponent(jLabel5)
+                        .addComponent(lbItems))
                     .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                        .addComponent(jLabel14)
-                        .addComponent(lbFinal)))
-                .addContainerGap())
+                        .addComponent(jLabel10)
+                        .addComponent(lbTotal)
+                        .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(jLabel12)
+                            .addComponent(lbDiscount)))))
         );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
@@ -604,7 +600,7 @@ public class OrderDialog extends javax.swing.JDialog {
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(btSave, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(btCancel, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap())
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
         pack();
@@ -646,7 +642,6 @@ public class OrderDialog extends javax.swing.JDialog {
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel10;
     private javax.swing.JLabel jLabel12;
-    private javax.swing.JLabel jLabel14;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabel5;
@@ -658,7 +653,6 @@ public class OrderDialog extends javax.swing.JDialog {
     private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JScrollPane jScrollPane3;
     private javax.swing.JLabel lbDiscount;
-    private javax.swing.JLabel lbFinal;
     private javax.swing.JLabel lbItems;
     private javax.swing.JLabel lbTotal;
     private javax.swing.JList<OrderBranch> list;
@@ -706,12 +700,17 @@ public class OrderDialog extends javax.swing.JDialog {
     }
 
     private void updateAction() {
-        if (checkValidate()) {
-            System.out.println("list size: " + orderProductTableModelDialog.getList().size());
-            System.out.println("list: " + orderProductTableModelDialog.getList());
+        if (order.getOrdID() == -1) { // Insert mode
+            if (orderProductTableModelDialog.insert(order)) {
+                SwingUtils.showInfoDialog(SwingUtils.INSERT_SUCCESS);
+            } else {
+                SwingUtils.showInfoDialog(SwingUtils.INSERT_FAIL);
+            }
+        } else if (orderProductTableModelDialog.update(order)) { // Update mode
+            SwingUtils.showInfoDialog(SwingUtils.UPDATE_SUCCESS);
 
         } else {
-            SwingUtils.showInfoDialog("Save dang xu ly!");
+            SwingUtils.showInfoDialog(SwingUtils.UPDATE_FAIL);
         }
     }
 
@@ -738,7 +737,13 @@ public class OrderDialog extends javax.swing.JDialog {
     }
 
     private void resetAction(boolean mustInfo) {
+        // Load lai vung customer info
+        cbStatus.setSelectedItem(order.getOrdStatus());
+        cbCustomer.setSelectedItem(orderCustomerComboBoxModel.getCustomerFromID(order.getCusID()));
+        // Load lai table product
         orderProductTableModelDialog.load(order.getOrdID());
+        // Load lai may cai label
+
         if (mustInfo) {
             SwingUtils.showInfoDialog(SwingUtils.DB_RESET);
         }
@@ -747,14 +752,15 @@ public class OrderDialog extends javax.swing.JDialog {
         }
     }
 
-    private boolean checkValidate() {
-
-        return true;
-    }
-
     private boolean checkDuplicate(String proName) {
-        
-        return false;
+        boolean result = false;
+        // Chi check ten product khi khac ten mac dinh
+        if (!proName.equals(OrderProduct.DEFAULT_PRONAME)) {
+            List<OrderProduct> tmp = new ArrayList();
+           orderProductTableModelDialog.getList().stream().filter(op -> op.getProName().equals(proName)).forEach(op -> tmp.add(op));
+            result = tmp.size() > 1; //Mang co 2 phan tu tuc la duplicate
+        }
+        return result;
     }
 
     private void updateItemsLabel() {
@@ -763,37 +769,24 @@ public class OrderDialog extends javax.swing.JDialog {
         } else {
             lbItems.setText("0");
         }
-        updateTotalLabel();
     }
 
-    private void updateDiscountLabel() {
-        OrderCustomer oc = (OrderCustomer) cbCustomer.getSelectedItem();
+    private void updateDiscountLabel(float discount) {
         NumberFormat format = NumberFormat.getPercentInstance();
-        lbDiscount.setText(format.format(oc.getCusDiscount()));
-        updateFinalLabel();
+        lbDiscount.setText(format.format(discount));
     }
 
     private void updateTotalLabel() {
         float sum = 0;
         if (tbProduct.getRowCount() > 0) {
             for (int i = 0; i < tbProduct.getRowCount(); i++) {
-                sum += (float) tbProduct.getValueAt(i, COL_PROPRICE2);
+                sum += (float) tbProduct.getValueAt(i, COL_PROPRICE2) * (int) tbProduct.getValueAt(i, COL_PROQTY);
             }
+            String dis = lbDiscount.getText().split("%")[0];
+            float discount = Float.parseFloat(dis) / 100;
+            sum = sum * (1 - discount);
         }
         lbTotal.setText(String.format("%,.0f Đ", (float) sum));
-        updateFinalLabel();
-    }
-
-    private void updateFinalLabel() {
-        float sum = 0;
-        if (tbProduct.getRowCount() > 0) {
-            for (int i = 0; i < tbProduct.getRowCount(); i++) {
-                sum += (float) tbProduct.getValueAt(i, COL_PROPRICE2);
-            }
-            OrderCustomer oc = (OrderCustomer) cbCustomer.getSelectedItem();
-            sum = sum * (1 - oc.getCusDiscount());
-        }
-        lbFinal.setText(String.format("%,.0f Đ", (float) sum));
     }
 
     private void clearFilter() {
