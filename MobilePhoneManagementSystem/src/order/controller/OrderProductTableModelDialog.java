@@ -1,12 +1,10 @@
 package order.controller;
 
-import java.util.ArrayList;
 import java.util.List;
 import order.model.Order;
 import order.model.OrderProduct;
 import order.model.OrderProductDAOImpl;
 import utility.CustomizedTableModel;
-import utility.SwingUtils;
 
 /**
  *
@@ -15,7 +13,7 @@ import utility.SwingUtils;
 public class OrderProductTableModelDialog extends CustomizedTableModel<OrderProduct> {
 
     public OrderProductTableModelDialog() {
-        super(new OrderProductDAOImpl(), new String[]{"No.", "Product Name", "Qty", "Price 1", "SalesOff", "Price 2"});
+        super(new OrderProductDAOImpl(), new String[]{"No.", "Product Name", "Qty", "Price 1", "SalesOff", "Price 2", "ID"});
     }
 
     public List<OrderProduct> getList() {
@@ -33,16 +31,8 @@ public class OrderProductTableModelDialog extends CustomizedTableModel<OrderProd
     }
 
     public boolean insert(Order order) {
-        boolean result = false;
-        if (checkOrderProduct()) { //Da chon product day du
-            ((OrderProductDAOImpl) super.daoImpl).setCurrentOrder(order);
-            if (((OrderProductDAOImpl) super.daoImpl).insert(list)) {
-                result = true;
-            }
-        } else {
-            SwingUtils.showErrorDialog("Please choose all product items !");
-        }
-        return result;
+        ((OrderProductDAOImpl) super.daoImpl).setCurrentOrder(order);
+        return ((OrderProductDAOImpl) super.daoImpl).insert(list);
     }
 
     @Override
@@ -53,16 +43,8 @@ public class OrderProductTableModelDialog extends CustomizedTableModel<OrderProd
     }
 
     public boolean update(Order order) {
-        boolean result = false;
-        if (checkOrderProduct()) { //Da chon product day du
-            ((OrderProductDAOImpl) super.daoImpl).setCurrentOrder(order);
-            if (((OrderProductDAOImpl) super.daoImpl).update(list)) {
-                result = true;
-            }
-        } else {
-            SwingUtils.showErrorDialog("Please choose all product items !");
-        }
-        return result;
+        ((OrderProductDAOImpl) super.daoImpl).setCurrentOrder(order);
+        return ((OrderProductDAOImpl) super.daoImpl).update(list);
     }
 
     @Override
@@ -77,14 +59,6 @@ public class OrderProductTableModelDialog extends CustomizedTableModel<OrderProd
         return true;
     }
 
-    public boolean checkOrderProduct() {
-        // Check product name co khac empty
-        // (co chon product het khong)
-        List<OrderProduct> tmp = new ArrayList();
-        list.stream().filter(op -> op.getProName().equals(OrderProduct.DEFAULT_PRONAME)).forEach(op -> tmp.add(op));
-        return tmp.size() == 0; //Da chon product day du
-    }
-
     @Override
     public boolean isCellEditable(int rowIndex, int columnIndex) {
         return columnIndex == 1 || columnIndex == 2; //Chi sua name va qty
@@ -92,7 +66,7 @@ public class OrderProductTableModelDialog extends CustomizedTableModel<OrderProd
 
     @Override
     public Class<?> getColumnClass(int column) {
-        Class[] columnClasses = {Integer.class, String.class, Integer.class, Float.class, Float.class, Float.class};
+        Class[] columnClasses = {Integer.class, String.class, Integer.class, Float.class, Float.class, Float.class, Integer.class};
         return columnClasses[column];
     }
 
@@ -119,6 +93,9 @@ public class OrderProductTableModelDialog extends CustomizedTableModel<OrderProd
                     break;
                 case 5:
                     result = item.getProPrice2();
+                    break;
+                case 6:
+                    result = item.getProID();
                     break;
             }
         }
@@ -154,6 +131,9 @@ public class OrderProductTableModelDialog extends CustomizedTableModel<OrderProd
                 break;
             case 5:
                 item.setProPrice2((float) aValue);
+                break;
+            case 6:
+                item.setProID((int) aValue);
                 break;
         }
         fireTableCellUpdated(rowIndex, columnIndex);

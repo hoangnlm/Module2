@@ -19,6 +19,7 @@ import java.util.Calendar;
 import java.util.List;
 import javax.swing.DefaultListSelectionModel;
 import javax.swing.JButton;
+import javax.swing.JOptionPane;
 import javax.swing.RowFilter;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
@@ -51,19 +52,20 @@ public class OrderPanel extends javax.swing.JPanel {
     private int selectedRowIndex;
     private OrderStatus filterStatus;
 
-    private static final int COL_ORDID = 0;
-    private static final int COL_USERNAME = 1;
-    private static final int COL_CUSNAME = 2;
-    private static final int COL_ORDDATE = 3;
-    private static final int COL_DISCOUNT = 4;
-    private static final int COL_STATUS = 5;
+    public static final int COL_ORDID = 0;
+    public static final int COL_CUSNAME = 1;
+    public static final int COL_ORDDATE = 2;
+    public static final int COL_ORDVALUE = 3;
+    public static final int COL_STATUS = 4;
+    public static final int COL_DISCOUNT = 5;
+    public static final int COL_USERNAME = 6;
 
-    private static final int COL_PROID = 0;
-    private static final int COL_PRONAME = 1;
-    private static final int COL_PROQTY = 2;
-    private static final int COL_PROPRICE1 = 3;
-    private static final int COL_SALEAMOUNT = 4;
-    private static final int COL_PROPRICE2 = 5;
+    public static final int COL_PROID = 0;
+    public static final int COL_PRONAME = 1;
+    public static final int COL_PROQTY = 2;
+    public static final int COL_PROPRICE1 = 3;
+    public static final int COL_SALEAMOUNT = 4;
+    public static final int COL_PROPRICE2 = 5;
 
 //<editor-fold defaultstate="collapsed" desc="constructor">
     public OrderPanel() {
@@ -115,12 +117,15 @@ public class OrderPanel extends javax.swing.JPanel {
         tbOrderList.getColumnModel().getColumn(COL_ORDID).setMinWidth(40);
         tbOrderList.getColumnModel().getColumn(COL_ORDID).setMaxWidth(40);
 
+        // Col order value
+        tbOrderList.getColumnModel().getColumn(COL_ORDVALUE).setMinWidth(50);
+        tbOrderList.getColumnModel().getColumn(COL_ORDVALUE).setCellRenderer(new CurrencyCellRenderer());
+
         // Col user name
-        tbOrderList.getColumnModel().getColumn(COL_USERNAME).setMinWidth(120);
-        tbOrderList.getColumnModel().getColumn(COL_USERNAME).setMaxWidth(120);
+        tbOrderList.getColumnModel().getColumn(COL_USERNAME).setMinWidth(50);
 
         // Col cus name
-        tbOrderList.getColumnModel().getColumn(COL_CUSNAME).setMinWidth(150);
+        tbOrderList.getColumnModel().getColumn(COL_CUSNAME).setMinWidth(50);
 
         // Col order date
         tbOrderList.getColumnModel().getColumn(COL_ORDDATE).setMinWidth(120);
@@ -129,9 +134,10 @@ public class OrderPanel extends javax.swing.JPanel {
         // Col discount
         tbOrderList.getColumnModel().getColumn(COL_DISCOUNT).setMinWidth(120);
         tbOrderList.getColumnModel().getColumn(COL_DISCOUNT).setMaxWidth(120);
+        tbOrderList.getColumnModel().getColumn(COL_DISCOUNT).setCellRenderer(new PercentCellRenderer());
 
         // Col status
-        tbOrderList.getColumnModel().getColumn(COL_STATUS).setMinWidth(120);
+        tbOrderList.getColumnModel().getColumn(COL_STATUS).setMinWidth(40);
 
         // Col pro ID
         tbProductList.getColumnModel().getColumn(COL_PROID).setMinWidth(40);
@@ -155,7 +161,7 @@ public class OrderPanel extends javax.swing.JPanel {
         // Col price 2
         tbProductList.getColumnModel().getColumn(COL_PROPRICE2).setMinWidth(125);
         tbProductList.getColumnModel().getColumn(COL_PROPRICE2).setCellRenderer(new CurrencyCellRenderer());
-        
+
         // Bat su kien select row tren table sales off
         tbOrderList.getSelectionModel().addListSelectionListener((ListSelectionEvent e) -> {
             DefaultListSelectionModel model = (DefaultListSelectionModel) e.getSource();
@@ -224,6 +230,12 @@ public class OrderPanel extends javax.swing.JPanel {
             }
         });
         cbStatusFilter.addItemListener(new ItemListener() {
+            @Override
+            public void itemStateChanged(ItemEvent e) {
+                doFilter();
+            }
+        });
+        cbValueFilter.addItemListener(new ItemListener() {
             @Override
             public void itemStateChanged(ItemEvent e) {
                 doFilter();
@@ -316,7 +328,7 @@ public class OrderPanel extends javax.swing.JPanel {
 
         lbOrderDate1.setText("Order Value:");
 
-        cbValueFilter.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "~1.000.000", "1.000.000-5.000.000", "5.000.000-10.000.000", "10.000.000~", "All" }));
+        cbValueFilter.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "~1.000.000", "1.000.000-10.000.000", "10.000.000-20.000.000", "20.000.000~", "All" }));
         cbValueFilter.setSelectedItem("All");
 
         javax.swing.GroupLayout pnFilterLayout = new javax.swing.GroupLayout(pnFilter);
@@ -384,21 +396,24 @@ public class OrderPanel extends javax.swing.JPanel {
 
         jScrollPane1.setBorder(javax.swing.BorderFactory.createTitledBorder(javax.swing.BorderFactory.createEtchedBorder(), "Order List"));
 
+        tbOrderList.setAutoCreateRowSorter(true);
         tbOrderList.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
 
             },
             new String [] {
-                "ID", "User Name", "Cus. Name", "Order Date", "Discount", "Value", "Status"
+                "ID", "Order Date", "Value", "Status", "Discount", "User Name", "Cus. Name"
             }
         ));
         tbOrderList.setFillsViewportHeight(true);
         tbOrderList.setRowHeight(25);
+        tbOrderList.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
         tbOrderList.getTableHeader().setReorderingAllowed(false);
         jScrollPane1.setViewportView(tbOrderList);
 
         jScrollPane2.setBorder(javax.swing.BorderFactory.createTitledBorder(javax.swing.BorderFactory.createEtchedBorder(), "Order Details"));
 
+        tbProductList.setAutoCreateRowSorter(true);
         tbProductList.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
 
@@ -409,6 +424,7 @@ public class OrderPanel extends javax.swing.JPanel {
         ));
         tbProductList.setFillsViewportHeight(true);
         tbProductList.setRowHeight(25);
+        tbProductList.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
         tbProductList.getTableHeader().setReorderingAllowed(false);
         jScrollPane2.setViewportView(tbProductList);
 
@@ -511,7 +527,7 @@ public class OrderPanel extends javax.swing.JPanel {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(pnFilter, javax.swing.GroupLayout.PREFERRED_SIZE, 76, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 198, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 198, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 219, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
@@ -526,6 +542,8 @@ public class OrderPanel extends javax.swing.JPanel {
 //<editor-fold defaultstate="collapsed" desc="Bat su kien">
     private void btAddActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btAddActionPerformed
         new OrderDialog(null).setVisible(true);
+        refreshAction(false);
+        scrollToRow(tbOrderList.getRowCount() - 1);
     }//GEN-LAST:event_btAddActionPerformed
 
     private void btSalesOffActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btSalesOffActionPerformed
@@ -534,6 +552,7 @@ public class OrderPanel extends javax.swing.JPanel {
 
     private void btUpdateActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btUpdateActionPerformed
         new OrderDialog(selectedOrder).setVisible(true);
+        refreshAction(false);
     }//GEN-LAST:event_btUpdateActionPerformed
 
     private void btRemoveActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btRemoveActionPerformed
@@ -579,23 +598,54 @@ public class OrderPanel extends javax.swing.JPanel {
 
 //<editor-fold defaultstate="collapsed" desc="doFilter">
     private void doFilter() {
-        RowFilter<OrderTableModel, Object> rf = null;
+        RowFilter<OrderTableModel, Integer> rf = null;
         //Filter theo regex, neu parse bi loi thi khong filter
         try {
-            List<RowFilter<OrderTableModel, Object>> filters = new ArrayList<>();
-            filters.add(RowFilter.regexFilter("^" + tfIdFilter.getText(), 0));
-            filters.add(RowFilter.regexFilter("^" + tfUserFilter.getText(), 1));
-            filters.add(RowFilter.regexFilter("^" + tfCusFilter.getText(), 1));
+            List<RowFilter<OrderTableModel, Integer>> filters = new ArrayList<>();
+            // Filter ID
+            filters.add(RowFilter.regexFilter("^" + tfIdFilter.getText(), COL_ORDID));
+
+            // Filter User Name khi khac rong
+            if (!tfUserFilter.getText().isEmpty()) {
+                RowFilter<OrderTableModel, Integer> userFilter = new RowFilter<OrderTableModel, Integer>() {
+                    @Override
+                    public boolean include(RowFilter.Entry<? extends OrderTableModel, ? extends Integer> entry) {
+                        OrderTableModel model = entry.getModel();
+                        Order o = model.getOrderAtIndex(entry.getIdentifier());
+                        if (o.getUserName().toUpperCase().contains(tfUserFilter.getText().toUpperCase())) {
+                            return true;
+                        }
+                        return false;
+                    }
+                };
+                filters.add(userFilter);
+            }
+
+            // Filter Cus Name khi khac rong
+            if (!tfCusFilter.getText().isEmpty()) {
+                RowFilter<OrderTableModel, Integer> cusFilter = new RowFilter<OrderTableModel, Integer>() {
+                    @Override
+                    public boolean include(RowFilter.Entry<? extends OrderTableModel, ? extends Integer> entry) {
+                        OrderTableModel model = entry.getModel();
+                        Order o = model.getOrderAtIndex(entry.getIdentifier());
+                        if (o.getCusName().toUpperCase().contains(tfCusFilter.getText().toUpperCase())) {
+                            return true;
+                        }
+                        return false;
+                    }
+                };
+                filters.add(cusFilter);
+            }
 
             // Chi filter date khi date khac null
             if (dcFilter.getDate() != null) {
                 // dcFilter khac voi date cua table o GIO, PHUT, GIAY nen phai dung Calendar de so sanh chi nam, thang, ngay.... oh vai~.
                 // Magic here....
-                RowFilter<OrderTableModel, Object> dateFilter = new RowFilter<OrderTableModel, Object>() {
+                RowFilter<OrderTableModel, Integer> dateFilter = new RowFilter<OrderTableModel, Integer>() {
                     @Override
-                    public boolean include(RowFilter.Entry<? extends OrderTableModel, ? extends Object> entry) {
+                    public boolean include(RowFilter.Entry<? extends OrderTableModel, ? extends Integer> entry) {
                         OrderTableModel model = entry.getModel();
-                        Order o = model.getOrderAtIndex((Integer) entry.getIdentifier());
+                        Order o = model.getOrderAtIndex(entry.getIdentifier());
 
                         Calendar origin = Calendar.getInstance();
                         origin.setTime(o.getOrdDate());
@@ -614,10 +664,32 @@ public class OrderPanel extends javax.swing.JPanel {
                 filters.add(dateFilter);
             }
 
+            // Value filter
+            RowFilter<OrderTableModel, Integer> valueFilter = new RowFilter<OrderTableModel, Integer>() {
+                @Override
+                public boolean include(RowFilter.Entry<? extends OrderTableModel, ? extends Integer> entry) {
+                    OrderTableModel model = entry.getModel();
+                    Order o = model.getOrderAtIndex(entry.getIdentifier());
+                    switch (cbValueFilter.getSelectedIndex()) {
+                        case 0: // ~1.000.000
+                            return o.getOrdValue() <= 1000000;
+                        case 1: // 1.000.000-10.000.000
+                            return 1000000 <= o.getOrdValue() && o.getOrdValue() <= 10000000;
+                        case 2: // 10.000.000-20.000.000
+                            return 10000000 <= o.getOrdValue() && o.getOrdValue() <= 20000000;
+                        case 3: // 20.000.000~
+                            return 20000000 <= o.getOrdValue();
+                        case 4:  // All
+                            return true;
+                    }
+                    return false;
+                }
+            };
+
             // Chi filter status khi status khac "All"
             String stt = ((OrderStatus) cbStatusFilter.getSelectedItem()).getSttName();
             if (!stt.equals("All")) {
-                filters.add(RowFilter.regexFilter("^" + stt, 5));
+                filters.add(RowFilter.regexFilter("^" + stt, COL_STATUS));
             }
 
             rf = RowFilter.andFilter(filters);
@@ -628,16 +700,15 @@ public class OrderPanel extends javax.swing.JPanel {
     }
 //</editor-fold>
 
-    private void clearFilter(){
+    private void clearFilter() {
         tfIdFilter.setText(null);
         dcFilter.setDate(null);
         tfUserFilter.setText(null);
-        cbValueFilter.setSelectedIndex(cbValueFilter.getItemCount()-1);
+        cbValueFilter.setSelectedIndex(cbValueFilter.getItemCount() - 1);
         tfCusFilter.setText(null);
-        cbStatusFilter.setSelectedIndex(cbStatusFilter.getItemCount()-1);
+        cbStatusFilter.setSelectedIndex(cbStatusFilter.getItemCount() - 1);
     }
-    
-    //<editor-fold defaultstate="collapsed" desc="xu ly cho table order">
+
     private void fetchAction() {
         selectedRowIndex = tbOrderList.convertRowIndexToModel(tbOrderList.getSelectedRow());
         selectedOrder = orderTableModel.getOrderAtIndex(selectedRowIndex);
@@ -646,6 +717,9 @@ public class OrderPanel extends javax.swing.JPanel {
     }
 
     private void deleteAction() {
+        if (SwingUtils.showConfirmDialog("Are you sure to delete this order ?") == JOptionPane.NO_OPTION) {
+            return;
+        }
         setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
         boolean result = orderTableModel.delete(selectedOrder);
         setCursor(null);
@@ -655,8 +729,10 @@ public class OrderPanel extends javax.swing.JPanel {
         // Neu row xoa la row khac cuoi thi tien cursor ve truoc
         selectedRowIndex = (selectedRowIndex == tbOrderList.getRowCount() ? tbOrderList.getRowCount() - 1 : selectedRowIndex++);
         scrollToRow(selectedRowIndex);
+
+        // Them refresh do cai table order khong tu dong update sau khi delete nhu cac table khac
+        refreshAction(false);
     }
-//</editor-fold>
 
     private void refreshAction(boolean mustInfo) {
         if (mustInfo) {

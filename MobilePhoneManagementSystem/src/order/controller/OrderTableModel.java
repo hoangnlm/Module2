@@ -4,6 +4,8 @@ import java.util.Date;
 import order.model.Order;
 import order.model.OrderDAOImpl;
 import utility.CustomizedTableModel;
+import utility.SwingUtils;
+import utility.SwingUtils.FormatType;
 
 /**
  *
@@ -12,10 +14,10 @@ import utility.CustomizedTableModel;
 public class OrderTableModel extends CustomizedTableModel<Order> {
 
     public OrderTableModel() {
-        super(new OrderDAOImpl(), new String[]{"ID", "User Name", "Cus. Name", "Order Date", "Discount (%)", "Status"});
+        super(new OrderDAOImpl(), new String[]{"ID", "Cus. Name", "Date", "Value", "Status", "Discount", "User Name"});
     }
-    
-    public Order getOrderAtIndex(int index){
+
+    public Order getOrderAtIndex(int index) {
         return list.get(index);
     }
 
@@ -23,10 +25,10 @@ public class OrderTableModel extends CustomizedTableModel<Order> {
     public boolean isCellEditable(int rowIndex, int columnIndex) {
         return false;
     }
-    
+
     @Override
     public Class<?> getColumnClass(int column) {
-        Class[] columnClasses = {Integer.class, String.class, String.class, Date.class, Float.class, String.class};
+        Class[] columnClasses = {Integer.class, String.class, Date.class, Float.class, String.class, Float.class, String.class};
         return columnClasses[column];
     }
 
@@ -35,23 +37,26 @@ public class OrderTableModel extends CustomizedTableModel<Order> {
         item = list.get(rowIndex);
         Object result = null;
         switch (columnIndex) {
-            case 0:
+            case OrderPanel.COL_ORDID:
                 result = item.getOrdID();
                 break;
-            case 1:
-                result = item.getUserName();
-                break;
-            case 2:
-                result = item.getCusName();
-                break;
-            case 3:
+            case OrderPanel.COL_ORDDATE:
                 result = item.getOrdDate();
                 break;
-            case 4:
-                result = item.getCusDiscount()* 100;
+            case OrderPanel.COL_ORDVALUE:
+                result = item.getOrdValue();
                 break;
-            case 5:
+            case OrderPanel.COL_STATUS:
                 result = item.getOrdStatus();
+                break;
+            case OrderPanel.COL_DISCOUNT:
+                result = item.getCusDiscount();
+                break;
+            case OrderPanel.COL_CUSNAME:
+                result = item.getCusName();
+                break;
+            case OrderPanel.COL_USERNAME:
+                result = item.getUserName();
                 break;
         }
         return result;
@@ -65,23 +70,22 @@ public class OrderTableModel extends CustomizedTableModel<Order> {
                 item.setOrdID((int) aValue);
                 break;
             case 1:
-                item.setUserName((String) aValue);
-                break;
-            case 2:
-                item.setCusName((String) aValue);
-                break;
-            case 3:
                 item.setOrdDate((Date) aValue);
                 break;
+            case 2:
+                item.setOrdValue((float) SwingUtils.unFormatString((String) aValue, FormatType.CURRENCY));
+                break;
+            case 3:
+                item.setOrdStatus((String) aValue);
+                break;
             case 4:
-                if (aValue instanceof Integer) {
-                    item.setCusDiscount(((int) aValue) / 100f);
-                } else {
-                    item.setCusDiscount((float) aValue / 100);
-                }
+                item.setCusDiscount((float) SwingUtils.unFormatString((String) aValue, FormatType.PERCENT));
                 break;
             case 5:
-                item.setOrdStatus((String) aValue);
+                item.setCusName((String) aValue);
+                break;
+            case 6:
+                item.setUserName((String) aValue);
                 break;
         }
         fireTableCellUpdated(rowIndex, columnIndex);

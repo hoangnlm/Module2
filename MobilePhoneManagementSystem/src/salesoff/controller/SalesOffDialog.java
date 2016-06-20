@@ -214,6 +214,7 @@ public class SalesOffDialog extends javax.swing.JDialog {
             }
         ));
         tbSaleList.setRowHeight(25);
+        tbSaleList.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
         tbSaleList.getTableHeader().setReorderingAllowed(false);
         jScrollPane1.setViewportView(tbSaleList);
 
@@ -267,6 +268,7 @@ public class SalesOffDialog extends javax.swing.JDialog {
             }
         ));
         tbProList.setRowHeight(25);
+        tbProList.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
         tbProList.getTableHeader().setReorderingAllowed(false);
         jScrollPane2.setViewportView(tbProList);
 

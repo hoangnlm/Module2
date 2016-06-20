@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import order.model.OrderBranch;
 import order.model.OrderProduct;
-import order.model.OrderProductDAOImplDialog;
+import order.model.OrderProductDAOImplComboBox;
 import utility.CustomizedComboBoxModel;
 
 /**
@@ -22,7 +22,7 @@ public class OrderProductComboBoxModel extends CustomizedComboBoxModel<OrderProd
     private List<OrderProduct> filterByName;
 
     public OrderProductComboBoxModel() {
-        super(new OrderProductDAOImplDialog());
+        super(new OrderProductDAOImplComboBox());
         filterByBranch = new ArrayList();
         filterByName = new ArrayList();
         origin = new ArrayList(list);

@@ -29,14 +29,15 @@ public class OrderProductDAOImpl implements IDAO<OrderProduct> {
      * @param ordID
      */
     public void load(int ordID) {
-        crs = getCRS("select p.ProID, ProName, OrdProQty, ProPrice, SalesOffAmount, OrdProPrice, s.SalesOffID, RANK() OVER(ORDER BY OrdDetailsID) ProNo, BraName, p.BraID, ProStock from OrderDetails o join Products p on o.ProID=p.ProID left join SalesOff s on p.SalesOffID=s.SalesOffID join Branches b on p.BraID=b.BraID where OrdID=?", ordID);
+        crs = getCRS("select p.ProID, ProName, OrdProQty, ProPrice, SalesOffAmount, OrdProPrice, s.SalesOffID, BraName, p.BraID, ProStock from OrderDetails o join Products p on o.ProID=p.ProID left join SalesOff s on p.SalesOffID=s.SalesOffID join Branches b on p.BraID=b.BraID where OrdID=?", ordID);
     }
 
     @Override
     public List<OrderProduct> getList() {
         List<OrderProduct> list = new ArrayList<>();
         try {
-            if (crs != null && crs.first()) {
+            if (crs != null && crs.first()) { // Neu table co data (update mode)                
+                int no = 1;
                 do {
                     list.add(new OrderProduct(
                             crs.getInt(OrderProduct.COL_PROID),
@@ -47,11 +48,19 @@ public class OrderProductDAOImpl implements IDAO<OrderProduct> {
                             (crs.getFloat(OrderProduct.COL_PROPRICE1) - crs.getFloat(OrderProduct.COL_PROPRICE2)) / crs.getFloat(OrderProduct.COL_PROPRICE1),
                             crs.getFloat(OrderProduct.COL_PROPRICE2),
                             crs.getInt(OrderProduct.COL_SALEID),
-                            crs.getInt(OrderProduct.COL_PRONO),
+                            // So thu tu hien thi tren table
+                            no++,
                             crs.getString(OrderProduct.COL_BRANAME),
                             crs.getInt(OrderProduct.COL_BRAID),
                             crs.getInt(OrderProduct.COL_PROSTOCK)));
                 } while (crs.next());
+            } else { // Neu table khong co data (insert mode)
+                OrderProduct op = new OrderProduct();
+                op.setProNo(1);
+                op.setProName(OrderProduct.DEFAULT_PRONAME);
+                op.setProQty(1);
+                op.setProStock(1);
+                list.add(op);
             }
         } catch (SQLException ex) {
             Logger.getLogger(OrderProductDAOImpl.class.getName()).log(Level.SEVERE, null, ex);
@@ -64,13 +73,28 @@ public class OrderProductDAOImpl implements IDAO<OrderProduct> {
         return false;
 
     }
-    
-    public boolean insert(List<OrderProduct> list){
+
+    public boolean insert(List<OrderProduct> list) {
         boolean result = false;
         if (currentOrder == null) { // Chua set current order cho DAO
-            return result;
+            return false;
         }
 
+        try {
+            // Insert table Orders
+            runPS("insert Orders(CusID, UserID, OrdDate, OrdCusDiscount, SttID) values(?,?,?,?,?)", currentOrder.getCusID(), currentOrder.getUserID(), currentOrder.getOrdDate(), currentOrder.getCusDiscount(), currentOrder.getOrdStatusID());
+            // Lay ordID sau khi insert table Orders
+            CachedRowSet crs2 = getCRS("select top(1) OrdID from Orders order by OrdID DESC");
+            crs2.first();
+            currentOrder.setOrdID(crs2.getInt("OrdID"));
+            // Insert table OrderDetails
+            for (OrderProduct op : list) {
+                runPS("insert OrderDetails(OrdID, ProID, OrdProQty, OrdProPrice) values(?,?,?,?)", currentOrder.getOrdID(), op.getProID(), op.getProQty(), op.getProPrice2());
+            }
+            result = true;
+        } catch (SQLException ex) {
+            Logger.getLogger(OrderProductDAOImpl.class.getName()).log(Level.SEVERE, null, ex);
+        }
         return result;
     }
 
@@ -79,18 +103,22 @@ public class OrderProductDAOImpl implements IDAO<OrderProduct> {
         return false;
 
     }
-        
+
     public boolean update(List<OrderProduct> list) {
         boolean result = false;
         if (currentOrder == null) { // Chua set current order cho DAO
-            return result;
+            return false;
         }
-        if(currentOrder.getOrdID()==-1){ //Insert new Order
-            return insert(list);
-        }
-        try {
-            runPS("update Orders set CusID=?, OrdCusDiscount=?, SttID=?",currentOrder.getCusID(), currentOrder.getCusDiscount(),currentOrder.getOrdStatusID());
 
+        try {
+            // Update table Orders
+            runPS("update Orders set CusID=?, OrdCusDiscount=?, SttID=? where OrdID=?", currentOrder.getCusID(), currentOrder.getCusDiscount(), currentOrder.getOrdStatusID(), currentOrder.getOrdID());
+            // Xoa het order details cu cua current order
+            runPS("delete OrderDetails where OrdID =?", currentOrder.getOrdID());
+            // Update table OrderDetails
+            for (OrderProduct op : list) {
+                runPS("insert OrderDetails(OrdID, ProID, OrdProQty, OrdProPrice) values (?,?,?,?)", currentOrder.getOrdID(), op.getProID(), op.getProQty(), op.getProPrice2());
+            }
             result = true;
         } catch (SQLException ex) {
             Logger.getLogger(OrderProductDAOImpl.class.getName()).log(Level.SEVERE, null, ex);

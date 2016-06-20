@@ -18,7 +18,8 @@ public class OrderCustomerDAOImpl implements IDAO<OrderCustomer> {
     private int selectingIndex;
 
     public OrderCustomerDAOImpl() {
-        crs = getCRS("select a.CusID, CusName, CusPhone, CusAddress, CusDiscount, a.CusLevelID from Customers a join CustomerLevels b on a.CusLevelID=b.CusLevelID");
+        // Chi load customer dang duoc enable
+        crs = getCRS("select a.CusID, CusName, CusPhone, CusAddress, CusDiscount, a.CusLevelID from Customers a join CustomerLevels b on a.CusLevelID=b.CusLevelID where CusEnabled=1");
     }
 
     @Override

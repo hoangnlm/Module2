@@ -1,13 +1,15 @@
 package order.model;
 
 import java.util.Date;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * Define order class model
  *
  * @author Hoang
  */
-public class Order {
+public class Order implements Cloneable {
 
     private int ordID;
     private String userName;
@@ -126,5 +128,16 @@ public class Order {
 
     public void setOrdValue(float ordValue) {
         this.ordValue = ordValue;
+    }
+
+    @Override
+    public Order clone() {
+        Order result = null;
+        try {
+            result = (Order) super.clone();
+        } catch (CloneNotSupportedException ex) {
+            Logger.getLogger(Order.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return result; 
     }
 }

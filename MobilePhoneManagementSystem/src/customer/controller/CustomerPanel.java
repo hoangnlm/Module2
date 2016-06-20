@@ -11,18 +11,22 @@ import java.awt.Cursor;
 import java.awt.Dimension;
 import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import javax.swing.AbstractAction;
 import javax.swing.DefaultListSelectionModel;
 import javax.swing.JButton;
+import javax.swing.JOptionPane;
 import javax.swing.RowFilter;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.table.TableRowSorter;
 import order.controller.OrderDialog;
+import utility.CurrencyCellRenderer;
 import utility.StringCellEditor;
 import utility.TableCellListener;
 import utility.SwingUtils;
@@ -45,12 +49,13 @@ public class CustomerPanel extends javax.swing.JPanel {
     private CustomerLevel filterLevel;
 
     // Define some column constants
-    private static final int COL_CUSID = 0;
-    private static final int COL_CUSNAME = 1;
-    private static final int COL_CUSLEVEL = 2;
-    private static final int COL_CUSPHONE = 3;
-    private static final int COL_CUSADDRESS = 4;
-    private static final int COL_STATUS = 5;
+    public static final int COL_CUSID = 0;
+    public static final int COL_CUSNAME = 1;
+    public static final int COL_CUSPAID = 2;
+    public static final int COL_CUSLEVELNAME = 3;
+    public static final int COL_CUSPHONE = 4;
+    public static final int COL_CUSADDRESS = 5;
+    public static final int COL_STATUS = 6;
 
     //<editor-fold defaultstate="collapsed" desc="Constructor">
     /**
@@ -58,7 +63,7 @@ public class CustomerPanel extends javax.swing.JPanel {
      */
     public CustomerPanel() {
         initComponents();
-        
+
         // Disable button khi moi khoi dong len
         setButtonEnabled(false);
 
@@ -81,7 +86,7 @@ public class CustomerPanel extends javax.swing.JPanel {
         // Set data cho table
         customerTableModel = new CustomerTableModel();
         tbCustomerList.setModel(customerTableModel);
-        
+
         // Set sorter cho table
         sorter = new TableRowSorter<>(customerTableModel);
         tbCustomerList.setRowSorter(sorter);
@@ -95,17 +100,33 @@ public class CustomerPanel extends javax.swing.JPanel {
         // Set height cho table header
         tbCustomerList.getTableHeader().setPreferredSize(new Dimension(100, 30));
 
+        // Col cus id
+        tbCustomerList.getColumnModel().getColumn(COL_CUSID).setMinWidth(20);
+        tbCustomerList.getColumnModel().getColumn(COL_CUSID).setMaxWidth(40);
+
         // Col cus name
+        tbCustomerList.getColumnModel().getColumn(COL_CUSNAME).setMinWidth(100);
         tbCustomerList.getColumnModel().getColumn(COL_CUSNAME).setCellEditor(new StringCellEditor(1, 50, SwingUtils.PATTERN_CUSNAME));
 
-        // Col cus level
-        tbCustomerList.getColumnModel().getColumn(COL_CUSLEVEL).setCellEditor(new CustomerLevelComboBoxCellEditor(customerLevelComboBoxModel2));
+        // Col cus paid
+        tbCustomerList.getColumnModel().getColumn(COL_CUSPAID).setMinWidth(120);
+        tbCustomerList.getColumnModel().getColumn(COL_CUSPAID).setCellRenderer(new CurrencyCellRenderer());
+
+        // Col cus level name
+        tbCustomerList.getColumnModel().getColumn(COL_CUSLEVELNAME).setMinWidth(150);
+        tbCustomerList.getColumnModel().getColumn(COL_CUSLEVELNAME).setCellEditor(new CustomerLevelComboBoxCellEditor(customerLevelComboBoxModel2));
 
         // Col cus phone
+        tbCustomerList.getColumnModel().getColumn(COL_CUSPHONE).setMinWidth(100);
         tbCustomerList.getColumnModel().getColumn(COL_CUSPHONE).setCellEditor(new StringCellEditor(1, 20, SwingUtils.PATTERN_CUSPHONE));
 
         // Col cus address
+        tbCustomerList.getColumnModel().getColumn(COL_CUSADDRESS).setMinWidth(100);
         tbCustomerList.getColumnModel().getColumn(COL_CUSADDRESS).setCellEditor(new StringCellEditor(1, 200, SwingUtils.PATTERN_CUSADDRESS));
+
+        // Col status
+        tbCustomerList.getColumnModel().getColumn(COL_STATUS).setMinWidth(60);
+        tbCustomerList.getColumnModel().getColumn(COL_STATUS).setMaxWidth(60);
 
         // Bat su kien select row tren table
         tbCustomerList.getSelectionModel().addListSelectionListener((ListSelectionEvent e) -> {
@@ -124,17 +145,13 @@ public class CustomerPanel extends javax.swing.JPanel {
             @Override
             public void actionPerformed(ActionEvent e) {
                 TableCellListener tcl = (TableCellListener) e.getSource();
-//                System.out.println("Row   : " + tcl.getRow());
-//                System.out.println("Column: " + tcl.getColumn());
-//                System.out.println("Old   : " + tcl.getOldValue());
-//                System.out.println("New   : " + tcl.getNewValue());
-
                 switch (tcl.getColumn()) {
                     case COL_CUSNAME:
                         selectedCustomer.setCusName((String) tcl.getNewValue());
                         break;
-                    case COL_CUSLEVEL:
-                        selectedCustomer.setCusLevel((int) tcl.getNewValue());
+                    case COL_CUSLEVELNAME:
+                        selectedCustomer.setCusLevelName((String) tcl.getNewValue());
+                        selectedCustomer.setCusLevelID(customerLevelComboBoxModel2.getCustomerLevelFromLevelName((String) tcl.getNewValue()).getCusLevelID());
                         break;
                     case COL_CUSPHONE:
                         selectedCustomer.setCusPhone((String) tcl.getNewValue());
@@ -219,6 +236,22 @@ public class CustomerPanel extends javax.swing.JPanel {
             @Override
             public void removeUpdate(DocumentEvent e) {
                 doFilter();
+            }
+        });
+        cbLevelFilter.addItemListener(new ItemListener() {
+            @Override
+            public void itemStateChanged(ItemEvent e) {
+                if (e.getStateChange() == ItemEvent.SELECTED) {
+                    doFilter();
+                }
+            }
+        });
+        cbStatusFilter.addItemListener(new ItemListener() {
+            @Override
+            public void itemStateChanged(ItemEvent e) {
+                if (e.getStateChange() == ItemEvent.SELECTED) {
+                    doFilter();
+                }
             }
         });
 //</editor-fold>
@@ -440,12 +473,13 @@ public class CustomerPanel extends javax.swing.JPanel {
 
         jScrollPane2.setBorder(javax.swing.BorderFactory.createTitledBorder(javax.swing.BorderFactory.createEtchedBorder(), "Order Details"));
 
+        tbCustomerList.setAutoCreateRowSorter(true);
         tbCustomerList.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
-                {null, null, null, null, null, null}
+                {null, null, null, null, null, null, null}
             },
             new String [] {
-                "ID", "Cus. Name", "Cus. Level", "Cus. Phone", "Cus. Address", "Status"
+                "ID", "Name", "Paid", "Level", "Phone", "Address", "Status"
             }
         ));
         tbCustomerList.setFillsViewportHeight(true);
@@ -559,22 +593,22 @@ public class CustomerPanel extends javax.swing.JPanel {
         //Filter theo regex, neu parse bi loi thi khong filter
         try {
             List<RowFilter<CustomerTableModel, Object>> filters = new ArrayList<>();
-            filters.add(RowFilter.regexFilter("^" + tfIdFilter.getText(), 0));
-            filters.add(RowFilter.regexFilter("^" + tfCusNameFilter.getText(), 1));
+            filters.add(RowFilter.regexFilter("^" + tfIdFilter.getText(), COL_CUSID));
+            filters.add(RowFilter.regexFilter("^" + tfCusNameFilter.getText(), COL_CUSNAME));
 
             // Neu co chon cus level thi moi filter level
             if (cbLevelFilter.getSelectedIndex() != cbLevelFilter.getItemCount() - 1) {
-                filters.add(RowFilter.regexFilter("^" + ((CustomerLevel) cbLevelFilter.getSelectedItem()).getCusLevel(), 2));
+                filters.add(RowFilter.regexFilter("^" + ((CustomerLevel) cbLevelFilter.getSelectedItem()).getCusLevelName(), COL_CUSLEVELNAME));
             }
 
-            filters.add(RowFilter.regexFilter("^" + tfCusPhoneFilter.getText(), 3));
-            filters.add(RowFilter.regexFilter("^" + tfCusAddressFilter.getText(), 4));
+            filters.add(RowFilter.regexFilter("^" + tfCusPhoneFilter.getText(), COL_CUSPHONE));
+            filters.add(RowFilter.regexFilter("^" + tfCusAddressFilter.getText(), COL_CUSADDRESS));
 
             // Neu status khac "All" thi moi filter
             String statusFilter = cbStatusFilter.getSelectedItem().toString();
             if (!statusFilter.equals("All")) {
                 filters.add(RowFilter.regexFilter(
-                        statusFilter.equals("Enabled") ? "t" : "f", 5));
+                        statusFilter.equals("Enabled") ? "t" : "f", COL_STATUS));
             }
 
             rf = RowFilter.andFilter(filters);
@@ -585,23 +619,21 @@ public class CustomerPanel extends javax.swing.JPanel {
     }
 //</editor-fold>
 
-    private void clearFilter(){
+    private void clearFilter() {
         tfIdFilter.setText(null);
         tfCusPhoneFilter.setText(null);
         tfCusNameFilter.setText(null);
         tfCusAddressFilter.setText(null);
-        cbLevelFilter.setSelectedIndex(cbLevelFilter.getItemCount()-1);
-        cbStatusFilter.setSelectedIndex(cbStatusFilter.getItemCount()-1);
+        cbLevelFilter.setSelectedIndex(cbLevelFilter.getItemCount() - 1);
+        cbStatusFilter.setSelectedIndex(0);
     }
-    
+
     private void fetchAction() {
         selectedRowIndex = tbCustomerList.getSelectedRow();
-        selectedCustomer.setCusID((int) tbCustomerList.getValueAt(selectedRowIndex, 0));
-        selectedCustomer.setCusName((String) tbCustomerList.getValueAt(selectedRowIndex, 1));
-        selectedCustomer.setCusLevel((int) tbCustomerList.getValueAt(selectedRowIndex, 2));
-        selectedCustomer.setCusPhone((String) tbCustomerList.getValueAt(selectedRowIndex, 3));
-        selectedCustomer.setCusAddress((String) tbCustomerList.getValueAt(selectedRowIndex, 4));
-        selectedCustomer.setCusEnabled((boolean) tbCustomerList.getValueAt(selectedRowIndex, 5));
+        System.out.println("sele: " + selectedRowIndex);
+        if (selectedRowIndex >= 0) {
+            selectedCustomer = customerTableModel.getElementAt(tbCustomerList.convertRowIndexToView(selectedRowIndex));
+        }
     }
 
     private void refreshAction(boolean mustInfo) {
@@ -635,7 +667,17 @@ public class CustomerPanel extends javax.swing.JPanel {
 
     private void insertAction() {
         setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
-        boolean result = customerTableModel.insert(new Customer());
+        Customer c = new Customer();
+        // Khoi tao tri default de insert vao db
+        c.setCusID(-1);
+        c.setCusName("New Customer");
+        c.setCusPaid(0);
+        c.setCusAddress("New Address");
+        c.setCusPhone(System.currentTimeMillis() + "");
+        c.setCusLevelID(customerLevelComboBoxModel1.getElementAt(0).getCusLevelID());
+        c.setCusLevelName(customerLevelComboBoxModel1.getElementAt(0).getCusLevelName());
+        c.setCusEnabled(true);
+        boolean result = customerTableModel.insert(c);
         setCursor(null);
         SwingUtils.showInfoDialog(result ? SwingUtils.INSERT_SUCCESS : SwingUtils.INSERT_FAIL);
         // Select row vua insert vao
@@ -655,6 +697,9 @@ public class CustomerPanel extends javax.swing.JPanel {
     }
 
     private void deleteAction() {
+        if (SwingUtils.showConfirmDialog("Are you sure to delete this customer ?") == JOptionPane.NO_OPTION) {
+            return;
+        }
         setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
         boolean result = customerTableModel.delete(selectedCustomer);
         setCursor(null);
@@ -673,7 +718,6 @@ public class CustomerPanel extends javax.swing.JPanel {
 
     private void setButtonEnabled(boolean enabled, JButton... exclude) {
         btRemove.setEnabled(enabled);
-        btAdd.setEnabled(enabled);
         btNewOrder.setEnabled(enabled);
 
         // Ngoai tru may button nay luon luon enable

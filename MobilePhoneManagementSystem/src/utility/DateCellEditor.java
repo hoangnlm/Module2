@@ -5,6 +5,7 @@ package utility;
  */
 import com.toedter.calendar.JDateChooser;
 import java.awt.Component;
+import java.util.Calendar;
 import java.util.Date;
 import javax.swing.DefaultCellEditor;
 import javax.swing.JTable;
@@ -20,6 +21,11 @@ public class DateCellEditor extends DefaultCellEditor {
     public DateCellEditor() {
         super(new JTextField());
         dc = new JDateChooser();
+        Calendar c = Calendar.getInstance();
+        c.set(1900, 0, 1);
+        dc.getJCalendar().setMinSelectableDate(c.getTime());
+        c.set(2021, 11, 31);
+        dc.getJCalendar().setMaxSelectableDate(c.getTime());
         dc.getDateEditor().setEnabled(false);
     }
 

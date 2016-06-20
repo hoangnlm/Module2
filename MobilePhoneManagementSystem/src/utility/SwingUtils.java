@@ -1,6 +1,12 @@
 package utility;
 
 import java.awt.Toolkit;
+import java.text.NumberFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.JOptionPane;
 import javax.swing.JTextField;
 import javax.swing.text.AbstractDocument;
@@ -20,11 +26,59 @@ public class SwingUtils {
     public static final String DELETE_FAIL = "Deletion has failed !";
     public static final String DB_REFRESH = "Data have been refreshed !";
     public static final String DB_RESET = "Data have been reset !";
-    
+
     // Declare some regex constants
     public static final String PATTERN_CUSNAME = "[A-Za-z0-9 ]+";
     public static final String PATTERN_CUSPHONE = "\\d+";
     public static final String PATTERN_CUSADDRESS = "[A-Za-z0-9 .\\/-]+";
+    public static final String PATTERN_DATE = "MMM dd, yyyy";
+
+    public enum FormatType {
+        DATE, PERCENT, CURRENCY
+    }
+
+    public static String formatString(Object object, FormatType format) {
+        String result = "";
+        switch (format) {
+            case DATE:
+                SimpleDateFormat dateFormat = new SimpleDateFormat(PATTERN_DATE);
+                result = dateFormat.format(object);
+                break;
+            case PERCENT:
+                NumberFormat percentFormat = NumberFormat.getPercentInstance();
+                result = percentFormat.format(object);
+                break;
+            case CURRENCY:
+                result = String.format("%,.0f Đ", object);
+                break;
+        }
+        return result;
+    }
+
+    public static Object unFormatString(String str, FormatType format) {
+        switch (format) {
+            case DATE:
+
+                SimpleDateFormat dateFormat = new SimpleDateFormat(PATTERN_DATE);
+                try {
+                    return dateFormat.parse(str);
+                } catch (ParseException ex) {
+                    Logger.getLogger(SwingUtils.class.getName()).log(Level.SEVERE, null, ex);
+                }
+                break;
+            case PERCENT:
+                NumberFormat percentFormat = NumberFormat.getPercentInstance();
+                try {
+                    return percentFormat.parse(str);
+                } catch (ParseException ex) {
+                    Logger.getLogger(SwingUtils.class.getName()).log(Level.SEVERE, null, ex);
+                }
+                break;
+            case CURRENCY:
+                return Float.parseFloat(str.replaceAll(",", "").replace(" Đ", ""));
+        }
+        return null;
+    }
 
     public static int showConfirmDialog(String message) {
         return JOptionPane.showConfirmDialog(null, message, "Confirm:", JOptionPane.YES_NO_OPTION);

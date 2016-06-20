@@ -19,7 +19,7 @@ public class CustomerLevelComboBoxCellEditor extends DefaultCellEditor {
     @Override
     public Component getTableCellEditorComponent(JTable table, Object value, boolean isSelected, int row, int column) {
         JComboBox cb2 = (JComboBox) super.getTableCellEditorComponent(table, value, isSelected, row, column);
-        cb2.setSelectedItem(((CustomerLevelComboBoxModel) cb2.getModel()).getCustomerLevelFromValue((int) value));
+        cb2.setSelectedItem(((CustomerLevelComboBoxModel) cb2.getModel()).getCustomerLevelFromLevelName((String) value));
         return cb2;
     }
 }

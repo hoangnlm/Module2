@@ -6,6 +6,7 @@ import java.util.Locale;
 import javax.swing.JLabel;
 import javax.swing.JTable;
 import javax.swing.table.DefaultTableCellRenderer;
+import utility.SwingUtils.FormatType;
 
 /**
  *
@@ -16,7 +17,7 @@ public class CurrencyCellRenderer extends DefaultTableCellRenderer {
     @Override
     public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
         JLabel label = (JLabel) super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
-        label.setText(String.format("%,.0f Đ", (float) value));
+        label.setText(SwingUtils.formatString((float) value, FormatType.CURRENCY));
         return label;
     }
 }

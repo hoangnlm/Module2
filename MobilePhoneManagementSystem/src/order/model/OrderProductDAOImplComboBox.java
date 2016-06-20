@@ -19,12 +19,12 @@ import javax.sql.rowset.CachedRowSet;
  *
  * @author Hoang
  */
-public class OrderProductDAOImplDialog implements IDAO<OrderProduct> {
+public class OrderProductDAOImplComboBox implements IDAO<OrderProduct> {
 
     private CachedRowSet crs;  //CRS to update table
     private int selectingIndex;
 
-    public OrderProductDAOImplDialog() {
+    public OrderProductDAOImplComboBox() {
         // Chi thao tac voi product dang enable
         crs = getCRS("select ProID, p.BraID, BraName, ProName, ProStock, ProPrice, SalesOffAmount from Products p join Branches b on p.BraID=b.BraID left join SalesOff s on p.SalesOffID=s.SalesOffID where ProEnabled=1 order by BraName");
     }
@@ -51,7 +51,7 @@ public class OrderProductDAOImplDialog implements IDAO<OrderProduct> {
                 } while (crs.next());
             }
         } catch (SQLException ex) {
-            Logger.getLogger(OrderProductDAOImplDialog.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(OrderProductDAOImplComboBox.class.getName()).log(Level.SEVERE, null, ex);
         }
         return list;
     }

@@ -30,4 +30,21 @@ public class CustomerLevelComboBoxModel extends CustomizedComboBoxModel<Customer
         }
         return result;
     }
+
+    /**
+     * Tim customer level object tu level name
+     *
+     * @param levelName
+     * @return
+     */
+    public CustomerLevel getCustomerLevelFromLevelName(String levelName) {
+        CustomerLevel result = null;
+        for (int i = 0; i < list.size(); i++) {
+            if (list.get(i).getCusLevelName().equals(levelName)) {
+                result = list.get(i);
+                break;
+            }
+        }
+        return result;
+    }
 }

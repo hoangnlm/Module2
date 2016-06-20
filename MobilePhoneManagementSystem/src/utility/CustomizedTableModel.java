@@ -25,6 +25,19 @@ public abstract class CustomizedTableModel<M> extends AbstractTableModel {
         this.columnNames = columnNames;
         list = daoImpl.getList();
     }
+    
+    public M getElementAt(int index){
+        return list.get(index);
+    }
+
+    public void addElement(M item) {
+        list.add(item);
+        fireTableRowsInserted(list.indexOf(item), list.indexOf(item));
+    }
+    
+    public void removeElementAt(int index){
+        
+    }
 
     public int getSelectingIndex() {
         return selectingIndex;
@@ -34,7 +47,7 @@ public abstract class CustomizedTableModel<M> extends AbstractTableModel {
         this.selectingIndex = selectingIndex;          // Table model tinh tu 0
         daoImpl.setSelectingIndex(selectingIndex + 1); // ResultSet tinh tu 1
     }
-    
+
     public boolean insert(M item) {
         boolean result = false;
         if (daoImpl.insert(item)) {

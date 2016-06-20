@@ -23,7 +23,8 @@ public class CustomerDAOImpl implements IDAO<Customer> {
     private CachedRowSet crs;   //CRS to update table
 
     public CustomerDAOImpl() {
-        crs = getCRS("select CusID, CusName, CusLevel, CusPhone, CusAddress, CusEnabled, a.CusLevelID from Customers a join CustomerLevels b on a.CusLevelID=b.CusLevelID");
+        // Luu y Stt=2 co nghia la chi tinh cus paid cua cac order da thanh toan (status="Paid"), neu order chua thanh thoan thi cus paid la null (0).
+        crs = getCRS("select a.CusID, t3.CusPaid, CusName, CusLevel, CusLevelName, CusPhone, CusAddress, CusEnabled, a.CusLevelID from Customers a join CustomerLevels b on a.CusLevelID=b.CusLevelID left join (select CusID, sum(OrdValue) CusPaid from Orders t1 left join (select OrdID, sum(OrdProQty*OrdProPrice) OrdValue from OrderDetails where OrdID in (select OrdID from Orders where SttID=2) group by OrdID) t2 on t1.OrdID=t2.OrdID group by CusID) t3 on a.CusID=t3.CusID");
     }
 
     @Override
@@ -35,7 +36,9 @@ public class CustomerDAOImpl implements IDAO<Customer> {
                     customerList.add(new Customer(
                             crs.getInt(Customer.COL_CUSID),
                             crs.getString(Customer.COL_CUSNAME),
+                            crs.getFloat(Customer.COL_CUSPAID),
                             crs.getInt(Customer.COL_CUSLEVEL),
+                            crs.getString(Customer.COL_CUSLEVELNAME),
                             crs.getString(Customer.COL_CUSPHONE),
                             crs.getString(Customer.COL_CUSADDRESS),
                             crs.getBoolean(Customer.COL_CUSENABLED),
@@ -52,16 +55,10 @@ public class CustomerDAOImpl implements IDAO<Customer> {
     public boolean insert(Customer customer) {
         boolean result = false;
 
-        // Khoi tao tri default de insert vao db
-        customer.setCusName("New Customer");
-        customer.setCusAddress("New Address");
-        customer.setCusPhone(System.currentTimeMillis() + "");
-        customer.setCusLevel(1);
-        customer.setCusEnabled(true);
         try {
-            runPS("insert into Customers(CusName, CusLevelID, CusPhone, CusAddress, CusEnabled) values(?,(select CusLevelID from CustomerLevels where CusLevel=?),?,?,?)",
+            runPS("insert into Customers(CusName, CusLevelID, CusPhone, CusAddress, CusEnabled) values(?,?,?,?,?)",
                     customer.getCusName(),
-                    customer.getCusLevel(),
+                    customer.getCusLevelID(),
                     customer.getCusPhone(),
                     customer.getCusAddress(),
                     customer.isCusEnabled()
@@ -85,9 +82,9 @@ public class CustomerDAOImpl implements IDAO<Customer> {
             if (crs2.first()) {
                 SwingUtils.showErrorDialog("Customer phone cannot be duplicated !");
             } else {
-                runPS("update Customers set CusName=?, CusLevelID=(select CusLevelID from CustomerLevels where CusLevel=?), CusPhone=?, CusAddress=?, CusEnabled=? where CusID=?",
+                runPS("update Customers set CusName=?, CusLevelID=?, CusPhone=?, CusAddress=?, CusEnabled=? where CusID=?",
                         customer.getCusName(),
-                        customer.getCusLevel(),
+                        customer.getCusLevelID(),
                         customer.getCusPhone(),
                         customer.getCusAddress(),
                         customer.isCusEnabled(),

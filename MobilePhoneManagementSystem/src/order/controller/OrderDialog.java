@@ -1,48 +1,45 @@
 package order.controller;
 
-import java.awt.Cursor;
 import java.awt.Dimension;
 import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 import java.text.NumberFormat;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
-import java.util.Vector;
 import javax.swing.AbstractAction;
 import javax.swing.DefaultListSelectionModel;
-import javax.swing.JCheckBox;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
-import javax.swing.ListModel;
 import javax.swing.SwingUtilities;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
+import javax.swing.event.TableModelEvent;
+import javax.swing.event.TableModelListener;
 import main.controller.LoginConfig;
 import order.model.Order;
 import order.model.OrderBranch;
 import order.model.OrderCustomer;
 import order.model.OrderProduct;
-import utility.CheckBoxListCellRenderer;
+import order.model.OrderStatus;
 import utility.CurrencyCellRenderer;
 import utility.PercentCellRenderer;
 import utility.SpinnerCellEditor;
 import utility.SwingUtils;
+import utility.SwingUtils.FormatType;
 import utility.TableCellListener;
 
 /**
  *
  * @author Hoang
  */
-public class OrderDialog extends javax.swing.JDialog {
+public class OrderDialog extends javax.swing.JDialog implements ItemListener {
 
     public static void main(String[] args) {
         SwingUtilities.invokeLater(new Runnable() {
@@ -53,6 +50,7 @@ public class OrderDialog extends javax.swing.JDialog {
         });
     }
 
+    private Order backup;
     private Order order;
 
     // Khai bao model
@@ -67,12 +65,13 @@ public class OrderDialog extends javax.swing.JDialog {
     private OrderProduct selectedProduct;
     private int selectedRowIndex = -1;
 
-    private static final int COL_PRONO = 0;
-    private static final int COL_PRONAME = 1;
-    private static final int COL_PROQTY = 2;
-    private static final int COL_PROPRICE1 = 3;
-    private static final int COL_SALEAMOUNT = 4;
-    private static final int COL_PROPRICE2 = 5;
+    public static final int COL_PRONO = 0;
+    public static final int COL_PRONAME = 1;
+    public static final int COL_PROQTY = 2;
+    public static final int COL_PROPRICE1 = 3;
+    public static final int COL_SALEAMOUNT = 4;
+    public static final int COL_PROPRICE2 = 5;
+    public static final int COL_PROID = 6;
 
     // Two mode: insert va update
     private boolean insertMode;
@@ -89,30 +88,19 @@ public class OrderDialog extends javax.swing.JDialog {
         setLocationRelativeTo(null);
         insertMode = order == null;
 
-        // Disable button khi moi khoi dong len
-        btRemove.setEnabled(false);
-        btSave.setEnabled(false);
-
         // Set data cho combobox status
         orderStatusComboBoxModel = new OrderStatusComboBoxModel();
         orderStatusComboBoxRenderer = new OrderStatusComboBoxRenderer();
         cbStatus.setModel(orderStatusComboBoxModel);
         cbStatus.setRenderer(orderStatusComboBoxRenderer);
+        cbStatus.addItemListener(this);
 
         // Set data cho combobox customer
         orderCustomerComboBoxModel = new OrderCustomerComboBoxModel();
         orderCustomerComboBoxRenderer = new OrderCustomerComboBoxRenderer();
         cbCustomer.setModel(orderCustomerComboBoxModel);
         cbCustomer.setRenderer(orderCustomerComboBoxRenderer);
-        cbCustomer.addItemListener(new ItemListener() {
-            @Override
-            public void itemStateChanged(ItemEvent e) {
-                if (e.getStateChange() == ItemEvent.SELECTED) {
-                    updateDiscountLabel(((OrderCustomer) e.getItem()).getCusDiscount());
-                    updateTotalLabel();
-                }
-            }
-        });
+        cbCustomer.addItemListener(this);
 
         // Set data cho combobox product name
         orderProductComboBoxModel = new OrderProductComboBoxModel();
@@ -124,6 +112,9 @@ public class OrderDialog extends javax.swing.JDialog {
         // Set height cho table header
         tbProduct.getTableHeader().setPreferredSize(new Dimension(300, 30));
 
+        // Col pro ID (HIDDEN)
+        tbProduct.getColumnModel().getColumn(COL_PROID).setMinWidth(0);
+        tbProduct.getColumnModel().getColumn(COL_PROID).setMaxWidth(0);
         // Col pro No
         tbProduct.getColumnModel().getColumn(COL_PRONO).setMinWidth(40);
         tbProduct.getColumnModel().getColumn(COL_PRONO).setMaxWidth(50);
@@ -166,11 +157,6 @@ public class OrderDialog extends javax.swing.JDialog {
             @Override
             public void actionPerformed(ActionEvent e) {
                 TableCellListener tcl = (TableCellListener) e.getSource();
-//                System.out.println("Row   : " + tcl.getRow());
-//                System.out.println("Column: " + tcl.getColumn());
-//                System.out.println("Old   : " + tcl.getOldValue());
-//                System.out.println("New   : " + tcl.getNewValue());
-
                 switch (tcl.getColumn()) {
                     case COL_PRONAME:
                         String oldValue = (String) tcl.getOldValue();
@@ -180,18 +166,23 @@ public class OrderDialog extends javax.swing.JDialog {
                             if (checkDuplicate((String) tcl.getNewValue())) {
                                 SwingUtils.showErrorDialog("Duplicated item is not allowed in an order !");
                                 tbProduct.setValueAt(oldValue, tbProduct.getSelectedRow(), COL_PRONAME);
+                            } else if (checkStockZero((String) tcl.getNewValue())) {
+                                SwingUtils.showErrorDialog("This product is out of stock.\nPlease choose another !");
+                                tbProduct.setValueAt(oldValue, tbProduct.getSelectedRow(), COL_PRONAME);
                             } else {
                                 // Lay product moi tu combo box gan cho product
                                 // trong row cua table
                                 selectedProduct = orderProductComboBoxModel.getOrderProductFromName((String) tcl.getNewValue());
                                 // Gan quantity moi cho product hien tai
                                 selectedProduct.setProQty((int) tbProduct.getValueAt(tbProduct.getSelectedRow(), COL_PROQTY));
-                                // Set gia tri len table row
+                                // Update cac thuoc tinh cua product moi vao table
                                 tbProduct.setValueAt(selectedProduct.getProPrice1(), tbProduct.getSelectedRow(), COL_PROPRICE1);
                                 tbProduct.setValueAt(selectedProduct.getSalesOffAmount(), tbProduct.getSelectedRow(), COL_SALEAMOUNT);
                                 tbProduct.setValueAt(selectedProduct.getProPrice1() * (1 - selectedProduct.getSalesOffAmount()), tbProduct.getSelectedRow(), COL_PROPRICE2);
+                                tbProduct.setValueAt(selectedProduct.getProID(), tbProduct.getSelectedRow(), COL_PROID);
                                 // Update label
                                 updateTotalLabel();
+                                setTrackChanges(true);
                             }
                         } else if (!newValue.equals(oldValue)) {
                             tbProduct.setValueAt(oldValue, tbProduct.getSelectedRow(), COL_PRONAME);
@@ -202,49 +193,58 @@ public class OrderDialog extends javax.swing.JDialog {
                         selectedProduct.setProQty((int) tbProduct.getValueAt(tbProduct.getSelectedRow(), COL_PROQTY));
                         // Update label
                         updateItemsLabel();
-                        updateTotalLabel();
+                        setTrackChanges(true);
                         break;
                 }
-
-                trackChanges = true;
-                btSave.setEnabled(true);
             }
         });
-//</editor-fold>
 
+//</editor-fold>
         // Xu ly mode
         if (insertMode) { // Mode insert
             setTitle("New Order");
             this.order = new Order();
             this.order.setOrdID(-1);
-            SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
-            tfDate.setText(dateFormat.format(new Date()));
+            this.order.setOrdStatusID(orderStatusComboBoxModel.getElementAt(0).getSttID());
+            this.order.setOrdStatus(orderStatusComboBoxModel.getElementAt(0).getSttName());
+            this.order.setCusID(orderCustomerComboBoxModel.getElementAt(orderCustomerComboBoxModel.getSize() - 1).getCusID());
+            this.order.setCusDiscount(orderCustomerComboBoxModel.getElementAt(orderCustomerComboBoxModel.getSize() - 1).getCusDiscount());
+            this.order.setUserID(1);
+            this.order.setOrdDate(new Date());
+            backup = this.order.clone(); // Backup
+            tfID.setText("New");
+            tfDate.setText(SwingUtils.formatString(new Date(), FormatType.DATE));
             tfUser.setText(LoginConfig.USER_NAME);
             cbStatus.setSelectedIndex(0);
             cbCustomer.setSelectedIndex(cbCustomer.getItemCount() - 1);
-
-            // Set data cho cac label
-            updateItemsLabel();
-            updateDiscountLabel(((OrderCustomer) cbCustomer.getSelectedItem()).getCusDiscount());
-            updateTotalLabel();
-
+            setTrackChanges(false);
         } else { // Mode update
             setTitle("Update Order");
-            this.order = order;
-            SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
-            tfDate.setText(dateFormat.format(order.getOrdDate()));
-            tfUser.setText(order.getUserName());
-            cbStatus.setSelectedItem(orderStatusComboBoxModel.getStatusFromValue(order.getOrdStatus()));
-            cbCustomer.setSelectedItem(orderCustomerComboBoxModel.getCustomerFromID(order.getCusID()));
+            this.order = order.clone();
+            backup = this.order.clone(); // Backup
+            tfID.setText(this.order.getOrdID() + "");
+            tfDate.setText(SwingUtils.formatString(this.order.getOrdDate(), FormatType.DATE));
+            tfUser.setText(this.order.getUserName());
+            cbStatus.setSelectedItem(orderStatusComboBoxModel.getStatusFromValue(this.order.getOrdStatus()));
+            cbCustomer.setSelectedItem(orderCustomerComboBoxModel.getCustomerFromID(this.order.getCusID()));
+            setTrackChanges(false);
 
-            // Set data cho cac label
-            updateItemsLabel();
-            updateDiscountLabel(order.getCusDiscount());
-            updateTotalLabel();
+            // Xac nhan update discount khi discount cua customer bi thay doi sau order
+            if (backup.getCusDiscount() != orderCustomerComboBoxModel.getCustomerFromID(this.order.getCusID()).getCusDiscount()) {
+                if (SwingUtils.showConfirmDialog("Discount of this order has changed !\nWould you like to update ?") == JOptionPane.NO_OPTION) {
+                    this.order.setCusDiscount(backup.getCusDiscount());
+                } else {
+                    setTrackChanges(true);
+                }
+            }
         }
 
         // Set data cho table chinh
-        orderProductTableModelDialog.load(this.order.getOrdID());    //Emply list
+        orderProductTableModelDialog.load(this.order.getOrdID());    //Emply list neu o mode insert
+
+        // Set data cho cac label
+        updateItemsLabel();
+        updateDiscountLabel();
 
 //<editor-fold defaultstate="collapsed" desc="xu ly cho vung filter">
 // Set data cho list filter
@@ -305,6 +305,8 @@ public class OrderDialog extends javax.swing.JDialog {
         cbStatus = new javax.swing.JComboBox<>();
         jLabel7 = new javax.swing.JLabel();
         tfUser = new javax.swing.JTextField();
+        tfID = new javax.swing.JTextField();
+        jLabel8 = new javax.swing.JLabel();
         jPanel2 = new javax.swing.JPanel();
         btAdd = new javax.swing.JButton();
         btRemove = new javax.swing.JButton();
@@ -338,6 +340,7 @@ public class OrderDialog extends javax.swing.JDialog {
         jLabel3.setText("Date:");
 
         tfDate.setEditable(false);
+        tfDate.setEnabled(false);
         tfDate.setFocusable(false);
 
         jLabel4.setText("Customer:");
@@ -349,7 +352,14 @@ public class OrderDialog extends javax.swing.JDialog {
         jLabel7.setText("Seller:");
 
         tfUser.setEditable(false);
+        tfUser.setEnabled(false);
         tfUser.setFocusable(false);
+
+        tfID.setEditable(false);
+        tfID.setEnabled(false);
+        tfID.setFocusable(false);
+
+        jLabel8.setText("ID:");
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
@@ -358,21 +368,26 @@ public class OrderDialog extends javax.swing.JDialog {
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jLabel3, javax.swing.GroupLayout.PREFERRED_SIZE, 70, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel4))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addComponent(jLabel4)
+                        .addGap(17, 17, 17)
+                        .addComponent(cbCustomer, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addComponent(jLabel8, javax.swing.GroupLayout.PREFERRED_SIZE, 65, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(17, 17, 17)
+                        .addComponent(tfID, javax.swing.GroupLayout.PREFERRED_SIZE, 130, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(18, 18, Short.MAX_VALUE)
+                        .addComponent(jLabel3, javax.swing.GroupLayout.PREFERRED_SIZE, 70, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(tfDate, javax.swing.GroupLayout.PREFERRED_SIZE, 130, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addGap(18, 18, Short.MAX_VALUE)
                         .addComponent(jLabel7)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                         .addComponent(tfUser, javax.swing.GroupLayout.PREFERRED_SIZE, 130, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addComponent(jLabel6)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(cbStatus, javax.swing.GroupLayout.PREFERRED_SIZE, 160, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addComponent(cbCustomer, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
+                        .addComponent(cbStatus, javax.swing.GroupLayout.PREFERRED_SIZE, 160, javax.swing.GroupLayout.PREFERRED_SIZE))))
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -384,7 +399,9 @@ public class OrderDialog extends javax.swing.JDialog {
                     .addComponent(jLabel7)
                     .addComponent(tfUser, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel6)
-                    .addComponent(cbStatus, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(cbStatus, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(tfID, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel8))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(cbCustomer, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -397,6 +414,7 @@ public class OrderDialog extends javax.swing.JDialog {
         btAdd.setFont(new java.awt.Font("Lucida Grande", 0, 14)); // NOI18N
         btAdd.setIcon(new javax.swing.ImageIcon(getClass().getResource("/image/order/Add3.png"))); // NOI18N
         btAdd.setText("Add");
+        btAdd.setFocusPainted(false);
         btAdd.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btAddActionPerformed(evt);
@@ -406,6 +424,8 @@ public class OrderDialog extends javax.swing.JDialog {
         btRemove.setFont(new java.awt.Font("Lucida Grande", 0, 14)); // NOI18N
         btRemove.setIcon(new javax.swing.ImageIcon(getClass().getResource("/image/order/Delete2.png"))); // NOI18N
         btRemove.setText("Remove");
+        btRemove.setEnabled(false);
+        btRemove.setFocusPainted(false);
         btRemove.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btRemoveActionPerformed(evt);
@@ -415,6 +435,7 @@ public class OrderDialog extends javax.swing.JDialog {
         btReset.setFont(new java.awt.Font("Lucida Grande", 0, 14)); // NOI18N
         btReset.setIcon(new javax.swing.ImageIcon(getClass().getResource("/image/order/Refresh2.png"))); // NOI18N
         btReset.setText("Reset");
+        btReset.setFocusPainted(false);
         btReset.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btResetActionPerformed(evt);
@@ -444,6 +465,7 @@ public class OrderDialog extends javax.swing.JDialog {
         btClear.setFont(new java.awt.Font("Lucida Grande", 0, 12)); // NOI18N
         btClear.setIcon(new javax.swing.ImageIcon(getClass().getResource("/image/order/trash_full.png"))); // NOI18N
         btClear.setText("Clear Filter");
+        btClear.setFocusPainted(false);
         btClear.setPreferredSize(new java.awt.Dimension(100, 20));
         btClear.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -461,8 +483,8 @@ public class OrderDialog extends javax.swing.JDialog {
         list.setLayoutOrientation(javax.swing.JList.HORIZONTAL_WRAP);
         list.setMaximumSize(new java.awt.Dimension(99999, 9999));
         list.setMinimumSize(new java.awt.Dimension(600, 30));
-        list.setPreferredSize(new java.awt.Dimension(600, 200));
-        list.setSize(new java.awt.Dimension(600, 200));
+        list.setPreferredSize(new java.awt.Dimension(600, 600));
+        list.setSize(new java.awt.Dimension(600, 600));
         list.setVisibleRowCount(-1);
         jScrollPane3.setViewportView(list);
 
@@ -509,6 +531,8 @@ public class OrderDialog extends javax.swing.JDialog {
         btSave.setFont(new java.awt.Font("Lucida Grande", 0, 14)); // NOI18N
         btSave.setIcon(new javax.swing.ImageIcon(getClass().getResource("/image/order/OK2.png"))); // NOI18N
         btSave.setText("Save");
+        btSave.setEnabled(false);
+        btSave.setFocusPainted(false);
         btSave.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btSaveActionPerformed(evt);
@@ -518,6 +542,7 @@ public class OrderDialog extends javax.swing.JDialog {
         btCancel.setFont(new java.awt.Font("Lucida Grande", 0, 14)); // NOI18N
         btCancel.setIcon(new javax.swing.ImageIcon(getClass().getResource("/image/order/Cancel2.png"))); // NOI18N
         btCancel.setText("Cancel");
+        btCancel.setFocusPainted(false);
         btCancel.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btCancelActionPerformed(evt);
@@ -567,11 +592,12 @@ public class OrderDialog extends javax.swing.JDialog {
                         .addComponent(jLabel5)
                         .addComponent(lbItems))
                     .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                        .addComponent(jLabel12)
+                        .addComponent(lbDiscount))
+                    .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                         .addComponent(jLabel10)
-                        .addComponent(lbTotal)
-                        .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(jLabel12)
-                            .addComponent(lbDiscount)))))
+                        .addComponent(lbTotal)))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
@@ -647,6 +673,7 @@ public class OrderDialog extends javax.swing.JDialog {
     private javax.swing.JLabel jLabel5;
     private javax.swing.JLabel jLabel6;
     private javax.swing.JLabel jLabel7;
+    private javax.swing.JLabel jLabel8;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JPanel jPanel4;
@@ -658,6 +685,7 @@ public class OrderDialog extends javax.swing.JDialog {
     private javax.swing.JList<OrderBranch> list;
     private javax.swing.JTable tbProduct;
     private javax.swing.JTextField tfDate;
+    private javax.swing.JTextField tfID;
     private javax.swing.JTextField tfNameFilter;
     private javax.swing.JTextField tfUser;
     // End of variables declaration//GEN-END:variables
@@ -675,9 +703,8 @@ public class OrderDialog extends javax.swing.JDialog {
         product.setProName(OrderProduct.DEFAULT_PRONAME);
         orderProductTableModelDialog.insert(product);
         scrollToRow(tbProduct.getRowCount() - 1);
-        trackChanges = true;
-        btSave.setEnabled(true);
         updateItemsLabel();
+        setTrackChanges(true);
     }
 
     private void deleteAction() {
@@ -694,21 +721,28 @@ public class OrderDialog extends javax.swing.JDialog {
         // Neu row xoa la row khac cuoi thi tien cursor ve truoc
         selectedRowIndex = (selectedRowIndex == tbProduct.getRowCount() ? tbProduct.getRowCount() - 1 : selectedRowIndex++);
         scrollToRow(selectedRowIndex);
-        trackChanges = true;
-        btSave.setEnabled(true);
         updateItemsLabel();
+        setTrackChanges(true);
     }
 
+    // Ham goi khi bam nut Save
     private void updateAction() {
+        // Check da co product chua va product da chon het chua
+        if (checkProductEmpty()) {
+            SwingUtils.showInfoDialog("Please choose product name !");
+            return;
+        }
+
         if (order.getOrdID() == -1) { // Insert mode
             if (orderProductTableModelDialog.insert(order)) {
                 SwingUtils.showInfoDialog(SwingUtils.INSERT_SUCCESS);
+                dispose(); //Tat dialog sau khi da update db
             } else {
                 SwingUtils.showInfoDialog(SwingUtils.INSERT_FAIL);
             }
         } else if (orderProductTableModelDialog.update(order)) { // Update mode
             SwingUtils.showInfoDialog(SwingUtils.UPDATE_SUCCESS);
-
+            dispose(); //Tat dialog sau khi da update db
         } else {
             SwingUtils.showInfoDialog(SwingUtils.UPDATE_FAIL);
         }
@@ -738,55 +772,91 @@ public class OrderDialog extends javax.swing.JDialog {
 
     private void resetAction(boolean mustInfo) {
         // Load lai vung customer info
-        cbStatus.setSelectedItem(order.getOrdStatus());
-        cbCustomer.setSelectedItem(orderCustomerComboBoxModel.getCustomerFromID(order.getCusID()));
+        cbStatus.setSelectedItem(orderStatusComboBoxModel.getStatusFromValue(backup.getOrdStatus()));
+        cbCustomer.setSelectedItem(orderCustomerComboBoxModel.getCustomerFromID(backup.getCusID()));
+
+        // Phai load lai discount cua backup ma ko lay discount cua customer de phong truong hop customer thay doi discount sau order
+        order.setCusDiscount(backup.getCusDiscount());
+
         // Load lai table product
         orderProductTableModelDialog.load(order.getOrdID());
         // Load lai may cai label
+        updateItemsLabel();
+        updateDiscountLabel();
 
         if (mustInfo) {
             SwingUtils.showInfoDialog(SwingUtils.DB_RESET);
         }
-        if (insertMode) {
-            btSave.setEnabled(false);
-        }
-    }
-
-    private boolean checkDuplicate(String proName) {
-        boolean result = false;
-        // Chi check ten product khi khac ten mac dinh
-        if (!proName.equals(OrderProduct.DEFAULT_PRONAME)) {
-            List<OrderProduct> tmp = new ArrayList();
-           orderProductTableModelDialog.getList().stream().filter(op -> op.getProName().equals(proName)).forEach(op -> tmp.add(op));
-            result = tmp.size() > 1; //Mang co 2 phan tu tuc la duplicate
-        }
-        return result;
+        setTrackChanges(false);
     }
 
     private void updateItemsLabel() {
-        if (tbProduct.getRowCount() > 0) {
-            lbItems.setText(String.format("%02d", tbProduct.getRowCount()));
-        } else {
-            lbItems.setText("0");
+        int sum = 0;
+        if (orderProductTableModelDialog.getRowCount() > 0) {
+            for (int i = 0; i < orderProductTableModelDialog.getRowCount(); i++) {
+                sum += (int) orderProductTableModelDialog.getValueAt(i, COL_PROQTY);
+            }
         }
+        lbItems.setText(sum > 0 ? String.format("%02d", sum) : "0");
+        updateTotalLabel();
     }
 
-    private void updateDiscountLabel(float discount) {
+    private void updateDiscountLabel() {
         NumberFormat format = NumberFormat.getPercentInstance();
-        lbDiscount.setText(format.format(discount));
+        lbDiscount.setText(format.format(order.getCusDiscount()));
+        updateTotalLabel();
     }
 
     private void updateTotalLabel() {
         float sum = 0;
-        if (tbProduct.getRowCount() > 0) {
-            for (int i = 0; i < tbProduct.getRowCount(); i++) {
-                sum += (float) tbProduct.getValueAt(i, COL_PROPRICE2) * (int) tbProduct.getValueAt(i, COL_PROQTY);
+        if (orderProductTableModelDialog.getRowCount() > 0) {
+            for (int i = 0; i < orderProductTableModelDialog.getRowCount(); i++) {
+                sum += (float) orderProductTableModelDialog.getValueAt(i, COL_PROPRICE2) * (int) orderProductTableModelDialog.getValueAt(i, COL_PROQTY);
             }
             String dis = lbDiscount.getText().split("%")[0];
             float discount = Float.parseFloat(dis) / 100;
             sum = sum * (1 - discount);
         }
         lbTotal.setText(String.format("%,.0f Đ", (float) sum));
+    }
+
+    /**
+     * Kiem tra da chon product name day du het chua
+     *
+     * @return true neu da chon product name day du
+     */
+    private boolean checkProductEmpty() {
+        List<OrderProduct> tmp = new ArrayList();
+        orderProductTableModelDialog.getList().stream().filter(op -> op.getProName().equals(OrderProduct.DEFAULT_PRONAME)).forEach(op -> tmp.add(op));
+        System.out.println(tmp.size());
+        return tmp.size() > 0; //Da chon product day du
+    }
+
+    /**
+     * Kiem tra so luong product co con ton kho hay khong
+     *
+     * @param proName
+     * @return true neu het hang
+     */
+    private boolean checkStockZero(String proName) {
+        return orderProductComboBoxModel.getOrderProductFromName(proName).getProStock() == 0;
+    }
+
+    /**
+     * Kiem tra duplicate product trong order
+     *
+     * @param proName
+     * @return true if duplicated
+     */
+    private boolean checkDuplicate(String proName) {
+        List<OrderProduct> tmp = new ArrayList();
+        orderProductTableModelDialog.getList().stream().filter(op -> op.getProName().equals(proName)).forEach(op -> tmp.add(op));
+        return tmp.size() > 1; //Mang co 2 phan tu tuc la duplicate
+    }
+
+    public void setTrackChanges(boolean trackChanges) {
+        this.trackChanges = trackChanges;
+        btSave.setEnabled(trackChanges);
     }
 
     private void clearFilter() {
@@ -797,5 +867,26 @@ public class OrderDialog extends javax.swing.JDialog {
     private void scrollToRow(int row) {
         tbProduct.getSelectionModel().setSelectionInterval(row, row);
         tbProduct.scrollRectToVisible(new Rectangle(tbProduct.getCellRect(row, 0, true)));
+    }
+
+    @Override
+    public void itemStateChanged(ItemEvent e) {
+        if (e.getSource() == cbCustomer) {
+            if (e.getStateChange() == ItemEvent.SELECTED) {
+                OrderCustomer oc = (OrderCustomer) e.getItem();
+                order.setCusID(oc.getCusID());
+                order.setCusName(oc.getCusName());
+                order.setCusDiscount(oc.getCusDiscount());
+                updateDiscountLabel();
+                setTrackChanges(true);
+            }
+        }
+
+        if (e.getSource() == cbStatus) {
+            OrderStatus os = (OrderStatus) e.getItem();
+            order.setOrdStatusID(os.getSttID());
+            order.setOrdStatus(os.getSttName());
+            setTrackChanges(true);
+        }
     }
 }

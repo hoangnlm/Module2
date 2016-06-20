@@ -85,7 +85,7 @@ public final class MainFrame extends javax.swing.JFrame {
         lb[10] = lbLogout;
         lb[11] = lbExit;
 
-        pn[0] = new ServicePanel();
+        pn[0] = new HomePanel();
         pn[1] = new BlankPanel();
         pn[2] = new BlankPanel();
         pn[3] = new BlankPanel();

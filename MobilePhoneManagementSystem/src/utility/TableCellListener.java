@@ -31,8 +31,7 @@ public class TableCellListener implements PropertyChangeListener, Runnable {
     }
 
     /**
-     * Create a TableCellListener with a copy of all the data relevant to the
-     * change of data for a given cell.
+     * Create a TableCellListener with a copy of all the data relevant to the change of data for a given cell.
      *
      * @param row the row of the changed cell
      * @param column the column of the changed cell
@@ -116,7 +115,6 @@ public class TableCellListener implements PropertyChangeListener, Runnable {
         //  column of the table have not been set when the "tableCellEditor"
         //  PropertyChangeEvent is fired.
         //  This results in the "run" method being invoked
-
         SwingUtilities.invokeLater(this);
     }
 
@@ -136,17 +134,20 @@ public class TableCellListener implements PropertyChangeListener, Runnable {
      */
     private void processEditingStopped() {
         newValue = table.getModel().getValueAt(row, column);
-
         //  The data has changed, invoke the supplied Action
         if (!newValue.equals(oldValue)) {
             //  Make a copy of the data in case another cell starts editing
             //  while processing this change
 
-            TableCellListener tcl = new TableCellListener(
-                    getTable(), getRow(), getColumn(), getOldValue(), getNewValue());
+//            TableCellListener tcl = new TableCellListener(
+//                    getTable(), getRow(), getColumn(), getOldValue(), getNewValue());
 
+//            ActionEvent event = new ActionEvent(
+//                    tcl,
+//                    ActionEvent.ACTION_PERFORMED,
+//                    "");
             ActionEvent event = new ActionEvent(
-                    tcl,
+                    this,
                     ActionEvent.ACTION_PERFORMED,
                     "");
             action.actionPerformed(event);

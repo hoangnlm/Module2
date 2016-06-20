@@ -13,7 +13,9 @@ public class Customer {
 
     private int cusID;
     private String cusName;
+    private float cusPaid;
     private int cusLevel;
+    private String cusLevelName;
     private String cusPhone;
     private String cusAddress;
     private boolean cusEnabled;
@@ -22,7 +24,9 @@ public class Customer {
     //Khai bao ten column de hien thi tren table
     public static final String COL_CUSID = "CusID";
     public static final String COL_CUSNAME = "CusName";
+    public static final String COL_CUSPAID = "CusPaid";
     public static final String COL_CUSLEVEL = "CusLevel";
+    public static final String COL_CUSLEVELNAME = "CusLevelName";
     public static final String COL_CUSPHONE = "CusPhone";
     public static final String COL_CUSADDRESS = "CusAddress";
     public static final String COL_CUSENABLED = "CusEnabled";
@@ -32,10 +36,12 @@ public class Customer {
 
     }
 
-    public Customer(int cusID, String cusName, int cusLevel, String cusPhone, String cusAddress, boolean cusEnabled, int cusLevelID) {
+    public Customer(int cusID, String cusName, float cusPaid, int cusLevel, String cusLevelName, String cusPhone, String cusAddress, boolean cusEnabled, int cusLevelID) {
         this.cusID = cusID;
         this.cusName = cusName;
+        this.cusPaid = cusPaid;
         this.cusLevel = cusLevel;
+        this.cusLevelName = cusLevelName;
         this.cusPhone = cusPhone;
         this.cusAddress = cusAddress;
         this.cusEnabled = cusEnabled;
@@ -58,6 +64,14 @@ public class Customer {
         this.cusName = cusName;
     }
 
+    public float getCusPaid() {
+        return cusPaid;
+    }
+
+    public void setCusPaid(float cusPaid) {
+        this.cusPaid = cusPaid;
+    }
+
     public int getCusLevel() {
         return cusLevel;
     }
@@ -66,12 +80,16 @@ public class Customer {
         this.cusLevel = cusLevel;
     }
 
-    public String getCusPhone() {
-        return cusPhone;
+    public String getCusLevelName() {
+        return cusLevelName;
     }
 
-    public int getCusLevelID() {
-        return cusLevelID;
+    public void setCusLevelName(String cusLevelName) {
+        this.cusLevelName = cusLevelName;
+    }
+
+    public String getCusPhone() {
+        return cusPhone;
     }
 
     public void setCusPhone(String cusPhone) {
@@ -94,8 +112,13 @@ public class Customer {
         this.cusEnabled = cusEnabled;
     }
 
+    public int getCusLevelID() {
+        return cusLevelID;
+    }
+
     public void setCusLevelID(int cusLevelID) {
         this.cusLevelID = cusLevelID;
     }
+
 
 }

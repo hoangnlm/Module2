@@ -32,7 +32,7 @@ public class CustomerLevelComboBoxRenderer extends JLabel implements ListCellRen
             setForeground(list.getForeground());
         }
         if (value != null) {
-            setText(value.getCusLevel() + "");
+            setText(value.getCusLevelName());
         }
         return this;
     }

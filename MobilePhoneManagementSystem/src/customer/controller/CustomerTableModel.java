@@ -13,13 +13,17 @@ import utility.CustomizedTableModel;
 public class CustomerTableModel extends CustomizedTableModel<Customer> {
 
     public CustomerTableModel() {
-        super(new CustomerDAOImpl(), new String[]{"ID", "Cus. Name", "Cus. Level", "Cus. Phone", "Cus. Address", "Status"});
+        super(new CustomerDAOImpl(), new String[]{"ID", "Name", "Paid", "Level", "Phone", "Address", "Status"});
     }
 
+    @Override
+    public boolean isCellEditable(int rowIndex, int columnIndex) {
+        return columnIndex!=0 && columnIndex!=2; // Khong sua ID va paid
+    }
 
     @Override
     public Class<?> getColumnClass(int column) {
-        Class[] columnClasses = {Integer.class, String.class, Integer.class, String.class, String.class, Boolean.class};
+        Class[] columnClasses = {Integer.class, String.class, Float.class, String.class, String.class, String.class, Boolean.class};
         return columnClasses[column];
     }
 
@@ -28,22 +32,25 @@ public class CustomerTableModel extends CustomizedTableModel<Customer> {
         item = list.get(rowIndex);
         Object result = null;
         switch (columnIndex) {
-            case 0:
+            case CustomerPanel.COL_CUSID:
                 result = item.getCusID();
                 break;
-            case 1:
+            case CustomerPanel.COL_CUSNAME:
                 result = item.getCusName();
                 break;
-            case 2:
-                result = item.getCusLevel();
+            case CustomerPanel.COL_CUSPAID:
+                result = item.getCusPaid();
                 break;
-            case 3:
+            case CustomerPanel.COL_CUSLEVELNAME:
+                result = item.getCusLevelName();
+                break;
+            case CustomerPanel.COL_CUSPHONE:
                 result = item.getCusPhone();
                 break;
-            case 4:
+            case CustomerPanel.COL_CUSADDRESS:
                 result = item.getCusAddress();
                 break;
-            case 5:
+            case CustomerPanel.COL_STATUS:
                 result = item.isCusEnabled();
                 break;
         }
@@ -54,22 +61,25 @@ public class CustomerTableModel extends CustomizedTableModel<Customer> {
     public void setValueAt(Object aValue, int rowIndex, int columnIndex) {
         Customer customer = list.get(rowIndex);
         switch (columnIndex) {
-            case 0:
+            case CustomerPanel.COL_CUSID:
                 customer.setCusID((int) aValue);
                 break;
-            case 1:
+            case CustomerPanel.COL_CUSNAME:
                 customer.setCusName((String) aValue);
                 break;
-            case 2:
-                customer.setCusLevel(((CustomerLevel) aValue).getCusLevel());
+            case CustomerPanel.COL_CUSPAID:
+                customer.setCusPaid((float) aValue);
                 break;
-            case 3:
+            case CustomerPanel.COL_CUSLEVELNAME:
+                customer.setCusLevelName(((CustomerLevel) aValue).getCusLevelName());
+                break;
+            case CustomerPanel.COL_CUSPHONE:
                 customer.setCusPhone((String) aValue);
                 break;
-            case 4:
+            case CustomerPanel.COL_CUSADDRESS:
                 customer.setCusAddress((String) aValue);
                 break;
-            case 5:
+            case CustomerPanel.COL_STATUS:
                 customer.setCusEnabled((boolean) aValue);
                 break;
         }
