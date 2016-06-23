@@ -66,7 +66,7 @@ public class CustomerLevelDialog extends javax.swing.JDialog {
         tbLevelList.getColumnModel().getColumn(COL_CUSLEVEL).setMaxWidth(50);
 
         // Col cus level name
-        tbLevelList.getColumnModel().getColumn(COL_CUSLEVELNAME).setCellEditor(new StringCellEditor(1, 50, SwingUtils.PATTERN_CUSNAME));
+        tbLevelList.getColumnModel().getColumn(COL_CUSLEVELNAME).setCellEditor(new StringCellEditor(1, 50, SwingUtils.PATTERN_NAMEWITHSPACE));
 
         // Col cus discount
         tbLevelList.getColumnModel().getColumn(COL_CUSDISCOUNT).setCellEditor(new SpinnerCellEditor(CustomerLevel.MIN_DISCOUNT, CustomerLevel.MAX_DISCOUNT));
@@ -202,15 +202,14 @@ public class CustomerLevelDialog extends javax.swing.JDialog {
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addGap(12, 12, 12)
+                .addContainerGap(12, Short.MAX_VALUE)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(btAdd, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(btDelete, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(btRefresh, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(btClose, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 327, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 240, javax.swing.GroupLayout.PREFERRED_SIZE))
         );
 
         pack();
@@ -299,7 +298,6 @@ public class CustomerLevelDialog extends javax.swing.JDialog {
 
     private void setButtonEnabled(boolean enabled, JButton... exclude) {
         btDelete.setEnabled(enabled);
-        btAdd.setEnabled(enabled);
 
         // Ngoai tru may button nay luon luon enable
         if (exclude.length != 0) {

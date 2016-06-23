@@ -27,6 +27,7 @@ public abstract class CustomizedTableModel<M> extends AbstractTableModel {
     }
     
     public M getElementAt(int index){
+        System.out.println("index: "+index);
         return list.get(index);
     }
 

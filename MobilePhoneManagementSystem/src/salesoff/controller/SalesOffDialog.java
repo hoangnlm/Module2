@@ -9,6 +9,7 @@ import java.util.Date;
 import javax.swing.AbstractAction;
 import javax.swing.DefaultListSelectionModel;
 import javax.swing.JButton;
+import javax.swing.JOptionPane;
 import javax.swing.JTable;
 import javax.swing.event.ListSelectionEvent;
 import salesoff.model.SalesOff;
@@ -83,7 +84,7 @@ public class SalesOffDialog extends javax.swing.JDialog {
         tbSaleList.getColumnModel().getColumn(COL_SALEID).setMaxWidth(40);
 
         // Col sale name
-        tbSaleList.getColumnModel().getColumn(COL_SALENAME).setCellEditor(new StringCellEditor(1, 50, SwingUtils.PATTERN_CUSADDRESS));
+        tbSaleList.getColumnModel().getColumn(COL_SALENAME).setCellEditor(new StringCellEditor(1, 50, SwingUtils.PATTERN_ADDRESS));
         tbSaleList.getColumnModel().getColumn(COL_SALENAME).setMinWidth(150);
 
         // Col sale start date
@@ -163,7 +164,6 @@ public class SalesOffDialog extends javax.swing.JDialog {
             @Override
             public void actionPerformed(ActionEvent e) {
                 TableCellListener tcl = (TableCellListener) e.getSource();
-//                scrollToRow(tbProList, tcl.getRow());
 
                 switch (tcl.getColumn()) {
                     case COL_PROSALE:
@@ -186,41 +186,27 @@ public class SalesOffDialog extends javax.swing.JDialog {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        jScrollPane1 = new javax.swing.JScrollPane();
-        tbSaleList = new javax.swing.JTable();
         btAddSale = new javax.swing.JButton();
         btRemoveSale = new javax.swing.JButton();
         btRefresh = new javax.swing.JButton();
         btClose = new javax.swing.JButton();
+        jSplitPane1 = new javax.swing.JSplitPane();
         jScrollPane2 = new javax.swing.JScrollPane();
         tbProList = new javax.swing.JTable();
+        jScrollPane1 = new javax.swing.JScrollPane();
+        tbSaleList = new javax.swing.JTable();
+        btSelect = new javax.swing.JButton();
+        btDeselect = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setTitle("SalesOff Management");
         setMinimumSize(new java.awt.Dimension(712, 600));
         setModal(true);
 
-        jScrollPane1.setBorder(javax.swing.BorderFactory.createTitledBorder(javax.swing.BorderFactory.createEtchedBorder(), "SalesOff List"));
-
-        tbSaleList.setModel(new javax.swing.table.DefaultTableModel(
-            new Object [][] {
-                {"1", "Hoang", "3", "0936031044", "10"},
-                {"2", "Tri", "2", "123123123", "5"},
-                {"3", "Son", "0", "3434343434", "1"},
-                {null, null, null, null, null}
-            },
-            new String [] {
-                "ID", "Name", "Start", "End", "Amount(%)"
-            }
-        ));
-        tbSaleList.setRowHeight(25);
-        tbSaleList.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
-        tbSaleList.getTableHeader().setReorderingAllowed(false);
-        jScrollPane1.setViewportView(tbSaleList);
-
         btAddSale.setFont(new java.awt.Font("Lucida Grande", 0, 14)); // NOI18N
         btAddSale.setIcon(new javax.swing.ImageIcon(getClass().getResource("/image/order/Add3.png"))); // NOI18N
         btAddSale.setText("Add");
+        btAddSale.setFocusPainted(false);
         btAddSale.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btAddSaleActionPerformed(evt);
@@ -230,6 +216,7 @@ public class SalesOffDialog extends javax.swing.JDialog {
         btRemoveSale.setFont(new java.awt.Font("Lucida Grande", 0, 14)); // NOI18N
         btRemoveSale.setIcon(new javax.swing.ImageIcon(getClass().getResource("/image/order/Delete2.png"))); // NOI18N
         btRemoveSale.setText("Remove");
+        btRemoveSale.setFocusPainted(false);
         btRemoveSale.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btRemoveSaleActionPerformed(evt);
@@ -239,6 +226,7 @@ public class SalesOffDialog extends javax.swing.JDialog {
         btRefresh.setFont(new java.awt.Font("Lucida Grande", 0, 14)); // NOI18N
         btRefresh.setIcon(new javax.swing.ImageIcon(getClass().getResource("/image/order/Refresh2.png"))); // NOI18N
         btRefresh.setText("Refresh");
+        btRefresh.setFocusPainted(false);
         btRefresh.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btRefreshActionPerformed(evt);
@@ -248,13 +236,21 @@ public class SalesOffDialog extends javax.swing.JDialog {
         btClose.setFont(new java.awt.Font("Lucida Grande", 0, 14)); // NOI18N
         btClose.setIcon(new javax.swing.ImageIcon(getClass().getResource("/image/order/Cancel2.png"))); // NOI18N
         btClose.setText("Close");
+        btClose.setFocusPainted(false);
         btClose.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btCloseActionPerformed(evt);
             }
         });
 
+        jSplitPane1.setDividerLocation(220);
+        jSplitPane1.setDividerSize(10);
+        jSplitPane1.setOrientation(javax.swing.JSplitPane.VERTICAL_SPLIT);
+        jSplitPane1.setContinuousLayout(true);
+        jSplitPane1.setOneTouchExpandable(true);
+
         jScrollPane2.setBorder(javax.swing.BorderFactory.createTitledBorder(javax.swing.BorderFactory.createEtchedBorder(), "SalesOff Details"));
+        jScrollPane2.setMinimumSize(new java.awt.Dimension(31, 150));
 
         tbProList.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
@@ -272,21 +268,70 @@ public class SalesOffDialog extends javax.swing.JDialog {
         tbProList.getTableHeader().setReorderingAllowed(false);
         jScrollPane2.setViewportView(tbProList);
 
+        jSplitPane1.setBottomComponent(jScrollPane2);
+
+        jScrollPane1.setBorder(javax.swing.BorderFactory.createTitledBorder(javax.swing.BorderFactory.createEtchedBorder(), "SalesOff List"));
+        jScrollPane1.setMinimumSize(new java.awt.Dimension(31, 150));
+
+        tbSaleList.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+                {"1", "Hoang", "3", "0936031044", "10"},
+                {"2", "Tri", "2", "123123123", "5"},
+                {"3", "Son", "0", "3434343434", "1"},
+                {null, null, null, null, null}
+            },
+            new String [] {
+                "ID", "Name", "Start", "End", "Amount(%)"
+            }
+        ));
+        tbSaleList.setRowHeight(25);
+        tbSaleList.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
+        tbSaleList.getTableHeader().setReorderingAllowed(false);
+        jScrollPane1.setViewportView(tbSaleList);
+
+        jSplitPane1.setLeftComponent(jScrollPane1);
+
+        btSelect.setFont(new java.awt.Font("Lucida Grande", 0, 14)); // NOI18N
+        btSelect.setIcon(new javax.swing.ImageIcon(getClass().getResource("/image/order/accept.png"))); // NOI18N
+        btSelect.setText("Select All");
+        btSelect.setFocusPainted(false);
+        btSelect.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btSelectActionPerformed(evt);
+            }
+        });
+
+        btDeselect.setFont(new java.awt.Font("Lucida Grande", 0, 14)); // NOI18N
+        btDeselect.setIcon(new javax.swing.ImageIcon(getClass().getResource("/image/order/crossout.png"))); // NOI18N
+        btDeselect.setText("Deselect All");
+        btDeselect.setFocusPainted(false);
+        btDeselect.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btDeselectActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 735, Short.MAX_VALUE)
-            .addComponent(jScrollPane2)
+            .addComponent(jSplitPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 735, Short.MAX_VALUE)
             .addGroup(layout.createSequentialGroup()
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(btAddSale, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(btRemoveSale, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(btRefresh, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(btClose, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(layout.createSequentialGroup()
+                        .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(btSelect, javax.swing.GroupLayout.PREFERRED_SIZE, 130, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(18, 18, 18)
+                        .addComponent(btDeselect, javax.swing.GroupLayout.PREFERRED_SIZE, 130, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(18, 18, 18)
+                        .addComponent(btClose, javax.swing.GroupLayout.PREFERRED_SIZE, 130, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(layout.createSequentialGroup()
+                        .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(btAddSale, javax.swing.GroupLayout.PREFERRED_SIZE, 130, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(18, 18, 18)
+                        .addComponent(btRemoveSale, javax.swing.GroupLayout.PREFERRED_SIZE, 130, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(18, 18, 18)
+                        .addComponent(btRefresh, javax.swing.GroupLayout.PREFERRED_SIZE, 130, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
@@ -296,12 +341,15 @@ public class SalesOffDialog extends javax.swing.JDialog {
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(btAddSale, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(btRemoveSale, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(btRefresh, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(btRefresh, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jSplitPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 464, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(btSelect, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(btDeselect, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(btClose, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 171, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(18, 18, 18)
-                .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 317, Short.MAX_VALUE))
+                .addGap(12, 12, 12))
         );
 
         pack();
@@ -323,13 +371,24 @@ public class SalesOffDialog extends javax.swing.JDialog {
         refreshAction(true);
     }//GEN-LAST:event_btRefreshActionPerformed
 
+    private void btSelectActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btSelectActionPerformed
+        selectAll();
+    }//GEN-LAST:event_btSelectActionPerformed
+
+    private void btDeselectActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btDeselectActionPerformed
+        deselectAll();
+    }//GEN-LAST:event_btDeselectActionPerformed
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btAddSale;
     private javax.swing.JButton btClose;
+    private javax.swing.JButton btDeselect;
     private javax.swing.JButton btRefresh;
     private javax.swing.JButton btRemoveSale;
+    private javax.swing.JButton btSelect;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane2;
+    private javax.swing.JSplitPane jSplitPane1;
     private javax.swing.JTable tbProList;
     private javax.swing.JTable tbSaleList;
     // End of variables declaration//GEN-END:variables
@@ -337,6 +396,7 @@ public class SalesOffDialog extends javax.swing.JDialog {
 
     //<editor-fold defaultstate="collapsed" desc="xu ly cho table salesoff">
     private void fetchSaleAction() {
+        setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
         selectedSaleRowIndex = tbSaleList.getSelectedRow();
         selectedSale.setSaleID((int) tbSaleList.getValueAt(selectedSaleRowIndex, 0));
         selectedSale.setSaleName(((String) tbSaleList.getValueAt(selectedSaleRowIndex, 1)).trim());
@@ -346,6 +406,7 @@ public class SalesOffDialog extends javax.swing.JDialog {
 
         // Reload table product list voi SalesOff moi chon
         salesOffProductTableModel.load(selectedSale.getSaleID());
+        setCursor(null);
     }
 
     private void insertSaleAction() {
@@ -367,6 +428,9 @@ public class SalesOffDialog extends javax.swing.JDialog {
     }
 
     private void deleteSaleAction() {
+        if (SwingUtils.showConfirmDialog("Are you sure to remove this sales off ?") == JOptionPane.NO_OPTION) {
+            return;
+        }
         setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
         boolean result = salesOffTableModel.delete(selectedSale);
         setCursor(null);
@@ -387,16 +451,15 @@ public class SalesOffDialog extends javax.swing.JDialog {
         selectedPro.setBraName((String) tbProList.getValueAt(selectedProRowIndex, 2));
         selectedPro.setSalesOff((boolean) tbProList.getValueAt(selectedProRowIndex, 3));
     }
-    
+
     private void updateProAction() {
         setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
         boolean result = salesOffProductTableModel.update(selectedPro);
         setCursor(null);
         SwingUtils.showInfoDialog(result ? SwingUtils.UPDATE_SUCCESS : SwingUtils.UPDATE_FAIL);
-//        scrollToRow(tbSaleList, selectedSaleRowIndex);
     }
 //</editor-fold>
-    
+
     private void refreshAction(boolean mustInfo) {
         if (mustInfo) {
             setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
@@ -408,16 +471,42 @@ public class SalesOffDialog extends javax.swing.JDialog {
         }
         scrollToRow(tbSaleList, selectedSaleRowIndex);
     }
-    
+
+    private void selectAll() {
+        setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
+        boolean result = false;
+        for (int i = 0; i < salesOffProductTableModel.getRowCount(); i++) {
+            SalesOffProduct sop = salesOffProductTableModel.getElementAt(i);
+            sop.setSaleID(selectedSale.getSaleID());
+            result = salesOffProductTableModel.update(sop);
+        }
+        refreshAction(false);
+        setCursor(null);
+        SwingUtils.showInfoDialog(result ? SwingUtils.UPDATE_SUCCESS : SwingUtils.UPDATE_FAIL);
+    }
+
+    private void deselectAll() {
+        setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
+        boolean result = false;
+        for (int i = 0; i < salesOffProductTableModel.getRowCount(); i++) {
+            SalesOffProduct sop = salesOffProductTableModel.getElementAt(i);
+            sop.setSaleID(0);
+            result = salesOffProductTableModel.update(sop);
+        }
+        refreshAction(false);
+        setCursor(null);
+        SwingUtils.showInfoDialog(result ? SwingUtils.UPDATE_SUCCESS : SwingUtils.UPDATE_FAIL);
+    }
+
     private void scrollToRow(JTable table, int row) {
         table.getSelectionModel().setSelectionInterval(row, row);
         table.scrollRectToVisible(new Rectangle(table.getCellRect(row, 0, true)));
     }
-//</editor-fold>
 
     private void setButtonEnabled(boolean enabled, JButton... exclude) {
-        btAddSale.setEnabled(enabled);
         btRemoveSale.setEnabled(enabled);
+        btSelect.setEnabled(enabled);
+        btDeselect.setEnabled(enabled);
 
         // Ngoai tru may button nay luon luon enable
         if (exclude.length != 0) {

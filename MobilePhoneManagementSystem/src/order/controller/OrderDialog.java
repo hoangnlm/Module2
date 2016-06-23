@@ -5,8 +5,6 @@ import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
-import java.beans.PropertyChangeEvent;
-import java.beans.PropertyChangeListener;
 import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -20,9 +18,7 @@ import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
-import javax.swing.event.TableModelEvent;
-import javax.swing.event.TableModelListener;
-import main.controller.LoginConfig;
+import main.model.Login;
 import order.model.Order;
 import order.model.OrderBranch;
 import order.model.OrderCustomer;
@@ -52,6 +48,7 @@ public class OrderDialog extends javax.swing.JDialog implements ItemListener {
 
     private Order backup;
     private Order order;
+    private int backupRowCount;
 
     // Khai bao model
     private OrderProductTableModelDialog orderProductTableModelDialog;
@@ -78,9 +75,6 @@ public class OrderDialog extends javax.swing.JDialog implements ItemListener {
 
     // Flag de theo doi co thay doi noi dung gi khong
     private boolean trackChanges;
-
-    // List de save vao database
-    private List<OrderProduct> proList;
 
     public OrderDialog(Order order) {
         super((JFrame) null, true);
@@ -193,7 +187,9 @@ public class OrderDialog extends javax.swing.JDialog implements ItemListener {
                         selectedProduct.setProQty((int) tbProduct.getValueAt(tbProduct.getSelectedRow(), COL_PROQTY));
                         // Update label
                         updateItemsLabel();
-                        setTrackChanges(true);
+                        if (checkProductEmpty()) {
+                            setTrackChanges(true);
+                        }
                         break;
                 }
             }
@@ -214,7 +210,7 @@ public class OrderDialog extends javax.swing.JDialog implements ItemListener {
             backup = this.order.clone(); // Backup
             tfID.setText("New");
             tfDate.setText(SwingUtils.formatString(new Date(), FormatType.DATE));
-            tfUser.setText(LoginConfig.USER_NAME);
+            tfUser.setText(Login.USER_NAME);
             cbStatus.setSelectedIndex(0);
             cbCustomer.setSelectedIndex(cbCustomer.getItemCount() - 1);
             setTrackChanges(false);
@@ -241,6 +237,7 @@ public class OrderDialog extends javax.swing.JDialog implements ItemListener {
 
         // Set data cho table chinh
         orderProductTableModelDialog.load(this.order.getOrdID());    //Emply list neu o mode insert
+        backupRowCount = orderProductTableModelDialog.getRowCount(); //Backup so row ban dau
 
         // Set data cho cac label
         updateItemsLabel();
@@ -702,9 +699,7 @@ public class OrderDialog extends javax.swing.JDialog implements ItemListener {
         product.setProQty(1);
         product.setProName(OrderProduct.DEFAULT_PRONAME);
         orderProductTableModelDialog.insert(product);
-        scrollToRow(tbProduct.getRowCount() - 1);
         updateItemsLabel();
-        setTrackChanges(true);
     }
 
     private void deleteAction() {
@@ -722,7 +717,10 @@ public class OrderDialog extends javax.swing.JDialog implements ItemListener {
         selectedRowIndex = (selectedRowIndex == tbProduct.getRowCount() ? tbProduct.getRowCount() - 1 : selectedRowIndex++);
         scrollToRow(selectedRowIndex);
         updateItemsLabel();
-        setTrackChanges(true);
+        // Check neu product ko empty va so row khac voi so row ban dau thi moi bat trackchange
+        if (!checkProductEmpty() && orderProductTableModelDialog.getRowCount()!=backupRowCount) {
+            setTrackChanges(true);
+        }
     }
 
     // Ham goi khi bam nut Save
@@ -828,7 +826,6 @@ public class OrderDialog extends javax.swing.JDialog implements ItemListener {
     private boolean checkProductEmpty() {
         List<OrderProduct> tmp = new ArrayList();
         orderProductTableModelDialog.getList().stream().filter(op -> op.getProName().equals(OrderProduct.DEFAULT_PRONAME)).forEach(op -> tmp.add(op));
-        System.out.println(tmp.size());
         return tmp.size() > 0; //Da chon product day du
     }
 
@@ -878,7 +875,9 @@ public class OrderDialog extends javax.swing.JDialog implements ItemListener {
                 order.setCusName(oc.getCusName());
                 order.setCusDiscount(oc.getCusDiscount());
                 updateDiscountLabel();
-                setTrackChanges(true);
+                if (!checkProductEmpty()) {
+                    setTrackChanges(true);
+                }
             }
         }
 
@@ -886,7 +885,9 @@ public class OrderDialog extends javax.swing.JDialog implements ItemListener {
             OrderStatus os = (OrderStatus) e.getItem();
             order.setOrdStatusID(os.getSttID());
             order.setOrdStatus(os.getSttName());
-            setTrackChanges(true);
+            if (!checkProductEmpty()) {
+                setTrackChanges(true);
+            }
         }
     }
 }

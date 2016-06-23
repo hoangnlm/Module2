@@ -83,7 +83,7 @@ public class SalesOffDialog_bk extends javax.swing.JDialog {
         tbSaleList.getColumnModel().getColumn(COL_SALEID).setMaxWidth(40);
 
         // Col sale name
-        tbSaleList.getColumnModel().getColumn(COL_SALENAME).setCellEditor(new StringCellEditor(1, 50, SwingUtils.PATTERN_CUSADDRESS));
+        tbSaleList.getColumnModel().getColumn(COL_SALENAME).setCellEditor(new StringCellEditor(1, 50, SwingUtils.PATTERN_ADDRESS));
         tbSaleList.getColumnModel().getColumn(COL_SALENAME).setMinWidth(150);
 
         // Col sale start date

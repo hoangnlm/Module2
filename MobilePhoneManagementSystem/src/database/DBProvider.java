@@ -18,16 +18,24 @@ public class DBProvider {
     private CallableStatement callableStatement;
     private ResultSet resultSet;
 
+    // Khai bao cac tri default
+    public static final String HOST = "10.211.55.7";
+//    public static final String HOST = "localhost";
+    public static final String PORT = "1433";
+    public static final String DBNAME = "Mobile";
+    public static final String NAME = "sa";
+    public static final String PASSWORD = "111";
+
     public static void main(String[] args) throws SQLException {
         // Dung de test ket noi db
     }
 
     public DBProvider() {
-        dbHost = "10.211.55.7";
-        dbPort = "1433";
-        dbName = "Mobile";
-        dbUsername = "sa";
-        dbPassword = "111";
+        dbHost = HOST;
+        dbPort = PORT;
+        dbName = DBNAME;
+        dbUsername = NAME;
+        dbPassword = PASSWORD;
     }
 
     public DBProvider(String dbHost, String dbPort, String dbName, String dbUsername, String dbPassword) {
@@ -69,11 +77,19 @@ public class DBProvider {
     }
 
     public String getDbUrl() {
-        return dbType + dbHost + ":" + dbPort + ";DatabaseName=" + dbName;
+        if (dbPort.isEmpty()) {
+            return dbType + dbHost + ";DatabaseName=" + dbName;
+        } else {
+            return dbType + dbHost + ":" + dbPort + ";DatabaseName=" + dbName;
+        }
     }
 
     public String getFullDbUrl() {
-        return dbType + dbHost + ":" + dbPort + ";DatabaseName=" + dbName + ";UID=" + dbUsername + ";Password=" + dbPassword;
+        if (dbPort.isEmpty()) {
+            return dbType + dbHost + ";DatabaseName=" + dbName + ";UID=" + dbUsername + ";Password=" + dbPassword;
+        } else {
+            return dbType + dbHost + ":" + dbPort + ";DatabaseName=" + dbName + ";UID=" + dbUsername + ";Password=" + dbPassword;
+        }
     }
 
     public String getDbHost() {

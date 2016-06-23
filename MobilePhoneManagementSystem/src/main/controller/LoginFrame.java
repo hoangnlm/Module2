@@ -5,11 +5,13 @@
  */
 package main.controller;
 
-import com.jtattoo.plaf.hifi.HiFiLookAndFeel;
-import java.awt.Color;
-import java.util.Properties;
-import javax.swing.UIManager;
+import java.awt.CardLayout;
+import main.model.Login;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
+import javax.swing.JOptionPane;
 import utility.IOUtils;
+import utility.SwingUtils;
 
 /**
  *
@@ -17,19 +19,30 @@ import utility.IOUtils;
  */
 public class LoginFrame extends javax.swing.JFrame {
 
-    public static LoginConfig config;
+    public static Login config;
 
+    public static final String LOGIN_PANEL = "LoginPanel";
+    public static final String CONFIG_PANEL = "ConfigPanel";
+    public static final String CONFIG_FILENAME = "config";
+    
     /**
      * Creates new form TestFrame
      */
     public LoginFrame() {
         // Thiet lap GUI
         initComponents();
-        setBackground(new Color(0, 255, 0, 0));
-        pnContent.setBackground(new Color(0, 255, 0, 0));
-        pnContent.add(new LoginPanel(pnContent));
-        pack();
+//        setBackground(new Color(0, 255, 0, 0));
+//        pnContent.setBackground(new Color(0, 255, 0, 0));
+        pnContent.add(new LoginPanel(this), LOGIN_PANEL);
+        pnContent.add(new ConfigPanel(this), CONFIG_PANEL);
+        reloadContentPanel(LOGIN_PANEL);
 
+        addWindowListener(new WindowAdapter() {
+            @Override
+            public void windowClosing(WindowEvent e) {
+                exit();
+            }
+        });
     }
 
     /**
@@ -46,20 +59,19 @@ public class LoginFrame extends javax.swing.JFrame {
         setDefaultCloseOperation(javax.swing.WindowConstants.DO_NOTHING_ON_CLOSE);
         setTitle("Login System");
         setMinimumSize(new java.awt.Dimension(269, 554));
-        setUndecorated(true);
         setResizable(false);
 
-        pnContent.setLayout(new java.awt.GridBagLayout());
+        pnContent.setLayout(new java.awt.CardLayout());
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(pnContent, javax.swing.GroupLayout.DEFAULT_SIZE, 270, Short.MAX_VALUE)
+            .addComponent(pnContent, javax.swing.GroupLayout.PREFERRED_SIZE, 270, javax.swing.GroupLayout.PREFERRED_SIZE)
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(pnContent, javax.swing.GroupLayout.DEFAULT_SIZE, 554, Short.MAX_VALUE)
+            .addComponent(pnContent, javax.swing.GroupLayout.PREFERRED_SIZE, 554, javax.swing.GroupLayout.PREFERRED_SIZE)
         );
 
         pack();
@@ -73,32 +85,24 @@ public class LoginFrame extends javax.swing.JFrame {
 
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(new Runnable() {
+            @Override
             public void run() {
+                // Khoi tao LAF
+                SwingUtils.createLookAndFeel();
+
                 // Load config tu file len, neu file khong ton tai thi tao moi
                 try {
-                    config = (LoginConfig) IOUtils.readObject(getClass().getResource("config").getPath());
+                    config = (Login) IOUtils.readObject(CONFIG_FILENAME);
                 } catch (Exception e) {
                     // neu bi loi doc file thi config van la null
+                    config = null;
                 }
 
                 if (config == null) { // Neu file config khong ton tai
-                    config = new LoginConfig(LoginConfig.HOST, LoginConfig.PORT, LoginConfig.DBNAME, LoginConfig.NAME, LoginConfig.PASSWORD, LoginConfig.USER_NAME, LoginConfig.USER_PASSWORD);
-
-                    LoginFrame loginFrame = new LoginFrame();
-                    loginFrame.setVisible(true);
+                    config = new Login(Login.HOST, Login.PORT, Login.DBNAME, Login.NAME, Login.PASSWORD, Login.USER_NAME, Login.USER_PASSWORD, Login.USER_FUNCTIONS);
+                    new LoginFrame().setVisible(true);
                 } else { // Neu file config da ton tai
-                    try {
-                        Properties props = new Properties();
-                        props.put("logoString", "");
-                        props.put("macStyleWindowDecoration", "off");
-                        HiFiLookAndFeel laf = new HiFiLookAndFeel();
-                        laf.setTheme(props);
-                        UIManager.setLookAndFeel(laf);
-                        MainFrame mainFrame = new MainFrame();
-                        mainFrame.setVisible(true);
-                    } catch (javax.swing.UnsupportedLookAndFeelException ex) {
-                        java.util.logging.Logger.getLogger(MainFrame.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-                    }
+                    new MainFrame().setVisible(true);
                 }
             }
         });
@@ -107,4 +111,15 @@ public class LoginFrame extends javax.swing.JFrame {
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JPanel pnContent;
     // End of variables declaration//GEN-END:variables
+
+    public void reloadContentPanel(String panelName) {
+        CardLayout cl = (CardLayout) pnContent.getLayout();
+        cl.show(pnContent, panelName);
+    }
+    
+    public void exit() {
+        if (SwingUtils.showConfirmDialog("Are you sure to exit?") == JOptionPane.YES_OPTION) {
+            System.exit(0);
+        }
+    }
 }

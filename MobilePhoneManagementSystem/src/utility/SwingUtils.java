@@ -1,14 +1,22 @@
 package utility;
 
+import com.jtattoo.plaf.hifi.HiFiLookAndFeel;
+import java.awt.Color;
+import java.awt.Font;
 import java.awt.Toolkit;
 import java.text.NumberFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.Properties;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.swing.InputVerifier;
+import javax.swing.JComponent;
 import javax.swing.JOptionPane;
 import javax.swing.JTextField;
+import javax.swing.UIManager;
+import javax.swing.UnsupportedLookAndFeelException;
 import javax.swing.text.AbstractDocument;
 import javax.swing.text.AttributeSet;
 import javax.swing.text.BadLocationException;
@@ -28,10 +36,12 @@ public class SwingUtils {
     public static final String DB_RESET = "Data have been reset !";
 
     // Declare some regex constants
-    public static final String PATTERN_CUSNAME = "[A-Za-z0-9 ]+";
-    public static final String PATTERN_CUSPHONE = "\\d+";
-    public static final String PATTERN_CUSADDRESS = "[A-Za-z0-9 .\\/-]+";
+    public static final String PATTERN_NAMENOSPACE = "[A-Za-z0-9]+";
+    public static final String PATTERN_NAMEWITHSPACE = "[A-Za-z0-9 ]+";
+    public static final String PATTERN_NUMBER = "\\d+";
+    public static final String PATTERN_ADDRESS = "[A-Za-z0-9 .\\/-]+";
     public static final String PATTERN_DATE = "MMM dd, yyyy";
+    public static final String PATTERN_HOST = "[A-Za-z0-9.]+";
 
     public enum FormatType {
         DATE, PERCENT, CURRENCY
@@ -126,16 +136,28 @@ public class SwingUtils {
         tf.setDocument(doc);
     }
 
-    public static void validateStringInput(JTextField tf, int maxLength, String regex) {
+    public static void validateStringInput(JTextField tf, int minLength, int maxLength, String regex) {
         AbstractDocument abstractDocument = (AbstractDocument) tf.getDocument();
         abstractDocument.setDocumentFilter(new StringDocumentFilter(maxLength, regex));
+        if (minLength > 0) {
+            tf.setInputVerifier(new InputVerifier() {
+                @Override
+                public boolean verify(JComponent input) {
+                    if (tf.getText().length() < minLength) {
+                        SwingUtils.showErrorDialog("At least " + minLength + " character(s) !");
+                        return false;
+                    }
+                    return true;
+                }
+            });
+        }
     }
 
     public static class IntegerDocumentFilter extends DocumentFilter {
 
         @Override
         public void replace(DocumentFilter.FilterBypass fb, int offset, int length, String text, AttributeSet attrs) throws BadLocationException {
-            if (text.matches(PATTERN_CUSPHONE)) {
+            if (text.matches(PATTERN_NUMBER)) {
                 super.replace(fb, offset, length, text, attrs);
             } else {
                 SwingUtils.showErrorDialog("Invalid input!");
@@ -167,5 +189,20 @@ public class SwingUtils {
                 SwingUtils.showErrorDialog("Invalid input!");
             }
         }
+    }
+
+    public static void createLookAndFeel() {
+        Properties props = new Properties();
+        props.put("logoString", "");
+        props.put("macStyleWindowDecoration", "on");
+        HiFiLookAndFeel laf = new HiFiLookAndFeel();
+        laf.setTheme(props);
+        try {
+            UIManager.setLookAndFeel(laf);
+        } catch (UnsupportedLookAndFeelException ex) {
+            Logger.getLogger(SwingUtils.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        UIManager.getLookAndFeelDefaults().put("TableHeader.foreground", Color.ORANGE);
+        UIManager.getLookAndFeelDefaults().put("TableHeader.font", new Font("Calibri", Font.BOLD, 15));
     }
 }

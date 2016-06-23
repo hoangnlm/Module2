@@ -14,7 +14,7 @@ import utility.SwingUtils.FormatType;
 public class OrderTableModel extends CustomizedTableModel<Order> {
 
     public OrderTableModel() {
-        super(new OrderDAOImpl(), new String[]{"ID", "Cus. Name", "Date", "Value", "Status", "Discount", "User Name"});
+        super(new OrderDAOImpl(), new String[]{"ID","User Name", "Cus. Name", "Date", "Status", "Discount", "Value"});
     }
 
     public Order getOrderAtIndex(int index) {
@@ -28,7 +28,7 @@ public class OrderTableModel extends CustomizedTableModel<Order> {
 
     @Override
     public Class<?> getColumnClass(int column) {
-        Class[] columnClasses = {Integer.class, String.class, Date.class, Float.class, String.class, Float.class, String.class};
+        Class[] columnClasses = {Integer.class, String.class, String.class, Date.class, String.class, Float.class, Float.class};
         return columnClasses[column];
     }
 
@@ -66,25 +66,25 @@ public class OrderTableModel extends CustomizedTableModel<Order> {
     public void setValueAt(Object aValue, int rowIndex, int columnIndex) {
         item = list.get(rowIndex);
         switch (columnIndex) {
-            case 0:
+            case OrderPanel.COL_ORDID:
                 item.setOrdID((int) aValue);
                 break;
-            case 1:
+            case OrderPanel.COL_ORDDATE:
                 item.setOrdDate((Date) aValue);
                 break;
-            case 2:
+            case OrderPanel.COL_ORDVALUE:
                 item.setOrdValue((float) SwingUtils.unFormatString((String) aValue, FormatType.CURRENCY));
                 break;
-            case 3:
+            case OrderPanel.COL_STATUS:
                 item.setOrdStatus((String) aValue);
                 break;
-            case 4:
+            case OrderPanel.COL_DISCOUNT:
                 item.setCusDiscount((float) SwingUtils.unFormatString((String) aValue, FormatType.PERCENT));
                 break;
-            case 5:
+            case OrderPanel.COL_CUSNAME:
                 item.setCusName((String) aValue);
                 break;
-            case 6:
+            case OrderPanel.COL_USERNAME:
                 item.setUserName((String) aValue);
                 break;
         }

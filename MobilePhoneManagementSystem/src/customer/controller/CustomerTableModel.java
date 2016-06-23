@@ -3,6 +3,8 @@ package customer.controller;
 import customer.model.CustomerDAOImpl;
 import customer.model.Customer;
 import customer.model.CustomerLevel;
+import java.util.ArrayList;
+import java.util.List;
 import utility.CustomizedTableModel;
 
 /**
@@ -14,6 +16,12 @@ public class CustomerTableModel extends CustomizedTableModel<Customer> {
 
     public CustomerTableModel() {
         super(new CustomerDAOImpl(), new String[]{"ID", "Name", "Paid", "Level", "Phone", "Address", "Status"});
+    }
+    
+    public Customer getCustomerFromID(int id){
+        List<Customer> tmp = new ArrayList();
+        list.stream().filter(c->c.getCusID()==id).forEach(c->tmp.add(c));
+        return tmp.size()>0?tmp.get(0):null;
     }
 
     @Override

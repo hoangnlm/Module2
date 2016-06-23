@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package order.controller;
 
 import com.toedter.calendar.JDateChooser;
@@ -53,12 +48,12 @@ public class OrderPanel extends javax.swing.JPanel {
     private OrderStatus filterStatus;
 
     public static final int COL_ORDID = 0;
-    public static final int COL_CUSNAME = 1;
-    public static final int COL_ORDDATE = 2;
-    public static final int COL_ORDVALUE = 3;
+    public static final int COL_USERNAME = 1;
+    public static final int COL_CUSNAME = 2;
+    public static final int COL_ORDDATE = 3;
     public static final int COL_STATUS = 4;
     public static final int COL_DISCOUNT = 5;
-    public static final int COL_USERNAME = 6;
+    public static final int COL_ORDVALUE = 6;
 
     public static final int COL_PROID = 0;
     public static final int COL_PRONAME = 1;
@@ -269,10 +264,6 @@ public class OrderPanel extends javax.swing.JPanel {
         btClear = new javax.swing.JButton();
         lbOrderDate1 = new javax.swing.JLabel();
         cbValueFilter = new javax.swing.JComboBox<>();
-        jScrollPane1 = new javax.swing.JScrollPane();
-        tbOrderList = new javax.swing.JTable();
-        jScrollPane2 = new javax.swing.JScrollPane();
-        tbProductList = new javax.swing.JTable();
         btRemove = new javax.swing.JButton();
         btUpdate = new javax.swing.JButton();
         btAdd = new javax.swing.JButton();
@@ -280,6 +271,11 @@ public class OrderPanel extends javax.swing.JPanel {
         pnTitle = new javax.swing.JPanel();
         jLabel1 = new javax.swing.JLabel();
         btSalesOff = new javax.swing.JButton();
+        jSplitPane1 = new javax.swing.JSplitPane();
+        jScrollPane2 = new javax.swing.JScrollPane();
+        tbProductList = new javax.swing.JTable();
+        jScrollPane1 = new javax.swing.JScrollPane();
+        tbOrderList = new javax.swing.JTable();
 
         setPreferredSize(new java.awt.Dimension(790, 640));
 
@@ -394,40 +390,6 @@ public class OrderPanel extends javax.swing.JPanel {
                 .addContainerGap())
         );
 
-        jScrollPane1.setBorder(javax.swing.BorderFactory.createTitledBorder(javax.swing.BorderFactory.createEtchedBorder(), "Order List"));
-
-        tbOrderList.setAutoCreateRowSorter(true);
-        tbOrderList.setModel(new javax.swing.table.DefaultTableModel(
-            new Object [][] {
-
-            },
-            new String [] {
-                "ID", "Order Date", "Value", "Status", "Discount", "User Name", "Cus. Name"
-            }
-        ));
-        tbOrderList.setFillsViewportHeight(true);
-        tbOrderList.setRowHeight(25);
-        tbOrderList.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
-        tbOrderList.getTableHeader().setReorderingAllowed(false);
-        jScrollPane1.setViewportView(tbOrderList);
-
-        jScrollPane2.setBorder(javax.swing.BorderFactory.createTitledBorder(javax.swing.BorderFactory.createEtchedBorder(), "Order Details"));
-
-        tbProductList.setAutoCreateRowSorter(true);
-        tbProductList.setModel(new javax.swing.table.DefaultTableModel(
-            new Object [][] {
-
-            },
-            new String [] {
-                "ID", "Product Name", "Quantity", "Sold Price"
-            }
-        ));
-        tbProductList.setFillsViewportHeight(true);
-        tbProductList.setRowHeight(25);
-        tbProductList.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
-        tbProductList.getTableHeader().setReorderingAllowed(false);
-        jScrollPane2.setViewportView(tbProductList);
-
         btRemove.setFont(new java.awt.Font("Lucida Grande", 0, 14)); // NOI18N
         btRemove.setIcon(new javax.swing.ImageIcon(getClass().getResource("/image/order/Delete.png"))); // NOI18N
         btRemove.setText("Remove");
@@ -500,6 +462,54 @@ public class OrderPanel extends javax.swing.JPanel {
                 .addComponent(btSalesOff, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE))
         );
 
+        jSplitPane1.setDividerLocation(200);
+        jSplitPane1.setDividerSize(10);
+        jSplitPane1.setOrientation(javax.swing.JSplitPane.VERTICAL_SPLIT);
+        jSplitPane1.setContinuousLayout(true);
+        jSplitPane1.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
+        jSplitPane1.setOneTouchExpandable(true);
+
+        jScrollPane2.setBorder(javax.swing.BorderFactory.createTitledBorder(javax.swing.BorderFactory.createEtchedBorder(), "Order Details"));
+        jScrollPane2.setMinimumSize(new java.awt.Dimension(31, 150));
+        jScrollPane2.setPreferredSize(new java.awt.Dimension(462, 200));
+
+        tbProductList.setAutoCreateRowSorter(true);
+        tbProductList.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+
+            },
+            new String [] {
+                "ID", "Product Name", "Quantity", "Sold Price"
+            }
+        ));
+        tbProductList.setFillsViewportHeight(true);
+        tbProductList.setRowHeight(25);
+        tbProductList.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
+        tbProductList.getTableHeader().setReorderingAllowed(false);
+        jScrollPane2.setViewportView(tbProductList);
+
+        jSplitPane1.setBottomComponent(jScrollPane2);
+
+        jScrollPane1.setBorder(javax.swing.BorderFactory.createTitledBorder(javax.swing.BorderFactory.createEtchedBorder(), "Order List"));
+        jScrollPane1.setMinimumSize(new java.awt.Dimension(31, 150));
+
+        tbOrderList.setAutoCreateRowSorter(true);
+        tbOrderList.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+
+            },
+            new String [] {
+                "ID", "Order Date", "Value", "Status", "Discount", "User Name", "Cus. Name"
+            }
+        ));
+        tbOrderList.setFillsViewportHeight(true);
+        tbOrderList.setRowHeight(25);
+        tbOrderList.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
+        tbOrderList.getTableHeader().setReorderingAllowed(false);
+        jScrollPane1.setViewportView(tbOrderList);
+
+        jSplitPane1.setTopComponent(jScrollPane1);
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
         layout.setHorizontalGroup(
@@ -516,8 +526,7 @@ public class OrderPanel extends javax.swing.JPanel {
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
             .addComponent(pnTitle, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
             .addComponent(pnFilter, javax.swing.GroupLayout.PREFERRED_SIZE, 790, Short.MAX_VALUE)
-            .addComponent(jScrollPane1)
-            .addComponent(jScrollPane2)
+            .addComponent(jSplitPane1)
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -527,10 +536,8 @@ public class OrderPanel extends javax.swing.JPanel {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(pnFilter, javax.swing.GroupLayout.PREFERRED_SIZE, 76, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 198, Short.MAX_VALUE)
+                .addComponent(jSplitPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 429, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 219, Short.MAX_VALUE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(btRemove, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(btUpdate, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -583,6 +590,7 @@ public class OrderPanel extends javax.swing.JPanel {
     private javax.swing.JLabel jLabel6;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane2;
+    private javax.swing.JSplitPane jSplitPane1;
     private javax.swing.JLabel lbOrderDate;
     private javax.swing.JLabel lbOrderDate1;
     private javax.swing.JPanel pnDateChooser;
@@ -685,6 +693,8 @@ public class OrderPanel extends javax.swing.JPanel {
                     return false;
                 }
             };
+            
+            filters.add(valueFilter);
 
             // Chi filter status khi status khac "All"
             String stt = ((OrderStatus) cbStatusFilter.getSelectedItem()).getSttName();

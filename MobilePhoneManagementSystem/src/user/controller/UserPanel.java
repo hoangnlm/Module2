@@ -74,7 +74,7 @@ public class UserPanel extends javax.swing.JPanel {
         tbUserList.getTableHeader().setPreferredSize(new Dimension(100, 30));
 
         // Col cus name
-        tbUserList.getColumnModel().getColumn(COL_CUSNAME).setCellEditor(new StringCellEditor(1, 50, SwingUtils.PATTERN_CUSNAME));
+        tbUserList.getColumnModel().getColumn(COL_CUSNAME).setCellEditor(new StringCellEditor(1, 50, SwingUtils.PATTERN_NAMEWITHSPACE));
 
         // Bat su kien select row tren table
         tbUserList.getSelectionModel().addListSelectionListener((ListSelectionEvent e) -> {

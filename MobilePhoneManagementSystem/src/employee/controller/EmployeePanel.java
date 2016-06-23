@@ -129,13 +129,13 @@ public class EmployeePanel extends javax.swing.JPanel {
         tbEmpployeeList.getColumnModel().getColumn(COL_STATUS).setMinWidth(30);
 //        tbEmpployeeList.getColumnModel().getColumn(COL_EMPID).
         // Col emp name
-        tbEmpployeeList.getColumnModel().getColumn(COL_EMPNAME).setCellEditor(new StringCellEditor(1, 50, SwingUtils.PATTERN_CUSNAME));
+        tbEmpployeeList.getColumnModel().getColumn(COL_EMPNAME).setCellEditor(new StringCellEditor(1, 50, SwingUtils.PATTERN_NAMEWITHSPACE));
         tbEmpployeeList.getColumnModel().getColumn(COL_EMPNAME).setMinWidth(150);
         tbEmpployeeList.getColumnModel().getColumn(COL_EMPNAME).setMaxWidth(300);
         //Col username
         tbEmpployeeList.getColumnModel().getColumn(COL_USERNAME).setCellEditor(new UserNameComboBoxCellEditor(usernameLevelComboBoxModel2));
         // Col emp phone
-        tbEmpployeeList.getColumnModel().getColumn(COL_EMPPHONE).setCellEditor(new StringCellEditor(1, 30, SwingUtils.PATTERN_CUSPHONE));
+        tbEmpployeeList.getColumnModel().getColumn(COL_EMPPHONE).setCellEditor(new StringCellEditor(1, 30, SwingUtils.PATTERN_NUMBER));
         tbEmpployeeList.getColumnModel().getColumn(COL_EMPPHONE).setMinWidth(60);
         tbEmpployeeList.getColumnModel().getColumn(COL_EMPPHONE).setMinWidth(60);
         //col salary

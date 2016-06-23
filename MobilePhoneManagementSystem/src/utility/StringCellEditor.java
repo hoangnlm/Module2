@@ -33,7 +33,7 @@ public class StringCellEditor extends DefaultCellEditor {
         tf = (JTextField) getComponent();
         this.minLength = minLength;
 
-        SwingUtils.validateStringInput(tf, maxLength, regex);
+        SwingUtils.validateStringInput(tf, minLength, maxLength, regex);
     }
 
     //Override to check whether the edit is valid,

@@ -106,7 +106,7 @@ public class CustomerPanel extends javax.swing.JPanel {
 
         // Col cus name
         tbCustomerList.getColumnModel().getColumn(COL_CUSNAME).setMinWidth(100);
-        tbCustomerList.getColumnModel().getColumn(COL_CUSNAME).setCellEditor(new StringCellEditor(1, 50, SwingUtils.PATTERN_CUSNAME));
+        tbCustomerList.getColumnModel().getColumn(COL_CUSNAME).setCellEditor(new StringCellEditor(1, 50, SwingUtils.PATTERN_NAMEWITHSPACE));
 
         // Col cus paid
         tbCustomerList.getColumnModel().getColumn(COL_CUSPAID).setMinWidth(120);
@@ -118,11 +118,11 @@ public class CustomerPanel extends javax.swing.JPanel {
 
         // Col cus phone
         tbCustomerList.getColumnModel().getColumn(COL_CUSPHONE).setMinWidth(100);
-        tbCustomerList.getColumnModel().getColumn(COL_CUSPHONE).setCellEditor(new StringCellEditor(1, 20, SwingUtils.PATTERN_CUSPHONE));
+        tbCustomerList.getColumnModel().getColumn(COL_CUSPHONE).setCellEditor(new StringCellEditor(1, 20, SwingUtils.PATTERN_NUMBER));
 
         // Col cus address
         tbCustomerList.getColumnModel().getColumn(COL_CUSADDRESS).setMinWidth(100);
-        tbCustomerList.getColumnModel().getColumn(COL_CUSADDRESS).setCellEditor(new StringCellEditor(1, 200, SwingUtils.PATTERN_CUSADDRESS));
+        tbCustomerList.getColumnModel().getColumn(COL_CUSADDRESS).setCellEditor(new StringCellEditor(1, 200, SwingUtils.PATTERN_ADDRESS));
 
         // Col status
         tbCustomerList.getColumnModel().getColumn(COL_STATUS).setMinWidth(60);
@@ -630,9 +630,9 @@ public class CustomerPanel extends javax.swing.JPanel {
 
     private void fetchAction() {
         selectedRowIndex = tbCustomerList.getSelectedRow();
-        System.out.println("sele: " + selectedRowIndex);
         if (selectedRowIndex >= 0) {
-            selectedCustomer = customerTableModel.getElementAt(tbCustomerList.convertRowIndexToView(selectedRowIndex));
+            
+            selectedCustomer = customerTableModel.getCustomerFromID((int) tbCustomerList.getValueAt(selectedRowIndex, COL_CUSID));
         }
     }
 

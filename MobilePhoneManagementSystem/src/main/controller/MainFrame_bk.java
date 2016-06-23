@@ -26,9 +26,6 @@ import javax.swing.JRadioButton;
 import customer.controller.CustomerPanel;
 import employee.controller.EmployeePanel;
 import home.controller.HomePanel;
-import java.awt.CardLayout;
-import javax.swing.SwingUtilities;
-import main.model.UserFunction;
 import order.controller.OrderPanel;
 import service.controller.ServicePanel;
 import user.controller.UserPanel;
@@ -39,7 +36,7 @@ import utility.SwingUtils;
  *
  * @author Hoang
  */
-public final class MainFrame extends javax.swing.JFrame {
+public final class MainFrame_bk extends javax.swing.JFrame {
 
     private final ButtonGroup group = new ButtonGroup();
     private final int sidebarTotal = 12;
@@ -53,22 +50,10 @@ public final class MainFrame extends javax.swing.JFrame {
 
     private Login config;
 
-    public static final int HOMEPANEL = 0;
-    public static final int PRODUCTPANEL = 1;
-    public static final int INBOUNDPANEL = 2;
-    public static final int OUTBOUNDPANEL = 3;
-    public static final int ORDERPANEL = 4;
-    public static final int CUSTOMERPANEL = 5;
-    public static final int SUPPLIERPANEL = 6;
-    public static final int SERVICEPANEL = 7;
-    public static final int EMPLOYEEPANEL = 8;
-    public static final int USERPANEL = 9;
-    public static final int BLANKPANEL = 10;
-
     /**
      * Creates new form Main
      */
-    public MainFrame() {
+    public MainFrame_bk() {
         this.config = LoginFrame.config;
         setLogo();
         initComponents();
@@ -79,6 +64,7 @@ public final class MainFrame extends javax.swing.JFrame {
             public void windowClosing(WindowEvent e) {
                 exit();
             }
+
         });
     }
 
@@ -100,54 +86,12 @@ public final class MainFrame extends javax.swing.JFrame {
         pn[1] = new BlankPanel();
         pn[2] = new BlankPanel();
         pn[3] = new BlankPanel();
-        pn[4] = new BlankPanel();
-        pn[5] = new BlankPanel();
+        pn[4] = new OrderPanel();
+        pn[5] = new CustomerPanel();
         pn[6] = new BlankPanel();
-        pn[7] = new BlankPanel();
-        pn[8] = new BlankPanel();
-        pn[9] = new BlankPanel();
-
-        // Chi can permission view, permission update vo trong panel xu ly
-        for (UserFunction uf : config.userFunctions) {
-            if (uf.FunctionGroup.equals(Login.FG_PRODUCT) && uf.FunctionName.equals(Login.FN_VIEW)) {
-//                pn[1] = new ProductPanel();
-            }
-            if (uf.FunctionGroup.equals(Login.FG_INBOUND) && uf.FunctionName.equals(Login.FN_VIEW)) {
-//                pn[2] = new InboundPanel();
-            }
-            if (uf.FunctionGroup.equals(Login.FG_OUTBOUND) && uf.FunctionName.equals(Login.FN_VIEW)) {
-//                pn[3] = new OutboundPanel();
-            }
-            if (uf.FunctionGroup.equals(Login.FG_ORDER) && uf.FunctionName.equals(Login.FN_VIEW)) {
-                pn[4] = new OrderPanel();
-            }
-            if (uf.FunctionGroup.equals(Login.FG_CUSTOMER) && uf.FunctionName.equals(Login.FN_VIEW)) {
-                pn[5] = new CustomerPanel();
-            }
-            if (uf.FunctionGroup.equals(Login.FG_SUPPLIER) && uf.FunctionName.equals(Login.FN_VIEW)) {
-//                pn[7] = new SupplierPanel();
-            }
-            if (uf.FunctionGroup.equals(Login.FG_SERVICE) && uf.FunctionName.equals(Login.FN_VIEW)) {
-                pn[8] = new ServicePanel();
-            }
-            if (uf.FunctionGroup.equals(Login.FG_EMPLOYEE) && uf.FunctionName.equals(Login.FN_VIEW)) {
-//                pn[9] = new EmployeePanel();
-            }
-            if (uf.FunctionGroup.equals(Login.FG_USER) && uf.FunctionName.equals(Login.FN_VIEW)) {
-                pn[9] = new UserPanel();
-            }
-        }
-
-        pnMain.add(pn[0], HOMEPANEL + "");
-        pnMain.add(pn[1], PRODUCTPANEL + "");
-        pnMain.add(pn[2], INBOUNDPANEL + "");
-        pnMain.add(pn[3], OUTBOUNDPANEL + "");
-        pnMain.add(pn[4], ORDERPANEL + "");
-        pnMain.add(pn[5], CUSTOMERPANEL + "");
-        pnMain.add(pn[6], SUPPLIERPANEL + "");
-        pnMain.add(pn[7], SERVICEPANEL + "");
-        pnMain.add(pn[8], EMPLOYEEPANEL + "");
-        pnMain.add(pn[9], USERPANEL + "");
+        pn[7] = new ServicePanel();
+        pn[8] = new EmployeePanel();
+        pn[9] = new UserPanel();
 
         for (int i = 0; i < sidebarTotal; i++) {
             setSidebarItem(lb[i]);
@@ -160,6 +104,7 @@ public final class MainFrame extends javax.swing.JFrame {
         label.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
+//                 System.out.println("Mouse pressed inside the component");
                 if (e.getComponent() instanceof JLabel) {
                     for (int i = 0; i < rb.length; i++) {
                         if (lb[i] == (JLabel) e.getComponent()) {
@@ -172,6 +117,7 @@ public final class MainFrame extends javax.swing.JFrame {
 
             @Override
             public void mouseEntered(MouseEvent e) {
+//                 System.out.println("Mouse Entered inside the component");
                 if (e.getComponent() instanceof JLabel) {
                     for (int i = 0; i < rb.length; i++) {
                         if (lb[i] == (JLabel) e.getComponent() && rb[i].isSelected() == false) {
@@ -183,19 +129,20 @@ public final class MainFrame extends javax.swing.JFrame {
 
             @Override
             public void mouseExited(MouseEvent e) {
+//                 System.out.println("Mouse Exitted inside the component");
                 if (e.getComponent() instanceof JLabel) {
                     for (int i = 0; i < rb.length; i++) {
                         if (lb[i] == (JLabel) e.getComponent() && rb[i].isSelected() == false) {
-                            setDeselected((JLabel) e.getComponent());
+                            setNormal((JLabel) e.getComponent());
                         }
                     }
                 }
             }
         });
-        setDeselected(label);
+        setNormal(label);
     }
 
-    public void setDeselected(JLabel label) {
+    public void setNormal(JLabel label) {
         label.setBackground(normalState);
         label.setForeground(Color.WHITE);
     }
@@ -223,23 +170,25 @@ public final class MainFrame extends javax.swing.JFrame {
                 rb[i].setSelected(true);
                 lb[i].setBackground(seletedState);
                 lb[i].setForeground(Color.BLACK);
-                setPanel(i);
+                setPanel(pn[i]);
             } else {
-                setDeselected(lb[i]);
+                setNormal(lb[i]);
             }
         }
     }
 
-    public void setPanel(int index) {
-        CardLayout cl = (CardLayout) pnMain.getLayout();
-        cl.show(pnMain, index + "");
+    public void setPanel(JPanel pnChild) {
+        pnMain.removeAll();
+        pnMain.add(pnChild);
+        pnMain.validate();
+        pnMain.repaint();
     }
 
     private void logout() {
         if (SwingUtils.showConfirmDialog("Are you sure to log out?") == JOptionPane.YES_OPTION) {
             // Reset look and feel and open login frame
             try {
-                SwingUtils.createLookAndFeel();
+//                UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
                 new LoginFrame().setVisible(true);
             } catch (Exception ex) {
                 Logger.getLogger(MainFrame.class.getName()).log(Level.SEVERE, null, ex);
@@ -258,8 +207,6 @@ public final class MainFrame extends javax.swing.JFrame {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        spPanel = new javax.swing.JSplitPane();
-        pnMain = new javax.swing.JPanel();
         pnSidebar = new javax.swing.JPanel();
         lbHome = new javax.swing.JLabel();
         lbProduct = new javax.swing.JLabel();
@@ -273,6 +220,7 @@ public final class MainFrame extends javax.swing.JFrame {
         lbLogout = new javax.swing.JLabel();
         lbEmployee = new javax.swing.JLabel();
         lbExit = new javax.swing.JLabel();
+        pnMain = new javax.swing.JPanel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DO_NOTHING_ON_CLOSE);
         setTitle("Mobile Phone Shop Management System");
@@ -280,31 +228,10 @@ public final class MainFrame extends javax.swing.JFrame {
         setIconImage(getLogo());
         setIconImages(null);
         setMinimumSize(new java.awt.Dimension(1000, 705));
-        setResizable(false);
         setSize(new java.awt.Dimension(0, 0));
-
-        spPanel.setDividerSize(10);
-        spPanel.setContinuousLayout(true);
-        spPanel.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
-        spPanel.setOneTouchExpandable(true);
-        spPanel.addPropertyChangeListener(new java.beans.PropertyChangeListener() {
-            public void propertyChange(java.beans.PropertyChangeEvent evt) {
-                spPanelPropertyChange(evt);
-            }
-        });
-
-        pnMain.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
-        pnMain.setMinimumSize(new java.awt.Dimension(810, 600));
-        pnMain.setPreferredSize(new java.awt.Dimension(810, 680));
-        pnMain.setLayout(new java.awt.CardLayout());
-        spPanel.setLeftComponent(pnMain);
 
         pnSidebar.setBackground(new java.awt.Color(51, 51, 51));
         pnSidebar.setBorder(javax.swing.BorderFactory.createEtchedBorder());
-        pnSidebar.setMaximumSize(new java.awt.Dimension(175, 32767));
-        pnSidebar.setMinimumSize(new java.awt.Dimension(175, 675));
-        pnSidebar.setPreferredSize(new java.awt.Dimension(175, 675));
-        pnSidebar.setSize(new java.awt.Dimension(175, 0));
 
         lbHome.setBackground(new java.awt.Color(51, 51, 51));
         lbHome.setFont(new java.awt.Font("Lucida Calligraphy", 0, 14)); // NOI18N
@@ -455,28 +382,29 @@ public final class MainFrame extends javax.swing.JFrame {
                 .addComponent(lbExit, javax.swing.GroupLayout.PREFERRED_SIZE, 55, javax.swing.GroupLayout.PREFERRED_SIZE))
         );
 
-        spPanel.setRightComponent(pnSidebar);
+        pnMain.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
+        pnMain.setPreferredSize(new java.awt.Dimension(810, 680));
+        pnMain.setLayout(new java.awt.GridLayout(1, 1));
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(spPanel)
+            .addGroup(layout.createSequentialGroup()
+                .addComponent(pnMain, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addGap(3, 3, 3)
+                .addComponent(pnSidebar, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(0, 0, 0))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(spPanel, javax.swing.GroupLayout.DEFAULT_SIZE, 679, Short.MAX_VALUE)
+            .addComponent(pnMain, javax.swing.GroupLayout.DEFAULT_SIZE, 0, Short.MAX_VALUE)
+            .addComponent(pnSidebar, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
 
         pack();
         setLocationRelativeTo(null);
     }// </editor-fold>//GEN-END:initComponents
-
-    private void spPanelPropertyChange(java.beans.PropertyChangeEvent evt) {//GEN-FIRST:event_spPanelPropertyChange
-        if (evt.getPropertyName().equals("dividerLocation") && (int) evt.getNewValue() == 0) {
-            spPanel.setDividerLocation(-1);
-        }
-    }//GEN-LAST:event_spPanelPropertyChange
 
     /**
      * @param args the command line arguments
@@ -506,7 +434,6 @@ public final class MainFrame extends javax.swing.JFrame {
     private javax.swing.JLabel lbUser;
     private javax.swing.JPanel pnMain;
     private javax.swing.JPanel pnSidebar;
-    private javax.swing.JSplitPane spPanel;
     // End of variables declaration//GEN-END:variables
 
     private void setLogo() {

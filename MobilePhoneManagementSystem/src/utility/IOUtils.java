@@ -1,6 +1,7 @@
 package utility;
 
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.FileReader;
@@ -24,7 +25,9 @@ public class IOUtils {
      */
     public static void writeObject(String path, Serializable obj) {
         try {
-            ObjectOutputStream objectOutputStream = new ObjectOutputStream(new FileOutputStream(path));
+            // Dam bao file phai ton tai
+            File file = new File(path);
+            ObjectOutputStream objectOutputStream = new ObjectOutputStream(new FileOutputStream(file));
             objectOutputStream.writeObject(obj);
             objectOutputStream.close();
         } catch (Exception e) {
