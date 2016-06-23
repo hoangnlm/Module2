@@ -26,6 +26,7 @@ import javax.swing.JRadioButton;
 import customer.controller.CustomerPanel;
 import employee.controller.EmployeePanel;
 import home.controller.HomePanel;
+import inbound.controller.InboundPanel;
 import java.awt.CardLayout;
 import javax.swing.SwingUtilities;
 import main.model.UserFunction;
@@ -98,7 +99,7 @@ public final class MainFrame extends javax.swing.JFrame {
 
         pn[0] = new HomePanel();
         pn[1] = new BlankPanel();
-        pn[2] = new BlankPanel();
+        pn[2] = new InboundPanel();
         pn[3] = new BlankPanel();
         pn[4] = new BlankPanel();
         pn[5] = new BlankPanel();
