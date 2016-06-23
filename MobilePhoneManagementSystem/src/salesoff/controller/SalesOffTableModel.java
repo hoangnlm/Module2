@@ -16,8 +16,20 @@ import utility.CustomizedTableModel;
  */
 public class SalesOffTableModel extends CustomizedTableModel<SalesOff> {
 
-    public SalesOffTableModel() {
+    private boolean updatable;
+
+    public SalesOffTableModel(boolean updatable) {
         super(new SalesOffDAOImpl(), new String[]{"ID", "Name", "Start Date", "End Date", "Amount (%)"});
+        this.updatable = updatable;
+    }
+
+    @Override
+    public boolean isCellEditable(int rowIndex, int columnIndex) {
+        if (updatable) {
+            return super.isCellEditable(rowIndex, columnIndex);
+        } else {
+            return false;
+        }
     }
 
     @Override

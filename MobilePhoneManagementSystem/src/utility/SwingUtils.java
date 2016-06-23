@@ -7,7 +7,6 @@ import java.awt.Toolkit;
 import java.text.NumberFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.Date;
 import java.util.Properties;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -39,7 +38,7 @@ public class SwingUtils {
     public static final String PATTERN_NAMENOSPACE = "[A-Za-z0-9]+";
     public static final String PATTERN_NAMEWITHSPACE = "[A-Za-z0-9 ]+";
     public static final String PATTERN_NUMBER = "\\d+";
-    public static final String PATTERN_ADDRESS = "[A-Za-z0-9 .\\/-]+";
+    public static final String PATTERN_ADDRESS = "[A-Za-z0-9 .,\\/-]+";
     public static final String PATTERN_DATE = "MMM dd, yyyy";
     public static final String PATTERN_HOST = "[A-Za-z0-9.]+";
 
@@ -177,16 +176,18 @@ public class SwingUtils {
 
         @Override
         public void replace(DocumentFilter.FilterBypass fb, int offset, int length, String text, AttributeSet attrs) throws BadLocationException {
-            if (text.matches(regex)) {
-                int totalLength = fb.getDocument().getLength() + text.length();
-                if (totalLength <= maxLength) {
-                    super.replace(fb, offset, length, text, attrs);
+            if (text != null) {
+                if (text.matches(regex)) {
+                    int totalLength = fb.getDocument().getLength() + text.length();
+                    if (totalLength <= maxLength) {
+                        super.replace(fb, offset, length, text, attrs);
+                    } else {
+                        SwingUtils.showErrorDialog("Maximum length: " + maxLength + " characters!");
+                    }
                 } else {
-                    SwingUtils.showErrorDialog("Maximum length: " + maxLength + " characters!");
+                    Toolkit.getDefaultToolkit().beep();
+                    SwingUtils.showErrorDialog("Invalid input!");
                 }
-            } else {
-                Toolkit.getDefaultToolkit().beep();
-                SwingUtils.showErrorDialog("Invalid input!");
             }
         }
     }

@@ -10,24 +10,7 @@ import java.util.List;
  * @author Hoang
  */
 public class Login implements Serializable {
-    
-    // Some constants in database
-    public static final String FG_USER = "User";
-    public static final String FG_PERMISSION = "Permission";
-    public static final String FG_PRODUCT = "Product";
-    public static final String FG_BRANCH = "Branch";
-    public static final String FG_INBOUND = "Inbound";
-    public static final String FG_OUTBOUND = "Outbound";
-    public static final String FG_SUPPLIER = "Supplier";
-    public static final String FG_ORDER= "Order";
-    public static final String FG_SALESOFF = "SalesOff";
-    public static final String FG_CUSTOMER = "Customer";
-    public static final String FG_CUSTOMERLEVEL = "CustomerLevel";
-    public static final String FG_SERVICE = "Service";
-    public static final String FG_EMPLOYEE = "Employee";    //13 features
-    public static final String FN_VIEW = "View";
-    public static final String FN_UPDATE = "Update";
-    
+    private static final long serialVersionUID = 1L;
     // Khai bao cac tri default
     public static final String HOST = DBProvider.HOST;
     public static final String PORT = DBProvider.PORT;
@@ -37,32 +20,32 @@ public class Login implements Serializable {
     public static final String USER_NAME = "root";
     public static final String USER_PASSWORD = "1";
     public static final List<UserFunction> USER_FUNCTIONS = Arrays.asList(
-            new UserFunction(FG_USER, FN_VIEW),
-            new UserFunction(FG_USER, FN_UPDATE),
-            new UserFunction(FG_PERMISSION, FN_VIEW),
-            new UserFunction(FG_PERMISSION, FN_UPDATE),
-            new UserFunction(FG_PRODUCT, FN_VIEW),
-            new UserFunction(FG_PRODUCT, FN_UPDATE),
-            new UserFunction(FG_BRANCH, FN_VIEW),
-            new UserFunction(FG_BRANCH, FN_UPDATE),
-            new UserFunction(FG_INBOUND, FN_VIEW),
-            new UserFunction(FG_INBOUND, FN_UPDATE),
-            new UserFunction(FG_OUTBOUND, FN_VIEW),
-            new UserFunction(FG_OUTBOUND, FN_UPDATE),
-            new UserFunction(FG_SUPPLIER, FN_VIEW),
-            new UserFunction(FG_SUPPLIER, FN_UPDATE),
-            new UserFunction(FG_ORDER, FN_VIEW),
-            new UserFunction(FG_ORDER, FN_UPDATE),
-            new UserFunction(FG_SALESOFF, FN_VIEW),
-            new UserFunction(FG_SALESOFF, FN_UPDATE),
-            new UserFunction(FG_CUSTOMER, FN_VIEW),
-            new UserFunction(FG_CUSTOMER, FN_UPDATE),
-            new UserFunction(FG_CUSTOMERLEVEL, FN_VIEW),
-            new UserFunction(FG_CUSTOMERLEVEL, FN_UPDATE),
-            new UserFunction(FG_SERVICE, FN_VIEW),
-            new UserFunction(FG_SERVICE, FN_UPDATE),
-            new UserFunction(FG_EMPLOYEE, FN_VIEW),
-            new UserFunction(FG_EMPLOYEE, FN_UPDATE)
+            new UserFunction(UserFunction.FG_USER, UserFunction.FN_VIEW),
+            new UserFunction(UserFunction.FG_USER, UserFunction.FN_UPDATE),
+            new UserFunction(UserFunction.FG_PERMISSION, UserFunction.FN_VIEW),
+            new UserFunction(UserFunction.FG_PERMISSION, UserFunction.FN_UPDATE),
+            new UserFunction(UserFunction.FG_PRODUCT, UserFunction.FN_VIEW),
+            new UserFunction(UserFunction.FG_PRODUCT, UserFunction.FN_UPDATE),
+            new UserFunction(UserFunction.FG_BRANCH, UserFunction.FN_VIEW),
+            new UserFunction(UserFunction.FG_BRANCH, UserFunction.FN_UPDATE),
+            new UserFunction(UserFunction.FG_INBOUND, UserFunction.FN_VIEW),
+            new UserFunction(UserFunction.FG_INBOUND, UserFunction.FN_UPDATE),
+            new UserFunction(UserFunction.FG_OUTBOUND, UserFunction.FN_VIEW),
+            new UserFunction(UserFunction.FG_OUTBOUND, UserFunction.FN_UPDATE),
+            new UserFunction(UserFunction.FG_SUPPLIER, UserFunction.FN_VIEW),
+            new UserFunction(UserFunction.FG_SUPPLIER, UserFunction.FN_UPDATE),
+            new UserFunction(UserFunction.FG_ORDER, UserFunction.FN_VIEW),
+            new UserFunction(UserFunction.FG_ORDER, UserFunction.FN_UPDATE),
+            new UserFunction(UserFunction.FG_SALESOFF, UserFunction.FN_VIEW),
+            new UserFunction(UserFunction.FG_SALESOFF, UserFunction.FN_UPDATE),
+            new UserFunction(UserFunction.FG_CUSTOMER, UserFunction.FN_VIEW),
+            new UserFunction(UserFunction.FG_CUSTOMER, UserFunction.FN_UPDATE),
+            new UserFunction(UserFunction.FG_CUSTOMERLEVEL, UserFunction.FN_VIEW),
+            new UserFunction(UserFunction.FG_CUSTOMERLEVEL, UserFunction.FN_UPDATE),
+            new UserFunction(UserFunction.FG_SERVICE, UserFunction.FN_VIEW),
+            new UserFunction(UserFunction.FG_SERVICE, UserFunction.FN_UPDATE),
+            new UserFunction(UserFunction.FG_EMPLOYEE, UserFunction.FN_VIEW),
+            new UserFunction(UserFunction.FG_EMPLOYEE, UserFunction.FN_UPDATE)
             );
 
     public String host;

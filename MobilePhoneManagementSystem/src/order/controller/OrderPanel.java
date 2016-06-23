@@ -20,6 +20,8 @@ import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.table.TableRowSorter;
+import main.controller.LoginFrame;
+import main.model.UserFunction;
 import order.model.Order;
 import order.model.OrderStatus;
 import salesoff.controller.SalesOffDialog;
@@ -238,6 +240,17 @@ public class OrderPanel extends javax.swing.JPanel {
         });
 //</editor-fold>
 
+        // Check permission order
+        if (!LoginFrame.checkPermission(new UserFunction(UserFunction.FG_ORDER, UserFunction.FN_UPDATE))) {
+            btAdd.setEnabled(false);
+            btUpdate.setEnabled(false);
+            btRemove.setEnabled(false);
+        }
+
+        // Check permission sales off
+        if (!LoginFrame.checkPermission(new UserFunction(UserFunction.FG_SALESOFF, UserFunction.FN_VIEW))) {
+            btSalesOff.setEnabled(false);
+        }        
     }
 //</editor-fold>
 
@@ -693,7 +706,7 @@ public class OrderPanel extends javax.swing.JPanel {
                     return false;
                 }
             };
-            
+
             filters.add(valueFilter);
 
             // Chi filter status khi status khac "All"
