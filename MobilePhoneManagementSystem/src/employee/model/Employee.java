@@ -13,8 +13,7 @@ import java.util.Date;
  */
 public class Employee {
 
-    private int empID;
-    private String userName;
+    private int empID;   
     private String empName;
     private String empPhone;
     private Date empBirthday;
@@ -25,8 +24,7 @@ public class Employee {
     private boolean empEnabled;
 
     //Khai bao ten column de hien thi tren table
-    public static final String COL_EMPID = "EmpID";
-    public static final String COL_USERNAME = "UserName";
+    public static final String COL_EMPID = "EmpID";    
     public static final String COL_EMPNAME = "EmpName";
     public static final String COL_EMPPHONE = "EmpPhone";
     public static final String COL_EMPSALARY = "BasicSalary";
@@ -44,9 +42,8 @@ public class Employee {
         this.empDes = empDes;
     }
 
-    public Employee(int empID, String userName, String empName, String empPhone, Date empBirthday, float empSalary, String empDes, Date empStartDate, float empBonus, boolean empEnabled) {
-        this.empID = empID;
-        this.userName = userName;
+    public Employee(int empID,  String empName, String empPhone, Date empBirthday, float empSalary, String empDes, Date empStartDate, float empBonus, boolean empEnabled) {
+        this.empID = empID;        
         this.empName = empName;
         this.empPhone = empPhone;
         this.empBirthday = empBirthday;
@@ -64,15 +61,7 @@ public class Employee {
     public void setEmpID(int empID) {
         this.empID = empID;
     }
-
-    public String getUserName() {
-        return userName;
-    }
-
-    public void setUserName(String userName) {
-        this.userName = userName;
-    }
-
+    
     public String getEmpName() {
         return empName;
     }
@@ -139,7 +128,7 @@ public class Employee {
 
     @Override
     public String toString() {
-        return "Employee{" + "empID=" + empID + ", userName=" + userName + ", empName=" + empName + ", empPhone=" + empPhone + ", empBirthday=" + empBirthday + ", empSalary=" + empSalary + ", empDes=" + empDes + ", empStartDate=" + empStartDate + ", empBonus=" + empBonus + ", empEnabled=" + empEnabled + '}';
+        return "Employee{" + "empID=" + empID + ", empName=" + empName + ", empPhone=" + empPhone + ", empBirthday=" + empBirthday + ", empSalary=" + empSalary + ", empDes=" + empDes + ", empStartDate=" + empStartDate + ", empBonus=" + empBonus + ", empEnabled=" + empEnabled + '}';
     }
 
 }

@@ -5,7 +5,6 @@
  */
 package service.controller;
 
-import database.IDAO;
 import service.model.ServiceType;
 import service.model.ServiceTypeDAOImpl;
 import utility.CustomizedComboBoxModel;
@@ -31,6 +30,16 @@ public class ServiceTypeComboBoxModel extends CustomizedComboBoxModel<ServiceTyp
         ServiceType result = null;
         for (int i = 0; i < list.size(); i++) {
             if (list.get(i).getSerTypeName().equals(serTypeName)) {
+                result = list.get(i);
+                break;
+            }
+        }
+        return result;
+    }
+    public ServiceType getServiceTypeNameFromValue(int serTypeID) {
+        ServiceType result = null;
+        for (int i = 0; i < list.size(); i++) {
+            if (list.get(i).getSerTypeID()==serTypeID) {
                 result = list.get(i);
                 break;
             }

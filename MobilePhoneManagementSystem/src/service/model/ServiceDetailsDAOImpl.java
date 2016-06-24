@@ -17,8 +17,12 @@ import javax.sql.rowset.CachedRowSet;
  *
  * @author BonBon
  */
-public class ServiceDetailsDAOImpl implements IDAO<ServiceDetails>{
+public class ServiceDetailsDAOImpl implements IDAO<ServiceDetails> {
+
     private CachedRowSet crs;  //CRS to update table
+    private int selectingIndex;
+    private Service currentService;
+
     /**
      * Dung load du lieu theo yeu cau, khong tu dong load
      *
@@ -26,15 +30,16 @@ public class ServiceDetailsDAOImpl implements IDAO<ServiceDetails>{
      */
     public void load(int serID) {
 //    public ServiceDetailsDAOImpl(){
-        crs = getCRS("select a.ServiceID,p.ProName,b.BraName,a.ServiceContent,a.ProQty,a.OrdID,a.ProID,p.BraID from ServiceDetails a join Products p on a.ProID=p.ProID left join Branches b on p.BraID=b.BraID WHERE a.ServiceID=?",serID);
-    
+        crs = getCRS("select a.ServiceID,p.ProName,b.BraName,a.ServiceContent,a.ProQty,a.OrdID,a.ProID,p.BraID from ServiceDetails a join Products p on a.ProID=p.ProID left join Branches b on p.BraID=b.BraID WHERE a.ServiceID=?", serID);
+
     }
-    
+
     @Override
     public List<ServiceDetails> getList() {
         List<ServiceDetails> list = new ArrayList<>();
         try {
-            if (crs != null && crs.first()) {
+            if (crs != null && crs.first()) { // Neu table co data (update mode)                
+                
                 do {
                     list.add(new ServiceDetails(
                             crs.getInt(ServiceDetails.COL_ID),
@@ -46,7 +51,14 @@ public class ServiceDetailsDAOImpl implements IDAO<ServiceDetails>{
                             crs.getInt(ServiceDetails.COL_PROID),
                             crs.getInt(ServiceDetails.COL_BRAID)
                     ));
-                } while (crs.next());                
+                } while (crs.next());
+            } else { // Neu table khong co data (insert mode)
+                ServiceDetails op = new ServiceDetails();
+                op.setBraName("");
+                op.setProName(ServiceDetails.DEFAULT_PRONAME);
+                op.setProQty(1);
+                op.setOrdID(0);
+                list.add(op);
             }
         } catch (SQLException ex) {
             Logger.getLogger(ServiceDetailsDAOImpl.class.getName()).log(Level.SEVERE, null, ex);
@@ -56,9 +68,63 @@ public class ServiceDetailsDAOImpl implements IDAO<ServiceDetails>{
 
     @Override
     public boolean insert(ServiceDetails model) {
+
         return false;
     }
 
+    public boolean insert(List<ServiceDetails> list) {
+        boolean result = false;
+        if (currentService == null) { // Chua set current service cho DAO
+            return false;
+        }
+
+        try {
+            System.out.println("CurentService: "+currentService.toString());
+            // Insert table Service
+            runPS("insert Service(UserID, ReceiveDate,ReturnDate, ServiceTypeID, SttID) values(?,?,?,?,?)", currentService.getUserID(), currentService.getReceiveDate(), currentService.getReturnDate(), currentService.getSerTypeID(), currentService.getSerStatusID());
+            // Lay ordID sau khi insert table Orders
+            CachedRowSet crs2 = getCRS("select top(1) ServiceID from Service order by ServiceID DESC");
+            crs2.first();
+            currentService.setSerID(crs2.getInt("ServiceID"));
+            System.out.println("ServiceID Of ServiceDetails:"+currentService.getSerID());
+            System.out.println("LIST Insert ServiceDetails: "+list.toString());
+            // Insert table OrderDetails
+            for (ServiceDetails op : list) {
+                runPS("insert ServiceDetails(ServiceID, ProID, ServiceContent,ProQty, OrdID) values(?,?,?,?,?)", currentService.getSerID(), op.getProID(),op.getSerContent(), op.getProQty(), op.getOrdID());
+            }
+            result = true;
+        } catch (SQLException ex) {
+            Logger.getLogger(ServiceDetailsDAOImpl.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return result;
+    }
+     public void setCurrentService(Service currentService) {
+        this.currentService = currentService;
+    }
+     public boolean update(List<ServiceDetails> list) {
+        boolean result = false;
+        if (currentService == null) { // Chua set current order cho DAO
+            return false;
+        }
+
+        try {
+            // Update table Orders
+            runPS("update Service set UserID=?, ReceiveDate=?,ReturnDate=?, ServiceTypeID=?, SttID=? where ServiceID=? ", currentService.getUserID(), currentService.getReceiveDate(), currentService.getReturnDate(), currentService.getSerTypeID(), currentService.getSerStatusID(),currentService.getSerID());
+            // Xoa het order details cu cua current order
+            runPS("delete ServiceDetails where ServiceID =?", currentService.getSerID());
+            // Update table OrderDetails
+            System.out.println("update currentSerID:"+currentService.getSerID()+"");
+            System.out.println("update ListServiceDetails:"+list.toString()+"");
+            for (ServiceDetails op : list) {
+                runPS("insert into ServiceDetails(ServiceID, ProID, ServiceContent,ProQty, OrdID) values(?,?,?,?,?)", currentService.getSerID(), op.getProID(),op.getSerContent(), op.getProQty(), op.getOrdID());
+            }
+            result = true;
+        } catch (SQLException ex) {
+            Logger.getLogger(ServiceDetailsDAOImpl.class.getName()).log(Level.SEVERE, null, ex);
+        }
+
+        return result;
+    }
     @Override
     public boolean update(ServiceDetails model) {
         return false;
@@ -76,7 +142,7 @@ public class ServiceDetailsDAOImpl implements IDAO<ServiceDetails>{
 
     @Override
     public void setSelectingIndex(int idx) {
-        
+
     }
-    
+
 }

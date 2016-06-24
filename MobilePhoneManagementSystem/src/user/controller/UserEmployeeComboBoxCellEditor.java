@@ -1,28 +1,31 @@
-package employee.controller;
+package user.controller;
+
 
 import java.awt.Component;
 import javax.swing.DefaultCellEditor;
 import javax.swing.JComboBox;
 import javax.swing.JTable;
+
+
 /**
  *
  * @author BonBon
  */
-public class UserNameComboBoxCellEditor extends DefaultCellEditor {
+public class UserEmployeeComboBoxCellEditor extends DefaultCellEditor {
 
     private JComboBox cb;
 
-    public UserNameComboBoxCellEditor(UserNameComboBoxModel userNameComboBoxModel) {
-        super(new JComboBox(userNameComboBoxModel));
+    public UserEmployeeComboBoxCellEditor(UserEmployeeComboBoxModel userEmployeeComboBoxModel) {
+        super(new JComboBox(userEmployeeComboBoxModel));
         cb = (JComboBox) getComponent();
-        cb.setRenderer(new UserNameComboBoxRenderer());
+        cb.setRenderer(new UserEmployeeComboBoxRenderer());
     }
 
     // Override to invoke setValue on the formatted text field.
     @Override
     public Component getTableCellEditorComponent(JTable table, Object value, boolean isSelected, int row, int column) {
         JComboBox cb2 = (JComboBox) super.getTableCellEditorComponent(table, value, isSelected, row, column);
-        cb2.setSelectedItem(((UserNameComboBoxModel) cb2.getModel()).getUserNameFromValue((String) value));
+        cb2.setSelectedItem(((UserEmployeeComboBoxModel) cb2.getModel()).getUserEmployeeNameFromValue((String) value));
         return cb2;
     }
 }

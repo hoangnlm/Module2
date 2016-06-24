@@ -12,16 +12,18 @@ import java.util.Date;
  * @author BonBon
  */
 public class ServiceDetails {
+
     private int serID;
-    private String proName; 
+    private String proName;
     private String braName;
     private String serContent;
     private int proQty;
     private int ordID;
-    
+
+    private int proStock;
     private int proID;
-    private int BraID;   
-    
+    private int BraID;
+
     public static final String COL_ID = "ServiceID";
     public static final String COL_PRONAME = "ProName";
     public static final String COL_BRANCH = "BraName";
@@ -29,8 +31,22 @@ public class ServiceDetails {
     public static final String COL_QUANTITY = "ProQty";
     public static final String COL_ORDERID = "OrdID";
 
+    public static final String COL_PROSTOCK = "ProStock";
     public static final String COL_PROID = "ProID";
     public static final String COL_BRAID = "BraID";
+    
+    public static final String DEFAULT_PRONAME = "<html><font color='red'>Please choose item...</font></html>";
+    public ServiceDetails() {
+    }
+
+    public ServiceDetails(String proName, String braName, int proStock, int proID, int BraID) {
+        
+        this.proName = proName;
+        this.braName = braName;
+        this.proStock = proStock;
+        this.proID = proID;
+        this.BraID = BraID;
+    }
 
     public ServiceDetails(int serID, String proName, String braName, String serContent, int proQty, int ordID, int proID, int BraID) {
         this.serID = serID;
@@ -43,6 +59,14 @@ public class ServiceDetails {
         this.BraID = BraID;
     }
 
+    public int getProStock() {
+        return proStock;
+    }
+
+    public void setProStock(int proStock) {
+        this.proStock = proStock;
+    }
+
     public String getSerContent() {
         return serContent;
     }
@@ -51,7 +75,6 @@ public class ServiceDetails {
         this.serContent = serContent;
     }
 
-   
     public int getSerID() {
         return serID;
     }
@@ -84,8 +107,6 @@ public class ServiceDetails {
         this.proQty = proQty;
     }
 
-    
-
     public int getOrdID() {
         return ordID;
     }
@@ -115,6 +136,5 @@ public class ServiceDetails {
         return "ServiceDetails{" + "serID=" + serID + ", proName=" + proName + ", braName=" + braName + ", serContent=" + serContent + ", proQty=" + proQty + ", ordID=" + ordID + ", proID=" + proID + ", BraID=" + BraID + '}';
     }
 
-    
     
 }

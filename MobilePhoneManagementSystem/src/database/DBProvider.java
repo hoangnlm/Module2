@@ -24,7 +24,7 @@ public class DBProvider {
     public static final String PORT = "1433";
     public static final String DBNAME = "Mobile";
     public static final String NAME = "sa";
-    public static final String PASSWORD = "26101996";
+    public static final String PASSWORD = "1";
 
     public static void main(String[] args) throws SQLException {
         // Dung de test ket noi db

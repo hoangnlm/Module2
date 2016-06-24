@@ -23,14 +23,14 @@ import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
-import customer.controller.CustomerPanel;
-import employee.controller.EmployeePanel;
 import home.controller.HomePanel;
 import inbound.controller.InboundPanel;
 import java.awt.CardLayout;
-import javax.swing.SwingUtilities;
 import main.model.UserFunction;
+import customer.controller.CustomerPanel;
+import employee.controller.EmployeePanel;
 import order.controller.OrderPanel;
+import product.controller.ProductPanel;
 import service.controller.ServicePanel;
 import user.controller.UserPanel;
 import utility.SwingUtils;
@@ -111,10 +111,10 @@ public final class MainFrame extends javax.swing.JFrame {
         // Chi can permission view, permission update vo trong panel xu ly
         for (UserFunction uf : config.userFunctions) {
             if (uf.FunctionGroup.equals(Login.FG_PRODUCT) && uf.FunctionName.equals(Login.FN_VIEW)) {
-//                pn[1] = new ProductPanel();
+                pn[1] = new ProductPanel();
             }
             if (uf.FunctionGroup.equals(Login.FG_INBOUND) && uf.FunctionName.equals(Login.FN_VIEW)) {
-//                pn[2] = new InboundPanel();
+                pn[2] = new InboundPanel();
             }
             if (uf.FunctionGroup.equals(Login.FG_OUTBOUND) && uf.FunctionName.equals(Login.FN_VIEW)) {
 //                pn[3] = new OutboundPanel();
@@ -126,13 +126,12 @@ public final class MainFrame extends javax.swing.JFrame {
                 pn[5] = new CustomerPanel();
             }
             if (uf.FunctionGroup.equals(Login.FG_SUPPLIER) && uf.FunctionName.equals(Login.FN_VIEW)) {
-//                pn[7] = new SupplierPanel();
+//                pn[6] = new SupplierPanel();
             }
-            if (uf.FunctionGroup.equals(Login.FG_SERVICE) && uf.FunctionName.equals(Login.FN_VIEW)) {
-                pn[8] = new ServicePanel();
+            if (uf.FunctionGroup.equals(Login.FG_SERVICE) && uf.FunctionName.equals(Login.FN_VIEW)) {                               pn[7] = new ServicePanel();
             }
             if (uf.FunctionGroup.equals(Login.FG_EMPLOYEE) && uf.FunctionName.equals(Login.FN_VIEW)) {
-//                pn[9] = new EmployeePanel();
+                pn[8] = new EmployeePanel();
             }
             if (uf.FunctionGroup.equals(Login.FG_USER) && uf.FunctionName.equals(Login.FN_VIEW)) {
                 pn[9] = new UserPanel();
