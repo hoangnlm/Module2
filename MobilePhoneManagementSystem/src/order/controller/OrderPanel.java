@@ -1,20 +1,28 @@
 package order.controller;
 
 import com.toedter.calendar.JDateChooser;
+import database.DBProvider;
 import java.awt.Cursor;
 import java.awt.Dimension;
+import java.awt.Frame;
 import java.awt.Rectangle;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
+import java.sql.Connection;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.DefaultListSelectionModel;
 import javax.swing.JButton;
 import javax.swing.JOptionPane;
+import javax.swing.JTable;
 import javax.swing.RowFilter;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
@@ -22,6 +30,12 @@ import javax.swing.event.ListSelectionEvent;
 import javax.swing.table.TableRowSorter;
 import main.controller.LoginFrame;
 import main.model.UserFunction;
+import net.sf.jasperreports.engine.JRException;
+import net.sf.jasperreports.engine.JasperCompileManager;
+import net.sf.jasperreports.engine.JasperFillManager;
+import net.sf.jasperreports.engine.JasperPrint;
+import net.sf.jasperreports.engine.JasperReport;
+import net.sf.jasperreports.view.JasperViewer;
 import order.model.Order;
 import order.model.OrderStatus;
 import salesoff.controller.SalesOffDialog;
@@ -250,7 +264,7 @@ public class OrderPanel extends javax.swing.JPanel {
         // Check permission sales off
         if (!LoginFrame.checkPermission(new UserFunction(UserFunction.FG_SALESOFF, UserFunction.FN_VIEW))) {
             btSalesOff.setEnabled(false);
-        }        
+        }
     }
 //</editor-fold>
 
@@ -519,6 +533,11 @@ public class OrderPanel extends javax.swing.JPanel {
         tbOrderList.setRowHeight(25);
         tbOrderList.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
         tbOrderList.getTableHeader().setReorderingAllowed(false);
+        tbOrderList.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                tbOrderListMouseClicked(evt);
+            }
+        });
         jScrollPane1.setViewportView(tbOrderList);
 
         jSplitPane1.setTopComponent(jScrollPane1);
@@ -563,7 +582,9 @@ public class OrderPanel extends javax.swing.JPanel {
     private void btAddActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btAddActionPerformed
         new OrderDialog(null).setVisible(true);
         refreshAction(false);
-        scrollToRow(tbOrderList.getRowCount() - 1);
+        if (orderTableModel.getRowCount() > 0) {
+            scrollToRow(selectedRowIndex);
+        }
     }//GEN-LAST:event_btAddActionPerformed
 
     private void btSalesOffActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btSalesOffActionPerformed
@@ -573,6 +594,7 @@ public class OrderPanel extends javax.swing.JPanel {
     private void btUpdateActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btUpdateActionPerformed
         new OrderDialog(selectedOrder).setVisible(true);
         refreshAction(false);
+        scrollToRow(selectedRowIndex);
     }//GEN-LAST:event_btUpdateActionPerformed
 
     private void btRemoveActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btRemoveActionPerformed
@@ -586,6 +608,18 @@ public class OrderPanel extends javax.swing.JPanel {
     private void btClearActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btClearActionPerformed
         clearFilter();
     }//GEN-LAST:event_btClearActionPerformed
+
+    private void tbOrderListMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tbOrderListMouseClicked
+        if (evt.getButton() == 1 && evt.getClickCount() == 2) {
+            JTable table = (JTable) evt.getSource();
+            int row = table.rowAtPoint(evt.getPoint());
+            if (row != -1) { // Khong double click trung row hoac khong co row nao
+                viewReport((int) table.getValueAt(row, COL_ORDID));
+            }
+//            System.out.println("click: " + table.rowAtPoint(evt.getPoint()));
+//            System.out.println("click: " + table.columnAtPoint(evt.getPoint()));
+        }
+    }//GEN-LAST:event_tbOrderListMouseClicked
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btAdd;
@@ -733,8 +767,8 @@ public class OrderPanel extends javax.swing.JPanel {
     }
 
     private void fetchAction() {
-        selectedRowIndex = tbOrderList.convertRowIndexToModel(tbOrderList.getSelectedRow());
-        selectedOrder = orderTableModel.getOrderAtIndex(selectedRowIndex);
+        selectedRowIndex = tbOrderList.getSelectedRow();
+        selectedOrder = orderTableModel.getOrderAtIndex(tbOrderList.convertRowIndexToModel(selectedRowIndex));
         // Reload table product list voi Order moi chon
         orderProductTableModel.load(selectedOrder.getOrdID());
     }
@@ -766,7 +800,6 @@ public class OrderPanel extends javax.swing.JPanel {
         } else {
             orderTableModel.refresh();
         }
-        scrollToRow(selectedRowIndex);
     }
 
     private void scrollToRow(int row) {
@@ -781,6 +814,33 @@ public class OrderPanel extends javax.swing.JPanel {
         // Ngoai tru may button nay luon luon enable
         if (exclude.length != 0) {
             Arrays.stream(exclude).forEach(b -> b.setEnabled(true));
+        }
+    }
+
+    // Print report
+    private void viewReport(int OrdID) {
+        try {
+            // Access xml file
+            String reportSrcFile = getClass().getResource("bill.jrxml").getPath();
+            // Compile xml file to .jasper file
+            JasperReport jasperReport = JasperCompileManager.compileReport(reportSrcFile);
+            // Create connection
+            DBProvider db = new DBProvider();
+            db.start();
+            Connection connection = db.getConnection();
+            // Pass parameters
+            Map<String, Object> parameters = new HashMap<>();
+            parameters.put("OrdIDPara", OrdID);
+            // Create .jpprint file
+            JasperPrint jasperPrint = JasperFillManager.fillReport(jasperReport, parameters, connection);
+            // View report in the JasperViewer
+            JasperViewer jv = new JasperViewer(jasperPrint, false);
+            jv.setZoomRatio(0.75f);
+            jv.setExtendedState(Frame.MAXIMIZED_BOTH);
+            jv.setVisible(true);
+            db.stop();
+        } catch (JRException ex) {
+            Logger.getLogger(OrderPanel.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
 }

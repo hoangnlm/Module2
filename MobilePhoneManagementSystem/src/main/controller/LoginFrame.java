@@ -6,7 +6,6 @@
 package main.controller;
 
 import java.awt.CardLayout;
-import java.awt.Color;
 import main.model.Login;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;

@@ -31,6 +31,7 @@ import java.awt.CardLayout;
 import javax.swing.SwingUtilities;
 import main.model.UserFunction;
 import order.controller.OrderPanel;
+import product.controller.ProductPanel;
 import service.controller.ServicePanel;
 import user.controller.UserPanel;
 import utility.SwingUtils;
@@ -111,10 +112,10 @@ public final class MainFrame extends javax.swing.JFrame {
         // Chi can permission view, permission update vo trong panel xu ly
         for (UserFunction uf : config.userFunctions) {
             if (uf.FunctionGroup.equals(UserFunction.FG_PRODUCT) && uf.FunctionName.equals(UserFunction.FN_VIEW)) {
-//                pn[1] = new ProductPanel();
+                pn[1] = new ProductPanel();
             }
             if (uf.FunctionGroup.equals(UserFunction.FG_INBOUND) && uf.FunctionName.equals(UserFunction.FN_VIEW)) {
-//                pn[2] = new InboundPanel();
+                pn[2] = new InboundPanel();
             }
             if (uf.FunctionGroup.equals(UserFunction.FG_OUTBOUND) && uf.FunctionName.equals(UserFunction.FN_VIEW)) {
 //                pn[3] = new OutboundPanel();
@@ -126,13 +127,13 @@ public final class MainFrame extends javax.swing.JFrame {
                 pn[5] = new CustomerPanel();
             }
             if (uf.FunctionGroup.equals(UserFunction.FG_SUPPLIER) && uf.FunctionName.equals(UserFunction.FN_VIEW)) {
-//                pn[7] = new SupplierPanel();
+//                pn[6] = new SupplierPanel();
             }
             if (uf.FunctionGroup.equals(UserFunction.FG_SERVICE) && uf.FunctionName.equals(UserFunction.FN_VIEW)) {
-                pn[8] = new ServicePanel();
+                pn[7] = new ServicePanel();
             }
             if (uf.FunctionGroup.equals(UserFunction.FG_EMPLOYEE) && uf.FunctionName.equals(UserFunction.FN_VIEW)) {
-//                pn[9] = new EmployeePanel();
+                pn[8] = new EmployeePanel();
             }
             if (uf.FunctionGroup.equals(UserFunction.FG_USER) && uf.FunctionName.equals(UserFunction.FN_VIEW)) {
                 pn[9] = new UserPanel();

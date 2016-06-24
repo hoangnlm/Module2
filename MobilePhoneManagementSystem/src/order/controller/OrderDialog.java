@@ -19,8 +19,6 @@ import javax.swing.event.DocumentListener;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import main.controller.LoginFrame;
-import main.model.Login;
-import main.model.UserFunction;
 import order.model.Order;
 import order.model.OrderBranch;
 import order.model.OrderCustomer;
@@ -178,7 +176,9 @@ public class OrderDialog extends javax.swing.JDialog implements ItemListener {
                                 tbProduct.setValueAt(selectedProduct.getProID(), tbProduct.getSelectedRow(), COL_PROID);
                                 // Update label
                                 updateTotalLabel();
-                                setTrackChanges(true);
+                                if (!checkProductEmpty()) {
+                                    setTrackChanges(true);
+                                }
                             }
                         } else if (!newValue.equals(oldValue)) {
                             tbProduct.setValueAt(oldValue, tbProduct.getSelectedRow(), COL_PRONAME);
@@ -189,7 +189,7 @@ public class OrderDialog extends javax.swing.JDialog implements ItemListener {
                         selectedProduct.setProQty((int) tbProduct.getValueAt(tbProduct.getSelectedRow(), COL_PROQTY));
                         // Update label
                         updateItemsLabel();
-                        if (checkProductEmpty()) {
+                        if (!checkProductEmpty()) {
                             setTrackChanges(true);
                         }
                         break;
@@ -203,16 +203,17 @@ public class OrderDialog extends javax.swing.JDialog implements ItemListener {
             setTitle("New Order");
             this.order = new Order();
             this.order.setOrdID(-1);
-            this.order.setOrdStatusID(orderStatusComboBoxModel.getElementAt(0).getSttID());
-            this.order.setOrdStatus(orderStatusComboBoxModel.getElementAt(0).getSttName());
-            this.order.setCusID(orderCustomerComboBoxModel.getElementAt(orderCustomerComboBoxModel.getSize() - 1).getCusID());
-            this.order.setCusDiscount(orderCustomerComboBoxModel.getElementAt(orderCustomerComboBoxModel.getSize() - 1).getCusDiscount());
-            this.order.setUserID(1);
+            this.order.setOrdStatusID(1);
+//            this.order.setOrdStatus("Waiting");
+//            this.order.setCusID(orderCustomerComboBoxModel.getElementAt(orderCustomerComboBoxModel.getSize() - 1).getCusID());
+//            this.order.setCusDiscount(orderCustomerComboBoxModel.getElementAt(orderCustomerComboBoxModel.getSize() - 1).getCusDiscount());
+//            this.order.setUserID(1);
+            this.order.setUserName(LoginFrame.config.userName);
             this.order.setOrdDate(new Date());
             backup = this.order.clone(); // Backup
             tfID.setText("New");
             tfDate.setText(SwingUtils.formatString(new Date(), FormatType.DATE));
-            tfUser.setText(Login.USER_NAME);
+            tfUser.setText(LoginFrame.config.userName);
             cbStatus.setSelectedIndex(0);
             cbCustomer.setSelectedIndex(cbCustomer.getItemCount() - 1);
             setTrackChanges(false);
@@ -700,8 +701,9 @@ public class OrderDialog extends javax.swing.JDialog implements ItemListener {
         product.setProNo(orderProductTableModelDialog.getRowCount() + 1);
         product.setProQty(1);
         product.setProName(OrderProduct.DEFAULT_PRONAME);
-        orderProductTableModelDialog.insert(product);
+        orderProductTableModelDialog.addElement(product);
         updateItemsLabel();
+        btSave.setEnabled(false);
     }
 
     private void deleteAction() {
@@ -720,7 +722,7 @@ public class OrderDialog extends javax.swing.JDialog implements ItemListener {
         scrollToRow(selectedRowIndex);
         updateItemsLabel();
         // Check neu product ko empty va so row khac voi so row ban dau thi moi bat trackchange
-        if (!checkProductEmpty() && orderProductTableModelDialog.getRowCount()!=backupRowCount) {
+        if (!checkProductEmpty() && orderProductTableModelDialog.getRowCount() != backupRowCount) {
             setTrackChanges(true);
         }
     }
