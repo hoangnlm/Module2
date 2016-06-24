@@ -1,15 +1,12 @@
 package service.controller;
 
 
-
-
 import service.model.ServiceDetails;
 import service.model.ServiceDetailsDAOImpl;
 import utility.CustomizedTableModel;
-
 /**
  *
- * @author Hoang
+ * @author BonBon
  */
 public class ServiceDetailsTableModel extends CustomizedTableModel<ServiceDetails> {
 

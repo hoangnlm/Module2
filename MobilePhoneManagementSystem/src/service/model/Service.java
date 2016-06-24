@@ -6,12 +6,15 @@
 package service.model;
 
 import java.util.Date;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import order.model.Order;
 
 /**
  *
  * @author BonBon
  */
-public class Service {
+public class Service implements Cloneable{
 
     private int serID;
     private String userName;
@@ -128,4 +131,15 @@ public class Service {
         this.serTypeID = serTypeID;
     }
     
+    
+    @Override
+    public Service clone() {
+        Service result = null;
+        try {
+            result = (Service) super.clone();
+        } catch (CloneNotSupportedException ex) {
+            Logger.getLogger(Service.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return result; 
+    }
 }

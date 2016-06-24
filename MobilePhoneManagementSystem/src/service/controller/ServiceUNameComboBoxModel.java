@@ -1,15 +1,13 @@
 package service.controller;
 
 
-import employee.controller.*;
-import database.IDAO;
 import user.model.User;
 import user.model.UserDAOImpl;
 import utility.CustomizedComboBoxModel;
 
 /**
  *
- * @author Hoang
+ * @author BonBon
  */
 public class ServiceUNameComboBoxModel extends CustomizedComboBoxModel<User> {
 

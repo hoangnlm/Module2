@@ -63,7 +63,18 @@ List<Service> list = new ArrayList<>();
 
     @Override
     public boolean delete(Service model) {
-        return false;
+        boolean result = false;
+        try {
+            // Xoa data trong table ServiceDetails
+            runPS("delete ServiceDetails where ServiceID=?", model.getSerID());
+            // Xoa data trong table Service
+            runPS("delete Service where ServiceID=?", model.getSerID());
+            result = true;
+        } catch (SQLException ex) {
+            Logger.getLogger(ServiceDAOImpl.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return result;
+
     }
 
     @Override

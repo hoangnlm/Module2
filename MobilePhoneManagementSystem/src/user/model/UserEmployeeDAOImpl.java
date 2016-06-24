@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package service.model;
+package user.model;
 
 import database.IDAO;
 import java.sql.SQLException;
@@ -13,48 +13,49 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.sql.rowset.CachedRowSet;
 
+
 /**
  *
  * @author BonBon
  */
-public class ServiceStatusDAOImpl implements IDAO<ServiceStatus> {
+public class UserEmployeeDAOImpl implements IDAO<UserEmployee> {
 
     private CachedRowSet crs;  //CRS to update table
 
-    public ServiceStatusDAOImpl() {
-        crs = getCRS("select * from Status where SttType like 'Service'");
+    public UserEmployeeDAOImpl() {
+//        crs = getCRS("select EmpID,EmpName from Employees WHERE  EmpID NOT IN (select u.EmpID from  Users u ) ");       
+        crs = getCRS("select EmpID,EmpName from Employees");
     }
 
     @Override
-    public List<ServiceStatus> getList() {
-        List<ServiceStatus> list = new ArrayList<>();
+    public List<UserEmployee> getList() {
+        List<UserEmployee> list = new ArrayList<>();
         try {
             if (crs.first()) {
                 do {
-                    list.add(new ServiceStatus(
-                            crs.getInt(ServiceStatus.COL_ID),
-                            crs.getString(ServiceStatus.COL_NAME),
-                            crs.getString(ServiceStatus.COL_TYPE)));
+                    list.add(new UserEmployee(                            
+                            crs.getInt(UserEmployee.COL_ID),
+                            crs.getString(UserEmployee.COL_NAME)));
                 } while (crs.next());
             }
         } catch (SQLException ex) {
-            Logger.getLogger(ServiceStatusDAOImpl.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(UserEmployeeDAOImpl.class.getName()).log(Level.SEVERE, null, ex);
         }
         return list;
     }
 
     @Override
-    public boolean insert(ServiceStatus model) {
+    public boolean insert(UserEmployee model) {
         return false;
     }
 
     @Override
-    public boolean update(ServiceStatus model) {
+    public boolean update(UserEmployee model) {
         return false;
     }
 
     @Override
-    public boolean delete(ServiceStatus model) {
+    public boolean delete(UserEmployee model) {
         return false;
     }
 

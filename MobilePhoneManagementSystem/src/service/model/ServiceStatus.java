@@ -1,10 +1,8 @@
 package service.model;
 
-import order.model.*;
-
 /**
  *
- * @author Hoang
+ * @author BonBon
  */
 public class ServiceStatus {
     private int sttID;

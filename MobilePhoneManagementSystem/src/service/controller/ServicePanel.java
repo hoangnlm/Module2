@@ -36,7 +36,7 @@ import utility.TableCellListener;
 
 /**
  *
- * @author Hoang
+ * @author BonBon
  */
 public class ServicePanel extends javax.swing.JPanel {
 
@@ -75,7 +75,7 @@ public class ServicePanel extends javax.swing.JPanel {
         dcFilter.setDate(null);
         pnReceiveDate.add(dcFilter);
         // Set date picker len giao dien
-        dcFilter1=new JDateChooser();
+        dcFilter1 = new JDateChooser();
         dcFilter1.setBounds(0, 0, 120, 20);
         dcFilter1.setDateFormatString("dd/MM/yyyy");
         dcFilter1.setDate(null);
@@ -91,15 +91,17 @@ public class ServicePanel extends javax.swing.JPanel {
         filterStatus = new ServiceStatus(0, "All", "Service");
         serviceStatusComboBoxModel.addElement(filterStatus);
         cbStatusFilter.setModel(serviceStatusComboBoxModel);
-        serviceStatusComboBoxRenderer = new ServiceStatusComboBoxRenderer();        
+        serviceStatusComboBoxRenderer = new ServiceStatusComboBoxRenderer();
         cbStatusFilter.setRenderer(serviceStatusComboBoxRenderer);
+        
         // Set data cho combobox service type filter
         serviceTypeComboBoxModel = new ServiceTypeComboBoxModel();
         filterType = new ServiceType(0, "All");
         serviceTypeComboBoxModel.addElement(filterType);
         cbTypeFilter.setModel(serviceTypeComboBoxModel);
-        serviceTypeComboBoxRenderer = new ServiceTypeComboBoxRenderer();        
+        serviceTypeComboBoxRenderer = new ServiceTypeComboBoxRenderer();
         cbTypeFilter.setRenderer(serviceTypeComboBoxRenderer);
+        
         // Set data cho table
         serviceTableModel = new ServiceTableModel();
         serviceDetailsTableModel = new ServiceDetailsTableModel();
@@ -112,7 +114,7 @@ public class ServicePanel extends javax.swing.JPanel {
 
         // Select mac dinh cho level filter
         cbStatusFilter.setSelectedIndex(cbStatusFilter.getItemCount() - 1);
-
+        cbTypeFilter.setSelectedIndex(cbTypeFilter.getItemCount() - 1);
         // Set auto define column from model to false to stop create column again
         tbServiceList.setAutoCreateColumnsFromModel(false);
         tbDetailsList.setAutoCreateColumnsFromModel(false);
@@ -124,7 +126,7 @@ public class ServicePanel extends javax.swing.JPanel {
         // Col order ID
         tbServiceList.getColumnModel().getColumn(COL_SERID).setMinWidth(30);
         tbServiceList.getColumnModel().getColumn(COL_SERID).setMaxWidth(50);
-tbServiceList.getColumnModel().getColumn(COL_SERID).sizeWidthToFit();
+        tbServiceList.getColumnModel().getColumn(COL_SERID).sizeWidthToFit();
         // Col user name
         tbServiceList.getColumnModel().getColumn(COL_USERNAME).setMinWidth(120);
 //        tbServiceList.getColumnModel().getColumn(COL_USERNAME).setMaxWidth(120);
@@ -142,7 +144,6 @@ tbServiceList.getColumnModel().getColumn(COL_SERID).sizeWidthToFit();
 //        tbServiceList.getColumnModel().getColumn(COL_SERTYPENAME).setMaxWidth(90);
         // Col status
         tbServiceList.getColumnModel().getColumn(COL_STATUS).setMinWidth(90);
-
 
         // Bat su kien select row tren table service list
         tbServiceList.getSelectionModel().addListSelectionListener((ListSelectionEvent e) -> {
@@ -164,12 +165,12 @@ tbServiceList.getColumnModel().getColumn(COL_SERID).sizeWidthToFit();
 //                System.out.println("Column: " + tcl.getColumn());
 //                System.out.println("Old   : " + tcl.getOldValue());
 //                System.out.println("New   : " + tcl.getNewValue());
-            
+
                 switch (tcl.getColumn()) {
-                    
+
                     case COL_USERNAME:
                         selectedService.setUserName((String) tcl.getNewValue());
-                        break;                    
+                        break;
                     case COL_RECEIVEDATE:
                         selectedService.setReceiveDate((Date) tcl.getNewValue());
                         break;
@@ -530,11 +531,14 @@ tbServiceList.getColumnModel().getColumn(COL_SERID).sizeWidthToFit();
     }// </editor-fold>//GEN-END:initComponents
 //<editor-fold defaultstate="collapsed" desc="Bat su kien">
     private void btAddActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btAddActionPerformed
-//        new OrderDialog(null).setVisible(true);
+        new ServiceDialog(null).setVisible(true);
+        refreshAction(false);
+        scrollToRow(tbServiceList.getRowCount() - 1);
     }//GEN-LAST:event_btAddActionPerformed
 
     private void btUpdateActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btUpdateActionPerformed
-//        new OrderDialog(selectedOrder).setVisible(true);
+        new ServiceDialog(selectedService).setVisible(true);
+        refreshAction(false);
     }//GEN-LAST:event_btUpdateActionPerformed
 
     private void btRemoveActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btRemoveActionPerformed
@@ -609,7 +613,7 @@ tbServiceList.getColumnModel().getColumn(COL_SERID).sizeWidthToFit();
                         return false;
                     }
                 };
-                
+
                 filters.add(dateFilter);
             }
             // Chi filter date khi date khac null
@@ -622,32 +626,33 @@ tbServiceList.getColumnModel().getColumn(COL_SERID).sizeWidthToFit();
                         ServiceTableModel model = entry.getModel();
                         Service o = model.getServiceAtIndex((Integer) entry.getIdentifier());
 
-                        Calendar origin = Calendar.getInstance();
-                        origin.setTime(o.getReceiveDate());
+                        Calendar origin1 = Calendar.getInstance();
+                        origin1.setTime(o.getReturnDate());
 
-                        Calendar filter = Calendar.getInstance();
-                        filter.setTime(dcFilter1.getDate());
+                        Calendar filter1 = Calendar.getInstance();
+                        filter1.setTime(dcFilter1.getDate());
 
-                        if (origin.get(Calendar.YEAR) == filter.get(Calendar.YEAR) && origin.get(Calendar.MONTH) == filter.get(Calendar.MONTH) && origin.get(Calendar.DATE) == filter.get(Calendar.DATE)) {
+                        if (origin1.get(Calendar.YEAR) == filter1.get(Calendar.YEAR) && origin1.get(Calendar.MONTH) == filter1.get(Calendar.MONTH) && origin1.get(Calendar.DATE) == filter1.get(Calendar.DATE)) {
                             return true;
                         }
 
                         return false;
                     }
                 };
-                
+
                 filters.add(dateFilter1);
+            }
+            //filter type khi khac All
+            String stt1 = ((ServiceType) cbTypeFilter.getSelectedItem()).getSerTypeName();
+            if (!stt1.equals("All")) {
+                filters.add(RowFilter.regexFilter("^" + stt1, 4));
             }
             // Chi filter status khi status khac "All"
             String stt = ((ServiceStatus) cbStatusFilter.getSelectedItem()).getSttName();
             if (!stt.equals("All")) {
                 filters.add(RowFilter.regexFilter("^" + stt, 5));
             }
-            
-//            String stt1 = ((ServiceType) cbTypeFilter.getSelectedItem()).getSerTypeName();
-//            if (!stt1.equals("All")) {
-//                filters.add(RowFilter.regexFilter("^" + stt, 6));
-//            }
+
             
             rf = RowFilter.andFilter(filters);
         } catch (java.util.regex.PatternSyntaxException e) {
@@ -658,7 +663,7 @@ tbServiceList.getColumnModel().getColumn(COL_SERID).sizeWidthToFit();
 //</editor-fold>
 
     private void clearFilter() {
-        tfIdFilter.setText(null);        
+        tfIdFilter.setText(null);
         tfUserFilter.setText(null);
         dcFilter.setDate(null);
         dcFilter1.setDate(null);
@@ -670,11 +675,12 @@ tbServiceList.getColumnModel().getColumn(COL_SERID).sizeWidthToFit();
     private void fetchAction() {
         selectedRowIndex = tbServiceList.convertRowIndexToModel(tbServiceList.getSelectedRow());
         selectedService = serviceTableModel.getServiceAtIndex(selectedRowIndex);
-         //Reload table product list voi Order moi chon
+        //Reload table product list voi Order moi chon
         serviceDetailsTableModel.load(selectedService.getSerID());
     }
 
     private void deleteAction() {
+        System.out.println(selectedService.getSerID());
         setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
         boolean result = serviceTableModel.delete(selectedService);
         setCursor(null);

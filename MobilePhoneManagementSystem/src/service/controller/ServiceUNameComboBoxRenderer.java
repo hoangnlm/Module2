@@ -5,7 +5,6 @@
  */
 package service.controller;
 
-import employee.controller.*;
 import java.awt.Color;
 import java.awt.Component;
 import javax.swing.JLabel;
@@ -16,7 +15,7 @@ import user.model.User;
 
 /**
  *
- * @author Hoang
+ * @author BonBon
  */
 public class ServiceUNameComboBoxRenderer extends JLabel implements ListCellRenderer<User> {
 

@@ -7,7 +7,7 @@ import utility.CustomizedTableModel;
 
 /**
  *
- * @author Hoang
+ * @author BonBon
  */
 public class ServiceTableModel extends CustomizedTableModel<Service> {
 
