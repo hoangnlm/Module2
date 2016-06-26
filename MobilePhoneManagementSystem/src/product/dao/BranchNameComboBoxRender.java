@@ -22,10 +22,11 @@ public class BranchNameComboBoxRender extends JLabel implements ListCellRenderer
     public Component getListCellRendererComponent(JList<? extends Branch> list, Branch value, int index, boolean isSelected, boolean cellHasFocus) {
         
         if (isSelected) {
-            setBackground(list.getSelectionBackground());
-            setForeground(Color.PINK);
+            setBackground(Color.ORANGE);
+            setForeground(Color.ORANGE);
+            
         } else {
-            setBackground(list.getBackground());
+            setBackground(new java.awt.Color(51, 51, 51));
             setForeground(list.getForeground());
         }
         

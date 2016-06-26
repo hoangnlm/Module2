@@ -3,15 +3,15 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package inbound.controller;
+package inbound.model;
 
+import com.sun.glass.events.KeyEvent;
+import inbound.controller.*;
 import com.toedter.calendar.JDateChooser;
 import inbound.model.Inbound;
 import inbound.model.InboundDetail;
 import inbound.model.InboundDetailDAOImpl;
 import inbound.model.InboundDetailTableModel;
-import inbound.model.Product;
-import inbound.model.ProductTableModel;
 import inbound.model.SupplierComboboxModel;
 import inbound.model.SupplierComboboxRenderer;
 import java.awt.Color;
@@ -119,6 +119,8 @@ public class InboundDialog extends javax.swing.JDialog implements ItemListener {
         
         //update lai list
        listIn = inboundDetailTableModel.getList();//null neu insert mode
+       
+       
     }
 
     
@@ -381,6 +383,12 @@ public class InboundDialog extends javax.swing.JDialog implements ItemListener {
 
         jLabel4.setText("Suppplier Invoice:");
 
+        txtInvoice.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyPressed(java.awt.event.KeyEvent evt) {
+                txtInvoiceKeyPressed(evt);
+            }
+        });
+
         jLabel5.setText("User:");
 
         txtUser.setEnabled(false);
@@ -569,11 +577,9 @@ public class InboundDialog extends javax.swing.JDialog implements ItemListener {
                         .addComponent(jButton2)
                         .addGap(0, 0, Short.MAX_VALUE))
                     .addGroup(layout.createSequentialGroup()
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addComponent(jButton1)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(btDelete)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
+                        .addComponent(btDelete)))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
@@ -667,6 +673,18 @@ public class InboundDialog extends javax.swing.JDialog implements ItemListener {
     private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton3ActionPerformed
         resetAction(true);
     }//GEN-LAST:event_jButton3ActionPerformed
+
+    private void txtInvoiceKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtInvoiceKeyPressed
+        int key = evt.getKeyCode();
+        if(key==evt.VK_0){
+            txtInvoice.setEditable(true);
+            txtInvoice.setBackground(Color.red);
+        }
+        else{
+            txtInvoice.setBackground(Color.orange);
+        }
+        
+    }//GEN-LAST:event_txtInvoiceKeyPressed
     public void deleteAction() {
 
         inboundDetailTableModel.delete(selectedInDetail);
@@ -689,12 +707,13 @@ public class InboundDialog extends javax.swing.JDialog implements ItemListener {
     }
 
     public void insertAction() {
-
+        
         if (txtInvoice.getText().equals("")) {
             SwingUtils.showInfoDialog("You have not input invoice id");
             txtInvoice.requestFocus();
             return;
         }
+       
         String temp = txtInvoice.getText();//check dupplicate sup invoice id
         if (new InboundDetailDAOImpl().insert(listIn,temp)) { //insert inbound moi voi gia tri mac dinh
 
@@ -739,7 +758,13 @@ public class InboundDialog extends javax.swing.JDialog implements ItemListener {
             SwingUtils.showInfoDialog("You have not input invoice id");
             txtInvoice.requestFocus();
             return;
-        } else{
+        } 
+        else if(!txtInvoice.getText().matches("[a-zA-Z]")){
+            SwingUtils.showInfoDialog("Invalid input!");
+            txtInvoice.requestFocus();
+            return;
+        }
+        else{
 
             //update lai nhung gia tri moi
             Inbound ib = new Inbound();

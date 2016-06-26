@@ -7,11 +7,17 @@ package branch.controller;
 
 import branch.dao.BranchDAOImpl;
 import branch.dao.CheckBoxCellEditor;
+import branch.dao.ComboBoxCellEditor;
 import branch.model.Branch;
 import branch.model.BranchTableModel;
+import branch.model.Supplier;
+import branch.model.SupplierComboboxModel;
+import branch.model.SupplierComboboxRenderer;
 import database.DBProvider;
 import java.awt.Cursor;
+import java.awt.Dimension;
 import java.awt.Rectangle;
+import java.awt.event.ActionEvent;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
@@ -19,8 +25,10 @@ import java.util.Random;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.sql.rowset.CachedRowSet;
+import javax.swing.AbstractAction;
 import javax.swing.DefaultListSelectionModel;
 import javax.swing.JFrame;
+import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.RowFilter;
 import javax.swing.event.DocumentEvent;
@@ -28,10 +36,12 @@ import javax.swing.event.DocumentListener;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.TableModelEvent;
 import javax.swing.event.TableModelListener;
+import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.TableModel;
 import javax.swing.table.TableRowSorter;
 import utility.StringCellEditor;
 import utility.SwingUtils;
+import utility.TableCellListener;
 
 /**
  *
@@ -41,13 +51,17 @@ public class BranchDialog extends javax.swing.JDialog {
 
    private BranchTableModel branchTableModel;
    private final TableRowSorter<BranchTableModel> sorter;
-   
+   private final SupplierComboboxModel supplierComboboxModel;
+   private final SupplierComboboxRenderer supplierComboboxRenderer;
    // Branch dang duoc chon trong table
     private Branch selectedBranch;
     private int selectedRowIndex;
+    private Supplier filterSupplier;
    
-   
-   
+    private static int COL_ID = 0;
+    private static int COL_BraName = 1;
+    private static int COL_Status = 2;
+    private static int COL_Supplier = 3;
    
    
     public BranchDialog() {
@@ -57,6 +71,17 @@ public class BranchDialog extends javax.swing.JDialog {
         
         
         selectedBranch = new Branch();
+        
+        //combobox
+        // Set data cho combobox level filter
+        supplierComboboxModel = new SupplierComboboxModel();
+        filterSupplier = new Supplier(0, "All", "223a", true);
+        supplierComboboxModel.addElement(filterSupplier);
+        
+        supplierComboboxRenderer = new SupplierComboboxRenderer();
+        cbSupplier.setModel(supplierComboboxModel);
+        cbSupplier.setRenderer(supplierComboboxRenderer);
+        
         
         //set data cho table
         branchTableModel = new BranchTableModel();
@@ -72,20 +97,38 @@ public class BranchDialog extends javax.swing.JDialog {
             DefaultListSelectionModel model = (DefaultListSelectionModel) e.getSource();
             if (!model.isSelectionEmpty()) {
                 fetchBranchDetails();
+                btnDelete.setEnabled(true);
                 tbBranchList.setSurrendersFocusOnKeystroke(false);
             } 
         });
         
         //bat su kien update cho table
-        tbBranchList.getModel().addTableModelListener(new TableModelListener() {
+        TableCellListener tcl = new TableCellListener(tbBranchList, new AbstractAction() {
             @Override
-            public void tableChanged(TableModelEvent e) {
-                fetchBranchDetails();
-//                new BranchDAOImpl().update(selectedBranch);
+            public void actionPerformed(ActionEvent e) {
+                TableCellListener tcl = (TableCellListener) e.getSource();
+//                System.out.println("Row   : " + tcl.getRow());
+//                System.out.println("Column: " + tcl.getColumn());
+//                System.out.println("Old   : " + tcl.getOldValue());
+//                System.out.println("New   : " + tcl.getNewValue());
+
+                switch (tcl.getColumn()) {
+                    case 1:
+                        selectedBranch.setBraName((String) tcl.getNewValue());
+                        
+                        break;
+                    case 2:
+                        selectedBranch.setBraStatus((boolean) tcl.getNewValue());
+                        break;
+                    case 3:
+                        selectedBranch.setSupName((String) tcl.getNewValue());
+                        break;
+                    }
+
                 updateAction();
-             
+                formatTable();
             }
-    });
+        });
         
         // Bat su kien cho vung filter
         tfIdFilter.getDocument().addDocumentListener(
@@ -122,8 +165,41 @@ public class BranchDialog extends javax.swing.JDialog {
                 doFilter();
             }
         });
+        
+        //set gia tri mac dinh
+        cbSupplier.setSelectedIndex(cbSupplier.getItemCount() - 1);
+        formatTable();
+        
+        //button delete
+        btnDelete.setEnabled(false);
     }
     
+    public void formatTable(){
+        tbBranchList.getTableHeader().setPreferredSize(new Dimension(300, 30));
+        
+         //alignment component
+        DefaultTableCellRenderer centerRenderer = new DefaultTableCellRenderer();
+        centerRenderer.setHorizontalAlignment(JLabel.CENTER);
+        //id
+        tbBranchList.getColumnModel().getColumn(COL_ID).setMinWidth(30);
+        tbBranchList.getColumnModel().getColumn(COL_ID).setMaxWidth(50);
+        tbBranchList.getColumnModel().getColumn(COL_ID).setCellRenderer(centerRenderer);
+        //branch
+        tbBranchList.getColumnModel().getColumn(COL_BraName).setMinWidth(100);
+        tbBranchList.getColumnModel().getColumn(COL_BraName).setMaxWidth(100);
+        tbBranchList.getColumnModel().getColumn(COL_BraName).setCellRenderer(centerRenderer);
+        tbBranchList.getColumnModel().getColumn(COL_BraName).setCellEditor(new StringCellEditor(1, 50, "[a-zA-Z ]+"));
+        //status
+        tbBranchList.getColumnModel().getColumn(COL_Status).setMinWidth(73);
+        tbBranchList.getColumnModel().getColumn(COL_Status).setMaxWidth(73);
+        
+        //supplier
+        tbBranchList.getColumnModel().getColumn(COL_Supplier).setMinWidth(200);
+        tbBranchList.getColumnModel().getColumn(COL_Supplier).setMaxWidth(200);
+        tbBranchList.getColumnModel().getColumn(COL_Supplier).setCellRenderer(centerRenderer);
+        tbBranchList.getColumnModel().getColumn(COL_Supplier).setCellEditor(new ComboBoxCellEditor(new SupplierComboboxModel()));
+    
+    }
     private void doFilter() {
         RowFilter<BranchTableModel, Object> rf = null;
 
@@ -135,11 +211,15 @@ public class BranchDialog extends javax.swing.JDialog {
 
             // Neu status khac "All" thi moi filter
             String statusFilter = cbStatusFilter.getSelectedItem().toString();
-            if (!statusFilter.equals("--Choose--")) {
+            if (!statusFilter.equals("--All--")) {
                 filters.add(RowFilter.regexFilter(
                         statusFilter.equals("Enabled") ? "t" : "f", 2));
             }
 
+            
+            if(cbSupplier.getSelectedIndex() != cbSupplier.getItemCount() - 1){
+                filters.add(RowFilter.regexFilter("^"+((Supplier) cbSupplier.getSelectedItem()).getSupName(), 3));
+            }
             rf = RowFilter.andFilter(filters);
         } catch (java.util.regex.PatternSyntaxException e) {
             return;
@@ -152,6 +232,7 @@ public class BranchDialog extends javax.swing.JDialog {
         selectedBranch.setBraID((int) tbBranchList.getValueAt(selectedRowIndex, 0));
         selectedBranch.setBraName((String) tbBranchList.getValueAt(selectedRowIndex, 1));
         selectedBranch.setBraStatus((boolean) tbBranchList.getValueAt(selectedRowIndex, 2));
+        selectedBranch.setSupName((String) tbBranchList.getValueAt(selectedRowIndex, 3));
     }
     
     private void updateAction() {
@@ -160,27 +241,31 @@ public class BranchDialog extends javax.swing.JDialog {
         } else {
             JOptionPane.showMessageDialog(this, "Update failed");
         }
-
-        
+        branchTableModel.refresh();
     }
     private void insertAction() {
         Branch branch = new Branch();
-        Random rn = new Random();
-        int result = rn.nextInt(1000 - 1 + 1) + 1;
-        branch.setBraName("Default Branch "+result);
+        
+        branch.setBraName("Default Branch "+System.currentTimeMillis());
         branch.setBraStatus(false);
-
+        
         if (branchTableModel.insert(branch)) {
             JOptionPane.showMessageDialog(this, "insert successfully");
-
+            
+            //refresh table
+            branchTableModel.refresh();
+            
+            
+            
             // Select row vua insert vao
-            moveScrollToRow(tbBranchList.getRowCount() - 1);
+            selectedRowIndex = 0;
+            moveScrollToRow(selectedRowIndex);
             tbBranchList.editCellAt(tbBranchList.getSelectedRow(), 1);
-            tbBranchList.setSurrendersFocusOnKeystroke(true);
             tbBranchList.getEditorComponent().requestFocus();
         } else {
             JOptionPane.showMessageDialog(this, "insert failed");
         }
+        formatTable();
     }
 
     /**
@@ -205,6 +290,9 @@ public class BranchDialog extends javax.swing.JDialog {
         jButton1 = new javax.swing.JButton();
         jButton2 = new javax.swing.JButton();
         jButton3 = new javax.swing.JButton();
+        jLabel4 = new javax.swing.JLabel();
+        cbSupplier = new javax.swing.JComboBox<>();
+        btnDelete = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
 
@@ -214,7 +302,7 @@ public class BranchDialog extends javax.swing.JDialog {
 
         jLabel3.setText("Status:");
 
-        cbStatusFilter.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "--Choose--", "Enabled", "Disabled" }));
+        cbStatusFilter.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "--All--", "Enabled", "Disabled" }));
         cbStatusFilter.addItemListener(new java.awt.event.ItemListener() {
             public void itemStateChanged(java.awt.event.ItemEvent evt) {
                 cbStatusFilterItemStateChanged(evt);
@@ -237,8 +325,8 @@ public class BranchDialog extends javax.swing.JDialog {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(jLabel3)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(cbStatusFilter, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addComponent(cbStatusFilter, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addContainerGap())
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -293,7 +381,7 @@ public class BranchDialog extends javax.swing.JDialog {
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel2Layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 248, Short.MAX_VALUE)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 211, Short.MAX_VALUE)
                 .addContainerGap())
         );
 
@@ -320,32 +408,67 @@ public class BranchDialog extends javax.swing.JDialog {
             }
         });
 
+        jLabel4.setText("Supplier:");
+
+        cbSupplier.addItemListener(new java.awt.event.ItemListener() {
+            public void itemStateChanged(java.awt.event.ItemEvent evt) {
+                cbSupplierItemStateChanged(evt);
+            }
+        });
+
+        btnDelete.setIcon(new javax.swing.ImageIcon(getClass().getResource("/image/product/Delete.png"))); // NOI18N
+        btnDelete.setText("Delete");
+        btnDelete.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnDeleteActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
             .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+            .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jButton2)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(jButton3)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(jButton1)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(layout.createSequentialGroup()
+                        .addComponent(jButton2)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(btnDelete)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(jButton1))
+                    .addGroup(layout.createSequentialGroup()
+                        .addComponent(jLabel4)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(cbSupplier, javax.swing.GroupLayout.PREFERRED_SIZE, 281, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(18, 18, 18)
+                        .addComponent(jButton3, javax.swing.GroupLayout.PREFERRED_SIZE, 43, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(0, 0, Short.MAX_VALUE)))
                 .addContainerGap())
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(layout.createSequentialGroup()
+                        .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(jLabel4)
+                            .addComponent(cbSupplier, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                        .addGap(47, 47, 47)
+                        .addComponent(jButton3, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addGap(18, 18, 18)
                 .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(jButton1)
-                    .addComponent(jButton2)
-                    .addComponent(jButton3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addComponent(jButton1)
+                        .addComponent(jButton2))
+                    .addComponent(btnDelete))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
@@ -357,7 +480,7 @@ public class BranchDialog extends javax.swing.JDialog {
     }//GEN-LAST:event_jButton1ActionPerformed
 
     private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
-        // TODO add your handling code here:
+        dispose();
     }//GEN-LAST:event_jButton2ActionPerformed
 
     private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton3ActionPerformed
@@ -365,6 +488,8 @@ public class BranchDialog extends javax.swing.JDialog {
         tfIdFilter.setText("");
         tfNameFilter.setText("");
         cbStatusFilter.setSelectedIndex(0);
+        cbSupplier.setSelectedIndex(cbSupplier.getItemCount() - 1);
+        branchTableModel.refresh();
     }//GEN-LAST:event_jButton3ActionPerformed
 
     private void cbStatusFilterItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_cbStatusFilterItemStateChanged
@@ -372,21 +497,42 @@ public class BranchDialog extends javax.swing.JDialog {
     }//GEN-LAST:event_cbStatusFilterItemStateChanged
 
     private void tbBranchListMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tbBranchListMouseClicked
-        int Selectedrow = tbBranchList.getSelectedRow();
-           
-          
-           if(tbBranchList.getValueAt(Selectedrow, 1).toString().equals("")){
-               return;
-           }
-           
-            int col = tbBranchList.columnAtPoint(evt.getPoint());
-            if(col==1){
-                System.err.println("nanana");
-                tbBranchList.setCellEditor(new StringCellEditor(1,50, "[A-Za-z]"));
-            }
-            
+//        int Selectedrow = tbBranchList.getSelectedRow();
+//           
+//          
+//           if(tbBranchList.getValueAt(Selectedrow, 1).toString().equals("")){
+//               return;
+//           }
+//           
+//            int col = tbBranchList.columnAtPoint(evt.getPoint());
+//            if(col==1){
+//                
+//                tbBranchList.setCellEditor(new StringCellEditor(1,50, "[A-Za-z]"));
+//            }
+//            
     }//GEN-LAST:event_tbBranchListMouseClicked
 
+    private void cbSupplierItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_cbSupplierItemStateChanged
+        doFilter();
+    }//GEN-LAST:event_cbSupplierItemStateChanged
+
+    private void btnDeleteActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnDeleteActionPerformed
+       deleteAction();
+    }//GEN-LAST:event_btnDeleteActionPerformed
+
+    public void deleteAction(){
+        int ans = SwingUtils.showConfirmDialog("Are you sure to delete?");
+        if(ans==JOptionPane.YES_OPTION){
+        if (branchTableModel.delete(selectedBranch)) {
+            JOptionPane.showMessageDialog(this, "Delete successfully");
+        } else {
+            JOptionPane.showMessageDialog(this, "Delete failed");
+        }
+        branchTableModel.refresh();
+        formatTable();
+        btnDelete.setEnabled(false);
+        }
+    }
    public void refreshAction(){
        setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
        branchTableModel = new BranchTableModel();
@@ -399,13 +545,16 @@ public class BranchDialog extends javax.swing.JDialog {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton btnDelete;
     private javax.swing.JComboBox<String> cbStatusFilter;
+    private javax.swing.JComboBox<Supplier> cbSupplier;
     private javax.swing.JButton jButton1;
     private javax.swing.JButton jButton2;
     private javax.swing.JButton jButton3;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
+    private javax.swing.JLabel jLabel4;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JScrollPane jScrollPane1;

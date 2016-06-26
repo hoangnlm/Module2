@@ -25,8 +25,8 @@ public class SupplierComboboxRenderer extends JLabel implements ListCellRenderer
     public Component getListCellRendererComponent(JList<? extends Supplier> list, Supplier value, int index, boolean isSelected, boolean cellHasFocus) {
         if(value!=null){
         if (isSelected) {
-            setBackground(list.getSelectionBackground());
-            setForeground(Color.PINK);
+            setBackground(Color.ORANGE);
+            setForeground(Color.ORANGE);
         } else {
             setBackground(list.getBackground());
             setForeground(list.getForeground());

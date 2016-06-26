@@ -31,6 +31,8 @@ import java.awt.CardLayout;
 import javax.swing.SwingUtilities;
 import main.model.UserFunction;
 import order.controller.OrderPanel;
+import outbound.controller.OutboundPanel;
+import product.controller.ProductPanel;
 import service.controller.ServicePanel;
 import user.controller.UserPanel;
 import utility.SwingUtils;
@@ -98,9 +100,9 @@ public final class MainFrame extends javax.swing.JFrame {
         lb[11] = lbExit;
 
         pn[0] = new HomePanel();
-        pn[1] = new BlankPanel();
+        pn[1] = new ProductPanel();
         pn[2] = new InboundPanel();
-        pn[3] = new BlankPanel();
+        pn[3] = new OutboundPanel();
         pn[4] = new BlankPanel();
         pn[5] = new BlankPanel();
         pn[6] = new BlankPanel();

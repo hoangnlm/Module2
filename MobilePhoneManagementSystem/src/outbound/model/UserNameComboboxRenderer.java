@@ -3,7 +3,8 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package inbound.model;
+package outbound.model;
+import inbound.model.*;
 import java.awt.Color;
 import java.awt.Component;
 import javax.swing.JLabel;
