@@ -1,5 +1,6 @@
 package service.controller;
 
+import com.toedter.calendar.JDateChooser;
 import order.controller.*;
 import java.awt.Dimension;
 import java.awt.Rectangle;
@@ -8,28 +9,29 @@ import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
-import java.text.NumberFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import javax.swing.AbstractAction;
 import javax.swing.DefaultListSelectionModel;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
-import javax.swing.SwingUtilities;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.table.DefaultTableCellRenderer;
-import main.model.Login;
+import main.controller.LoginFrame;
 import order.model.OrderBranch;
 import order.model.OrderProduct;
 import service.model.Service;
 import service.model.ServiceDetails;
 import service.model.ServiceStatus;
 import service.model.ServiceType;
+import utility.IntegerCellEditor;
 import utility.SpinnerCellEditor;
+import utility.StringCellEditor;
 import utility.SwingUtils;
 import utility.SwingUtils.FormatType;
 import utility.TableCellListener;
@@ -42,7 +44,7 @@ public class ServiceDialog extends javax.swing.JDialog implements ItemListener {
 
     private Service backup;
     private Service service;
-
+    private JDateChooser dcFilter;
     // Khai bao model
     private ServiceDetailsTableModelDialog serviceDetailsTableModelDialog;
     private ServiceStatusComboBoxModel serviceStatusComboBoxModel;
@@ -54,27 +56,38 @@ public class ServiceDialog extends javax.swing.JDialog implements ItemListener {
     // Product dang duoc chon trong table product list
     private ServiceDetails selectedDetails;
     private int selectedRowIndex = -1;
-
-    public static final int COL_SERID = 0;
+    public static final int COL_PROID = 0;
     public static final int COL_PRONAME = 1;
     public static final int COL_BRANAME = 2;
     public static final int COL_CONTENT = 3;
-
     public static final int COL_PROQTY = 4;
     public static final int COL_ODERID = 5;
-
+    public static final int COL_COST = 6;
+    public static final int COL_SERID = 7;
+    public static final int COL_BRAID = 8;
     // Two mode: insert va update
     private boolean insertMode;
 
     // Flag de theo doi co thay doi noi dung gi khong
     private boolean trackChanges;
-
+    private boolean valDate;
+    Date returnDate;
     // List de save vao database
     private List<ServiceDetails> serviceDetails;
 
     public ServiceDialog(Service service) {
         super((JFrame) null, true);
         initComponents();
+
+        dcFilter = new JDateChooser();
+        dcFilter.setBounds(0, 0, 130, 30);
+        dcFilter.setDateFormatString("MMMM dd,yyyy");
+
+        Calendar cal = Calendar.getInstance();
+        dcFilter.setMinSelectableDate(cal.getTime());
+        cal.add(Calendar.DATE, +30);
+        dcFilter.setMaxSelectableDate(cal.getTime());
+
         setLocationRelativeTo(null);
         insertMode = service == null;
 
@@ -85,7 +98,7 @@ public class ServiceDialog extends javax.swing.JDialog implements ItemListener {
         cbStatus.setRenderer(serviceStatusComboBoxRenderer);
         cbStatus.addItemListener(this);
 
-        // Set data cho combobox customer
+        // Set data cho combobox servicetype
         serviceTypeComboBoxModel = new ServiceTypeComboBoxModel();
         serviceTypeComboBoxRenderer = new ServiceTypeComboBoxRenderer();
         cbType.setModel(serviceTypeComboBoxModel);
@@ -105,6 +118,12 @@ public class ServiceDialog extends javax.swing.JDialog implements ItemListener {
         // Col Ser ID (HIDDEN)
         tbProduct.getColumnModel().getColumn(COL_SERID).setMinWidth(0);
         tbProduct.getColumnModel().getColumn(COL_SERID).setMaxWidth(0);
+        // Col pro ID (HIDDEN)
+        tbProduct.getColumnModel().getColumn(COL_PROID).setMinWidth(0);
+        tbProduct.getColumnModel().getColumn(COL_PROID).setMaxWidth(0);
+        // Col bra ID (HIDDEN)
+        tbProduct.getColumnModel().getColumn(COL_BRAID).setMinWidth(0);
+        tbProduct.getColumnModel().getColumn(COL_BRAID).setMaxWidth(0);
         // Col pro name
         tbProduct.getColumnModel().getColumn(COL_PRONAME).setMinWidth(300);
         tbProduct.getColumnModel().getColumn(COL_PRONAME).setCellEditor(new ServiceDetailsComboBoxCellEditor(serviceDetailsComboBoxModel));
@@ -113,7 +132,7 @@ public class ServiceDialog extends javax.swing.JDialog implements ItemListener {
 
         // Col content
         tbProduct.getColumnModel().getColumn(COL_CONTENT).setMinWidth(150);
-        tbProduct.getColumnModel().getColumn(COL_CONTENT).setCellRenderer(new DefaultTableCellRenderer());
+        tbProduct.getColumnModel().getColumn(COL_CONTENT).setCellEditor(new StringCellEditor(1, 200, SwingUtils.PATTERN_NAMEWITHSPACE));
 
         // Col quantity
         tbProduct.getColumnModel().getColumn(COL_PROQTY).setMinWidth(50);
@@ -121,7 +140,10 @@ public class ServiceDialog extends javax.swing.JDialog implements ItemListener {
 
         // Col oderid
         tbProduct.getColumnModel().getColumn(COL_ODERID).setMinWidth(50);
-        tbProduct.getColumnModel().getColumn(COL_ODERID).setCellEditor(new SpinnerCellEditor(1, 10000));
+        tbProduct.getColumnModel().getColumn(COL_ODERID).setCellEditor(new IntegerCellEditor(1, 100000));
+        // Col oderid
+        tbProduct.getColumnModel().getColumn(COL_COST).setMinWidth(100);
+        tbProduct.getColumnModel().getColumn(COL_COST).setCellEditor(new IntegerCellEditor(0, 200000));
 
         // Bat su kien select row tren table product
         tbProduct.getSelectionModel().addListSelectionListener((ListSelectionEvent e) -> {
@@ -147,25 +169,25 @@ public class ServiceDialog extends javax.swing.JDialog implements ItemListener {
                         String newValue = (String) tcl.getNewValue();
                         if (!newValue.equals(ServiceDetails.DEFAULT_PRONAME)) {
                             // Check duplicate product
+                            // Check duplicate product
                             if (checkDuplicate((String) tcl.getNewValue())) {
-                                SwingUtils.showErrorDialog("Duplicated item is not allowed in an order !");
+                                SwingUtils.showErrorDialog("Duplicated item is not allowed in an service !");
                                 tbProduct.setValueAt(oldValue, tbProduct.getSelectedRow(), COL_PRONAME);
-//                            } else if (checkStockZero((String) tcl.getNewValue())) {
-//                                SwingUtils.showErrorDialog("This product is out of stock.\nPlease choose another !");
-//                                tbProduct.setValueAt(oldValue, tbProduct.getSelectedRow(), COL_PRONAME);
                             } else {
                                 // Lay product moi tu combo box gan cho product
                                 // trong row cua table
-                                selectedDetails = serviceDetailsComboBoxModel.getProductFromName((String) tcl.getNewValue());
-//                                /// Gan quantity moi cho product hien tai
-                                selectedDetails.setProQty((int) tbProduct.getValueAt(tbProduct.getSelectedRow(), COL_PROQTY));
+                                selectedDetails = serviceDetailsComboBoxModel.getServiceDetailsFromName((String) tcl.getNewValue());
+//                               
                                 // Update cac thuoc tinh cua product moi vao table
                                 tbProduct.setValueAt(selectedDetails.getBraName(), tbProduct.getSelectedRow(), COL_BRANAME);
+                                tbProduct.setValueAt(selectedDetails.getProQty(), tbProduct.getSelectedRow(), COL_PROQTY);
                                 tbProduct.setValueAt(selectedDetails.getSerContent(), tbProduct.getSelectedRow(), COL_CONTENT);
+                                tbProduct.setValueAt(selectedDetails.getBraID(), tbProduct.getSelectedRow(), COL_BRAID);
                                 tbProduct.setValueAt(selectedDetails.getOrdID(), tbProduct.getSelectedRow(), COL_ODERID);
-                                tbProduct.setValueAt(selectedDetails.getSerID(), tbProduct.getSelectedRow(), COL_SERID);
+                                tbProduct.setValueAt(selectedDetails.getSerCost(), tbProduct.getSelectedRow(), COL_COST);
+                                tbProduct.setValueAt(selectedDetails.getProID(), tbProduct.getSelectedRow(), COL_PROID);
                                 // Update label
-//                                updateTotalLabel();
+                                updateTotalLabel();
                                 setTrackChanges(true);
                             }
                         } else if (!newValue.equals(oldValue)) {
@@ -173,22 +195,33 @@ public class ServiceDialog extends javax.swing.JDialog implements ItemListener {
                         }
                         break;
                     case COL_PROQTY:
-                        // Gan quantity moi cho product tren row
+                        // Gan quantity moi cho servicedetails tren row
                         selectedDetails.setProQty((int) tbProduct.getValueAt(tbProduct.getSelectedRow(), COL_PROQTY));
                         // Update label
                         updateItemsLabel();
                         setTrackChanges(true);
                         break;
+
                     case COL_ODERID:
-                        // Gan quantity moi cho product tren row
-                        selectedDetails.setOrdID((int) tbProduct.getValueAt(tbProduct.getSelectedRow(), COL_ODERID));
+                        if (cbType.getSelectedIndex() == 0) {
+                            setTrackChanges(true);
+                        } else {
+                            setTrackChanges(checkOrdID());
+                        }
+                        // Update label
+                        updateItemsLabel();
+
+                        break;
+                    case COL_CONTENT:
+                        // Gan content moi cho servicedetails tren row
+                        selectedDetails.setSerContent((String) tbProduct.getValueAt(tbProduct.getSelectedRow(), COL_CONTENT));
                         // Update label
                         updateItemsLabel();
                         setTrackChanges(true);
                         break;
-                    case COL_CONTENT:
-                        // Gan quantity moi cho product tren row
-                        selectedDetails.setSerContent((String) tbProduct.getValueAt(tbProduct.getSelectedRow(), COL_CONTENT));
+                    case COL_COST:
+                        // Gan cost moi cho servicedetails tren row
+                        selectedDetails.setSerCost((int) tbProduct.getValueAt(tbProduct.getSelectedRow(), COL_COST));
                         // Update label
                         updateItemsLabel();
                         setTrackChanges(true);
@@ -207,15 +240,19 @@ public class ServiceDialog extends javax.swing.JDialog implements ItemListener {
             this.service.setSerStatus(serviceStatusComboBoxModel.getElementAt(0).getSttName());
             this.service.setSerTypeID(serviceTypeComboBoxModel.getElementAt(serviceTypeComboBoxModel.getSize() - 1).getSerTypeID());
             this.service.setSerTypeName(serviceTypeComboBoxModel.getElementAt(serviceTypeComboBoxModel.getSize() - 1).getSerTypeName());
-            this.service.setUserID(1);
+
+            this.service.setUserName(LoginFrame.config.userName);
             this.service.setReceiveDate(new Date());
-            this.service.setReturnDate(new Date());
+
             backup = this.service.clone(); // Backup
 
-            tfID.setText("New");
+            tfID.setText(LoginFrame.config.userName);
             tfReceiveDate.setText(SwingUtils.formatString(new Date(), FormatType.DATE));
-            tfReturnDate.setText(SwingUtils.formatString(new Date(), FormatType.DATE));
-            tfUser.setText(Login.USER_NAME);
+            returnDate = new Date();
+            dcFilter.setDate(returnDate);
+            pnReturnDate.add(dcFilter);
+            this.service.setReturnDate(dcFilter.getDate());
+            tfUser.setText(LoginFrame.config.userName);
             cbStatus.setSelectedIndex(0);
             cbType.setSelectedIndex(cbType.getItemCount() - 1);
             setTrackChanges(false);
@@ -223,22 +260,19 @@ public class ServiceDialog extends javax.swing.JDialog implements ItemListener {
             setTitle("Update Service");
             this.service = service.clone();
             backup = this.service.clone(); // Backup
+
             tfID.setText(this.service.getSerID() + "");
+
             tfReceiveDate.setText(SwingUtils.formatString(this.service.getReceiveDate(), FormatType.DATE));
-            tfReturnDate.setText(SwingUtils.formatString(this.service.getReturnDate(), FormatType.DATE));
+            returnDate = this.service.getReturnDate();
+            dcFilter.setDate(returnDate);
+            pnReturnDate.add(dcFilter);
+            this.service.setReturnDate(dcFilter.getDate());
             tfUser.setText(this.service.getUserName());
             cbStatus.setSelectedItem(serviceStatusComboBoxModel.getStatusFromValue(this.service.getSerStatus()));
             cbType.setSelectedItem(serviceTypeComboBoxModel.getServiceTypeNameFromValue(this.service.getSerTypeName()));
             setTrackChanges(false);
 
-//            // Xac nhan update discount khi discount cua customer bi thay doi sau order
-//            if (backup.getSerTypeID() != serviceTypeComboBoxModel.getServiceTypeNameFromValue(this.service.getSerID()).getSerTypeID()) {
-//                if (SwingUtils.showConfirmDialog("Discount of this order has changed !\nWould you like to update ?") == JOptionPane.NO_OPTION) {
-//                    this.service.setSerTypeID(backup.getSerTypeID());
-//                } else {
-//                    setTrackChanges(true);
-//                }
-//            }
         }
 
         // Set data cho table chinh
@@ -246,8 +280,17 @@ public class ServiceDialog extends javax.swing.JDialog implements ItemListener {
 
         // Set data cho cac label
         updateItemsLabel();
-        updateDiscountLabel();
+//event cho jdatechooser
 
+        dcFilter.getDateEditor().addPropertyChangeListener(new PropertyChangeListener() {
+
+            @Override
+            public void propertyChange(PropertyChangeEvent evt) {
+                setTrackChanges(true);
+//                valDate = setReturnDate(dcFilter.getDate());
+
+            }
+        });
 //<editor-fold defaultstate="collapsed" desc="xu ly cho vung filter">
 // Set data cho list filter
         list.setModel(new OrderBranchListModel());
@@ -293,6 +336,25 @@ public class ServiceDialog extends javax.swing.JDialog implements ItemListener {
 //</editor-fold>
     }
 
+    private boolean setReturnDate(Date d) {
+        boolean result = false;
+        Date Receive = this.service.getReceiveDate();
+        Date now = new Date();
+//    Date oldReturn = this.service.getReturnDate();
+        Date datePick = d;
+        Date newReturn = datePick;
+        if (!(newReturn.compareTo(Receive) > 0)) {
+            result = true;
+        } else {
+//            if ((newReturn.compareTo(now)<=0)) {
+//            result = true;
+//        } else {
+            result = false;
+        }
+
+        return result;
+    }
+
 //<editor-fold defaultstate="collapsed" desc="Bat su kien">
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
@@ -307,11 +369,10 @@ public class ServiceDialog extends javax.swing.JDialog implements ItemListener {
         tfUser = new javax.swing.JTextField();
         tfID = new javax.swing.JTextField();
         jLabel8 = new javax.swing.JLabel();
-        tfReturnDate = new javax.swing.JTextField();
         jLabel9 = new javax.swing.JLabel();
         cbType = new javax.swing.JComboBox<>();
         jLabel11 = new javax.swing.JLabel();
-        jButton1 = new javax.swing.JButton();
+        pnReturnDate = new javax.swing.JPanel();
         jPanel2 = new javax.swing.JPanel();
         btAdd = new javax.swing.JButton();
         btRemove = new javax.swing.JButton();
@@ -330,8 +391,6 @@ public class ServiceDialog extends javax.swing.JDialog implements ItemListener {
         lbItems = new javax.swing.JLabel();
         lbTotal = new javax.swing.JLabel();
         jLabel10 = new javax.swing.JLabel();
-        lbDiscount = new javax.swing.JLabel();
-        jLabel12 = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setTitle("Add Order");
@@ -348,6 +407,12 @@ public class ServiceDialog extends javax.swing.JDialog implements ItemListener {
 
         jLabel6.setText("Status:");
 
+        cbStatus.addItemListener(new java.awt.event.ItemListener() {
+            public void itemStateChanged(java.awt.event.ItemEvent evt) {
+                cbStatusItemStateChanged(evt);
+            }
+        });
+
         jLabel7.setText("Technician:");
 
         tfUser.setEditable(false);
@@ -360,15 +425,28 @@ public class ServiceDialog extends javax.swing.JDialog implements ItemListener {
 
         jLabel8.setText("ID:");
 
-        tfReturnDate.setEditable(false);
-        tfReturnDate.setEnabled(false);
-        tfReturnDate.setFocusable(false);
-
         jLabel9.setText("ReturnDate:");
+
+        cbType.addItemListener(new java.awt.event.ItemListener() {
+            public void itemStateChanged(java.awt.event.ItemEvent evt) {
+                cbTypeItemStateChanged(evt);
+            }
+        });
 
         jLabel11.setText("Type:");
 
-        jButton1.setText("Check Warranty");
+        pnReturnDate.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
+
+        javax.swing.GroupLayout pnReturnDateLayout = new javax.swing.GroupLayout(pnReturnDate);
+        pnReturnDate.setLayout(pnReturnDateLayout);
+        pnReturnDateLayout.setHorizontalGroup(
+            pnReturnDateLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 0, Short.MAX_VALUE)
+        );
+        pnReturnDateLayout.setVerticalGroup(
+            pnReturnDateLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 0, Short.MAX_VALUE)
+        );
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
@@ -378,20 +456,20 @@ public class ServiceDialog extends javax.swing.JDialog implements ItemListener {
                 .addContainerGap()
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jLabel7, javax.swing.GroupLayout.PREFERRED_SIZE, 65, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel8, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addComponent(jLabel8, javax.swing.GroupLayout.DEFAULT_SIZE, 129, Short.MAX_VALUE))
                 .addGap(28, 28, 28)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                     .addComponent(tfUser, javax.swing.GroupLayout.DEFAULT_SIZE, 130, Short.MAX_VALUE)
                     .addComponent(tfID))
-                .addGap(75, 75, 75)
+                .addGap(85, 85, 85)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                     .addComponent(jLabel9, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(jLabel3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(tfReturnDate, javax.swing.GroupLayout.DEFAULT_SIZE, 130, Short.MAX_VALUE)
-                    .addComponent(tfReceiveDate))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 65, Short.MAX_VALUE)
+                    .addComponent(tfReceiveDate, javax.swing.GroupLayout.DEFAULT_SIZE, 130, Short.MAX_VALUE)
+                    .addComponent(pnReturnDate, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 69, Short.MAX_VALUE)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                     .addComponent(jLabel6, javax.swing.GroupLayout.DEFAULT_SIZE, 44, Short.MAX_VALUE)
                     .addComponent(jLabel11, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
@@ -399,14 +477,12 @@ public class ServiceDialog extends javax.swing.JDialog implements ItemListener {
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                     .addComponent(cbStatus, 0, 176, Short.MAX_VALUE)
                     .addComponent(cbType, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jButton1)
-                .addContainerGap())
+                .addGap(49, 49, 49))
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addContainerGap()
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel6)
                     .addComponent(cbStatus, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -416,17 +492,13 @@ public class ServiceDialog extends javax.swing.JDialog implements ItemListener {
                     .addComponent(jLabel3))
                 .addGap(15, 15, 15)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(tfReturnDate, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel9)
                     .addComponent(jLabel7)
                     .addComponent(tfUser, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel11)
-                    .addComponent(cbType, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(cbType, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(pnReturnDate, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addContainerGap())
-            .addGroup(jPanel1Layout.createSequentialGroup()
-                .addGap(26, 26, 26)
-                .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 42, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
         jPanel2.setBorder(javax.swing.BorderFactory.createTitledBorder(javax.swing.BorderFactory.createEtchedBorder(), "Product Details"));
@@ -579,10 +651,6 @@ public class ServiceDialog extends javax.swing.JDialog implements ItemListener {
 
         jLabel10.setText("Total money:");
 
-        lbDiscount.setText("2%");
-
-        jLabel12.setText("Discount:");
-
         javax.swing.GroupLayout jPanel4Layout = new javax.swing.GroupLayout(jPanel4);
         jPanel4.setLayout(jPanel4Layout);
         jPanel4Layout.setHorizontalGroup(
@@ -592,10 +660,6 @@ public class ServiceDialog extends javax.swing.JDialog implements ItemListener {
                 .addComponent(jLabel5, javax.swing.GroupLayout.PREFERRED_SIZE, 80, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(lbItems, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(jLabel12, javax.swing.GroupLayout.PREFERRED_SIZE, 80, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(lbDiscount, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addComponent(jLabel10)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -610,9 +674,6 @@ public class ServiceDialog extends javax.swing.JDialog implements ItemListener {
                     .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                         .addComponent(jLabel5)
                         .addComponent(lbItems))
-                    .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                        .addComponent(jLabel12)
-                        .addComponent(lbDiscount))
                     .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                         .addComponent(jLabel10)
                         .addComponent(lbTotal)))
@@ -645,7 +706,7 @@ public class ServiceDialog extends javax.swing.JDialog implements ItemListener {
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(btSave, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(btCancel, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(23, Short.MAX_VALUE))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
         pack();
@@ -668,13 +729,70 @@ public class ServiceDialog extends javax.swing.JDialog implements ItemListener {
     }//GEN-LAST:event_btResetActionPerformed
 
     private void btSaveActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btSaveActionPerformed
+        int ordID = 0;
+        if (selectedRowIndex == -1) {
+//            System.out.println("sssssss");
+            SwingUtils.showErrorDialog("Choose service details to update !");
+            return;
+        } else {
+            ordID = (int) tbProduct.getValueAt(tbProduct.getSelectedRow(), COL_ODERID);
+        }
+        if ((cbType.getSelectedIndex() == 1) && (ordID == 0)) {
+            SwingUtils.showErrorDialog("Please input OrderID to check warranty of product !");
+            setTrackChanges(false);
+            return;
+        }
         updateAction();
+
     }//GEN-LAST:event_btSaveActionPerformed
 
     private void btClearActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btClearActionPerformed
         clearFilter();
     }//GEN-LAST:event_btClearActionPerformed
 
+    private void cbTypeItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_cbTypeItemStateChanged
+        if (insertMode == true) {
+            if (cbType.getSelectedIndex() == 1) {
+                returnDate = new Date();
+                Calendar cal = Calendar.getInstance();
+                cal.setTime(returnDate);
+                cal.add(Calendar.DATE, +30);
+                returnDate = cal.getTime();
+                dcFilter.setDate(returnDate);
+                pnReturnDate.add(dcFilter);
+                this.service.setReturnDate(returnDate);
+            } else {
+                returnDate = new Date();
+                this.service.setReturnDate(returnDate);
+                dcFilter.setDate(returnDate);
+                pnReturnDate.add(dcFilter);
+            }
+        } else {
+
+        }
+
+    }//GEN-LAST:event_cbTypeItemStateChanged
+
+    private void cbStatusItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_cbStatusItemStateChanged
+        if (insertMode == false) {
+            if (cbStatus.getSelectedIndex() == 2) {
+
+                returnDate = new Date();
+                dcFilter.setDate(returnDate);
+                pnReturnDate.add(dcFilter);
+                this.service.setReturnDate(returnDate);
+            } else {
+                returnDate = backup.getReturnDate();
+                this.service.setReturnDate(returnDate);
+                dcFilter.setDate(returnDate);
+                pnReturnDate.add(dcFilter);
+            }
+        } else {
+
+        }
+    }//GEN-LAST:event_cbStatusItemStateChanged
+    //</editor-fold>
+    //<editor-fold>
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btAdd;
     private javax.swing.JButton btCancel;
@@ -684,11 +802,9 @@ public class ServiceDialog extends javax.swing.JDialog implements ItemListener {
     private javax.swing.JButton btSave;
     private javax.swing.JComboBox<service.model.ServiceStatus> cbStatus;
     private javax.swing.JComboBox<service.model.ServiceType> cbType;
-    private javax.swing.JButton jButton1;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel10;
     private javax.swing.JLabel jLabel11;
-    private javax.swing.JLabel jLabel12;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel5;
     private javax.swing.JLabel jLabel6;
@@ -700,18 +816,45 @@ public class ServiceDialog extends javax.swing.JDialog implements ItemListener {
     private javax.swing.JPanel jPanel4;
     private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JScrollPane jScrollPane3;
-    private javax.swing.JLabel lbDiscount;
     private javax.swing.JLabel lbItems;
     private javax.swing.JLabel lbTotal;
     private javax.swing.JList<OrderBranch> list;
+    private javax.swing.JPanel pnReturnDate;
     private javax.swing.JTable tbProduct;
     private javax.swing.JTextField tfID;
     private javax.swing.JTextField tfNameFilter;
     private javax.swing.JTextField tfReceiveDate;
-    private javax.swing.JTextField tfReturnDate;
     private javax.swing.JTextField tfUser;
     // End of variables declaration//GEN-END:variables
 //</editor-fold>
+
+    private boolean checkOrdID() {
+        boolean track = true;
+        // Gan oderid moi cho servicedetails tren row
+        int ordID = (int) tbProduct.getValueAt(tbProduct.getSelectedRow(), COL_ODERID);
+//                        int proID = (int) tbProduct.getValueAt(tbProduct.getSelectedRow(), COL_PROID);
+        int kq = serviceDetailsTableModelDialog.checkOrdID(ordID);
+        switch (kq) {
+            case 0:
+                SwingUtils.showErrorDialog("OrderID does not exist !");
+                tbProduct.setValueAt(0, tbProduct.getSelectedRow(), COL_ODERID);
+                track = false;
+                break;
+            //Check warranty
+            case 1:
+                SwingUtils.showErrorDialog("Warranty period has expired !");
+                tbProduct.setValueAt(0, tbProduct.getSelectedRow(), COL_ODERID);
+                track = false;
+                break;
+            case 2:
+                SwingUtils.showInfoDialog("In warranty  !");
+//                tbProduct.setValueAt(selectedDetails.getOrdID(), tbProduct.getSelectedRow(), COL_ODERID);
+
+                track = true;
+                break;
+        }
+        return track;
+    }
 
     private void insertAction() {
         // Toi da 20 items
@@ -720,11 +863,10 @@ public class ServiceDialog extends javax.swing.JDialog implements ItemListener {
             btAdd.setEnabled(false);
         }
         ServiceDetails details = new ServiceDetails();
-//        details.setOrdID(-1);
-//        details.setBraName("Choose product!");
-//        details.setSerContent("New service");        
-//        details.setProQty(1);
+        details.setSerID(this.service.getSerID());
+        details.setProQty(1);
         details.setProName(ServiceDetails.DEFAULT_PRONAME);
+
 //        details.setSerID(selectedDetails.getSerID());
         serviceDetailsTableModelDialog.insert(details);
         scrollToRow(tbProduct.getRowCount() - 1);
@@ -737,7 +879,7 @@ public class ServiceDialog extends javax.swing.JDialog implements ItemListener {
 
         // Toi thieu 01 item
         if (serviceDetailsTableModelDialog.getRowCount() == 2) {
-            SwingUtils.showInfoDialog("At least 01 item in 01 order !");
+            SwingUtils.showInfoDialog("At least 01 item in 01 Service !");
             btRemove.setEnabled(false);
         }
 
@@ -757,7 +899,12 @@ public class ServiceDialog extends javax.swing.JDialog implements ItemListener {
             SwingUtils.showInfoDialog("Please choose product name !");
             return;
         }
-
+//        if (valDate == false) {
+//            SwingUtils.showErrorDialog("Return date must be today or after !");
+//            return;
+//        } else {
+//            this.service.setReturnDate(dcFilter.getDate());
+//        }
         if (service.getSerID() == -1) { // Insert mode
             if (serviceDetailsTableModelDialog.insert(service)) {
                 SwingUtils.showInfoDialog(SwingUtils.INSERT_SUCCESS);
@@ -805,7 +952,6 @@ public class ServiceDialog extends javax.swing.JDialog implements ItemListener {
         serviceDetailsTableModelDialog.load(service.getSerID());
         // Load lai may cai label
         updateItemsLabel();
-        updateDiscountLabel();
 
         if (mustInfo) {
             SwingUtils.showInfoDialog(SwingUtils.DB_RESET);
@@ -814,6 +960,7 @@ public class ServiceDialog extends javax.swing.JDialog implements ItemListener {
     }
 
     private void updateItemsLabel() {
+//        int sum = tbProduct.getRowCount();
         int sum = 0;
         if (serviceDetailsTableModelDialog.getRowCount() > 0) {
             for (int i = 0; i < serviceDetailsTableModelDialog.getRowCount(); i++) {
@@ -821,27 +968,18 @@ public class ServiceDialog extends javax.swing.JDialog implements ItemListener {
             }
         }
         lbItems.setText(sum > 0 ? String.format("%02d", sum) : "0");
-//        updateTotalLabel();
+        updateTotalLabel();
     }
 
-    private void updateDiscountLabel() {
-        NumberFormat format = NumberFormat.getPercentInstance();
-//        lbDiscount.setText(format.format(order.getCusDiscount()));
-//        updateTotalLabel();
+    private void updateTotalLabel() {
+        int sum = 0;
+        if (serviceDetailsTableModelDialog.getRowCount() > 0) {
+            for (int i = 0; i < serviceDetailsTableModelDialog.getRowCount(); i++) {
+                sum += (int) serviceDetailsTableModelDialog.getValueAt(i, COL_COST) * (int) serviceDetailsTableModelDialog.getValueAt(i, COL_PROQTY);
+            }
+        }
+        lbTotal.setText(String.format("%,.0f Đ", (float) sum));
     }
-//
-//    private void updateTotalLabel() {
-//        float sum = 0;
-//        if (serviceDetailsTableModelDialog.getRowCount() > 0) {
-//            for (int i = 0; i < serviceDetailsTableModelDialog.getRowCount(); i++) {
-//                sum += (float) serviceDetailsTableModelDialog.getValueAt(i, COL_ODERID) * (int) serviceDetailsTableModelDialog.getValueAt(i, COL_PROQTY);
-//            }
-//            String dis = lbDiscount.getText().split("%")[0];
-//            float discount = Float.parseFloat(dis) / 100;
-//            sum = sum * (1 - discount);
-//        }
-//        lbTotal.setText(String.format("%,.0f Đ", (float) sum));
-//    }
 
     /**
      * Kiem tra da chon product name day du het chua
@@ -854,7 +992,6 @@ public class ServiceDialog extends javax.swing.JDialog implements ItemListener {
         System.out.println(tmp.size());
         return tmp.size() > 0; //Da chon product day du
     }
-
 
     /**
      * Kiem tra duplicate product trong order
@@ -890,7 +1027,6 @@ public class ServiceDialog extends javax.swing.JDialog implements ItemListener {
                 ServiceType oc = (ServiceType) e.getItem();
                 service.setSerTypeID(oc.getSerTypeID());
                 service.setSerTypeName(oc.getSerTypeName());
-                updateDiscountLabel();
                 setTrackChanges(true);
             }
         }

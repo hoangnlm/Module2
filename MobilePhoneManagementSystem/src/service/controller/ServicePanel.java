@@ -22,6 +22,7 @@ import java.util.List;
 import javax.swing.AbstractAction;
 import javax.swing.DefaultListSelectionModel;
 import javax.swing.JButton;
+import javax.swing.JOptionPane;
 import javax.swing.RowFilter;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
@@ -31,6 +32,7 @@ import service.model.Service;
 import service.model.ServiceStatus;
 import service.model.ServiceType;
 import utility.DateCellEditor;
+import utility.SpinnerCellEditor;
 import utility.SwingUtils;
 import utility.TableCellListener;
 
@@ -64,6 +66,17 @@ public class ServicePanel extends javax.swing.JPanel {
     private static final int COL_SERTYPENAME = 4;
     private static final int COL_STATUS = 5;
 
+    private static final int COL_PROID = 0;
+    private static final int COL_PRONAME = 1;
+    private static final int COL_BRANAME = 2;
+    private static final int COL_CONTENT = 3;
+    private static final int COL_PROQTY = 4;
+    private static final int COL_ODERID = 5;
+    private static final int COL_COST = 6;
+    //hidden
+    private static final int COL_SERVICEID = 7;    
+    private static final int COL_BRAID = 8;
+    
 //<editor-fold defaultstate="collapsed" desc="constructor">
     public ServicePanel() {
         initComponents();
@@ -122,7 +135,6 @@ public class ServicePanel extends javax.swing.JPanel {
         // Set height cho table header
         tbServiceList.getTableHeader().setPreferredSize(new Dimension(300, 30));
         tbDetailsList.getTableHeader().setPreferredSize(new Dimension(300, 30));
-
         // Col order ID
         tbServiceList.getColumnModel().getColumn(COL_SERID).setMinWidth(30);
         tbServiceList.getColumnModel().getColumn(COL_SERID).setMaxWidth(50);
@@ -144,15 +156,50 @@ public class ServicePanel extends javax.swing.JPanel {
 //        tbServiceList.getColumnModel().getColumn(COL_SERTYPENAME).setMaxWidth(90);
         // Col status
         tbServiceList.getColumnModel().getColumn(COL_STATUS).setMinWidth(90);
+        
+////    table detailslist
+        
+        tbDetailsList.getColumnModel().getColumn(COL_PROID).setMinWidth(30);
+        tbDetailsList.getColumnModel().getColumn(COL_PROID).setMaxWidth(50);
+                
+        // Col pro name
+        tbDetailsList.getColumnModel().getColumn(COL_PRONAME).setMinWidth(300);
+        
+        // Col braname
+        tbDetailsList.getColumnModel().getColumn(COL_BRANAME).setMinWidth(100);
 
+        // Col content
+        tbDetailsList.getColumnModel().getColumn(COL_CONTENT).setMinWidth(150);
+//        tbProduct.getColumnModel().getColumn(COL_CONTENT).setCellRenderer(new DefaultTableCellRenderer());
+
+        // Col quantity
+        tbDetailsList.getColumnModel().getColumn(COL_PROQTY).setMinWidth(50);
+//        tbDetailsList.getColumnModel().getColumn(COL_PROQTY).setCellEditor(new SpinnerCellEditor(1, 10));
+
+        // Col oderid
+        tbDetailsList.getColumnModel().getColumn(COL_ODERID).setMinWidth(50);
+//        tbDetailsList.getColumnModel().getColumn(COL_ODERID).setCellEditor(new SpinnerCellEditor(1, 10000));
+        tbDetailsList.getColumnModel().getColumn(COL_COST).setMinWidth(100);
+        // Col SER ID (HIDDEN)
+        tbDetailsList.getColumnModel().getColumn(COL_SERVICEID).setMinWidth(0);
+        tbDetailsList.getColumnModel().getColumn(COL_SERVICEID).setMaxWidth(0);
+        // Col bra ID (HIDDEN)
+        tbDetailsList.getColumnModel().getColumn(COL_BRAID).setMinWidth(0);
+        tbDetailsList.getColumnModel().getColumn(COL_BRAID).setMaxWidth(0);
         // Bat su kien select row tren table service list
         tbServiceList.getSelectionModel().addListSelectionListener((ListSelectionEvent e) -> {
             DefaultListSelectionModel model = (DefaultListSelectionModel) e.getSource();
+            
             if (!model.isSelectionEmpty()) {
                 fetchAction();
                 setButtonEnabled(true);
             } else {
                 setButtonEnabled(false);
+            }
+            if(!this.selectedService.getSerStatus().equals("Done")){
+                setButtonRemoveEnabled(true);
+            } else {
+                setButtonRemoveEnabled(false);
             }
         });
 
@@ -161,24 +208,11 @@ public class ServicePanel extends javax.swing.JPanel {
             @Override
             public void actionPerformed(ActionEvent e) {
                 TableCellListener tcl = (TableCellListener) e.getSource();
-//                System.out.println("Row   : " + tcl.getRow());
-//                System.out.println("Column: " + tcl.getColumn());
-//                System.out.println("Old   : " + tcl.getOldValue());
-//                System.out.println("New   : " + tcl.getNewValue());
 
                 switch (tcl.getColumn()) {
 
-                    case COL_USERNAME:
-                        selectedService.setUserName((String) tcl.getNewValue());
-                        break;
-                    case COL_RECEIVEDATE:
-                        selectedService.setReceiveDate((Date) tcl.getNewValue());
-                        break;
-                    case COL_RETURNDATE:
-                        selectedService.setReturnDate((Date) tcl.getNewValue());
-                        break;
                 }
-//                System.out.println("Listener: "+selectedEmployee.toString());
+//                
 //                updateAction();
             }
         });
@@ -354,7 +388,7 @@ public class ServicePanel extends javax.swing.JPanel {
                 .addGroup(pnFilterLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                     .addComponent(tfIdFilter, javax.swing.GroupLayout.DEFAULT_SIZE, 143, Short.MAX_VALUE)
                     .addComponent(tfUserFilter))
-                .addGap(34, 34, 34)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 44, Short.MAX_VALUE)
                 .addGroup(pnFilterLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                     .addComponent(lbOrderDate, javax.swing.GroupLayout.DEFAULT_SIZE, 77, Short.MAX_VALUE)
                     .addComponent(lbOrderDate1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
@@ -362,7 +396,7 @@ public class ServicePanel extends javax.swing.JPanel {
                 .addGroup(pnFilterLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(pnReceiveDate, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(pnReturnDate, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 55, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 45, Short.MAX_VALUE)
                 .addGroup(pnFilterLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jLabel7, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 48, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel6, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 48, javax.swing.GroupLayout.PREFERRED_SIZE))
@@ -516,11 +550,11 @@ public class ServicePanel extends javax.swing.JPanel {
                 .addComponent(pnTitle, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(pnFilter, javax.swing.GroupLayout.PREFERRED_SIZE, 76, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 210, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 198, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 222, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 201, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(btRemove, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(btUpdate, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -667,8 +701,8 @@ public class ServicePanel extends javax.swing.JPanel {
         tfUserFilter.setText(null);
         dcFilter.setDate(null);
         dcFilter1.setDate(null);
-        cbStatusFilter.setSelectedIndex(cbStatusFilter.getItemCount() - 1);
-        cbTypeFilter.setSelectedIndex(cbStatusFilter.getItemCount() - 1);
+        cbStatusFilter.setSelectedIndex(cbStatusFilter.getItemCount()- 1);
+        cbTypeFilter.setSelectedIndex(cbTypeFilter.getItemCount() - 1);
     }
 
     //<editor-fold defaultstate="collapsed" desc="xu ly cho table service">
@@ -680,7 +714,9 @@ public class ServicePanel extends javax.swing.JPanel {
     }
 
     private void deleteAction() {
-        System.out.println(selectedService.getSerID());
+        if (SwingUtils.showConfirmDialog("Are you sure to delete this service ?") == JOptionPane.NO_OPTION) {
+            return;
+        }
         setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
         boolean result = serviceTableModel.delete(selectedService);
         setCursor(null);
@@ -690,6 +726,7 @@ public class ServicePanel extends javax.swing.JPanel {
         // Neu row xoa la row khac cuoi thi tien cursor ve truoc
         selectedRowIndex = (selectedRowIndex == tbServiceList.getRowCount() ? tbServiceList.getRowCount() - 1 : selectedRowIndex++);
         scrollToRow(selectedRowIndex);
+        refreshAction(false);
     }
 //</editor-fold>
 
@@ -712,6 +749,14 @@ public class ServicePanel extends javax.swing.JPanel {
 
     private void setButtonEnabled(boolean enabled, JButton... exclude) {
         btUpdate.setEnabled(enabled);
+        btRemove.setEnabled(enabled);
+
+        // Ngoai tru may button nay luon luon enable
+        if (exclude.length != 0) {
+            Arrays.stream(exclude).forEach(b -> b.setEnabled(true));
+        }
+    }
+    private void setButtonRemoveEnabled(boolean enabled, JButton... exclude) {        
         btRemove.setEnabled(enabled);
 
         // Ngoai tru may button nay luon luon enable

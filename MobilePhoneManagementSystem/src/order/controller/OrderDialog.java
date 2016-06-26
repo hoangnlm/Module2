@@ -477,14 +477,12 @@ public class OrderDialog extends javax.swing.JDialog implements ItemListener {
 
         jScrollPane3.setMinimumSize(new java.awt.Dimension(200, 30));
         jScrollPane3.setPreferredSize(new java.awt.Dimension(604, 82));
-        jScrollPane3.setViewportView(list);
 
         list.setBackground(new java.awt.Color(51, 51, 51));
         list.setLayoutOrientation(javax.swing.JList.HORIZONTAL_WRAP);
         list.setMaximumSize(new java.awt.Dimension(99999, 9999));
         list.setMinimumSize(new java.awt.Dimension(600, 30));
         list.setPreferredSize(new java.awt.Dimension(600, 600));
-        list.setSize(new java.awt.Dimension(600, 600));
         list.setVisibleRowCount(-1);
         jScrollPane3.setViewportView(list);
 
