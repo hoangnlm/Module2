@@ -8,6 +8,7 @@ package service.model;
 import order.model.*;
 import database.IDAO;
 import java.sql.SQLException;
+import java.sql.Types;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
@@ -25,7 +26,7 @@ public class ServiceDetailsDAOImplComboBox implements IDAO<ServiceDetails> {
 
     public ServiceDetailsDAOImplComboBox() {
         // Chi thao tac voi product dang enable
-        crs = getCRS("select p.ProName,b.BraName,p.ProStock,p.ProID,p.BraID from Products p join Branches b on p.BraID=b.BraID");
+        crs = getCRS("select p.ProID,p.ProName,b.BraName,b.BraID from Products p join Branches b on b.BraID=p.BraID WHERE p.ProEnabled=1 ORDER BY b.BraName");
     }
 
     @Override
@@ -34,13 +35,19 @@ public class ServiceDetailsDAOImplComboBox implements IDAO<ServiceDetails> {
         try {
             if (crs != null && crs.first()) {
                 do {
-                    list.add(new ServiceDetails(                            
+                   
+                    list.add(new ServiceDetails(
+                            1,
                             crs.getString(ServiceDetails.COL_PRONAME),
                             crs.getString(ServiceDetails.COL_BRANCH),
-                            crs.getInt(ServiceDetails.COL_PROSTOCK),//!=0?crs.getInt(ServiceDetails.COL_ORDERID):0,
+                            "NewDetails",                            
+                            1,
+                            0,
+                            0,
                             crs.getInt(ServiceDetails.COL_PROID),
                             crs.getInt(ServiceDetails.COL_BRAID)
                     ));
+//                    System.out.println(list.get(0).toString());
                 } while (crs.next());
             }
         } catch (SQLException ex) {
@@ -76,4 +83,5 @@ public class ServiceDetailsDAOImplComboBox implements IDAO<ServiceDetails> {
         selectingIndex = idx;
     }
 
+   
 }

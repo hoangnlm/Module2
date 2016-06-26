@@ -27,8 +27,6 @@ public class ServiceDetailsComboBoxRenderer extends JPanel implements ListCellRe
         initComponents();
     }
 
-    
-
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -86,45 +84,30 @@ public class ServiceDetailsComboBoxRenderer extends JPanel implements ListCellRe
     @Override
     public Component getListCellRendererComponent(JList<? extends ServiceDetails> list, ServiceDetails value, int index, boolean isSelected, boolean cellHasFocus) {
         if (value != null) {
-            int stock = value.getProStock();
+
             if (isSelected) {
                 setBackground(Color.ORANGE);
-                if (stock == 0) {
-                    lbBranch.setForeground(Color.RED);
-                    lbName.setForeground(Color.RED);
-                    lbStock.setForeground(Color.RED);
-                } else {
-                    lbBranch.setForeground(Color.BLACK);
-                    lbName.setForeground(Color.BLACK);
-                    lbStock.setForeground(Color.BLACK);
-                }
+                lbBranch.setForeground(Color.BLACK);
+                lbName.setForeground(Color.BLACK);
+                lbStock.setForeground(Color.BLACK);
+
             } else {
                 setBackground(new java.awt.Color(51, 51, 51));
-                if (stock == 0) {
-                    lbBranch.setForeground(Color.RED);
-                    lbName.setForeground(Color.RED);
-                    lbStock.setForeground(Color.RED);
-                } else {
-                    lbBranch.setForeground(list.getForeground());
-                    lbName.setForeground(list.getForeground());
-                    lbStock.setForeground(list.getForeground());
-                }
+
+                lbBranch.setForeground(list.getForeground());
+                lbName.setForeground(list.getForeground());
+                lbStock.setForeground(list.getForeground());
+
             }
 
             lbBranch.setText(value.getBraName());
             lbName.setText(value.getProName());
-            lbStock.setText("Stock: " + value.getProStock());
 
             if (index == -1) {
-                if (stock == 0) {
-                    lbBranch.setForeground(Color.RED);
-                    lbName.setForeground(Color.RED);
-                    lbStock.setForeground(Color.RED);
-                } else {
-                    lbBranch.setForeground(Color.ORANGE);
-                    lbName.setForeground(Color.ORANGE);
-                    lbStock.setForeground(Color.ORANGE);
-                }
+
+                lbBranch.setForeground(Color.ORANGE);
+                lbName.setForeground(Color.ORANGE);
+                lbStock.setForeground(Color.ORANGE);
             }
         }
         return this;
