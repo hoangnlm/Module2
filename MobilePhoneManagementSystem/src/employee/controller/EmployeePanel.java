@@ -8,6 +8,7 @@ package employee.controller;
 //import utility.ComboBoxCellEditor;
 import com.toedter.calendar.JDateChooser;
 import employee.model.Employee;
+import inbound.controller.FloatEditor;
 import java.awt.Cursor;
 import java.awt.Dimension;
 import java.awt.Rectangle;
@@ -22,13 +23,17 @@ import java.util.List;
 import javax.swing.AbstractAction;
 import javax.swing.DefaultListSelectionModel;
 import javax.swing.JButton;
+import javax.swing.JOptionPane;
 import javax.swing.RowFilter;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.table.TableRowSorter;
+import main.controller.LoginFrame;
+import main.model.UserFunction;
 
 import utility.DateCellEditor;
+import utility.IntegerCellEditor;
 import utility.StringCellEditor;
 import utility.TableCellListener;
 import utility.SwingUtils;
@@ -41,16 +46,16 @@ public class EmployeePanel extends javax.swing.JPanel {
 
     private JDateChooser dcFilter;
     private JDateChooser dcFilter1;
-    private EmployeeTableModel employeeTableModel;    
+    private EmployeeTableModel employeeTableModel;
     private TableRowSorter<EmployeeTableModel> sorter;
 
     // Employee dang duoc chon trong table
     private Employee selectedEmployee;
     private int selectedRowIndex;
-   
+
     // Define some column constants
-    private static final int COL_EMPID = 0;    
-    private static final int COL_EMPNAME = 1;   
+    private static final int COL_EMPID = 0;
+    private static final int COL_EMPNAME = 1;
     private static final int COL_EMPPHONE = 2;
     private static final int COL_EMPBIRTH = 3;
     private static final int COL_SALARY = 4;
@@ -61,7 +66,7 @@ public class EmployeePanel extends javax.swing.JPanel {
 
     //<editor-fold defaultstate="collapsed" desc="Constructor">
     /**
-     * Creates new form OrderPanel
+     * Creates new form EmployeePanel
      */
     public EmployeePanel() {
         initComponents();
@@ -90,7 +95,7 @@ public class EmployeePanel extends javax.swing.JPanel {
         sorter = new TableRowSorter<>(employeeTableModel);
         tbEmpployeeList.setRowSorter(sorter);
 
-         //Set auto define column from model to false to stop create column again
+        //Set auto define column from model to false to stop create column again
         tbEmpployeeList.setAutoCreateColumnsFromModel(false);
 
         // Set height cho table header
@@ -98,22 +103,26 @@ public class EmployeePanel extends javax.swing.JPanel {
         //Set CellEditor cho table
         //col empid
         tbEmpployeeList.getColumnModel().getColumn(COL_EMPID).setMaxWidth(30);
-        tbEmpployeeList.getColumnModel().getColumn(COL_BONUS).setMaxWidth(50);
-        tbEmpployeeList.getColumnModel().getColumn(COL_STATUS).setMaxWidth(70);
-        tbEmpployeeList.getColumnModel().getColumn(COL_BONUS).setMinWidth(50);
+        tbEmpployeeList.getColumnModel().getColumn(COL_BONUS).setCellEditor(new IntegerCellEditor(4000000, 20000000));
+        tbEmpployeeList.getColumnModel().getColumn(COL_BONUS).setMinWidth(80);
+        tbEmpployeeList.getColumnModel().getColumn(COL_BONUS).setMaxWidth(80);
         tbEmpployeeList.getColumnModel().getColumn(COL_STATUS).setMinWidth(30);
-//        tbEmpployeeList.getColumnModel().getColumn(COL_EMPID).
+        tbEmpployeeList.getColumnModel().getColumn(COL_STATUS).setMaxWidth(70);
+
         // Col emp name
         tbEmpployeeList.getColumnModel().getColumn(COL_EMPNAME).setCellEditor(new StringCellEditor(1, 50, SwingUtils.PATTERN_NAMEWITHSPACE));
         tbEmpployeeList.getColumnModel().getColumn(COL_EMPNAME).setMinWidth(160);
         tbEmpployeeList.getColumnModel().getColumn(COL_EMPNAME).setMaxWidth(300);
-       
+        tbEmpployeeList.getColumnModel().getColumn(COL_EMPDES).setCellEditor(new StringCellEditor(1, 50, SwingUtils.PATTERN_NAMEWITHSPACE));
+//        tbEmpployeeList.getColumnModel().getColumn(COL_EMPNAME).setMinWidth(160);
+//        tbEmpployeeList.getColumnModel().getColumn(COL_EMPNAME).setMaxWidth(300);
+
         // Col emp phone
-        tbEmpployeeList.getColumnModel().getColumn(COL_EMPPHONE).setCellEditor(new StringCellEditor(1, 30, SwingUtils.PATTERN_NUMBER));
+        tbEmpployeeList.getColumnModel().getColumn(COL_EMPPHONE).setCellEditor(new StringCellEditor(6, 15, SwingUtils.PATTERN_NUMBER));
         tbEmpployeeList.getColumnModel().getColumn(COL_EMPPHONE).setMinWidth(80);
         tbEmpployeeList.getColumnModel().getColumn(COL_EMPPHONE).setMaxWidth(100);
         //col salary
-//        tbEmpployeeList.getColumnModel().getColumn(COL_SALARY).setCellEditor(new IntegerCellEditor(4000000, 2000000));
+        tbEmpployeeList.getColumnModel().getColumn(COL_SALARY).setCellEditor(new IntegerCellEditor(100000, 10000000));
         tbEmpployeeList.getColumnModel().getColumn(COL_SALARY).setMinWidth(80);
         tbEmpployeeList.getColumnModel().getColumn(COL_SALARY).setMaxWidth(80);
         // Col birth date
@@ -146,7 +155,7 @@ public class EmployeePanel extends javax.swing.JPanel {
 //                System.out.println("Column: " + tcl.getColumn());
 //                System.out.println("Old   : " + tcl.getOldValue());
 //                System.out.println("New   : " + tcl.getNewValue());
-            
+
                 switch (tcl.getColumn()) {
                     case COL_EMPNAME:
                         selectedEmployee.setEmpName((String) tcl.getNewValue());
@@ -157,21 +166,27 @@ public class EmployeePanel extends javax.swing.JPanel {
                     case COL_EMPBIRTH:
                         selectedEmployee.setEmpBirthday((Date) tcl.getNewValue());
                         break;
+                    case COL_SALARY:
+                        selectedEmployee.setEmpSalary((int) tcl.getNewValue());
+                        break;
+                    case COL_EMPDES:
+                        selectedEmployee.setEmpDes((String) tcl.getNewValue());
+                        break;
                     case COL_WORKSTART:
                         selectedEmployee.setEmpStartDate((Date) tcl.getNewValue());
-                        break;    
-//                    case COL_SALARY:
-//                        selectedEmployee.setEmpSalary((Float) tcl.getNewValue());
-//                        break;
-//                     case COL_BONUS:
-//                        selectedEmployee.setEmpBonus((Float) tcl.getNewValue());
+                        break;
+                    case COL_BONUS:
+                        selectedEmployee.setEmpBonus((int) tcl.getNewValue());
 //                        break;
                     case COL_STATUS:
                         selectedEmployee.setEmpEnabled((boolean) tcl.getNewValue());
                         break;
                 }
-//                System.out.println("Listener: "+selectedEmployee.toString());
-                updateAction();
+                if (SwingUtils.showConfirmDialog("Are you sure to update ?") == JOptionPane.NO_OPTION) {
+                    return;
+                } else {
+                    updateAction();
+                }
             }
         });
 //</editor-fold>
@@ -275,6 +290,16 @@ public class EmployeePanel extends javax.swing.JPanel {
             }
         });
 //</editor-fold>
+// Check permission employee
+        if (!LoginFrame.checkPermission(new UserFunction(UserFunction.FG_EMPLOYEE, UserFunction.FN_UPDATE))) {
+            tbEmpployeeList.setEnabled(false);
+            btAdd.setEnabled(false);
+            btRemove.setEnabled(false);
+        }
+        // Check permission salary
+        if (!LoginFrame.checkPermission(new UserFunction(UserFunction.FG_SALARY, UserFunction.FN_VIEW))) {
+            btSalary.setEnabled(false);
+        }
     }
 
     /**
@@ -494,7 +519,7 @@ public class EmployeePanel extends javax.swing.JPanel {
         btSalary.setFont(new java.awt.Font("Lucida Grande", 3, 14)); // NOI18N
         btSalary.setForeground(new java.awt.Color(255, 153, 0));
         btSalary.setIcon(new javax.swing.ImageIcon(getClass().getResource("/image/user/rsz_salary32.png"))); // NOI18N
-        btSalary.setText("<html><u>Salary</u></html>");
+        btSalary.setText("<html><u>Salary...</u></html>");
         btSalary.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btSalaryActionPerformed(evt);
@@ -578,7 +603,7 @@ public class EmployeePanel extends javax.swing.JPanel {
     }//GEN-LAST:event_btAddActionPerformed
 
     private void btSalaryActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btSalaryActionPerformed
-//        new UserNameDialog().setVisible(true);
+        new SalaryDialog(selectedEmployee).setVisible(true);
     }//GEN-LAST:event_btSalaryActionPerformed
 
     private void btRefreshActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btRefreshActionPerformed
@@ -636,8 +661,7 @@ public class EmployeePanel extends javax.swing.JPanel {
         try {
             List<RowFilter<EmployeeTableModel, Object>> filters = new ArrayList<>();
             filters.add(RowFilter.regexFilter("^" + tfIdFilter.getText(), 0));
-                       
-            
+
             filters.add(RowFilter.regexFilter("^" + tfEmpNameFilter.getText(), 1));
             filters.add(RowFilter.regexFilter("^" + tfEmpPhoneFilter.getText(), 2));
             // Chi filter date khi date khac null
@@ -693,7 +717,6 @@ public class EmployeePanel extends javax.swing.JPanel {
                 filters.add(dateFilter);
             }
             // Neu co chon user name thi moi filter username
-            
 
             filters.add(RowFilter.regexFilter("^" + tfBonusFilter.getText(), 7));
             filters.add(RowFilter.regexFilter("^" + tfEmpDes.getText(), 5));
@@ -720,21 +743,20 @@ public class EmployeePanel extends javax.swing.JPanel {
         tfEmpNameFilter.setText(null);
         tfEmpDes.setText(null);
         dcFilter.setDate(null);
-        dcFilter1.setDate(null);        
+        dcFilter1.setDate(null);
         cbStatusFilter.setSelectedIndex(0);
     }
 
     private void fetchAction() {
         selectedRowIndex = tbEmpployeeList.getSelectedRow();
         selectedEmployee.setEmpID((int) tbEmpployeeList.getValueAt(selectedRowIndex, 0));
-//        selectedEmployee.setUserName((String) tbEmpployeeList.getValueAt(selectedRowIndex, 1));
         selectedEmployee.setEmpName((String) tbEmpployeeList.getValueAt(selectedRowIndex, 1));
         selectedEmployee.setEmpPhone((String) tbEmpployeeList.getValueAt(selectedRowIndex, 2));
         selectedEmployee.setEmpBirthday((Date) tbEmpployeeList.getValueAt(selectedRowIndex, 3));
-        selectedEmployee.setEmpSalary((Float) tbEmpployeeList.getValueAt(selectedRowIndex, 4));
+        selectedEmployee.setEmpSalary((int) tbEmpployeeList.getValueAt(selectedRowIndex, 4));
         selectedEmployee.setEmpDes((String) tbEmpployeeList.getValueAt(selectedRowIndex, 5));
         selectedEmployee.setEmpStartDate((Date) tbEmpployeeList.getValueAt(selectedRowIndex, 6));
-        selectedEmployee.setEmpBonus((Float) tbEmpployeeList.getValueAt(selectedRowIndex, 7));
+        selectedEmployee.setEmpBonus((int) tbEmpployeeList.getValueAt(selectedRowIndex, 7));
         selectedEmployee.setEmpEnabled((boolean) tbEmpployeeList.getValueAt(selectedRowIndex, 8));
 //        System.out.println("fetch: "+selectedEmployee.toString());
     }
@@ -745,13 +767,13 @@ public class EmployeePanel extends javax.swing.JPanel {
 
             // Refresh table
             employeeTableModel.refresh();
-            
+
             setCursor(null);
             SwingUtils.showInfoDialog(SwingUtils.DB_REFRESH);
         } else {
             // Refresh table
             employeeTableModel.refresh();
-            
+
         }
         scrollToRow(selectedRowIndex);
     }
@@ -770,7 +792,7 @@ public class EmployeePanel extends javax.swing.JPanel {
 
     private void updateAction() {
 //        System.out.println("Updateaction: "+selectedEmployee.toString());
-        setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));        
+        setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
         boolean result = employeeTableModel.update(selectedEmployee);
         refreshAction(false);
         setCursor(null);
@@ -798,6 +820,7 @@ public class EmployeePanel extends javax.swing.JPanel {
     private void setButtonEnabled(boolean enabled, JButton... exclude) {
         btRemove.setEnabled(enabled);
         btAdd.setEnabled(enabled);
+        btSalary.setEnabled(enabled);
 
         // Ngoai tru may button nay luon luon enable
         if (exclude.length != 0) {

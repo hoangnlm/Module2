@@ -13,6 +13,7 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.sql.rowset.CachedRowSet;
+import main.controller.LoginFrame;
 import utility.SwingUtils;
 
 /**
@@ -34,16 +35,15 @@ public class EmployeeDAOImpl implements IDAO<Employee> {
         try {
             if (crs.first()) {
                 do {
-//                    new Employee(0, userName, empName, empPhone, empBirthday, 0, empDes, empStartDate, 0, true)
                     employeeList.add(new Employee(
                             crs.getInt(Employee.COL_EMPID),                            
                             crs.getString(Employee.COL_EMPNAME),
                             crs.getString(Employee.COL_EMPPHONE),
                             crs.getDate(Employee.COL_EMPBIRTHDAY),
-                            crs.getFloat(Employee.COL_EMPSALARY),
+                            crs.getInt(Employee.COL_EMPSALARY),
                             crs.getString(Employee.COL_EMPDESIGNATION),
                             crs.getDate(Employee.COL_EMPWORKSTARTDATE),
-                            crs.getFloat(Employee.COL_EMPBONUS),
+                            crs.getInt(Employee.COL_EMPBONUS),
                             crs.getBoolean(Employee.COL_EMPENABLED)));
                 } while (crs.next());
             }
@@ -132,9 +132,12 @@ public class EmployeeDAOImpl implements IDAO<Employee> {
         try {
             //Check emp co salary khong, neu co thi khong cho delete
             CachedRowSet crs1 = getCRS("select * from Salaries  where EmpID=?", employee.getEmpID());
+            CachedRowSet crs2 = getCRS("select * from Users  where EmpID=?", employee.getEmpID());
             if (crs1.first()) {
                 SwingUtils.showErrorDialog("Empployee have salary !");
-            } else {
+            }else if(crs2.first()){
+                SwingUtils.showErrorDialog("Empployee have an account user !");
+            }else {
                 runPS("delete from Employees where EmpID=?", employee.getEmpID());
 
                 // Refresh lai cachedrowset hien thi table

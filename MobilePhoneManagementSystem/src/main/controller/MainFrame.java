@@ -276,7 +276,7 @@ public final class MainFrame extends javax.swing.JFrame {
         lbExit = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DO_NOTHING_ON_CLOSE);
-        setTitle("Mobile Phone Shop Management System");
+        setTitle("Mobile Phone Shop Management System          User Online: "+LoginFrame.config.userName);
         setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
         setIconImage(getLogo());
         setIconImages(null);
@@ -305,7 +305,6 @@ public final class MainFrame extends javax.swing.JFrame {
         pnSidebar.setMaximumSize(new java.awt.Dimension(175, 32767));
         pnSidebar.setMinimumSize(new java.awt.Dimension(175, 675));
         pnSidebar.setPreferredSize(new java.awt.Dimension(175, 675));
-        pnSidebar.setSize(new java.awt.Dimension(175, 0));
 
         lbHome.setBackground(new java.awt.Color(51, 51, 51));
         lbHome.setFont(new java.awt.Font("Lucida Calligraphy", 0, 14)); // NOI18N

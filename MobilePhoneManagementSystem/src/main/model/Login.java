@@ -45,7 +45,9 @@ public class Login implements Serializable {
             new UserFunction(UserFunction.FG_SERVICE, UserFunction.FN_VIEW),
             new UserFunction(UserFunction.FG_SERVICE, UserFunction.FN_UPDATE),
             new UserFunction(UserFunction.FG_EMPLOYEE, UserFunction.FN_VIEW),
-            new UserFunction(UserFunction.FG_EMPLOYEE, UserFunction.FN_UPDATE)
+            new UserFunction(UserFunction.FG_EMPLOYEE, UserFunction.FN_UPDATE),
+            new UserFunction(UserFunction.FG_SALARY, UserFunction.FN_VIEW),
+            new UserFunction(UserFunction.FG_SALARY, UserFunction.FN_UPDATE)
             );
 
     public String host;

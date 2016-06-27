@@ -25,7 +25,7 @@ public class EmployeeTableModel extends CustomizedTableModel<Employee> {
     @Override
     public Class<?> getColumnClass(int column) {
         Class[] columnClasses = {Integer.class, String.class, String.class, Date.class,
-            Float.class, String.class, Date.class, Float.class, Boolean.class};
+            int.class, String.class, Date.class, int.class, Boolean.class};
         return columnClasses[column];
     }
 
@@ -82,7 +82,7 @@ public class EmployeeTableModel extends CustomizedTableModel<Employee> {
                 employee.setEmpBirthday((Date) aValue);
                 break;
             case 4:
-                employee.setEmpSalary((Float) aValue);
+                employee.setEmpSalary((int) aValue);
                 break;
             case 5:
                 employee.setEmpDes((String) aValue);
@@ -91,7 +91,7 @@ public class EmployeeTableModel extends CustomizedTableModel<Employee> {
                 employee.setEmpStartDate((Date) aValue);
                 break;
             case 7:
-                employee.setEmpBonus((Float) aValue);
+                employee.setEmpBonus((int) aValue);
                 break;
             case 8:
                 employee.setEmpEnabled((boolean) aValue);
