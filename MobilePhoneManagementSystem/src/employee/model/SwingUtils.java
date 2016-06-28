@@ -44,7 +44,7 @@ public class SwingUtils {
     public static final String PATTERN_SERVICECONTENT = "[A-Za-z0-9.,?-\\/% ]+";
 
     public enum FormatType {
-        DATE, PERCENT, CURRENCY, CURRENCYINTERGER
+        DATE, PERCENT, CURRENCY, CURRENCYINTERGER, CURRENCYDOUBLE
     }
 
     public static String formatString(Object object, FormatType format) {
@@ -62,7 +62,10 @@ public class SwingUtils {
                 result = String.format("%,.0f Đ", object);
                 break;
             case CURRENCYINTERGER:
-                result = String.format("%,.d đ", object);
+                result = String.format("%,d đ", object);
+                break;
+            case CURRENCYDOUBLE:
+                result = String.format("%,.0f đ", object);
                 break;
         }
         return result;
@@ -91,6 +94,8 @@ public class SwingUtils {
                 return Float.parseFloat(str.replaceAll(",", "").replace(" Đ", ""));
             case CURRENCYINTERGER:
                 return Integer.parseInt(str.replaceAll(",", "").replace(" đ", ""));
+            case CURRENCYDOUBLE:
+                return Double.parseDouble(str.replaceAll(",", "").replace(" đ", ""));
         }
         return null;
     }

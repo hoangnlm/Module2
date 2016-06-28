@@ -6,6 +6,8 @@
 package employee.controller;
 
 import com.toedter.calendar.JDateChooser;
+import employee.model.IntegerCurrencyCellRenderer;
+import employee.model.CurrencyDoubleCellRenderer;
 import employee.model.Employee;
 import employee.model.Salary;
 import java.awt.Cursor;
@@ -25,9 +27,10 @@ import javax.swing.event.ListSelectionEvent;
 import javax.swing.table.TableRowSorter;
 import main.controller.LoginFrame;
 import main.model.UserFunction;
-import employee.model.DateCellWorkingDateEditor;
-import utility.IntegerCellEditor;
 import employee.model.SwingUtils;
+import javax.swing.JLabel;
+import javax.swing.table.DefaultTableCellRenderer;
+import utility.SpinnerCellEditor;
 import utility.TableCellListener;
 
 /**
@@ -42,7 +45,8 @@ public class SalaryDialog extends javax.swing.JDialog {
 
     // Salary dang duoc chon trong table
     private Salary selectedSalary;
-    private int selectedRowIndex;
+    private int selectedRowIndex=-1;
+    private int backupRowCount;
     Employee employee;
 
 // Define some column constants
@@ -77,30 +81,40 @@ public class SalaryDialog extends javax.swing.JDialog {
         tbSalaryList.setRowSorter(sorter);
         // Set height cho table header
         tbSalaryList.getTableHeader().setPreferredSize(new Dimension(300, 30));
+        DefaultTableCellRenderer centerRenderer = new DefaultTableCellRenderer();
+        centerRenderer.setHorizontalAlignment(JLabel.CENTER);
+        tbSalaryList.getColumnModel().getColumn(COL_MONTH).setCellRenderer(centerRenderer);
+        tbSalaryList.getColumnModel().getColumn(COL_PAYDAY).setCellRenderer(centerRenderer);
+        tbSalaryList.getColumnModel().getColumn(COL_OFFDAYS).setCellRenderer(centerRenderer);
+        tbSalaryList.getColumnModel().getColumn(COL_WORKDAYS).setCellRenderer(centerRenderer);
+
         // Col Ser ID (HIDDEN)
-        tbSalaryList.getColumnModel().getColumn(COL_SALID).setMinWidth(70);
-//        tbSalaryList.getColumnModel().getColumn(COL_SALID).setMaxWidth(100);
+        tbSalaryList.getColumnModel().getColumn(COL_SALID).setMinWidth(0);
+        tbSalaryList.getColumnModel().getColumn(COL_SALID).setMaxWidth(40);
         tbSalaryList.getColumnModel().getColumn(COL_EMPID).setMinWidth(0);
         tbSalaryList.getColumnModel().getColumn(COL_EMPID).setMaxWidth(0);
         // Col pro ID (HIDDEN)
-        tbSalaryList.getColumnModel().getColumn(COL_MONTH).setMinWidth(70);
-//        tbSalaryList.getColumnModel().getColumn(COL_MONTH).setMaxWidth(100);
+        tbSalaryList.getColumnModel().getColumn(COL_MONTH).setMinWidth(100);
+        tbSalaryList.getColumnModel().getColumn(COL_MONTH).setMaxWidth(100);
         // Col quantity
-        tbSalaryList.getColumnModel().getColumn(COL_PAYDAY).setMinWidth(160);
-        tbSalaryList.getColumnModel().getColumn(COL_PAYDAY).setMaxWidth(200);
+        tbSalaryList.getColumnModel().getColumn(COL_PAYDAY).setMinWidth(130);
+        tbSalaryList.getColumnModel().getColumn(COL_PAYDAY).setMaxWidth(130);
 //        tbSalaryList.getColumnModel().getColumn(COL_PAYDAY).setCellEditor(new DateCellWorkingDateEditor());
 
         // Col oderid
-        tbSalaryList.getColumnModel().getColumn(COL_WORKDAYS).setMinWidth(100);
-//        tbSalaryList.getColumnModel().getColumn(COL_WORKDAYS).setMaxWidth(100);
-        tbSalaryList.getColumnModel().getColumn(COL_WORKDAYS).setCellEditor(new IntegerCellEditor(0, 28));
+        tbSalaryList.getColumnModel().getColumn(COL_WORKDAYS).setMinWidth(70);
+        tbSalaryList.getColumnModel().getColumn(COL_WORKDAYS).setMaxWidth(70);
+        tbSalaryList.getColumnModel().getColumn(COL_WORKDAYS).setCellEditor(new SpinnerCellEditor(0, 28));
         // Col oderid
-        tbSalaryList.getColumnModel().getColumn(COL_OFFDAYS).setMinWidth(100);
-//        tbSalaryList.getColumnModel().getColumn(COL_OFFDAYS).setMaxWidth(100);
-        tbSalaryList.getColumnModel().getColumn(COL_OFFDAYS).setCellEditor(new IntegerCellEditor(0, 14));
+        tbSalaryList.getColumnModel().getColumn(COL_OFFDAYS).setMinWidth(60);
+        tbSalaryList.getColumnModel().getColumn(COL_OFFDAYS).setMaxWidth(60);
+        tbSalaryList.getColumnModel().getColumn(COL_OFFDAYS).setCellEditor(new SpinnerCellEditor(0, 14));
         tbSalaryList.getColumnModel().getColumn(COL_BONUS).setMinWidth(100);
+        tbSalaryList.getColumnModel().getColumn(COL_BONUS).setCellRenderer(new IntegerCurrencyCellRenderer());
         tbSalaryList.getColumnModel().getColumn(COL_BASICSALARY).setMinWidth(100);
+        tbSalaryList.getColumnModel().getColumn(COL_BASICSALARY).setCellRenderer(new IntegerCurrencyCellRenderer());
         tbSalaryList.getColumnModel().getColumn(COL_TOTALSALARY).setMinWidth(100);
+        tbSalaryList.getColumnModel().getColumn(COL_TOTALSALARY).setCellRenderer(new CurrencyDoubleCellRenderer());
 
         // Bat su kien select row tren table product
         tbSalaryList.getSelectionModel().addListSelectionListener((ListSelectionEvent e) -> {
@@ -108,18 +122,18 @@ public class SalaryDialog extends javax.swing.JDialog {
             if (!model.isSelectionEmpty()) {
                 fetchAction();
                 setButtonEnabled(true);
-
+//                System.out.println("row index: "+selectedRowIndex+"___SelectedSalary: "+selectedSalary.toString());
             } else {
                 setButtonEnabled(false);
             }
-            updateItemsLabel();
+            //
         }
         );
 
 //</editor-fold>
         // Set data cho table chinh
         salaryTableModel.load(employee.getEmpID());
-
+       
         //<editor-fold defaultstate="collapsed" desc="Set cell listener cho updating">
         TableCellListener tcl = new TableCellListener(tbSalaryList, new AbstractAction() {
             @Override
@@ -127,23 +141,25 @@ public class SalaryDialog extends javax.swing.JDialog {
                 TableCellListener tcl = (TableCellListener) e.getSource();
 
                 switch (tcl.getColumn()) {
-                    
+
                     case COL_WORKDAYS:
-                        selectedSalary.setWorkDays((int) tcl.getNewValue());
-                        updateItemsLabel();
+//                        selectedSalary.setWorkDays((int) tcl.getNewValue());
+                        selectedSalary.setWorkDays(77);
+                        //
                         break;
                     case COL_OFFDAYS:
                         selectedSalary.setOffDays((int) tcl.getNewValue());
-                        updateItemsLabel();
+                        //
                         break;
                 }
                 if (SwingUtils.showConfirmDialog("Are you sure to update ?") == JOptionPane.NO_OPTION) {
                     return;
                 } else {
+                    System.out.println("Update: "+selectedSalary.toString());
                     updateAction();
 
                 }
-                updateItemsLabel();
+                //
             }
         });
 //</editor-fold>
@@ -174,18 +190,12 @@ public class SalaryDialog extends javax.swing.JDialog {
         btRemove = new javax.swing.JButton();
         btRefresh = new javax.swing.JButton();
         btCancel = new javax.swing.JButton();
-        jPanel2 = new javax.swing.JPanel();
-        jLabel5 = new javax.swing.JLabel();
-        jLabel7 = new javax.swing.JLabel();
-        lblBasicSalary = new javax.swing.JLabel();
-        lblBonusDes = new javax.swing.JLabel();
-        jLabel16 = new javax.swing.JLabel();
-        lblSumary = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setTitle("Salary");
         setMinimumSize(new java.awt.Dimension(712, 500));
         setModal(true);
+        setResizable(false);
 
         jScrollPane1.setBorder(javax.swing.BorderFactory.createTitledBorder(javax.swing.BorderFactory.createEtchedBorder(), "Salary List"));
 
@@ -230,61 +240,12 @@ public class SalaryDialog extends javax.swing.JDialog {
 
         btCancel.setFont(new java.awt.Font("Lucida Grande", 0, 14)); // NOI18N
         btCancel.setIcon(new javax.swing.ImageIcon(getClass().getResource("/image/order/Cancel2.png"))); // NOI18N
-        btCancel.setText("Cancel");
+        btCancel.setText("Close");
         btCancel.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btCancelActionPerformed(evt);
             }
         });
-
-        jPanel2.setBorder(javax.swing.BorderFactory.createTitledBorder("Salary Info"));
-
-        jLabel5.setText("Bonus on Designation:");
-
-        jLabel7.setText("Basic Salary:");
-
-        lblBasicSalary.setText("10000000 đ");
-
-        lblBonusDes.setText("5000000 đ");
-
-        jLabel16.setText("Sumary:");
-
-        lblSumary.setText("500000000");
-
-        javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
-        jPanel2.setLayout(jPanel2Layout);
-        jPanel2Layout.setHorizontalGroup(
-            jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel2Layout.createSequentialGroup()
-                .addContainerGap(12, Short.MAX_VALUE)
-                .addComponent(jLabel7)
-                .addGap(18, 18, 18)
-                .addComponent(lblBasicSalary, javax.swing.GroupLayout.PREFERRED_SIZE, 83, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(44, 44, 44)
-                .addComponent(jLabel5)
-                .addGap(18, 18, 18)
-                .addComponent(lblBonusDes, javax.swing.GroupLayout.PREFERRED_SIZE, 68, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(132, 132, 132)
-                .addComponent(jLabel16, javax.swing.GroupLayout.PREFERRED_SIZE, 66, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(18, 18, 18)
-                .addComponent(lblSumary, javax.swing.GroupLayout.PREFERRED_SIZE, 77, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(22, Short.MAX_VALUE))
-        );
-        jPanel2Layout.setVerticalGroup(
-            jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel2Layout.createSequentialGroup()
-                .addContainerGap()
-                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                        .addComponent(jLabel16, javax.swing.GroupLayout.PREFERRED_SIZE, 22, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addComponent(lblSumary, javax.swing.GroupLayout.PREFERRED_SIZE, 22, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                        .addComponent(jLabel7, javax.swing.GroupLayout.PREFERRED_SIZE, 22, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addComponent(lblBasicSalary, javax.swing.GroupLayout.PREFERRED_SIZE, 22, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addComponent(jLabel5, javax.swing.GroupLayout.PREFERRED_SIZE, 22, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addComponent(lblBonusDes, javax.swing.GroupLayout.PREFERRED_SIZE, 22, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addGap(13, 13, 13))
-        );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -292,7 +253,7 @@ public class SalaryDialog extends javax.swing.JDialog {
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addComponent(jScrollPane1)
             .addGroup(layout.createSequentialGroup()
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addContainerGap(146, Short.MAX_VALUE)
                 .addComponent(btAdd, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(btRemove)
@@ -300,15 +261,12 @@ public class SalaryDialog extends javax.swing.JDialog {
                 .addComponent(btRefresh, javax.swing.GroupLayout.PREFERRED_SIZE, 108, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(btCancel, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-            .addComponent(jPanel2, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addContainerGap(146, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 309, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 370, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(btAdd, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -342,14 +300,7 @@ public class SalaryDialog extends javax.swing.JDialog {
     private javax.swing.JButton btCancel;
     private javax.swing.JButton btRefresh;
     private javax.swing.JButton btRemove;
-    private javax.swing.JLabel jLabel16;
-    private javax.swing.JLabel jLabel5;
-    private javax.swing.JLabel jLabel7;
-    private javax.swing.JPanel jPanel2;
     private javax.swing.JScrollPane jScrollPane1;
-    private javax.swing.JLabel lblBasicSalary;
-    private javax.swing.JLabel lblBonusDes;
-    private javax.swing.JLabel lblSumary;
     private javax.swing.JTable tbSalaryList;
     // End of variables declaration//GEN-END:variables
 
@@ -359,8 +310,8 @@ public class SalaryDialog extends javax.swing.JDialog {
         details.setWorkDays(22);
         details.setOffDays(0);
         Calendar calendar = Calendar.getInstance();
-        details.setPayDay(calendar.getTime());     
-        details.setMonth(calendar.get(Calendar.MONTH-1));
+        details.setPayDay(calendar.getTime());
+        details.setMonth(calendar.get(Calendar.MONTH - 1));
         details.setEmpID(employee.getEmpID());
         details.setBasicSalary(employee.getEmpSalary());
         details.setBonus(employee.getEmpBonus());
@@ -369,29 +320,38 @@ public class SalaryDialog extends javax.swing.JDialog {
         refreshAction(false);
 
         scrollToRow(tbSalaryList.getRowCount() - 1);
-        updateItemsLabel();
+        //
     }
 
     private void deleteAction() {
         if (SwingUtils.showConfirmDialog("Are you sure to delete ?") == JOptionPane.NO_OPTION) {
             return;
-        } else if (salaryTableModel.delete(selectedSalary)) {
+        }else if(selectedRowIndex==-1){
+            SwingUtils.showErrorDialog("Choose salary to delete !");
+            return;
+        }else if(tbSalaryList.getRowCount()==1){
+            SwingUtils.showErrorDialog("At least 1 details !");
+            return;
+        }
+        if (salaryTableModel.delete(selectedSalary)) {
             SwingUtils.showInfoDialog(SwingUtils.DELETE_SUCCESS);
 
         } else {
             SwingUtils.showInfoDialog(SwingUtils.DELETE_FAIL);
         }
         refreshAction(false);
+        System.out.println("RowCount: "+tbSalaryList.getRowCount());
         // Neu row xoa la row cuoi thi lui cursor ve
         // Neu row xoa la row khac cuoi thi tien cursor ve truoc
-        selectedRowIndex = 1;
+        selectedRowIndex = 0;
+//        selectedRowIndex = (selectedRowIndex == tbSalaryList.getRowCount() ? tbSalaryList.getRowCount() - 1 : selectedRowIndex++);
         scrollToRow(selectedRowIndex);
-        updateItemsLabel();
+        //
     }
 
     private void refreshAction(boolean mustInfo) {
         if (mustInfo) {
-            setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));            
+            setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
             // Refresh table
             salaryTableModel.load(employee.getEmpID());
 //            salaryTableModel.refresh();
@@ -403,7 +363,7 @@ public class SalaryDialog extends javax.swing.JDialog {
             salaryTableModel.load(employee.getEmpID());
 //            salaryTableModel.refresh();
         }
-        updateItemsLabel();
+        //
         scrollToRow(selectedRowIndex);
 
     }
@@ -417,7 +377,7 @@ public class SalaryDialog extends javax.swing.JDialog {
             SwingUtils.showInfoDialog(SwingUtils.UPDATE_FAIL);
         }
         refreshAction(false);
-        updateItemsLabel();
+        //
     }
 
     private void cancelAction() {
@@ -437,6 +397,9 @@ public class SalaryDialog extends javax.swing.JDialog {
         selectedSalary.setPayDay((Date) tbSalaryList.getValueAt(selectedRowIndex, 3));
         selectedSalary.setWorkDays((int) tbSalaryList.getValueAt(selectedRowIndex, 4));
         selectedSalary.setOffDays((int) tbSalaryList.getValueAt(selectedRowIndex, 5));
+        selectedSalary.setBonus((int) tbSalaryList.getValueAt(selectedRowIndex, 6));
+        selectedSalary.setBasicSalary((int) tbSalaryList.getValueAt(selectedRowIndex, 7));
+        
 //        if (selectedRowIndex >= 0) {
 //            int idx = tbSalaryList.convertRowIndexToModel(selectedRowIndex);
 //            selectedSalary = salaryTableModel.getSalaryFromIndex(idx);
@@ -445,39 +408,6 @@ public class SalaryDialog extends javax.swing.JDialog {
 //            selectedSalary = null;
 //            salaryTableModel.setSelectingIndex(-1);
 //        }
-    }
-
-    private void updateItemsLabel() {
-        float sum;
-//        int sum = tbProduct.getRowCount();
-//        int sale = 0;float bonusSale=0;
-//        int service=0;
-//        SalaryDAOImpl sa = new SalaryDAOImpl();
-//        Vector arr = sa.getTotalItemSale(employee.getEmpID(),selectedSalary.getMonth());
-//        
-//        sale=(int) arr.get(1);
-//        bonusSale=(float) arr.get(2);
-//        lblTotalItemSale.setText(sale+"");
-//        lblBonusSale.setText(String.format("%12.2lf", bonusSale));
-
-        lblBasicSalary.setText(String.format("%d", employee.getEmpSalary()));
-        lblBonusDes.setText(String.format("%d", employee.getEmpBonus()));
-
-//        System.out.println("Salary: "+selectedSalary.toString());
-        sum = (employee.getEmpBonus() / selectedSalary.getWorkDays()) * (selectedSalary.getWorkDays() - selectedSalary.getOffDays()) + employee.getEmpSalary();
-
-        lblSumary.setText(String.format("%.2f", sum));
-        updateTotalLabel();
-    }
-
-    private void updateTotalLabel() {
-        int sum = 0;
-//        if (serviceDetailsTableModelDialog.getRowCount() > 0) {
-//            for (int i = 0; i < serviceDetailsTableModelDialog.getRowCount(); i++) {
-//                sum += (int) serviceDetailsTableModelDialog.getValueAt(i, COL_COST) * (int) serviceDetailsTableModelDialog.getValueAt(i, COL_PROQTY);
-//            }
-//        }
-//        lbTotal.setText(String.format("%,.0f Đ", (float) sum));
     }
 
     private void setButtonEnabled(boolean enabled, JButton... exclude) {

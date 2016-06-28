@@ -1,7 +1,7 @@
 package service.controller;
 
 import com.toedter.calendar.JDateChooser;
-import employee.model.CurrencyCellRenderer;
+import employee.model.IntegerCurrencyCellRenderer;
 import order.controller.*;
 import java.awt.Dimension;
 import java.awt.Rectangle;
@@ -35,6 +35,7 @@ import utility.SpinnerCellEditor;
 import utility.StringCellEditor;
 import employee.model.SwingUtils;
 import employee.model.SwingUtils.FormatType;
+import javax.swing.JLabel;
 import utility.TableCellListener;
 
 /**
@@ -115,7 +116,10 @@ public class ServiceDialog extends javax.swing.JDialog implements ItemListener {
 
         // Set height cho table header
         tbProduct.getTableHeader().setPreferredSize(new Dimension(300, 30));
-
+        DefaultTableCellRenderer centerRenderer = new DefaultTableCellRenderer();
+        centerRenderer.setHorizontalAlignment(JLabel.CENTER);
+        tbProduct.getColumnModel().getColumn(COL_PROQTY).setCellRenderer(centerRenderer);
+        tbProduct.getColumnModel().getColumn(COL_ODERID).setCellRenderer(centerRenderer);        
         // Col Ser ID (HIDDEN)
         tbProduct.getColumnModel().getColumn(COL_SERID).setMinWidth(0);
         tbProduct.getColumnModel().getColumn(COL_SERID).setMaxWidth(0);
@@ -144,7 +148,7 @@ public class ServiceDialog extends javax.swing.JDialog implements ItemListener {
         tbProduct.getColumnModel().getColumn(COL_ODERID).setCellEditor(new IntegerCellEditor(1, 100000));
         // Col oderid
         tbProduct.getColumnModel().getColumn(COL_COST).setMinWidth(100);
-        tbProduct.getColumnModel().getColumn(COL_COST).setCellRenderer(new CurrencyCellRenderer());
+        tbProduct.getColumnModel().getColumn(COL_COST).setCellRenderer(new IntegerCurrencyCellRenderer());
         tbProduct.getColumnModel().getColumn(COL_COST).setCellEditor(new IntegerCellEditor(0, 200000));
 
         // Bat su kien select row tren table product

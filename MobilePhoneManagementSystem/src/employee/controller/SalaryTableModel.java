@@ -14,7 +14,7 @@ import utility.CustomizedTableModel;
 public class SalaryTableModel extends CustomizedTableModel<Salary> {
 
     public SalaryTableModel() {
-        super(new SalaryDAOImpl(), new String[]{"ID", "EmpID", "Month", "PayDay", "WorkDays", "OffDays","Bonus","Salary","Total Salary"});
+        super(new SalaryDAOImpl(), new String[]{"ID", "EmpID", "Month Work ", "PayDay", "WorkDays", "OffDays","Bonus","Basic Salary","Total Salary"});
     }
 
     public Salary getSalaryFromIndex(int index) {
