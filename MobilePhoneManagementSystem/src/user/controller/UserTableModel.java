@@ -1,25 +1,23 @@
 package user.controller;
 
-
 import user.model.User;
 import user.model.UserDAOImpl;
+import user.model.UserEmployee;
 import utility.CustomizedTableModel;
 
 /**
- * Data model for table Customer List
  *
- * @author Hoang
+ * @author BonBon
  */
 public class UserTableModel extends CustomizedTableModel<User> {
 
     public UserTableModel() {
-        super(new UserDAOImpl(), new String[]{"ID", "User Name", "Status"});
+        super(new UserDAOImpl(), new String[]{"ID", "User Name", "Empployee Name", "Status", "Password","EmpID"});
     }
-
 
     @Override
     public Class<?> getColumnClass(int column) {
-        Class[] columnClasses = {Integer.class, String.class, Boolean.class};
+        Class[] columnClasses = {Integer.class, String.class, String.class, Boolean.class, String.class,Integer.class};
         return columnClasses[column];
     }
 
@@ -33,9 +31,18 @@ public class UserTableModel extends CustomizedTableModel<User> {
                 break;
             case 1:
                 result = item.getUserName();
-                break;            
+                break;
             case 2:
+                result = item.getEmpName();
+                break;
+            case 3:
                 result = item.isUserEnable();
+                break;
+            case 4:
+                result = item.getPassword();
+                break;
+            case 5:
+                result = item.getEmpID();
                 break;
         }
         return result;
@@ -51,8 +58,19 @@ public class UserTableModel extends CustomizedTableModel<User> {
             case 1:
                 user.setUserName((String) aValue);
                 break;
-            case 2:                
+            case 2:
+                if(aValue!=null)
+                user.setEmpName(((UserEmployee)aValue).getEmpName());
+//                 user.setEmpName((String) aValue);
+              break;
+            case 3:
                 user.setUserEnable((boolean) aValue);
+                break;
+            case 4:
+                user.setPassword((String) aValue);
+                break;
+            case 5:
+                user.setEmpID((int) aValue);
                 break;
         }
         fireTableCellUpdated(rowIndex, columnIndex);

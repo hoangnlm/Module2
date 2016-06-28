@@ -14,6 +14,8 @@ import branch.model.Supplier;
 import branch.model.SupplierComboboxModel;
 import branch.model.SupplierComboboxRenderer;
 import database.DBProvider;
+import java.awt.Color;
+import java.awt.Component;
 import java.awt.Cursor;
 import java.awt.Dimension;
 import java.awt.Rectangle;
@@ -26,11 +28,15 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.sql.rowset.CachedRowSet;
 import javax.swing.AbstractAction;
+import javax.swing.DefaultListCellRenderer;
 import javax.swing.DefaultListSelectionModel;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JList;
 import javax.swing.JOptionPane;
+import javax.swing.JTextField;
 import javax.swing.RowFilter;
+import static javax.swing.SwingConstants.CENTER;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import javax.swing.event.ListSelectionEvent;
@@ -165,7 +171,27 @@ public class BranchDialog extends javax.swing.JDialog {
                 doFilter();
             }
         });
-        
+         //customize combobox status
+        cbStatusFilter.setRenderer(new DefaultListCellRenderer() {
+            JTextField jtf = new JTextField();
+
+            @Override
+            public Component getListCellRendererComponent(JList<?> list, Object value, int index, boolean isSelected, boolean cellHasFocus) {
+                if (isSelected) {
+                    jtf.setBackground(Color.ORANGE);
+                    jtf.setForeground(Color.BLACK);
+
+                } else {
+                    jtf.setBackground(new java.awt.Color(51, 51, 51));
+                    jtf.setForeground(list.getForeground());
+                }
+                jtf.setText((String) value);
+                jtf.setBorder(null);
+                jtf.setHorizontalAlignment(CENTER);
+                return jtf;
+            }
+
+        });
         //set gia tri mac dinh
         cbSupplier.setSelectedIndex(cbSupplier.getItemCount() - 1);
         formatTable();
@@ -211,7 +237,7 @@ public class BranchDialog extends javax.swing.JDialog {
 
             // Neu status khac "All" thi moi filter
             String statusFilter = cbStatusFilter.getSelectedItem().toString();
-            if (!statusFilter.equals("--All--")) {
+            if (!statusFilter.equals("All")) {
                 filters.add(RowFilter.regexFilter(
                         statusFilter.equals("Enabled") ? "t" : "f", 2));
             }
@@ -302,7 +328,7 @@ public class BranchDialog extends javax.swing.JDialog {
 
         jLabel3.setText("Status:");
 
-        cbStatusFilter.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "--All--", "Enabled", "Disabled" }));
+        cbStatusFilter.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "All", "Enabled", "Disabled" }));
         cbStatusFilter.addItemListener(new java.awt.event.ItemListener() {
             public void itemStateChanged(java.awt.event.ItemEvent evt) {
                 cbStatusFilterItemStateChanged(evt);
@@ -342,12 +368,10 @@ public class BranchDialog extends javax.swing.JDialog {
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
+        tbBranchList.setAutoCreateRowSorter(true);
         tbBranchList.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
-                {null, null, null},
-                {null, null, null},
-                {null, null, null},
-                {null, null, null}
+
             },
             new String [] {
                 "Branch ID", "Branch Name", "Status"
@@ -361,6 +385,8 @@ public class BranchDialog extends javax.swing.JDialog {
                 return types [columnIndex];
             }
         });
+        tbBranchList.setFillsViewportHeight(true);
+        tbBranchList.setRowHeight(25);
         tbBranchList.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 tbBranchListMouseClicked(evt);

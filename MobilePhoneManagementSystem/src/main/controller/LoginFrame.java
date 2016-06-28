@@ -10,6 +10,7 @@ import main.model.Login;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import javax.swing.JOptionPane;
+import main.model.UserFunction;
 import utility.IOUtils;
 import utility.SwingUtils;
 
@@ -24,15 +25,13 @@ public class LoginFrame extends javax.swing.JFrame {
     public static final String LOGIN_PANEL = "LoginPanel";
     public static final String CONFIG_PANEL = "ConfigPanel";
     public static final String CONFIG_FILENAME = "config";
-    
+
     /**
      * Creates new form TestFrame
      */
     public LoginFrame() {
         // Thiet lap GUI
         initComponents();
-//        setBackground(new Color(0, 255, 0, 0));
-//        pnContent.setBackground(new Color(0, 255, 0, 0));
         pnContent.add(new LoginPanel(this), LOGIN_PANEL);
         pnContent.add(new ConfigPanel(this), CONFIG_PANEL);
         reloadContentPanel(LOGIN_PANEL);
@@ -43,6 +42,23 @@ public class LoginFrame extends javax.swing.JFrame {
                 exit();
             }
         });
+    }
+
+    /**
+     *  Check permission of user
+     * 
+     * @param userFunction
+     * @return true if user has that permission
+     */
+    public static boolean checkPermission(UserFunction userFunction) {
+        boolean result = false;
+        for (UserFunction uf : config.userFunctions) {
+            if (uf.FunctionGroup.equals(userFunction.FunctionGroup) && uf.FunctionName.equals(userFunction.FunctionName)) {
+                result = true;
+                break;
+            }
+        }
+        return result;
     }
 
     /**
@@ -116,7 +132,7 @@ public class LoginFrame extends javax.swing.JFrame {
         CardLayout cl = (CardLayout) pnContent.getLayout();
         cl.show(pnContent, panelName);
     }
-    
+
     public void exit() {
         if (SwingUtils.showConfirmDialog("Are you sure to exit?") == JOptionPane.YES_OPTION) {
             System.exit(0);

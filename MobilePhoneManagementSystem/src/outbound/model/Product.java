@@ -64,7 +64,7 @@ public class Product {
                     +"products."+Product.COL_BraID+", "
                     +"salesoff.salesoffID"
                     +" from products join branches on "+"branches."+COL_BraID+"=products."+COL_BraID
-                    +" join salesoff on salesoff.salesoffid=products.salesoffid"
+                    +" left join salesoff on salesoff.salesoffid=products.salesoffid"
                     +" Order by ProID DESC";
     public static final String Query_Insert = "Insert into products values(?,?,?,?,?,?,?,?)";
     public static final String Query_Update = "Update products set "

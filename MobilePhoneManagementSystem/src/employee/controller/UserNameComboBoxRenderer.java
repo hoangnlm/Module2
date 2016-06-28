@@ -15,7 +15,7 @@ import user.model.User;
 
 /**
  *
- * @author Hoang
+ * @author BonBon
  */
 public class UserNameComboBoxRenderer extends JLabel implements ListCellRenderer<User> {
 

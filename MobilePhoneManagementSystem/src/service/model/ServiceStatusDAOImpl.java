@@ -15,7 +15,7 @@ import javax.sql.rowset.CachedRowSet;
 
 /**
  *
- * @author Hoang
+ * @author BonBon
  */
 public class ServiceStatusDAOImpl implements IDAO<ServiceStatus> {
 

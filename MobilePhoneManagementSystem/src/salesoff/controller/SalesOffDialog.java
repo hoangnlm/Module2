@@ -12,6 +12,8 @@ import javax.swing.JButton;
 import javax.swing.JOptionPane;
 import javax.swing.JTable;
 import javax.swing.event.ListSelectionEvent;
+import main.controller.LoginFrame;
+import main.model.UserFunction;
 import salesoff.model.SalesOff;
 import salesoff.model.SalesOffProduct;
 import utility.DateCellEditor;
@@ -49,6 +51,9 @@ public class SalesOffDialog extends javax.swing.JDialog {
     private static final int COL_BRANAME = 2;
     private static final int COL_PROSALE = 3;
 
+    // Check permission
+    private boolean updatable = true;
+
     /**
      * Creates new form CustomerDialog
      */
@@ -63,8 +68,18 @@ public class SalesOffDialog extends javax.swing.JDialog {
         selectedSale = new SalesOff();
         selectedPro = new SalesOffProduct();
 
+        // Check permission
+        if (!LoginFrame.checkPermission(new UserFunction(UserFunction.FG_SALESOFF, UserFunction.FN_UPDATE))) {
+            tbProList.setEnabled(false);
+            btAddSale.setEnabled(false);
+            btRemoveSale.setEnabled(false);
+            btSelect.setEnabled(false);
+            btDeselect.setEnabled(false);
+            updatable = false;
+        }
+
         // Set data cho table
-        salesOffTableModel = new SalesOffTableModel();
+        salesOffTableModel = new SalesOffTableModel(updatable);
         salesOffProductTableModel = new SalesOffProductTableModel();
         tbSaleList.setModel(salesOffTableModel);
         tbProList.setModel(salesOffProductTableModel);
@@ -122,7 +137,9 @@ public class SalesOffDialog extends javax.swing.JDialog {
             DefaultListSelectionModel model = (DefaultListSelectionModel) e.getSource();
             if (!model.isSelectionEmpty()) {
                 fetchSaleAction();
-                setButtonEnabled(true);
+                if (updatable) {
+                    setButtonEnabled(true);
+                }
             } else {
                 setButtonEnabled(false);
             }

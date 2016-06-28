@@ -22,6 +22,7 @@ import java.util.List;
 import javax.swing.AbstractAction;
 import javax.swing.DefaultListSelectionModel;
 import javax.swing.JButton;
+import javax.swing.JOptionPane;
 import javax.swing.RowFilter;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
@@ -31,12 +32,13 @@ import service.model.Service;
 import service.model.ServiceStatus;
 import service.model.ServiceType;
 import utility.DateCellEditor;
+import utility.SpinnerCellEditor;
 import utility.SwingUtils;
 import utility.TableCellListener;
 
 /**
  *
- * @author Hoang
+ * @author BonBon
  */
 public class ServicePanel extends javax.swing.JPanel {
 
@@ -64,6 +66,17 @@ public class ServicePanel extends javax.swing.JPanel {
     private static final int COL_SERTYPENAME = 4;
     private static final int COL_STATUS = 5;
 
+    private static final int COL_PROID = 0;
+    private static final int COL_PRONAME = 1;
+    private static final int COL_BRANAME = 2;
+    private static final int COL_CONTENT = 3;
+    private static final int COL_PROQTY = 4;
+    private static final int COL_ODERID = 5;
+    private static final int COL_COST = 6;
+    //hidden
+    private static final int COL_SERVICEID = 7;    
+    private static final int COL_BRAID = 8;
+    
 //<editor-fold defaultstate="collapsed" desc="constructor">
     public ServicePanel() {
         initComponents();
@@ -75,7 +88,7 @@ public class ServicePanel extends javax.swing.JPanel {
         dcFilter.setDate(null);
         pnReceiveDate.add(dcFilter);
         // Set date picker len giao dien
-        dcFilter1=new JDateChooser();
+        dcFilter1 = new JDateChooser();
         dcFilter1.setBounds(0, 0, 120, 20);
         dcFilter1.setDateFormatString("dd/MM/yyyy");
         dcFilter1.setDate(null);
@@ -91,15 +104,17 @@ public class ServicePanel extends javax.swing.JPanel {
         filterStatus = new ServiceStatus(0, "All", "Service");
         serviceStatusComboBoxModel.addElement(filterStatus);
         cbStatusFilter.setModel(serviceStatusComboBoxModel);
-        serviceStatusComboBoxRenderer = new ServiceStatusComboBoxRenderer();        
+        serviceStatusComboBoxRenderer = new ServiceStatusComboBoxRenderer();
         cbStatusFilter.setRenderer(serviceStatusComboBoxRenderer);
+        
         // Set data cho combobox service type filter
         serviceTypeComboBoxModel = new ServiceTypeComboBoxModel();
         filterType = new ServiceType(0, "All");
         serviceTypeComboBoxModel.addElement(filterType);
         cbTypeFilter.setModel(serviceTypeComboBoxModel);
-        serviceTypeComboBoxRenderer = new ServiceTypeComboBoxRenderer();        
+        serviceTypeComboBoxRenderer = new ServiceTypeComboBoxRenderer();
         cbTypeFilter.setRenderer(serviceTypeComboBoxRenderer);
+        
         // Set data cho table
         serviceTableModel = new ServiceTableModel();
         serviceDetailsTableModel = new ServiceDetailsTableModel();
@@ -112,7 +127,7 @@ public class ServicePanel extends javax.swing.JPanel {
 
         // Select mac dinh cho level filter
         cbStatusFilter.setSelectedIndex(cbStatusFilter.getItemCount() - 1);
-
+        cbTypeFilter.setSelectedIndex(cbTypeFilter.getItemCount() - 1);
         // Set auto define column from model to false to stop create column again
         tbServiceList.setAutoCreateColumnsFromModel(false);
         tbDetailsList.setAutoCreateColumnsFromModel(false);
@@ -120,11 +135,10 @@ public class ServicePanel extends javax.swing.JPanel {
         // Set height cho table header
         tbServiceList.getTableHeader().setPreferredSize(new Dimension(300, 30));
         tbDetailsList.getTableHeader().setPreferredSize(new Dimension(300, 30));
-
         // Col order ID
         tbServiceList.getColumnModel().getColumn(COL_SERID).setMinWidth(30);
         tbServiceList.getColumnModel().getColumn(COL_SERID).setMaxWidth(50);
-tbServiceList.getColumnModel().getColumn(COL_SERID).sizeWidthToFit();
+        tbServiceList.getColumnModel().getColumn(COL_SERID).sizeWidthToFit();
         // Col user name
         tbServiceList.getColumnModel().getColumn(COL_USERNAME).setMinWidth(120);
 //        tbServiceList.getColumnModel().getColumn(COL_USERNAME).setMaxWidth(120);
@@ -142,16 +156,50 @@ tbServiceList.getColumnModel().getColumn(COL_SERID).sizeWidthToFit();
 //        tbServiceList.getColumnModel().getColumn(COL_SERTYPENAME).setMaxWidth(90);
         // Col status
         tbServiceList.getColumnModel().getColumn(COL_STATUS).setMinWidth(90);
+        
+////    table detailslist
+        
+        tbDetailsList.getColumnModel().getColumn(COL_PROID).setMinWidth(30);
+        tbDetailsList.getColumnModel().getColumn(COL_PROID).setMaxWidth(50);
+                
+        // Col pro name
+        tbDetailsList.getColumnModel().getColumn(COL_PRONAME).setMinWidth(300);
+        
+        // Col braname
+        tbDetailsList.getColumnModel().getColumn(COL_BRANAME).setMinWidth(100);
 
+        // Col content
+        tbDetailsList.getColumnModel().getColumn(COL_CONTENT).setMinWidth(150);
+//        tbProduct.getColumnModel().getColumn(COL_CONTENT).setCellRenderer(new DefaultTableCellRenderer());
 
+        // Col quantity
+        tbDetailsList.getColumnModel().getColumn(COL_PROQTY).setMinWidth(50);
+//        tbDetailsList.getColumnModel().getColumn(COL_PROQTY).setCellEditor(new SpinnerCellEditor(1, 10));
+
+        // Col oderid
+        tbDetailsList.getColumnModel().getColumn(COL_ODERID).setMinWidth(50);
+//        tbDetailsList.getColumnModel().getColumn(COL_ODERID).setCellEditor(new SpinnerCellEditor(1, 10000));
+        tbDetailsList.getColumnModel().getColumn(COL_COST).setMinWidth(100);
+        // Col SER ID (HIDDEN)
+        tbDetailsList.getColumnModel().getColumn(COL_SERVICEID).setMinWidth(0);
+        tbDetailsList.getColumnModel().getColumn(COL_SERVICEID).setMaxWidth(0);
+        // Col bra ID (HIDDEN)
+        tbDetailsList.getColumnModel().getColumn(COL_BRAID).setMinWidth(0);
+        tbDetailsList.getColumnModel().getColumn(COL_BRAID).setMaxWidth(0);
         // Bat su kien select row tren table service list
         tbServiceList.getSelectionModel().addListSelectionListener((ListSelectionEvent e) -> {
             DefaultListSelectionModel model = (DefaultListSelectionModel) e.getSource();
+            
             if (!model.isSelectionEmpty()) {
                 fetchAction();
                 setButtonEnabled(true);
             } else {
                 setButtonEnabled(false);
+            }
+            if(!this.selectedService.getSerStatus().equals("Done")){
+                setButtonRemoveEnabled(true);
+            } else {
+                setButtonRemoveEnabled(false);
             }
         });
 
@@ -160,24 +208,11 @@ tbServiceList.getColumnModel().getColumn(COL_SERID).sizeWidthToFit();
             @Override
             public void actionPerformed(ActionEvent e) {
                 TableCellListener tcl = (TableCellListener) e.getSource();
-//                System.out.println("Row   : " + tcl.getRow());
-//                System.out.println("Column: " + tcl.getColumn());
-//                System.out.println("Old   : " + tcl.getOldValue());
-//                System.out.println("New   : " + tcl.getNewValue());
-            
+
                 switch (tcl.getColumn()) {
-                    
-                    case COL_USERNAME:
-                        selectedService.setUserName((String) tcl.getNewValue());
-                        break;                    
-                    case COL_RECEIVEDATE:
-                        selectedService.setReceiveDate((Date) tcl.getNewValue());
-                        break;
-                    case COL_RETURNDATE:
-                        selectedService.setReturnDate((Date) tcl.getNewValue());
-                        break;
+
                 }
-//                System.out.println("Listener: "+selectedEmployee.toString());
+//                
 //                updateAction();
             }
         });
@@ -353,7 +388,7 @@ tbServiceList.getColumnModel().getColumn(COL_SERID).sizeWidthToFit();
                 .addGroup(pnFilterLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                     .addComponent(tfIdFilter, javax.swing.GroupLayout.DEFAULT_SIZE, 143, Short.MAX_VALUE)
                     .addComponent(tfUserFilter))
-                .addGap(34, 34, 34)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 44, Short.MAX_VALUE)
                 .addGroup(pnFilterLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                     .addComponent(lbOrderDate, javax.swing.GroupLayout.DEFAULT_SIZE, 77, Short.MAX_VALUE)
                     .addComponent(lbOrderDate1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
@@ -361,7 +396,7 @@ tbServiceList.getColumnModel().getColumn(COL_SERID).sizeWidthToFit();
                 .addGroup(pnFilterLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(pnReceiveDate, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(pnReturnDate, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 55, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 45, Short.MAX_VALUE)
                 .addGroup(pnFilterLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jLabel7, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 48, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel6, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 48, javax.swing.GroupLayout.PREFERRED_SIZE))
@@ -515,11 +550,11 @@ tbServiceList.getColumnModel().getColumn(COL_SERID).sizeWidthToFit();
                 .addComponent(pnTitle, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(pnFilter, javax.swing.GroupLayout.PREFERRED_SIZE, 76, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 210, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 198, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 222, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 201, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(btRemove, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(btUpdate, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -530,11 +565,14 @@ tbServiceList.getColumnModel().getColumn(COL_SERID).sizeWidthToFit();
     }// </editor-fold>//GEN-END:initComponents
 //<editor-fold defaultstate="collapsed" desc="Bat su kien">
     private void btAddActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btAddActionPerformed
-//        new OrderDialog(null).setVisible(true);
+        new ServiceDialog(null).setVisible(true);
+        refreshAction(false);
+        scrollToRow(tbServiceList.getRowCount() - 1);
     }//GEN-LAST:event_btAddActionPerformed
 
     private void btUpdateActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btUpdateActionPerformed
-//        new OrderDialog(selectedOrder).setVisible(true);
+        new ServiceDialog(selectedService).setVisible(true);
+        refreshAction(false);
     }//GEN-LAST:event_btUpdateActionPerformed
 
     private void btRemoveActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btRemoveActionPerformed
@@ -609,7 +647,7 @@ tbServiceList.getColumnModel().getColumn(COL_SERID).sizeWidthToFit();
                         return false;
                     }
                 };
-                
+
                 filters.add(dateFilter);
             }
             // Chi filter date khi date khac null
@@ -622,32 +660,33 @@ tbServiceList.getColumnModel().getColumn(COL_SERID).sizeWidthToFit();
                         ServiceTableModel model = entry.getModel();
                         Service o = model.getServiceAtIndex((Integer) entry.getIdentifier());
 
-                        Calendar origin = Calendar.getInstance();
-                        origin.setTime(o.getReceiveDate());
+                        Calendar origin1 = Calendar.getInstance();
+                        origin1.setTime(o.getReturnDate());
 
-                        Calendar filter = Calendar.getInstance();
-                        filter.setTime(dcFilter1.getDate());
+                        Calendar filter1 = Calendar.getInstance();
+                        filter1.setTime(dcFilter1.getDate());
 
-                        if (origin.get(Calendar.YEAR) == filter.get(Calendar.YEAR) && origin.get(Calendar.MONTH) == filter.get(Calendar.MONTH) && origin.get(Calendar.DATE) == filter.get(Calendar.DATE)) {
+                        if (origin1.get(Calendar.YEAR) == filter1.get(Calendar.YEAR) && origin1.get(Calendar.MONTH) == filter1.get(Calendar.MONTH) && origin1.get(Calendar.DATE) == filter1.get(Calendar.DATE)) {
                             return true;
                         }
 
                         return false;
                     }
                 };
-                
+
                 filters.add(dateFilter1);
+            }
+            //filter type khi khac All
+            String stt1 = ((ServiceType) cbTypeFilter.getSelectedItem()).getSerTypeName();
+            if (!stt1.equals("All")) {
+                filters.add(RowFilter.regexFilter("^" + stt1, 4));
             }
             // Chi filter status khi status khac "All"
             String stt = ((ServiceStatus) cbStatusFilter.getSelectedItem()).getSttName();
             if (!stt.equals("All")) {
                 filters.add(RowFilter.regexFilter("^" + stt, 5));
             }
-            
-//            String stt1 = ((ServiceType) cbTypeFilter.getSelectedItem()).getSerTypeName();
-//            if (!stt1.equals("All")) {
-//                filters.add(RowFilter.regexFilter("^" + stt, 6));
-//            }
+
             
             rf = RowFilter.andFilter(filters);
         } catch (java.util.regex.PatternSyntaxException e) {
@@ -658,23 +697,26 @@ tbServiceList.getColumnModel().getColumn(COL_SERID).sizeWidthToFit();
 //</editor-fold>
 
     private void clearFilter() {
-        tfIdFilter.setText(null);        
+        tfIdFilter.setText(null);
         tfUserFilter.setText(null);
         dcFilter.setDate(null);
         dcFilter1.setDate(null);
-        cbStatusFilter.setSelectedIndex(cbStatusFilter.getItemCount() - 1);
-        cbTypeFilter.setSelectedIndex(cbStatusFilter.getItemCount() - 1);
+        cbStatusFilter.setSelectedIndex(cbStatusFilter.getItemCount()- 1);
+        cbTypeFilter.setSelectedIndex(cbTypeFilter.getItemCount() - 1);
     }
 
     //<editor-fold defaultstate="collapsed" desc="xu ly cho table service">
     private void fetchAction() {
         selectedRowIndex = tbServiceList.convertRowIndexToModel(tbServiceList.getSelectedRow());
         selectedService = serviceTableModel.getServiceAtIndex(selectedRowIndex);
-         //Reload table product list voi Order moi chon
+        //Reload table product list voi Order moi chon
         serviceDetailsTableModel.load(selectedService.getSerID());
     }
 
     private void deleteAction() {
+        if (SwingUtils.showConfirmDialog("Are you sure to delete this service ?") == JOptionPane.NO_OPTION) {
+            return;
+        }
         setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
         boolean result = serviceTableModel.delete(selectedService);
         setCursor(null);
@@ -684,6 +726,7 @@ tbServiceList.getColumnModel().getColumn(COL_SERID).sizeWidthToFit();
         // Neu row xoa la row khac cuoi thi tien cursor ve truoc
         selectedRowIndex = (selectedRowIndex == tbServiceList.getRowCount() ? tbServiceList.getRowCount() - 1 : selectedRowIndex++);
         scrollToRow(selectedRowIndex);
+        refreshAction(false);
     }
 //</editor-fold>
 
@@ -706,6 +749,14 @@ tbServiceList.getColumnModel().getColumn(COL_SERID).sizeWidthToFit();
 
     private void setButtonEnabled(boolean enabled, JButton... exclude) {
         btUpdate.setEnabled(enabled);
+        btRemove.setEnabled(enabled);
+
+        // Ngoai tru may button nay luon luon enable
+        if (exclude.length != 0) {
+            Arrays.stream(exclude).forEach(b -> b.setEnabled(true));
+        }
+    }
+    private void setButtonRemoveEnabled(boolean enabled, JButton... exclude) {        
         btRemove.setEnabled(enabled);
 
         // Ngoai tru may button nay luon luon enable

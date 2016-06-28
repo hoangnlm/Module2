@@ -26,7 +26,7 @@ public class InboundDAOImpl implements IDAO<Inbound> {
     private CachedRowSet crs;
 
     public InboundDAOImpl() {
-        this.crs = getCRS("SELECT InID,InDate,SupName,SupInvoiceID,UserName,s.SupID,u.UserID from Inbounds i join Suppliers s on i.SupID=s.SupID join Users u on u.UserID=i.UserID");
+        this.crs = getCRS("SELECT InID,InDate,SupName,SupInvoiceID,UserName,s.SupID,u.UserID from Inbounds i join Suppliers s on i.SupID=s.SupID join Users u on u.UserID=i.UserID order by InID DESC");
     }
     
     

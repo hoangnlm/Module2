@@ -1,11 +1,13 @@
 package employee.controller;
 
-import customer.controller.*;
 import java.awt.Component;
 import javax.swing.DefaultCellEditor;
 import javax.swing.JComboBox;
 import javax.swing.JTable;
-
+/**
+ *
+ * @author BonBon
+ */
 public class UserNameComboBoxCellEditor extends DefaultCellEditor {
 
     private JComboBox cb;

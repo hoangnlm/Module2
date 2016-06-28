@@ -27,7 +27,7 @@ public class OutboundDAOImpl implements IDAO<Outbound> {
     private CachedRowSet crs;
 
     public OutboundDAOImpl() {
-        this.crs = getCRS("SELECT OutID,OutDate,OutContent,UserName,u.UserID from Outbounds o join Users u on u.UserID=o.UserID");
+        this.crs = getCRS("SELECT OutID,OutDate,OutContent,UserName,u.UserID from Outbounds o join Users u on u.UserID=o.UserID order by OutID desc");
     }
     
     

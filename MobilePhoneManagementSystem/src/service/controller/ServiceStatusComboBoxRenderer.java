@@ -11,12 +11,11 @@ import java.awt.Component;
 import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.ListCellRenderer;
-import static javax.swing.SwingConstants.CENTER;
 import service.model.ServiceStatus;
 
 /**
  *
- * @author Hoang
+ * @author BonBon
  */
 public class ServiceStatusComboBoxRenderer extends JLabel implements ListCellRenderer<ServiceStatus> {
 

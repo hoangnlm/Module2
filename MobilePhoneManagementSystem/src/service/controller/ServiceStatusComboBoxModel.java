@@ -1,13 +1,12 @@
 package service.controller;
 
-import order.model.OrderStatus;
 import service.model.ServiceStatus;
 import service.model.ServiceStatusDAOImpl;
 import utility.CustomizedComboBoxModel;
 
 /**
  *
- * @author Hoang
+ * @author BonBon
  */
 public class ServiceStatusComboBoxModel extends CustomizedComboBoxModel<ServiceStatus> {
 

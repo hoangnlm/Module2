@@ -22,7 +22,7 @@ import utility.CustomizedTableModel;
 public class ProductTableModel extends CustomizedTableModel<Product> {
 
     public ProductTableModel() {
-        super(new ProductDAOImpl(), new String[]{"ID", "Branch Name", "Product Name", "Stock", "Price", "Description","Enable","SaleOff","Image"});
+        super(new ProductDAOImpl(), new String[]{"ID", "Branch", "Product Name", "Stock", "Price", "Description","Enable","SaleOff","Image"});
     }
     
 

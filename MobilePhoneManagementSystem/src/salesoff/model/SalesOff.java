@@ -24,8 +24,8 @@ public class SalesOff {
     public static final String COL_SALEEND = "SalesOffEndDate";
     public static final String COL_SALEAMOUNT = "SalesOffAmount";
     
-    public static final int MIN_SALE = 0;
-    public static final int MAX_SALE = 50;
+    public static final int MIN_SALE = 1;
+    public static final int MAX_SALE = 20;
     
     public SalesOff() {
     }

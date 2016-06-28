@@ -1,20 +1,17 @@
 package service.controller;
 
 
-
-
 import service.model.ServiceDetails;
 import service.model.ServiceDetailsDAOImpl;
 import utility.CustomizedTableModel;
-
 /**
  *
- * @author Hoang
+ * @author BonBon
  */
 public class ServiceDetailsTableModel extends CustomizedTableModel<ServiceDetails> {
 
     public ServiceDetailsTableModel() {
-        super(new ServiceDetailsDAOImpl(), new String[]{"ServiceID", "Product Name", "Branch","Content","Quantity", "OderID"});
+        super(new ServiceDetailsDAOImpl(), new String[]{"ProID","Product Name","Branch","Content", "Qty", "OrderID","Cost","SerID","BraID"});
     }
     
     public ServiceDetails getServiceDetailsFromIndex(int index){
@@ -34,7 +31,7 @@ public class ServiceDetailsTableModel extends CustomizedTableModel<ServiceDetail
 
     @Override
     public Class<?> getColumnClass(int column) {
-        Class[] columnClasses = {Integer.class, String.class, String.class, String.class, Integer.class,Integer.class};
+        Class[] columnClasses = {Integer.class, String.class, String.class, String.class, Integer.class,Integer.class,Integer.class,Integer.class, Integer.class};
         return columnClasses[column];
     }
 
@@ -44,7 +41,7 @@ public class ServiceDetailsTableModel extends CustomizedTableModel<ServiceDetail
         Object result = null;
         switch (columnIndex) {
             case 0:
-                result = item.getSerID();
+                result = item.getProID();
                 break;
             case 1:
                 result = item.getProName();
@@ -61,6 +58,15 @@ public class ServiceDetailsTableModel extends CustomizedTableModel<ServiceDetail
             case 5:
                 result = item.getOrdID();
                 break;
+            case 6:
+                result = item.getSerCost();
+                break;    
+            case 7:
+                result = item.getSerID();
+                break;
+            case 8:
+                result = item.getBraID();
+                break;
         }
         return result;
     }
@@ -70,7 +76,7 @@ public class ServiceDetailsTableModel extends CustomizedTableModel<ServiceDetail
         item = list.get(rowIndex);
         switch (columnIndex) {
             case 0:
-                item.setSerID((int) aValue);
+                item.setProID((int) aValue);
                 break;
             case 1:
                 item.setProName((String) aValue);
@@ -86,6 +92,15 @@ public class ServiceDetailsTableModel extends CustomizedTableModel<ServiceDetail
                 break;
             case 5:
                 item.setOrdID((int) aValue);
+                break;
+            case 6:
+                item.setSerCost((int) aValue);
+                break;  
+            case 7:
+                item.setSerID((int) aValue);
+                break;
+            case 8:
+                item.setBraID((int) aValue);
                 break;
         }
         fireTableCellUpdated(rowIndex, columnIndex);

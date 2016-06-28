@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package customer.controller;
 
 import customer.model.Customer;
@@ -25,6 +20,8 @@ import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.table.TableRowSorter;
+import main.controller.LoginFrame;
+import main.model.UserFunction;
 import order.controller.OrderDialog;
 import utility.CurrencyCellRenderer;
 import utility.StringCellEditor;
@@ -56,7 +53,7 @@ public class CustomerPanel extends javax.swing.JPanel {
     public static final int COL_CUSPHONE = 4;
     public static final int COL_CUSADDRESS = 5;
     public static final int COL_STATUS = 6;
-
+    
     //<editor-fold defaultstate="collapsed" desc="Constructor">
     /**
      * Creates new form OrderPanel
@@ -255,6 +252,18 @@ public class CustomerPanel extends javax.swing.JPanel {
             }
         });
 //</editor-fold>
+
+    // Check permission Customer
+        if(!LoginFrame.checkPermission(new UserFunction(UserFunction.FG_CUSTOMER, UserFunction.FN_UPDATE))){
+            tbCustomerList.setEnabled(false);
+            btAdd.setEnabled(false);
+            btNewOrder.setEnabled(false);
+        }
+        
+        // Check permission CustomerLevel (chi check view)
+         if(!LoginFrame.checkPermission(new UserFunction(UserFunction.FG_CUSTOMERLEVEL, UserFunction.FN_VIEW))){
+             btCusLevel.setEnabled(false);
+         }       
     }
 
     /**
@@ -662,7 +671,6 @@ public class CustomerPanel extends javax.swing.JPanel {
             // Refresh combobox column table
             customerLevelComboBoxModel2.refresh();
         }
-        scrollToRow(selectedRowIndex);
     }
 
     private void insertAction() {

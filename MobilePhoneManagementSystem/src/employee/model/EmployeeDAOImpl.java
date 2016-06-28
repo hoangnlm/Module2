@@ -6,7 +6,6 @@
 package employee.model;
 
 import database.IDAO;
-import java.sql.Date;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -25,7 +24,7 @@ public class EmployeeDAOImpl implements IDAO<Employee> {
     private CachedRowSet crs;   //CRS to update table
 
     public EmployeeDAOImpl() {
-        crs = getCRS("select EmpID,UserName, EmpName, EmpPhone, Birthday, BasicSalary,Designation, WorkingStartDate,Bonus, EmpEnabled from Employees a join Users b on a.UserID=b.UserID");
+        crs = getCRS("select EmpID, EmpName, EmpPhone, Birthday, BasicSalary,Designation, WorkingStartDate,Bonus, EmpEnabled from Employees");
 
     }
 
@@ -37,8 +36,7 @@ public class EmployeeDAOImpl implements IDAO<Employee> {
                 do {
 //                    new Employee(0, userName, empName, empPhone, empBirthday, 0, empDes, empStartDate, 0, true)
                     employeeList.add(new Employee(
-                            crs.getInt(Employee.COL_EMPID),
-                            crs.getString(Employee.COL_USERNAME),
+                            crs.getInt(Employee.COL_EMPID),                            
                             crs.getString(Employee.COL_EMPNAME),
                             crs.getString(Employee.COL_EMPPHONE),
                             crs.getDate(Employee.COL_EMPBIRTHDAY),
@@ -60,8 +58,7 @@ public class EmployeeDAOImpl implements IDAO<Employee> {
         boolean result = false;
 
         // Khoi tao tri default de insert vao db
-        employee.setEmpName("New Employee");
-        employee.setUserName("");
+        employee.setEmpName("New Employee");        
         employee.setEmpPhone(System.currentTimeMillis() + "");
         Calendar calendar = Calendar.getInstance();
         calendar.set(Calendar.MONTH, calendar.get(Calendar.MONTH) + 1);
@@ -72,8 +69,8 @@ public class EmployeeDAOImpl implements IDAO<Employee> {
         employee.setEmpBonus(0);
         employee.setEmpEnabled(true);
         try {
-            runPS("insert into Employees(EmpName, UserID, EmpPhone, Birthday,BasicSalary,Designation,WorkingStartDate,"
-                    + "Bonus, EmpEnabled) values(?,(select MAX(UserID) from Users),?,?,?,?,?,?,?)",
+            runPS("insert into Employees(EmpName, EmpPhone, Birthday,BasicSalary,Designation,WorkingStartDate,"
+                    + "Bonus, EmpEnabled) values(?,?,?,?,?,?,?,?)",
                     employee.getEmpName(),
                     employee.getEmpPhone(),
                     employee.getEmpBirthday(),
@@ -98,21 +95,16 @@ public class EmployeeDAOImpl implements IDAO<Employee> {
 //        System.out.println("Deo VO: "+empl.toString());
         boolean result = false;
         try {
-            // Check cus phone khong duoc trung
-            CachedRowSet crs2 = getCRS("select * from Employees "
-                    + "where UserID = (select UserID from Users where "
-                    + "UserName=?) AND EmpID <> ?", empl.getUserName(),empl.getEmpID());
+            // Check cus phone khong duoc trung            
             CachedRowSet crs3 = getCRS("select * from Employees "
                     + "where EmpPhone = ? AND EmpID <>?", empl.getEmpPhone(),empl.getEmpID());
-            if (crs2.first()) {
-                SwingUtils.showErrorDialog("Username cannot be duplicated !");
-            } else if (crs3.first()) {
+            
+            if (crs3.first()) {
                 SwingUtils.showErrorDialog("Phone cannot be duplicated !");
             } else {
-                runPS("update Employees set EmpName=?, UserID=(select UserID from Users where UserName=?), EmpPhone=?,"
+                runPS("update Employees set EmpName=?, EmpPhone=?,"
                         + " Birthday=?,BasicSalary=?,Designation=?,WorkingStartDate = ?,Bonus=?, EmpEnabled=? where EmpID=?",
-                        empl.getEmpName(),
-                        empl.getUserName(),
+                        empl.getEmpName(),                        
                         empl.getEmpPhone(),
                         empl.getEmpBirthday(),
                         empl.getEmpSalary(),

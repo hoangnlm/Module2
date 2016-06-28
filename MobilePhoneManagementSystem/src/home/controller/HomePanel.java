@@ -6,6 +6,9 @@
 package home.controller;
 
 import com.toedter.calendar.JDateChooser;
+import java.sql.SQLException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  *
@@ -42,6 +45,11 @@ public class HomePanel extends javax.swing.JPanel {
         btStatistics.setForeground(new java.awt.Color(255, 153, 0));
         btStatistics.setText("Mobile Phone Shop Management System...");
         btStatistics.setFocusPainted(false);
+        btStatistics.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btStatisticsActionPerformed(evt);
+            }
+        });
         add(btStatistics);
         btStatistics.setBounds(10, 640, 290, 30);
 
@@ -50,6 +58,14 @@ public class HomePanel extends javax.swing.JPanel {
         add(jLabel5);
         jLabel5.setBounds(0, -30, 810, 730);
     }// </editor-fold>//GEN-END:initComponents
+
+    private void btStatisticsActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btStatisticsActionPerformed
+        try {
+            new statistic.Statistic().setVisible(true);
+        } catch (SQLException ex) {
+            Logger.getLogger(HomePanel.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }//GEN-LAST:event_btStatisticsActionPerformed
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables

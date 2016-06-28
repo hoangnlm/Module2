@@ -11,13 +11,11 @@ import database.IDAO;
 import java.io.InputStream;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
-import static java.time.Clock.system;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.sql.rowset.CachedRowSet;
-import javax.swing.JTable;
 import product.model.Product;
 import utility.SwingUtils;
 /**
@@ -170,7 +168,7 @@ public class ProductDAOImpl implements IDAO<Product> {
             PreparedStatement ps = db.getPreparedStatement("Update Products set ProImage=? where ProID=?");
             ps.setBlob(1, is);
             ps.setInt(2, product.getProId());
-            System.err.println("nanana");
+            
             ps.executeUpdate();
             result = true;
         } catch (SQLException ex) {

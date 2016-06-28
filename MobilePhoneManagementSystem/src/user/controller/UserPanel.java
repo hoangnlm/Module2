@@ -23,28 +23,35 @@ import javax.swing.event.ListSelectionEvent;
 import javax.swing.table.TableRowSorter;
 
 import user.model.User;
+import user.model.UserEmployee;
 import utility.StringCellEditor;
 import utility.TableCellListener;
 import utility.SwingUtils;
 
 /**
  *
- * @author Hoang map :D
+ * @author BonBon
  */
 public class UserPanel extends javax.swing.JPanel {
-    
+
     private UserTableModel userTableModel;
-    
+
     private TableRowSorter<UserTableModel> sorter;
 
     // Customer dang duoc chon trong table
     private User selectedUser;
     private int selectedRowIndex;
+    private UserEmployeeComboBoxModel employeeComboBoxModel1;
+    private UserEmployeeComboBoxModel employeeComboBoxModel2;
+    UserEmployee filterEmployee;
 
-    // Define some column constants
-    private static final int COL_CUSID = 0;
-    private static final int COL_CUSNAME = 1;    
-    private static final int COL_STATUS = 2;
+// Define some column constants
+    private static final int COL_USERID = 0;
+    private static final int COL_USERNAME = 1;
+    private static final int COL_EMPNAME = 2;
+    private static final int COL_STATUS = 3;
+    private static final int COL_PASS = 4;
+    private static final int COL_EMPID = 5;
 
     //<editor-fold defaultstate="collapsed" desc="Constructor">
     /**
@@ -52,12 +59,14 @@ public class UserPanel extends javax.swing.JPanel {
      */
     public UserPanel() {
         initComponents();
-
         // Disable button khi moi khoi dong len
         setButtonEnabled(false);
-
+        
         // Selecting customer in the table
         selectedUser = new User();
+
+        // Set data cho column employee Username combobox
+        employeeComboBoxModel1 = new UserEmployeeComboBoxModel();
 
         // Set data cho table
         userTableModel = new UserTableModel();
@@ -73,8 +82,23 @@ public class UserPanel extends javax.swing.JPanel {
         // Set height cho table header
         tbUserList.getTableHeader().setPreferredSize(new Dimension(100, 30));
 
-        // Col cus name
-        tbUserList.getColumnModel().getColumn(COL_CUSNAME).setCellEditor(new StringCellEditor(1, 50, SwingUtils.PATTERN_NAMEWITHSPACE));
+        // Col cus id
+        tbUserList.getColumnModel().getColumn(COL_USERID).setMinWidth(40);
+        tbUserList.getColumnModel().getColumn(COL_USERID).setMaxWidth(60);
+        // Col user name
+        tbUserList.getColumnModel().getColumn(COL_USERNAME).setCellEditor(new StringCellEditor(1, 50, SwingUtils.PATTERN_NAMENOSPACE));
+        // Col emp name
+        tbUserList.getColumnModel().getColumn(COL_EMPNAME).setMinWidth(150);
+        tbUserList.getColumnModel().getColumn(COL_EMPNAME).setCellEditor(new UserEmployeeComboBoxCellEditor(employeeComboBoxModel1));
+        // Col status
+        tbUserList.getColumnModel().getColumn(COL_STATUS).setMinWidth(70);
+        tbUserList.getColumnModel().getColumn(COL_STATUS).setMaxWidth(70);
+//        // Col pass
+        tbUserList.getColumnModel().getColumn(COL_PASS).setMinWidth(0);
+        tbUserList.getColumnModel().getColumn(COL_PASS).setMaxWidth(0);
+        //Col EmpID
+        tbUserList.getColumnModel().getColumn(COL_EMPID).setMinWidth(0);
+        tbUserList.getColumnModel().getColumn(COL_EMPID).setMaxWidth(0);
 
         // Bat su kien select row tren table
         tbUserList.getSelectionModel().addListSelectionListener((ListSelectionEvent e) -> {
@@ -93,20 +117,21 @@ public class UserPanel extends javax.swing.JPanel {
             @Override
             public void actionPerformed(ActionEvent e) {
                 TableCellListener tcl = (TableCellListener) e.getSource();
-//                System.out.println("Row   : " + tcl.getRow());
-//                System.out.println("Column: " + tcl.getColumn());
-//                System.out.println("Old   : " + tcl.getOldValue());
-//                System.out.println("New   : " + tcl.getNewValue());
 
                 switch (tcl.getColumn()) {
-                    case COL_CUSNAME:
+                    case COL_USERNAME:
                         selectedUser.setUserName((String) tcl.getNewValue());
-                        break;                    
+                        break;
+                    case COL_EMPNAME:
+                        selectedUser.setEmpName((String) tcl.getNewValue());
+                        selectedUser.setEmpID(employeeComboBoxModel1.getUserEmployeeNameFromValue((String) tcl.getNewValue()).getEmpID());
+
+                        break;
                     case COL_STATUS:
                         selectedUser.setUserEnable((boolean) tcl.getNewValue());
                         break;
                 }
-                
+
                 updateAction();
             }
         });
@@ -119,29 +144,46 @@ public class UserPanel extends javax.swing.JPanel {
             public void changedUpdate(DocumentEvent e) {
                 doFilter();
             }
-            
+
             @Override
             public void insertUpdate(DocumentEvent e) {
                 doFilter();
             }
-            
+
             @Override
             public void removeUpdate(DocumentEvent e) {
                 doFilter();
             }
         });
-        tfCusNameFilter.getDocument().addDocumentListener(
+        tfUserNameFilter.getDocument().addDocumentListener(
                 new DocumentListener() {
             @Override
             public void changedUpdate(DocumentEvent e) {
                 doFilter();
             }
-            
+
             @Override
             public void insertUpdate(DocumentEvent e) {
                 doFilter();
             }
-            
+
+            @Override
+            public void removeUpdate(DocumentEvent e) {
+                doFilter();
+            }
+        });
+        tfEmpNameFilter.getDocument().addDocumentListener(
+                new DocumentListener() {
+            @Override
+            public void changedUpdate(DocumentEvent e) {
+                doFilter();
+            }
+
+            @Override
+            public void insertUpdate(DocumentEvent e) {
+                doFilter();
+            }
+
             @Override
             public void removeUpdate(DocumentEvent e) {
                 doFilter();
@@ -164,17 +206,19 @@ public class UserPanel extends javax.swing.JPanel {
         jLabel2 = new javax.swing.JLabel();
         tfIdFilter = new javax.swing.JTextField();
         jLabel3 = new javax.swing.JLabel();
-        tfCusNameFilter = new javax.swing.JTextField();
+        tfUserNameFilter = new javax.swing.JTextField();
         jLabel6 = new javax.swing.JLabel();
         cbStatusFilter = new javax.swing.JComboBox<>();
         jButton1 = new javax.swing.JButton();
+        jLabel4 = new javax.swing.JLabel();
+        tfEmpNameFilter = new javax.swing.JTextField();
         btRemove = new javax.swing.JButton();
         btAdd = new javax.swing.JButton();
         btRefresh = new javax.swing.JButton();
         pnTitle = new javax.swing.JPanel();
         jLabel1 = new javax.swing.JLabel();
-        btCusLevel = new javax.swing.JButton();
-        btNewOrder = new javax.swing.JButton();
+        btPermission = new javax.swing.JButton();
+        btChangePass = new javax.swing.JButton();
         jScrollPane2 = new javax.swing.JScrollPane();
         tbUserList = new javax.swing.JTable();
 
@@ -184,7 +228,7 @@ public class UserPanel extends javax.swing.JPanel {
 
         jLabel2.setText("ID:");
 
-        jLabel3.setText("Name:");
+        jLabel3.setText("UserName:");
         jLabel3.setPreferredSize(new java.awt.Dimension(55, 16));
 
         jLabel6.setText("Status:");
@@ -206,6 +250,8 @@ public class UserPanel extends javax.swing.JPanel {
             }
         });
 
+        jLabel4.setText("EmpName:");
+
         javax.swing.GroupLayout pnFilterLayout = new javax.swing.GroupLayout(pnFilter);
         pnFilter.setLayout(pnFilterLayout);
         pnFilterLayout.setHorizontalGroup(
@@ -213,19 +259,23 @@ public class UserPanel extends javax.swing.JPanel {
             .addGroup(pnFilterLayout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(jLabel2)
-                .addGap(23, 23, 23)
-                .addComponent(tfIdFilter, javax.swing.GroupLayout.PREFERRED_SIZE, 129, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(jLabel3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(tfIdFilter, javax.swing.GroupLayout.PREFERRED_SIZE, 54, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 39, Short.MAX_VALUE)
+                .addComponent(jLabel3, javax.swing.GroupLayout.PREFERRED_SIZE, 71, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(18, 18, 18)
-                .addComponent(tfCusNameFilter, javax.swing.GroupLayout.PREFERRED_SIZE, 195, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(27, 27, 27)
+                .addComponent(tfUserNameFilter, javax.swing.GroupLayout.PREFERRED_SIZE, 114, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 39, Short.MAX_VALUE)
+                .addComponent(jLabel4)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(tfEmpNameFilter, javax.swing.GroupLayout.PREFERRED_SIZE, 161, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 41, Short.MAX_VALUE)
                 .addComponent(jLabel6)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(cbStatusFilter, javax.swing.GroupLayout.PREFERRED_SIZE, 138, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(39, 39, 39)
+                .addComponent(cbStatusFilter, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(25, 25, 25))
+                .addContainerGap())
         );
         pnFilterLayout.setVerticalGroup(
             pnFilterLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -233,16 +283,17 @@ public class UserPanel extends javax.swing.JPanel {
                 .addContainerGap()
                 .addGroup(pnFilterLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                     .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
-                    .addComponent(cbStatusFilter, javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(javax.swing.GroupLayout.Alignment.LEADING, pnFilterLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                        .addComponent(jLabel6)
+                        .addComponent(cbStatusFilter)
+                        .addComponent(tfEmpNameFilter))
                     .addGroup(javax.swing.GroupLayout.Alignment.LEADING, pnFilterLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                         .addComponent(jLabel3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addComponent(jLabel6)
-                        .addComponent(tfCusNameFilter))
-                    .addGroup(javax.swing.GroupLayout.Alignment.LEADING, pnFilterLayout.createSequentialGroup()
-                        .addGroup(pnFilterLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(jLabel2)
-                            .addComponent(tfIdFilter, javax.swing.GroupLayout.PREFERRED_SIZE, 20, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addGap(0, 0, Short.MAX_VALUE)))
+                        .addComponent(tfUserNameFilter)
+                        .addComponent(jLabel4))
+                    .addGroup(javax.swing.GroupLayout.Alignment.LEADING, pnFilterLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                        .addComponent(jLabel2)
+                        .addComponent(tfIdFilter, javax.swing.GroupLayout.PREFERRED_SIZE, 20, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addGap(17, 17, 17))
         );
 
@@ -280,13 +331,22 @@ public class UserPanel extends javax.swing.JPanel {
         jLabel1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/image/main/User.png"))); // NOI18N
         jLabel1.setText("<html><u><i><font color='red'>U</font>ser <font color='red'>M</font>anagement</i></u></html>");
 
-        btCusLevel.setFont(new java.awt.Font("Lucida Grande", 3, 14)); // NOI18N
-        btCusLevel.setForeground(new java.awt.Color(255, 153, 0));
-        btCusLevel.setIcon(new javax.swing.ImageIcon(getClass().getResource("/image/user/rsz_permission.png"))); // NOI18N
-        btCusLevel.setText("<html><u>Permission</u></html>");
-        btCusLevel.addActionListener(new java.awt.event.ActionListener() {
+        btPermission.setFont(new java.awt.Font("Lucida Grande", 3, 14)); // NOI18N
+        btPermission.setForeground(new java.awt.Color(255, 153, 0));
+        btPermission.setIcon(new javax.swing.ImageIcon(getClass().getResource("/image/user/rsz_permission.png"))); // NOI18N
+        btPermission.setText("<html><u>Permission</u></html>");
+        btPermission.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btCusLevelActionPerformed(evt);
+                btPermissionActionPerformed(evt);
+            }
+        });
+
+        btChangePass.setFont(new java.awt.Font("Lucida Grande", 3, 14)); // NOI18N
+        btChangePass.setForeground(new java.awt.Color(255, 153, 0));
+        btChangePass.setText("<html><u>Change Password</u></html>");
+        btChangePass.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btChangePassActionPerformed(evt);
             }
         });
 
@@ -296,36 +356,29 @@ public class UserPanel extends javax.swing.JPanel {
             pnTitleLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(pnTitleLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 450, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 146, Short.MAX_VALUE)
-                .addComponent(btCusLevel, javax.swing.GroupLayout.PREFERRED_SIZE, 170, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 295, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(btChangePass, javax.swing.GroupLayout.PREFERRED_SIZE, 247, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(btPermission, javax.swing.GroupLayout.PREFERRED_SIZE, 170, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap())
         );
         pnTitleLayout.setVerticalGroup(
             pnTitleLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(pnTitleLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                 .addComponent(jLabel1, javax.swing.GroupLayout.DEFAULT_SIZE, 61, Short.MAX_VALUE)
-                .addComponent(btCusLevel, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addComponent(btPermission, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(btChangePass, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE))
         );
 
-        btNewOrder.setFont(new java.awt.Font("Lucida Grande", 3, 14)); // NOI18N
-        btNewOrder.setForeground(new java.awt.Color(0, 255, 255));
-        btNewOrder.setIcon(new javax.swing.ImageIcon(getClass().getResource("/image/order/Customer2.png"))); // NOI18N
-        btNewOrder.setText("New Employee");
-        btNewOrder.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btNewOrderActionPerformed(evt);
-            }
-        });
-
-        jScrollPane2.setBorder(javax.swing.BorderFactory.createTitledBorder(javax.swing.BorderFactory.createEtchedBorder(), "Order Details"));
+        jScrollPane2.setBorder(javax.swing.BorderFactory.createTitledBorder(javax.swing.BorderFactory.createEtchedBorder(), "User List"));
 
         tbUserList.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
-                {null, null, null}
+                {null, null, null, null}
             },
             new String [] {
-                "ID", "User Name", "Status"
+                "ID", "User Name", "Emp Name", "Status"
             }
         ));
         tbUserList.setFillsViewportHeight(true);
@@ -347,8 +400,6 @@ public class UserPanel extends javax.swing.JPanel {
                 .addComponent(btRemove, javax.swing.GroupLayout.PREFERRED_SIZE, 150, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(btRefresh, javax.swing.GroupLayout.PREFERRED_SIZE, 150, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(btNewOrder, javax.swing.GroupLayout.PREFERRED_SIZE, 150, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
             .addComponent(jScrollPane2)
         );
@@ -359,14 +410,13 @@ public class UserPanel extends javax.swing.JPanel {
                 .addComponent(pnTitle, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(pnFilter, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 415, Short.MAX_VALUE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGap(16, 16, 16)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(btRemove, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(btAdd, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(btRefresh, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(btNewOrder, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(btRefresh, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addContainerGap())
         );
     }// </editor-fold>//GEN-END:initComponents
@@ -376,13 +426,9 @@ public class UserPanel extends javax.swing.JPanel {
         insertAction();
     }//GEN-LAST:event_btAddActionPerformed
 
-    private void btCusLevelActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btCusLevelActionPerformed
-        new PermissionDialog().setVisible(true);
-    }//GEN-LAST:event_btCusLevelActionPerformed
-
-    private void btNewOrderActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btNewOrderActionPerformed
-        
-    }//GEN-LAST:event_btNewOrderActionPerformed
+    private void btPermissionActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btPermissionActionPerformed
+        new PermissionDialog(selectedUser).setVisible(true);
+    }//GEN-LAST:event_btPermissionActionPerformed
 
     private void btRefreshActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btRefreshActionPerformed
         refreshAction(true);
@@ -399,12 +445,17 @@ public class UserPanel extends javax.swing.JPanel {
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
         clearFilter();
     }//GEN-LAST:event_jButton1ActionPerformed
+
+    private void btChangePassActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btChangePassActionPerformed
+         new PasswordDialog(selectedUser).setVisible(true);
+         refreshAction(false);
+    }//GEN-LAST:event_btChangePassActionPerformed
     //// </editor-fold>
     //<editor-fold defaultstate="collapsed" desc="khai bao component">
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btAdd;
-    private javax.swing.JButton btCusLevel;
-    private javax.swing.JButton btNewOrder;
+    private javax.swing.JButton btChangePass;
+    private javax.swing.JButton btPermission;
     private javax.swing.JButton btRefresh;
     private javax.swing.JButton btRemove;
     private javax.swing.JComboBox<String> cbStatusFilter;
@@ -412,13 +463,15 @@ public class UserPanel extends javax.swing.JPanel {
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
+    private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabel6;
     private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JPanel pnFilter;
     private javax.swing.JPanel pnTitle;
     private javax.swing.JTable tbUserList;
-    private javax.swing.JTextField tfCusNameFilter;
+    private javax.swing.JTextField tfEmpNameFilter;
     private javax.swing.JTextField tfIdFilter;
+    private javax.swing.JTextField tfUserNameFilter;
     // End of variables declaration//GEN-END:variables
 //</editor-fold>
 
@@ -430,15 +483,15 @@ public class UserPanel extends javax.swing.JPanel {
         try {
             List<RowFilter<UserTableModel, Object>> filters = new ArrayList<>();
             filters.add(RowFilter.regexFilter("^" + tfIdFilter.getText(), 0));
-            filters.add(RowFilter.regexFilter("^" + tfCusNameFilter.getText(), 1));
-
+            filters.add(RowFilter.regexFilter("^" + tfUserNameFilter.getText(), 1));
+            filters.add(RowFilter.regexFilter("^" + tfEmpNameFilter.getText(), 2));
             // Neu status khac "All" thi moi filter
             String statusFilter = cbStatusFilter.getSelectedItem().toString();
             if (!statusFilter.equals("All")) {
                 filters.add(RowFilter.regexFilter(
-                        statusFilter.equals("Enabled") ? "t" : "f", 5));
+                        statusFilter.equals("Enabled") ? "t" : "f", 3));
             }
-            
+
             rf = RowFilter.andFilter(filters);
         } catch (java.util.regex.PatternSyntaxException e) {
             return;
@@ -448,34 +501,38 @@ public class UserPanel extends javax.swing.JPanel {
 //</editor-fold>
 
     private void clearFilter() {
-        tfIdFilter.setText("");        
-        tfCusNameFilter.setText("");        
+        tfIdFilter.setText("");
+        tfEmpNameFilter.setText("");
+        tfUserNameFilter.setText("");
         cbStatusFilter.setSelectedIndex(0);
     }
-    
+
     private void fetchAction() {
         selectedRowIndex = tbUserList.getSelectedRow();
         selectedUser.setUserID((int) tbUserList.getValueAt(selectedRowIndex, 0));
-        selectedUser.setUserName((String) tbUserList.getValueAt(selectedRowIndex, 1));        
-        selectedUser.setUserEnable((boolean) tbUserList.getValueAt(selectedRowIndex, 2));
+        selectedUser.setUserName((String) tbUserList.getValueAt(selectedRowIndex, 1));
+        selectedUser.setEmpName((String) tbUserList.getValueAt(selectedRowIndex, 2));
+        selectedUser.setUserEnable((boolean) tbUserList.getValueAt(selectedRowIndex, 3));
+        selectedUser.setPassword((String) tbUserList.getValueAt(selectedRowIndex, 4));
+        selectedUser.setEmpID((int) tbUserList.getValueAt(selectedRowIndex, 5));
     }
-    
+
     private void refreshAction(boolean mustInfo) {
         if (mustInfo) {
             setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
 
             // Refresh table
-            userTableModel.refresh();            
+            userTableModel.refresh();
             setCursor(null);
             SwingUtils.showInfoDialog(SwingUtils.DB_REFRESH);
         } else {
             // Refresh table
             userTableModel.refresh();
-            
+
         }
         scrollToRow(selectedRowIndex);
     }
-    
+
     private void insertAction() {
         setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
         boolean result = userTableModel.insert(new User());
@@ -487,7 +544,7 @@ public class UserPanel extends javax.swing.JPanel {
         tbUserList.editCellAt(tbUserList.getSelectedRow(), 1);
         tbUserList.getEditorComponent().requestFocus();
     }
-    
+
     private void updateAction() {
         setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
         boolean result = userTableModel.update(selectedUser);
@@ -495,8 +552,14 @@ public class UserPanel extends javax.swing.JPanel {
         setCursor(null);
         SwingUtils.showInfoDialog(result ? SwingUtils.UPDATE_SUCCESS : SwingUtils.UPDATE_FAIL);
         scrollToRow(selectedRowIndex);
+        
+//        
+//        //load lai combobox cho cell
+//        UserPanel u= new UserPanel();
+//        employeeComboBoxModel2 = new UserEmployeeComboBoxModel();
+//        tbUserList.getColumnModel().getColumn(COL_EMPNAME).setCellEditor(new UserEmployeeComboBoxCellEditor(employeeComboBoxModel2));
     }
-    
+
     private void deleteAction() {
         setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
         boolean result = userTableModel.delete(selectedUser);
@@ -508,16 +571,17 @@ public class UserPanel extends javax.swing.JPanel {
         selectedRowIndex = (selectedRowIndex == tbUserList.getRowCount() ? tbUserList.getRowCount() - 1 : selectedRowIndex++);
         scrollToRow(selectedRowIndex);
     }
-    
+
     private void scrollToRow(int row) {
         tbUserList.getSelectionModel().setSelectionInterval(row, row);
         tbUserList.scrollRectToVisible(new Rectangle(tbUserList.getCellRect(row, 0, true)));
     }
-    
+
     private void setButtonEnabled(boolean enabled, JButton... exclude) {
         btRemove.setEnabled(enabled);
         btAdd.setEnabled(enabled);
-        btNewOrder.setEnabled(enabled);
+        btChangePass.setEnabled(enabled);
+        btPermission.setEnabled(enabled);
 
         // Ngoai tru may button nay luon luon enable
         if (exclude.length != 0) {

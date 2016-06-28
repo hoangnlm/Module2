@@ -3,19 +3,18 @@ package employee.controller;
 import employee.model.Employee;
 import employee.model.EmployeeDAOImpl;
 import java.util.Date;
-import user.model.User;
 
 import utility.CustomizedTableModel;
 
 /**
- * Data model for table Customer List
+ * Data model for table Employee List
  *
- * @author Hoang
+ * @author BonBon
  */
 public class EmployeeTableModel extends CustomizedTableModel<Employee> {
 
     public EmployeeTableModel() {
-        super(new EmployeeDAOImpl(), new String[]{"ID", "UserName", "Name", "Phone", "Birthday", "BasicSalary", "EmpDes",
+        super(new EmployeeDAOImpl(), new String[]{"ID", "Name", "Phone", "Birthday", "BasicSalary", "EmpDes",
             "WorkStart", "Bonus", "Status"});
     }
 
@@ -25,7 +24,7 @@ public class EmployeeTableModel extends CustomizedTableModel<Employee> {
 
     @Override
     public Class<?> getColumnClass(int column) {
-        Class[] columnClasses = {Integer.class, String.class, String.class, String.class, Date.class,
+        Class[] columnClasses = {Integer.class, String.class, String.class, Date.class,
             Float.class, String.class, Date.class, Float.class, Boolean.class};
         return columnClasses[column];
     }
@@ -37,32 +36,29 @@ public class EmployeeTableModel extends CustomizedTableModel<Employee> {
         switch (columnIndex) {
             case 0:
                 result = item.getEmpID();
-                break;
+                break;           
             case 1:
-                result = item.getUserName();
-                break;
-            case 2:
                 result = item.getEmpName();
                 break;
-            case 3:
+            case 2:
                 result = item.getEmpPhone();
                 break;
-            case 4:
+            case 3:
                 result = item.getEmpBirthday();
                 break;
-            case 5:
+            case 4:
                 result = item.getEmpSalary();
                 break;
-            case 6:
+            case 5:
                 result = item.getEmpDes();
                 break;
-            case 7:
+            case 6:
                 result = item.getEmpStartDate();
                 break;
-            case 8:
+            case 7:
                 result = item.getEmpBonus();
                 break;
-            case 9:
+            case 8:
                 result = item.isEmpEnabled();
                 break;
         }
@@ -75,32 +71,29 @@ public class EmployeeTableModel extends CustomizedTableModel<Employee> {
         switch (columnIndex) {
             case 0:
                 employee.setEmpID((int) aValue);
-                break;
+                break;            
             case 1:
-                employee.setUserName(((User) aValue).getUserName());
-                break;
-            case 2:
                 employee.setEmpName((String) aValue);
                 break;
-            case 3:
+            case 2:
                 employee.setEmpPhone((String) aValue);
                 break;
-            case 4:
+            case 3:
                 employee.setEmpBirthday((Date) aValue);
                 break;
-            case 5:
+            case 4:
                 employee.setEmpSalary((Float) aValue);
                 break;
-            case 6:
+            case 5:
                 employee.setEmpDes((String) aValue);
                 break;
-            case 7:
+            case 6:
                 employee.setEmpStartDate((Date) aValue);
                 break;
-            case 8:
+            case 7:
                 employee.setEmpBonus((Float) aValue);
                 break;
-            case 9:
+            case 8:
                 employee.setEmpEnabled((boolean) aValue);
                 break;
         }

@@ -82,7 +82,7 @@ public class OrderProductDAOImpl implements IDAO<OrderProduct> {
 
         try {
             // Insert table Orders
-            runPS("insert Orders(CusID, UserID, OrdDate, OrdCusDiscount, SttID) values(?,?,?,?,?)", currentOrder.getCusID(), currentOrder.getUserID(), currentOrder.getOrdDate(), currentOrder.getCusDiscount(), currentOrder.getOrdStatusID());
+            runPS("insert Orders(CusID, UserID, OrdDate, OrdCusDiscount, SttID) values(?,(select UserID from Users where UserName=?),?,?,?)", currentOrder.getCusID(), currentOrder.getUserName(), currentOrder.getOrdDate(), currentOrder.getCusDiscount(), currentOrder.getOrdStatusID());
             // Lay ordID sau khi insert table Orders
             CachedRowSet crs2 = getCRS("select top(1) OrdID from Orders order by OrdID DESC");
             crs2.first();

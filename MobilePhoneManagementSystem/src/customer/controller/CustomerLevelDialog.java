@@ -15,6 +15,8 @@ import javax.swing.AbstractAction;
 import javax.swing.DefaultListSelectionModel;
 import javax.swing.JButton;
 import javax.swing.event.ListSelectionEvent;
+import main.controller.LoginFrame;
+import main.model.UserFunction;
 import utility.SpinnerCellEditor;
 import utility.StringCellEditor;
 import utility.SwingUtils;
@@ -36,7 +38,7 @@ public class CustomerLevelDialog extends javax.swing.JDialog {
     private static final int COL_CUSLEVEL = 1;
     private static final int COL_CUSLEVELNAME = 2;
     private static final int COL_CUSDISCOUNT = 3;
-
+    
     /**
      * Creates new form CustomerDialog
      */
@@ -106,6 +108,13 @@ public class CustomerLevelDialog extends javax.swing.JDialog {
                 updateAction();
             }
         });
+        
+        // Check permission
+        if(!LoginFrame.checkPermission(new UserFunction(UserFunction.FG_CUSTOMERLEVEL, UserFunction.FN_UPDATE))){
+            tbLevelList.setEnabled(false);
+            btAdd.setEnabled(false);
+            btDelete.setEnabled(false);
+        }
     }
 
     /**
@@ -258,7 +267,6 @@ public class CustomerLevelDialog extends javax.swing.JDialog {
         } else {
             customerLevelTableModel.refresh();
         }
-        scrollToRow(selectedRowIndex);
     }
 
     private void insertAction() {

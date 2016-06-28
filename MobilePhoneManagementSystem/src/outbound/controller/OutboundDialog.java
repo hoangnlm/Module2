@@ -9,6 +9,7 @@ package outbound.controller;
 import com.toedter.calendar.JDateChooser;
 import database.DBProvider;
 import database.IDAO;
+import inbound.model.CurrencyCellRenderer;
 
 import java.awt.Color;
 import java.awt.Component;
@@ -45,6 +46,9 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.sql.rowset.CachedRowSet;
 import javax.swing.AbstractAction;
+import javax.swing.event.RowSorterEvent;
+import javax.swing.event.RowSorterListener;
+import javax.swing.table.DefaultTableCellRenderer;
 import order.controller.OrderBranchListCellRenderer;
 import order.controller.OrderBranchListModel;
 import order.model.OrderBranch;
@@ -90,6 +94,22 @@ public class OutboundDialog extends javax.swing.JDialog implements ItemListener 
     //flag de cho biet co thay doi noi dung gi k
     private boolean trackChanges;
 
+    
+     /*Product table*/
+    private static int COL_ID = 0;
+    private static int COL_BraName = 1;
+    private static int COL_ProName = 2;
+    private static int COL_ProStock = 3;
+    private static int COL_ProPrice = 4;
+    private static int COL_ProDescr = 5;
+    private static int COL_ProEnable = 6;
+    
+    //Outbound Detail Table
+    private static int COL_OutDID = 0;
+    private static int COL_OutDName = 1;
+    private static int COL_OutDQTy = 2;
+    
+    
     public OutboundDialog(Outbound outbound) {
         super((JFrame) null, true);
         insertMode = outbound == null;
@@ -145,10 +165,11 @@ public class OutboundDialog extends javax.swing.JDialog implements ItemListener 
         TableColumnModel tcm = tbProductList.getColumnModel();
         tcm.removeColumn(tcm.getColumn(8));
 
-        //hide column hinh
+        //hide column saleoff
         tcm.removeColumn(tcm.getColumn(7));
 
-       
+       //hide column enable
+        tcm.removeColumn(tcm.getColumn(6));
 
         //set data cho table InDetail
         outboundDetailTableModel = new OutboundDetailTableModel();
@@ -204,6 +225,18 @@ public class OutboundDialog extends javax.swing.JDialog implements ItemListener 
             }
         });
 
+        //event trong truong hop k co record trong table
+        sorter.addRowSorterListener(new RowSorterListener() {
+        
+
+            @Override
+            public void sorterChanged(RowSorterEvent e) {
+               if(tbProductList.getRowCount()==0)
+                   btnAdd.setEnabled(false);
+               else
+                   btnAdd.setEnabled(true);
+            }
+    });
         // Bat su kien select row tren table Indetail
         tbInDetail.getSelectionModel().addListSelectionListener((ListSelectionEvent e) -> {
             DefaultListSelectionModel model = (DefaultListSelectionModel) e.getSource();
@@ -250,10 +283,59 @@ public class OutboundDialog extends javax.swing.JDialog implements ItemListener 
             }
         });
         
-       
+       formatTable();
 
     }
-    
+    public void formatTable() {
+        //alignment component
+        DefaultTableCellRenderer centerRenderer = new DefaultTableCellRenderer();
+        centerRenderer.setHorizontalAlignment(JLabel.CENTER);
+        //id
+        tbProductList.getColumnModel().getColumn(COL_ID).setMinWidth(30);
+        tbProductList.getColumnModel().getColumn(COL_ID).setMaxWidth(50);
+        tbProductList.getColumnModel().getColumn(COL_ID).setCellRenderer(centerRenderer);
+        //branch
+        tbProductList.getColumnModel().getColumn(COL_BraName).setMinWidth(80);
+        tbProductList.getColumnModel().getColumn(COL_BraName).setMaxWidth(80);
+        tbProductList.getColumnModel().getColumn(COL_BraName).setCellRenderer(centerRenderer);
+        
+        
+        //name
+        tbProductList.getColumnModel().getColumn(COL_ProName).setMinWidth(80);
+        tbProductList.getColumnModel().getColumn(COL_ProName).setCellRenderer(centerRenderer);
+        
+        //stock
+        tbProductList.getColumnModel().getColumn(COL_ProStock).setMinWidth(35);
+        tbProductList.getColumnModel().getColumn(COL_ProStock).setMaxWidth(50);
+        tbProductList.getColumnModel().getColumn(COL_ProStock).setCellRenderer(centerRenderer);
+
+        //price
+        tbProductList.getColumnModel().getColumn(COL_ProPrice).setMinWidth(80);
+        tbProductList.getColumnModel().getColumn(COL_ProPrice).setCellRenderer(new CurrencyCellRenderer());
+
+        //desc
+        tbProductList.getColumnModel().getColumn(COL_ProDescr).setMinWidth(50);
+        tbProductList.getColumnModel().getColumn(COL_ProDescr).setCellRenderer(centerRenderer);
+        
+        
+        //id
+        tbInDetail.getColumnModel().getColumn(COL_OutDID).setMinWidth(35);
+        tbInDetail.getColumnModel().getColumn(COL_OutDID).setMaxWidth(70);
+        tbInDetail.getColumnModel().getColumn(COL_OutDID).setCellRenderer(centerRenderer);
+        
+        
+        //InDetail Name
+        tbInDetail.getColumnModel().getColumn(COL_OutDName).setMinWidth(500);
+        tbInDetail.getColumnModel().getColumn(COL_OutDName).setMaxWidth(500);
+        tbInDetail.getColumnModel().getColumn(COL_OutDName).setCellRenderer(centerRenderer);
+        
+        
+        //stock
+        tbInDetail.getColumnModel().getColumn(COL_OutDQTy).setMinWidth(35);
+        tbInDetail.getColumnModel().getColumn(COL_OutDQTy).setMaxWidth(150);
+        tbInDetail.getColumnModel().getColumn(COL_OutDQTy).setCellRenderer(centerRenderer);
+
+    }
     public int returnProstockByProID(int proid){
         CachedRowSet crs2 = getCRS("SELECT prostock from products where proid=?",proid);
         int result = 0;
@@ -374,7 +456,7 @@ public class OutboundDialog extends javax.swing.JDialog implements ItemListener 
         jScrollPane2 = new javax.swing.JScrollPane();
         tbProductList = new javax.swing.JTable();
         btnSave = new javax.swing.JButton();
-        jButton1 = new javax.swing.JButton();
+        btnAdd = new javax.swing.JButton();
         btDelete = new javax.swing.JButton();
         jButton5 = new javax.swing.JButton();
         jButton3 = new javax.swing.JButton();
@@ -422,7 +504,7 @@ public class OutboundDialog extends javax.swing.JDialog implements ItemListener 
         jPanel1Layout.setHorizontalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
-                .addContainerGap(41, Short.MAX_VALUE)
+                .addContainerGap(47, Short.MAX_VALUE)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                     .addGroup(jPanel1Layout.createSequentialGroup()
                         .addComponent(jLabel2)
@@ -432,7 +514,7 @@ public class OutboundDialog extends javax.swing.JDialog implements ItemListener 
                         .addComponent(jLabel5)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                         .addComponent(txtUser)))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 125, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 128, Short.MAX_VALUE)
                 .addComponent(jLabel4)
                 .addGap(18, 18, 18)
                 .addComponent(jScrollPane4, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -440,42 +522,42 @@ public class OutboundDialog extends javax.swing.JDialog implements ItemListener 
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel1Layout.createSequentialGroup()
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addGap(30, 30, 30)
-                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(jLabel5)
-                            .addComponent(txtUser, javax.swing.GroupLayout.PREFERRED_SIZE, 43, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
-                                .addComponent(jLabel2)
-                                .addGap(12, 12, 12))
-                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
-                                .addComponent(jLabel4)
-                                .addGap(41, 41, 41))))
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
-                        .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(pnlDate, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(jScrollPane4, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 105, javax.swing.GroupLayout.PREFERRED_SIZE))))
-                .addContainerGap(22, Short.MAX_VALUE))
+                        .addComponent(jScrollPane4, javax.swing.GroupLayout.PREFERRED_SIZE, 105, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addContainerGap())
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
+                        .addComponent(jLabel4)
+                        .addGap(14, 14, 14)
+                        .addComponent(jLabel2)
+                        .addGap(26, 26, 26))
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(txtUser, javax.swing.GroupLayout.PREFERRED_SIZE, 54, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(jLabel5))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(pnlDate, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addContainerGap())))
         );
 
         jPanel3.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "Outbound Details", javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Tahoma", 1, 13), new java.awt.Color(255, 153, 0))); // NOI18N
 
+        jScrollPane1.setAutoscrolls(true);
+
+        tbInDetail.setAutoCreateRowSorter(true);
         tbInDetail.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null}
+
             },
             new String [] {
                 "Title 1", "Title 2", "Title 3", "Title 4"
             }
         ));
+        tbInDetail.setFillsViewportHeight(true);
+        tbInDetail.setRowHeight(25);
+        tbInDetail.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
         tbInDetail.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 tbInDetailMouseClicked(evt);
@@ -491,22 +573,23 @@ public class OutboundDialog extends javax.swing.JDialog implements ItemListener 
         );
         jPanel3Layout.setVerticalGroup(
             jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 156, Short.MAX_VALUE)
+            .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 178, Short.MAX_VALUE)
         );
 
         jPanel4.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "Product", javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Tahoma", 1, 13), new java.awt.Color(255, 153, 0))); // NOI18N
 
+        tbProductList.setAutoCreateRowSorter(true);
         tbProductList.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null}
+
             },
             new String [] {
                 "Title 1", "Title 2", "Title 3", "Title 4"
             }
         ));
+        tbProductList.setFillsViewportHeight(true);
+        tbProductList.setRowHeight(25);
+        tbProductList.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
         tbProductList.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 tbProductListMouseClicked(evt);
@@ -535,16 +618,16 @@ public class OutboundDialog extends javax.swing.JDialog implements ItemListener 
             }
         });
 
-        jButton1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/image/product/Add.png"))); // NOI18N
-        jButton1.setText("Add");
-        jButton1.addActionListener(new java.awt.event.ActionListener() {
+        btnAdd.setIcon(new javax.swing.ImageIcon(getClass().getResource("/image/product/Add.png"))); // NOI18N
+        btnAdd.setText("Add");
+        btnAdd.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton1ActionPerformed(evt);
+                btnAddActionPerformed(evt);
             }
         });
 
         btDelete.setIcon(new javax.swing.ImageIcon(getClass().getResource("/image/product/Delete.png"))); // NOI18N
-        btDelete.setText("Delete");
+        btDelete.setText("Remove");
         btDelete.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btDeleteActionPerformed(evt);
@@ -583,28 +666,25 @@ public class OutboundDialog extends javax.swing.JDialog implements ItemListener 
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(layout.createSequentialGroup()
-                        .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(btnSave)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(jButton3)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(jButton5)
-                        .addGap(0, 0, Short.MAX_VALUE))
-                    .addGroup(layout.createSequentialGroup()
-                        .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(jButton1)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(btDelete)
-                        .addGap(0, 0, Short.MAX_VALUE))
-                    .addGroup(layout.createSequentialGroup()
-                        .addComponent(jScrollPane3)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jButton2))
-                    .addComponent(jPanel4, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jPanel3, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jPanel1, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addComponent(jScrollPane3)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jButton2))
+            .addComponent(jPanel4, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addComponent(jPanel3, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addComponent(jPanel1, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addGroup(layout.createSequentialGroup()
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(btnAdd, javax.swing.GroupLayout.PREFERRED_SIZE, 130, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(btDelete, javax.swing.GroupLayout.PREFERRED_SIZE, 129, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(0, 0, Short.MAX_VALUE))
+            .addGroup(layout.createSequentialGroup()
+                .addGap(0, 0, Short.MAX_VALUE)
+                .addComponent(btnSave, javax.swing.GroupLayout.PREFERRED_SIZE, 132, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jButton3)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jButton5, javax.swing.GroupLayout.PREFERRED_SIZE, 139, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
@@ -613,18 +693,18 @@ public class OutboundDialog extends javax.swing.JDialog implements ItemListener 
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addGroup(layout.createSequentialGroup()
-                        .addGap(37, 37, 37)
+                        .addGap(39, 39, 39)
                         .addComponent(jButton2)))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addComponent(jPanel4, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(btDelete)
-                    .addComponent(jButton1))
+                    .addComponent(btnAdd))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jPanel3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 25, Short.MAX_VALUE)
+                .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, 144, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(btnSave)
@@ -640,7 +720,7 @@ public class OutboundDialog extends javax.swing.JDialog implements ItemListener 
         // TODO add your handling code here:
     }//GEN-LAST:event_txtUserActionPerformed
 
-    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
+    private void btnAddActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAddActionPerformed
 
         OutboundDetail inbound = new OutboundDetail();
         inbound.setOutID(0);
@@ -651,7 +731,7 @@ public class OutboundDialog extends javax.swing.JDialog implements ItemListener 
         listOut = outboundDetailTableModel.getList();
         setTrackChanges(true);
         
-    }//GEN-LAST:event_jButton1ActionPerformed
+    }//GEN-LAST:event_btnAddActionPerformed
 
     private void btnSaveActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSaveActionPerformed
         if (insertMode)//insert mode
@@ -807,7 +887,7 @@ public class OutboundDialog extends javax.swing.JDialog implements ItemListener 
         selectedProduct.setProStock((int) tbProductList.getValueAt(selectedRowIndex, 3));
         selectedProduct.setProPrice((float) tbProductList.getValueAt(selectedRowIndex, 4));
         selectedProduct.setProDesc((String) tbProductList.getValueAt(selectedRowIndex, 5));
-        selectedProduct.setProEnabled((boolean) tbProductList.getValueAt(selectedRowIndex, 6));
+//        selectedProduct.setProEnabled((boolean) tbProductList.getValueAt(selectedRowIndex, 6));
         //cot sale off k cho update
 
         //cot image
@@ -836,8 +916,8 @@ public class OutboundDialog extends javax.swing.JDialog implements ItemListener 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btDelete;
+    private javax.swing.JButton btnAdd;
     private javax.swing.JButton btnSave;
-    private javax.swing.JButton jButton1;
     private javax.swing.JButton jButton2;
     private javax.swing.JButton jButton3;
     private javax.swing.JButton jButton5;
