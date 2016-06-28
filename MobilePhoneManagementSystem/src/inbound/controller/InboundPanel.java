@@ -279,7 +279,7 @@ public class InboundPanel extends javax.swing.JPanel {
             }
             }
             if(jdcFromDate.getDate()==null&&jdcToDate.getDate()==null){
-                System.err.println("aaa");
+//                System.err.println("aaa");
                 
             }
             // Neu co chon cus level thi moi filter level
