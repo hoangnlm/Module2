@@ -35,7 +35,7 @@ import javax.swing.table.TableRowSorter;
 import main.controller.LoginFrame;
 import main.model.UserFunction;
 import static order.controller.OrderDialog.COL_PROQTY;
-import utility.DateCellEditor;
+import employee.model.DateCellWorkingDateEditor;
 import utility.IntegerCellEditor;
 import utility.SpinnerCellEditor;
 import utility.StringCellEditor;
@@ -93,7 +93,7 @@ public class SalaryDialog extends javax.swing.JDialog {
         // Col quantity
         tbSalaryList.getColumnModel().getColumn(COL_PAYDAY).setMinWidth(160);
         tbSalaryList.getColumnModel().getColumn(COL_PAYDAY).setMaxWidth(200);
-        tbSalaryList.getColumnModel().getColumn(COL_PAYDAY).setCellEditor(new DateCellEditor());
+        tbSalaryList.getColumnModel().getColumn(COL_PAYDAY).setCellEditor(new DateCellWorkingDateEditor());
 
         // Col oderid
         tbSalaryList.getColumnModel().getColumn(COL_WORKDAYS).setMinWidth(100);
@@ -185,7 +185,7 @@ public class SalaryDialog extends javax.swing.JDialog {
         lblSumary = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
-        setTitle("Add Customer");
+        setTitle("Salary");
         setMinimumSize(new java.awt.Dimension(712, 500));
         setModal(true);
 

@@ -110,21 +110,14 @@ public class UserPanel extends javax.swing.JPanel {
             DefaultListSelectionModel model = (DefaultListSelectionModel) e.getSource();
             if (!model.isSelectionEmpty()) {
                 fetchAction();
-//                if (checkRoot() == true) {
-//                    setButtonEnabled(checkRoot());
-//                } else{                    
-//                    setButtonEnabled(checkPermissionUpdate());
-//                    setButtonChangePassEnabled(checkChangePass());
-//                }
-
-                setButtonChangePassEnabled(checkChangePass());
                 // Check permission Permission (chi check view)
+                setButtonEnabled(true);
                 if (!LoginFrame.checkPermission(new UserFunction(UserFunction.FG_PERMISSION, UserFunction.FN_VIEW))) {
                     btPermission.setEnabled(false);
                 } else {
                     setButtonPermissionEnabled(checkChangePass());
                 }
-                setButtonEnabled(true);
+                setButtonChangePassEnabled(checkChangePass());
             } else {
                 setButtonEnabled(false);
             }
@@ -587,7 +580,7 @@ public class UserPanel extends javax.swing.JPanel {
 
     private boolean checkChangePass() {
         UserDAOImpl u = new UserDAOImpl();
-        boolean result = u.checkChangePassForAdmin(userName, selectedUser.getUserID());
+        boolean result = u.checkChangePassForAdmin(userName, selectedUser);
         return result;
     }
 

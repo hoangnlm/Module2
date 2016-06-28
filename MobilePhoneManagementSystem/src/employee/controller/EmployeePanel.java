@@ -8,7 +8,6 @@ package employee.controller;
 //import utility.ComboBoxCellEditor;
 import com.toedter.calendar.JDateChooser;
 import employee.model.Employee;
-import inbound.controller.FloatEditor;
 import java.awt.Cursor;
 import java.awt.Dimension;
 import java.awt.Rectangle;
@@ -32,7 +31,8 @@ import javax.swing.table.TableRowSorter;
 import main.controller.LoginFrame;
 import main.model.UserFunction;
 
-import utility.DateCellEditor;
+import employee.model.DateCellBirthDayEditor;
+import employee.model.DateCellWorkingDateEditor;
 import utility.IntegerCellEditor;
 import utility.StringCellEditor;
 import utility.TableCellListener;
@@ -126,11 +126,11 @@ public class EmployeePanel extends javax.swing.JPanel {
         tbEmpployeeList.getColumnModel().getColumn(COL_SALARY).setMinWidth(80);
         tbEmpployeeList.getColumnModel().getColumn(COL_SALARY).setMaxWidth(80);
         // Col birth date
-        tbEmpployeeList.getColumnModel().getColumn(COL_EMPBIRTH).setCellEditor(new DateCellEditor());
+        tbEmpployeeList.getColumnModel().getColumn(COL_EMPBIRTH).setCellEditor(new DateCellBirthDayEditor());
         tbEmpployeeList.getColumnModel().getColumn(COL_EMPBIRTH).setMinWidth(90);
         tbEmpployeeList.getColumnModel().getColumn(COL_EMPBIRTH).setMaxWidth(90);
         // Col work start date
-        tbEmpployeeList.getColumnModel().getColumn(COL_WORKSTART).setCellEditor(new DateCellEditor());
+        tbEmpployeeList.getColumnModel().getColumn(COL_WORKSTART).setCellEditor(new DateCellWorkingDateEditor());
         tbEmpployeeList.getColumnModel().getColumn(COL_WORKSTART).setMinWidth(90);
         tbEmpployeeList.getColumnModel().getColumn(COL_WORKSTART).setMaxWidth(90);
 

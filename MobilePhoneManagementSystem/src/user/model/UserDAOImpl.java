@@ -62,12 +62,12 @@ public class UserDAOImpl implements IDAO<User> {
         return result;
     }
 
-    public boolean checkChangePassForAdmin(String userName, int selectedID) {
+    public boolean checkChangePassForAdmin(String userName, User selectedUser) {
         boolean result;
         CachedRowSet crs1, crs2;
         int funtionIDOnline = 0, funtionIDSelected = 0;
         //functionID cua row selected
-        crs1 = getCRS("select FunctionID from Permission where UserID = ?", selectedID);
+        crs1 = getCRS("select FunctionID from Permission where UserID = ?", selectedUser.getUserID());
         //funtionID cua user dang online
         crs2 = getCRS("select FunctionID from Permission where UserID=(select UserID from Users where UserName=?)", userName);
         try {
@@ -91,8 +91,10 @@ public class UserDAOImpl implements IDAO<User> {
         if (!userName.equals("root")) {
             if (funtionIDOnline == 2 && funtionIDSelected != 2) {
                 result = true;
-            } else {
-                result = false;
+            } else if(funtionIDOnline == 2&&userName.equals(selectedUser.getUserName())){
+                result = true;
+            }else{
+                return false;
             }
         }else{
             result=true;

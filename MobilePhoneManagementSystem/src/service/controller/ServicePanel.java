@@ -33,7 +33,7 @@ import main.model.UserFunction;
 import service.model.Service;
 import service.model.ServiceStatus;
 import service.model.ServiceType;
-import utility.DateCellEditor;
+import employee.model.DateCellWorkingDateEditor;
 import utility.SpinnerCellEditor;
 import utility.SwingUtils;
 import utility.TableCellListener;
@@ -146,11 +146,11 @@ public class ServicePanel extends javax.swing.JPanel {
 //        tbServiceList.getColumnModel().getColumn(COL_USERNAME).setMaxWidth(120);
 
         // Col receivedate
-        tbServiceList.getColumnModel().getColumn(COL_RECEIVEDATE).setCellEditor(new DateCellEditor());
+        tbServiceList.getColumnModel().getColumn(COL_RECEIVEDATE).setCellEditor(new DateCellWorkingDateEditor());
         tbServiceList.getColumnModel().getColumn(COL_RECEIVEDATE).setMinWidth(120);
 //        tbServiceList.getColumnModel().getColumn(COL_RECEIVEDATE).setMaxWidth(120);
         // Col receive date
-        tbServiceList.getColumnModel().getColumn(COL_RETURNDATE).setCellEditor(new DateCellEditor());
+        tbServiceList.getColumnModel().getColumn(COL_RETURNDATE).setCellEditor(new DateCellWorkingDateEditor());
         tbServiceList.getColumnModel().getColumn(COL_RETURNDATE).setMinWidth(120);
 //        tbServiceList.getColumnModel().getColumn(COL_RETURNDATE).setMaxWidth(120);
         // Col type

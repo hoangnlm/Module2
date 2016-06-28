@@ -77,7 +77,7 @@ public class PasswordDialog extends javax.swing.JDialog implements IDAO<User> {
         txtPass2 = new javax.swing.JPasswordField();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
-        setTitle("Permission");
+        setTitle("Change Password");
         setMinimumSize(new java.awt.Dimension(400, 180));
         setResizable(false);
 
