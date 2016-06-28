@@ -21,23 +21,18 @@
   <Layout>
     <DimensionLayout dim="0">
       <Group type="103" groupAlignment="0" attributes="0">
-          <Group type="102" alignment="1" attributes="0">
-              <Group type="103" groupAlignment="1" attributes="0">
-                  <Component id="jScrollPane2" alignment="0" max="32767" attributes="0"/>
-                  <Group type="102" alignment="0" attributes="0">
-                      <EmptySpace pref="162" max="32767" attributes="0"/>
-                      <Component id="btAdd" min="-2" pref="150" max="-2" attributes="0"/>
-                      <EmptySpace max="-2" attributes="0"/>
-                      <Component id="btRemove" min="-2" pref="150" max="-2" attributes="0"/>
-                      <EmptySpace max="-2" attributes="0"/>
-                      <Component id="btRefresh" min="-2" pref="150" max="-2" attributes="0"/>
-                      <EmptySpace min="0" pref="156" max="32767" attributes="0"/>
-                  </Group>
-                  <Component id="pnFilter" alignment="1" max="32767" attributes="0"/>
-                  <Component id="pnTitle" alignment="0" max="32767" attributes="0"/>
-              </Group>
+          <Group type="102" alignment="0" attributes="0">
+              <EmptySpace pref="162" max="32767" attributes="0"/>
+              <Component id="btAdd" min="-2" pref="150" max="-2" attributes="0"/>
               <EmptySpace max="-2" attributes="0"/>
+              <Component id="btRemove" min="-2" pref="150" max="-2" attributes="0"/>
+              <EmptySpace max="-2" attributes="0"/>
+              <Component id="btRefresh" min="-2" pref="150" max="-2" attributes="0"/>
+              <EmptySpace pref="166" max="32767" attributes="0"/>
           </Group>
+          <Component id="jScrollPane2" max="32767" attributes="0"/>
+          <Component id="pnFilter" alignment="0" max="32767" attributes="0"/>
+          <Component id="pnTitle" alignment="0" max="32767" attributes="0"/>
       </Group>
     </DimensionLayout>
     <DimensionLayout dim="1">
@@ -88,7 +83,7 @@
                       <Component id="tfBonusFilter" pref="47" max="32767" attributes="0"/>
                       <Component id="tfIdFilter" max="32767" attributes="0"/>
                   </Group>
-                  <EmptySpace pref="41" max="32767" attributes="0"/>
+                  <EmptySpace max="32767" attributes="0"/>
                   <Group type="103" groupAlignment="0" max="-2" attributes="0">
                       <Component id="jLabel3" pref="0" max="32767" attributes="0"/>
                       <Component id="jLabel5" pref="39" max="32767" attributes="0"/>
@@ -98,7 +93,7 @@
                       <Component id="tfEmpPhoneFilter" pref="116" max="32767" attributes="0"/>
                       <Component id="tfEmpNameFilter" max="32767" attributes="0"/>
                   </Group>
-                  <EmptySpace pref="34" max="32767" attributes="0"/>
+                  <EmptySpace max="32767" attributes="0"/>
                   <Group type="103" groupAlignment="0" max="-2" attributes="0">
                       <Component id="jLabel7" max="32767" attributes="0"/>
                       <Component id="jLabel8" max="32767" attributes="0"/>
@@ -108,7 +103,7 @@
                       <Component id="pnBirthday" max="32767" attributes="0"/>
                       <Component id="pnStartDate" max="32767" attributes="0"/>
                   </Group>
-                  <EmptySpace type="separate" pref="40" max="32767" attributes="0"/>
+                  <EmptySpace type="separate" max="32767" attributes="0"/>
                   <Group type="103" groupAlignment="0" max="-2" attributes="0">
                       <Component id="jLabel9" pref="73" max="32767" attributes="0"/>
                       <Component id="jLabel6" max="32767" attributes="0"/>
@@ -367,7 +362,7 @@
               <Group type="102" alignment="0" attributes="0">
                   <EmptySpace max="-2" attributes="0"/>
                   <Component id="jLabel1" min="-2" pref="450" max="-2" attributes="0"/>
-                  <EmptySpace pref="136" max="32767" attributes="0"/>
+                  <EmptySpace max="32767" attributes="0"/>
                   <Component id="btSalary" min="-2" pref="170" max="-2" attributes="0"/>
                   <EmptySpace max="-2" attributes="0"/>
               </Group>

@@ -29,7 +29,7 @@ import user.model.UserDAOImpl;
 import user.model.UserEmployee;
 import utility.StringCellEditor;
 import utility.TableCellListener;
-import utility.SwingUtils;
+import employee.model.SwingUtils;
 
 /**
  *
@@ -638,7 +638,7 @@ public class UserPanel extends javax.swing.JPanel {
 
     private void setButtonEnabled(boolean enabled, JButton... exclude) {
         btRemove.setEnabled(enabled);
-        btAdd.setEnabled(enabled);
+//        btAdd.setEnabled(enabled);
 //        btChangePass.setEnabled(enabled);
 //        btPermission.setEnabled(enabled);
 

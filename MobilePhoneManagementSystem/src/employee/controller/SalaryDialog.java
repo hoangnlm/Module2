@@ -8,38 +8,26 @@ package employee.controller;
 import com.toedter.calendar.JDateChooser;
 import employee.model.Employee;
 import employee.model.Salary;
-import employee.model.SalaryDAOImpl;
 import java.awt.Cursor;
 import java.awt.Dimension;
 import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
-import java.beans.PropertyChangeEvent;
-import java.beans.PropertyChangeListener;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
-import java.util.Vector;
 import javax.swing.AbstractAction;
 import javax.swing.DefaultListSelectionModel;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
-import javax.swing.RowFilter;
-import javax.swing.event.DocumentEvent;
-import javax.swing.event.DocumentListener;
 import javax.swing.event.ListSelectionEvent;
-import javax.swing.event.ListSelectionListener;
 import javax.swing.table.TableRowSorter;
 import main.controller.LoginFrame;
 import main.model.UserFunction;
-import static order.controller.OrderDialog.COL_PROQTY;
 import employee.model.DateCellWorkingDateEditor;
 import utility.IntegerCellEditor;
-import utility.SpinnerCellEditor;
-import utility.StringCellEditor;
-import utility.SwingUtils;
+import employee.model.SwingUtils;
 import utility.TableCellListener;
 
 /**
@@ -56,6 +44,7 @@ public class SalaryDialog extends javax.swing.JDialog {
     private Salary selectedSalary;
     private int selectedRowIndex;
     Employee employee;
+
 // Define some column constants
     private static final int COL_SALID = 0;
     private static final int COL_EMPID = 1;
@@ -63,16 +52,15 @@ public class SalaryDialog extends javax.swing.JDialog {
     private static final int COL_PAYDAY = 3;
     private static final int COL_WORKDAYS = 4;
     private static final int COL_OFFDAYS = 5;
+    private static final int COL_BONUS = 6;
+    private static final int COL_BASICSALARY = 7;
+    private static final int COL_TOTALSALARY = 8;
     private List<Salary> salary;
 
     public SalaryDialog(Employee employee) {
         super((JFrame) null, true);
         initComponents();
         this.employee = employee;
-        dcFilter = new JDateChooser();
-        dcFilter.setBounds(0, 0, 130, 30);
-        dcFilter.setDateFormatString("MMMM dd,yyyy");
-//        pnPayday.add(dcFilter);
         setLocationRelativeTo(null);
         //Disable button khi moi khoi dong len
         setButtonEnabled(false);
@@ -81,13 +69,14 @@ public class SalaryDialog extends javax.swing.JDialog {
         selectedSalary = new Salary();
         // Set data cho table
         salaryTableModel = new SalaryTableModel();
+
         tbSalaryList.setModel(salaryTableModel);
 // Set sorter cho table
         sorter = new TableRowSorter<>(salaryTableModel);
+
         tbSalaryList.setRowSorter(sorter);
         // Set height cho table header
         tbSalaryList.getTableHeader().setPreferredSize(new Dimension(300, 30));
-
         // Col Ser ID (HIDDEN)
         tbSalaryList.getColumnModel().getColumn(COL_SALID).setMinWidth(70);
 //        tbSalaryList.getColumnModel().getColumn(COL_SALID).setMaxWidth(100);
@@ -99,16 +88,19 @@ public class SalaryDialog extends javax.swing.JDialog {
         // Col quantity
         tbSalaryList.getColumnModel().getColumn(COL_PAYDAY).setMinWidth(160);
         tbSalaryList.getColumnModel().getColumn(COL_PAYDAY).setMaxWidth(200);
-        tbSalaryList.getColumnModel().getColumn(COL_PAYDAY).setCellEditor(new DateCellWorkingDateEditor());
+//        tbSalaryList.getColumnModel().getColumn(COL_PAYDAY).setCellEditor(new DateCellWorkingDateEditor());
 
         // Col oderid
         tbSalaryList.getColumnModel().getColumn(COL_WORKDAYS).setMinWidth(100);
 //        tbSalaryList.getColumnModel().getColumn(COL_WORKDAYS).setMaxWidth(100);
-        tbSalaryList.getColumnModel().getColumn(COL_WORKDAYS).setCellEditor(new IntegerCellEditor(0, 30));
+        tbSalaryList.getColumnModel().getColumn(COL_WORKDAYS).setCellEditor(new IntegerCellEditor(0, 28));
         // Col oderid
         tbSalaryList.getColumnModel().getColumn(COL_OFFDAYS).setMinWidth(100);
 //        tbSalaryList.getColumnModel().getColumn(COL_OFFDAYS).setMaxWidth(100);
-        tbSalaryList.getColumnModel().getColumn(COL_OFFDAYS).setCellEditor(new IntegerCellEditor(0, 22));
+        tbSalaryList.getColumnModel().getColumn(COL_OFFDAYS).setCellEditor(new IntegerCellEditor(0, 14));
+        tbSalaryList.getColumnModel().getColumn(COL_BONUS).setMinWidth(100);
+        tbSalaryList.getColumnModel().getColumn(COL_BASICSALARY).setMinWidth(100);
+        tbSalaryList.getColumnModel().getColumn(COL_TOTALSALARY).setMinWidth(100);
 
         // Bat su kien select row tren table product
         tbSalaryList.getSelectionModel().addListSelectionListener((ListSelectionEvent e) -> {
@@ -121,11 +113,12 @@ public class SalaryDialog extends javax.swing.JDialog {
                 setButtonEnabled(false);
             }
             updateItemsLabel();
-        });
+        }
+        );
 
 //</editor-fold>
         // Set data cho table chinh
-        salaryTableModel.load(employee.getEmpID());  
+        salaryTableModel.load(employee.getEmpID());
 
         //<editor-fold defaultstate="collapsed" desc="Set cell listener cho updating">
         TableCellListener tcl = new TableCellListener(tbSalaryList, new AbstractAction() {
@@ -134,10 +127,7 @@ public class SalaryDialog extends javax.swing.JDialog {
                 TableCellListener tcl = (TableCellListener) e.getSource();
 
                 switch (tcl.getColumn()) {
-                    case COL_PAYDAY:
-//                        selectedProduct.setProQty((int) tbProduct.getValueAt(tbProduct.getSelectedRow(), COL_PROQTY));
-                        selectedSalary.setPayDay((Date) tcl.getNewValue());
-                        break;
+                    
                     case COL_WORKDAYS:
                         selectedSalary.setWorkDays((int) tcl.getNewValue());
                         updateItemsLabel();
@@ -151,20 +141,22 @@ public class SalaryDialog extends javax.swing.JDialog {
                     return;
                 } else {
                     updateAction();
-                    
+
                 }
                 updateItemsLabel();
             }
         });
 //</editor-fold>
 
-        if (!LoginFrame.checkPermission(new UserFunction(UserFunction.FG_SALARY, UserFunction.FN_UPDATE))) {
+        if (!LoginFrame.checkPermission(
+                new UserFunction(UserFunction.FG_SALARY, UserFunction.FN_UPDATE))) {
             tbSalaryList.setEnabled(false);
             btAdd.setEnabled(false);
             btRemove.setEnabled(false);
         }
 
-        tbSalaryList.setAutoCreateColumnsFromModel(false);
+        tbSalaryList.setAutoCreateColumnsFromModel(
+                false);
     }
 
     /**
@@ -367,11 +359,12 @@ public class SalaryDialog extends javax.swing.JDialog {
         details.setWorkDays(22);
         details.setOffDays(0);
         Calendar calendar = Calendar.getInstance();
-        details.setPayDay(calendar.getTime());
-//        calendar.set(Calendar.MONTH, calendar.get(Calendar.MONTH) + 1);        
-        details.setMonth(calendar.get(Calendar.MONDAY));
+        details.setPayDay(calendar.getTime());     
+        details.setMonth(calendar.get(Calendar.MONTH-1));
         details.setEmpID(employee.getEmpID());
-//        System.out.println("zzzzzzz:   " + details);
+        details.setBasicSalary(employee.getEmpSalary());
+        details.setBonus(employee.getEmpBonus());
+        System.out.println("zzzzzzz:   " + details);
         salaryTableModel.insert(details);
         refreshAction(false);
 
@@ -398,15 +391,11 @@ public class SalaryDialog extends javax.swing.JDialog {
 
     private void refreshAction(boolean mustInfo) {
         if (mustInfo) {
-            setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
-            lblBasicSalary.setText("");
-            lblBonusDes.setText("");
-            lblSumary.setText("");
-            
+            setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));            
             // Refresh table
             salaryTableModel.load(employee.getEmpID());
 //            salaryTableModel.refresh();
-            
+
             setCursor(null);
             SwingUtils.showInfoDialog(SwingUtils.DB_REFRESH);
         } else {
@@ -416,7 +405,7 @@ public class SalaryDialog extends javax.swing.JDialog {
         }
         updateItemsLabel();
         scrollToRow(selectedRowIndex);
-        
+
     }
 
     // Ham goi khi bam nut Save
@@ -473,7 +462,7 @@ public class SalaryDialog extends javax.swing.JDialog {
 
         lblBasicSalary.setText(String.format("%d", employee.getEmpSalary()));
         lblBonusDes.setText(String.format("%d", employee.getEmpBonus()));
-        
+
 //        System.out.println("Salary: "+selectedSalary.toString());
         sum = (employee.getEmpBonus() / selectedSalary.getWorkDays()) * (selectedSalary.getWorkDays() - selectedSalary.getOffDays()) + employee.getEmpSalary();
 

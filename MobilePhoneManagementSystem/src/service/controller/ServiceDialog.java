@@ -1,6 +1,7 @@
 package service.controller;
 
 import com.toedter.calendar.JDateChooser;
+import employee.model.CurrencyCellRenderer;
 import order.controller.*;
 import java.awt.Dimension;
 import java.awt.Rectangle;
@@ -32,8 +33,8 @@ import service.model.ServiceType;
 import utility.IntegerCellEditor;
 import utility.SpinnerCellEditor;
 import utility.StringCellEditor;
-import utility.SwingUtils;
-import utility.SwingUtils.FormatType;
+import employee.model.SwingUtils;
+import employee.model.SwingUtils.FormatType;
 import utility.TableCellListener;
 
 /**
@@ -85,7 +86,7 @@ public class ServiceDialog extends javax.swing.JDialog implements ItemListener {
 
         Calendar cal = Calendar.getInstance();
         dcFilter.setMinSelectableDate(cal.getTime());
-        cal.add(Calendar.DATE, +30);
+        cal.add(Calendar.DATE, +15);
         dcFilter.setMaxSelectableDate(cal.getTime());
 
         setLocationRelativeTo(null);
@@ -143,6 +144,7 @@ public class ServiceDialog extends javax.swing.JDialog implements ItemListener {
         tbProduct.getColumnModel().getColumn(COL_ODERID).setCellEditor(new IntegerCellEditor(1, 100000));
         // Col oderid
         tbProduct.getColumnModel().getColumn(COL_COST).setMinWidth(100);
+        tbProduct.getColumnModel().getColumn(COL_COST).setCellRenderer(new CurrencyCellRenderer());
         tbProduct.getColumnModel().getColumn(COL_COST).setCellEditor(new IntegerCellEditor(0, 200000));
 
         // Bat su kien select row tren table product
@@ -346,9 +348,6 @@ public class ServiceDialog extends javax.swing.JDialog implements ItemListener {
         if (!(newReturn.compareTo(Receive) > 0)) {
             result = true;
         } else {
-//            if ((newReturn.compareTo(now)<=0)) {
-//            result = true;
-//        } else {
             result = false;
         }
 
@@ -896,15 +895,9 @@ public class ServiceDialog extends javax.swing.JDialog implements ItemListener {
     private void updateAction() {
         // Check da co product chua va product da chon het chua
         if (checkProductEmpty()) {
-            SwingUtils.showInfoDialog("Please choose product name !");
+            SwingUtils.showInfoDialog("Please choose product name !");            
             return;
         }
-//        if (valDate == false) {
-//            SwingUtils.showErrorDialog("Return date must be today or after !");
-//            return;
-//        } else {
-//            this.service.setReturnDate(dcFilter.getDate());
-//        }
         if (service.getSerID() == -1) { // Insert mode
             if (serviceDetailsTableModelDialog.insert(service)) {
                 SwingUtils.showInfoDialog(SwingUtils.INSERT_SUCCESS);

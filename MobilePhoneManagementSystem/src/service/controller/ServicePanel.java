@@ -32,9 +32,9 @@ import main.model.UserFunction;
 import service.model.Service;
 import service.model.ServiceStatus;
 import service.model.ServiceType;
+import employee.model.CurrencyCellRenderer;
 import employee.model.DateCellWorkingDateEditor;
-import utility.SpinnerCellEditor;
-import utility.SwingUtils;
+import employee.model.SwingUtils;
 import utility.TableCellListener;
 
 /**
@@ -83,16 +83,24 @@ public class ServicePanel extends javax.swing.JPanel {
         initComponents();
 
         // Set date picker len giao dien
+        Calendar c = Calendar.getInstance();
         dcFilter = new JDateChooser();
         dcFilter.setBounds(0, 0, 120, 20);
         dcFilter.setDateFormatString("dd/MM/yyyy");
         dcFilter.setDate(null);
+        c.set(2010, 1, 1);
+        dcFilter1.getJCalendar().setMinSelectableDate(c.getTime());
+        Calendar c1 = Calendar.getInstance();
+        dcFilter1.getJCalendar().setMaxSelectableDate(c1.getTime());
         pnReceiveDate.add(dcFilter);
         // Set date picker1 len giao dien
         dcFilter1 = new JDateChooser();
         dcFilter1.setBounds(0, 0, 120, 20);
         dcFilter1.setDateFormatString("dd/MM/yyyy");
         dcFilter1.setDate(null);
+        dcFilter1.getJCalendar().setMinSelectableDate(c.getTime());
+        c1.add(Calendar.DATE, +15);
+        dcFilter1.getJCalendar().setMaxSelectableDate(c1.getTime());
         pnReturnDate.add(dcFilter1);
         //Disable button khi moi khoi dong len
         setButtonEnabled(false);
@@ -179,6 +187,7 @@ public class ServicePanel extends javax.swing.JPanel {
         // Col oderid
         tbDetailsList.getColumnModel().getColumn(COL_ODERID).setMinWidth(50);
 //        tbDetailsList.getColumnModel().getColumn(COL_ODERID).setCellEditor(new SpinnerCellEditor(1, 10000));
+        tbDetailsList.getColumnModel().getColumn(COL_COST).setCellRenderer(new CurrencyCellRenderer());
         tbDetailsList.getColumnModel().getColumn(COL_COST).setMinWidth(100);
         // Col SER ID (HIDDEN)
         tbDetailsList.getColumnModel().getColumn(COL_SERVICEID).setMinWidth(0);

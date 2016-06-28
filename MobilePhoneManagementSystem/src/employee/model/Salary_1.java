@@ -11,7 +11,7 @@ import java.util.Date;
  *
  * @author BonBon
  */
-public class Salary {
+public class Salary_1 {
 
     private int salID;
     private int empID;
@@ -19,56 +19,29 @@ public class Salary {
     private Date payDay;
     private int workDays;
     private int offDays;
-    private int bonus;
-    private int basicSalary;
-    private double total;
+//    private int bonus;
+//    private int basicSalary;
+//    private float total;
 
-    public static final String COL_SALID = "SalaryID";
-    public static final String COL_EMPID = "EmpID";
-    public static final String COL_PAYDAY = "PayDay";
-    public static final String COL_WORKDAYS = "WorkDays";
-    public static final String COL_OFFDAYS = "OffDays";
-    public static final String COL_SALARYNOW = "BasicSalaryNow";
-    public static final String COL_BONUSNOW = "BonusNow";
-
-    public Salary() {
-    }
-
-    public Salary(int salID, int empID, int month, Date payDay, int workDays, int offDays, int bonus, int basicSalary, double total) {
+    public Salary_1(int salID, int empID, int month, Date payDay, int workDays, int offDays) {
         this.salID = salID;
         this.empID = empID;
         this.month = month;
         this.payDay = payDay;
         this.workDays = workDays;
         this.offDays = offDays;
-        this.bonus = bonus;
-        this.basicSalary = basicSalary;
-        this.total = (double) (((double) basicSalary / workDays) * (workDays - offDays) + bonus);
+    }
+    
+    public static final String COL_SALID = "SalaryID";
+    public static final String COL_EMPID = "EmpID";
+    public static final String COL_PAYDAY = "PayDay";
+    public static final String COL_WORKDAYS = "WorkDays";
+    public static final String COL_OFFDAYS = "OffDays";
+
+    public Salary_1() {
     }
 
-    public int getBonus() {
-        return bonus;
-    }
-
-    public void setBonus(int bonus) {
-        this.bonus = bonus;
-    }
-
-    public int getBasicSalary() {
-        return basicSalary;
-    }
-
-    public void setBasicSalary(int basicSalary) {
-        this.basicSalary = basicSalary;
-    }
-
-    public double getTotal() {
-        return total;
-    }
-
-    public void setTotal(double total) {
-        this.total = total;
-    }
+    
 
     public int getMonth() {
         return month;
@@ -120,7 +93,7 @@ public class Salary {
 
     @Override
     public String toString() {
-        return "Salary{" + "salID=" + salID + ", empID=" + empID + ", month=" + month + ", payDay=" + payDay + ", workDays=" + workDays + ", offDays=" + offDays + ", bonus=" + bonus + ", basicSalary=" + basicSalary + ", total=" + total + '}';
+        return "Salary{" + "salID=" + salID + ", empID=" + empID + ", month=" + month + ", payDay=" + payDay + ", workDays=" + workDays + ", offDays=" + offDays + '}';
     }
 
 }

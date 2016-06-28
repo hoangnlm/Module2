@@ -7,7 +7,6 @@ package employee.controller;
 
 //import utility.ComboBoxCellEditor;
 import com.toedter.calendar.JDateChooser;
-import static customer.controller.CustomerPanel.COL_CUSPHONE;
 import employee.model.Employee;
 import java.awt.Cursor;
 import java.awt.Dimension;
@@ -37,7 +36,8 @@ import employee.model.DateCellWorkingDateEditor;
 import utility.IntegerCellEditor;
 import utility.StringCellEditor;
 import utility.TableCellListener;
-import utility.SwingUtils;
+import employee.model.SwingUtils;
+import employee.model.CurrencyCellRenderer;
 
 /**
  *
@@ -72,15 +72,26 @@ public class EmployeePanel extends javax.swing.JPanel {
     public EmployeePanel() {
         initComponents();
 // Set date picker len giao dien
+        Calendar c = Calendar.getInstance();
+
         dcFilter = new JDateChooser();
         dcFilter.setBounds(0, 0, 110, 20);
         dcFilter.setDateFormatString("dd/MM/yyyy");
         dcFilter.setDate(null);
+        c.set(1945, 1, 1);
+        dcFilter.getJCalendar().setMinSelectableDate(c.getTime());
+        c.set(2000, 1, 1);
+        dcFilter.getJCalendar().setMaxSelectableDate(c.getTime());
         pnBirthday.add(dcFilter);
+        //work day
         dcFilter1 = new JDateChooser();
         dcFilter1.setBounds(0, 0, 110, 20);
         dcFilter1.setDateFormatString("dd/MM/yyyy");
         dcFilter1.setDate(null);
+        c.set(2010, 1, 1);
+        dcFilter1.getJCalendar().setMinSelectableDate(c.getTime());
+        Calendar c1 = Calendar.getInstance();
+        dcFilter1.getJCalendar().setMaxSelectableDate(c1.getTime());
         pnStartDate.add(dcFilter1);
         //Disable button khi moi khoi dong len
         setButtonEnabled(false);
@@ -106,14 +117,14 @@ public class EmployeePanel extends javax.swing.JPanel {
         tbEmpployeeList.getColumnModel().getColumn(COL_EMPID).setMaxWidth(30);
 
         tbEmpployeeList.getColumnModel().getColumn(COL_STATUS).setMinWidth(30);
-        tbEmpployeeList.getColumnModel().getColumn(COL_STATUS).setMaxWidth(70);
+        tbEmpployeeList.getColumnModel().getColumn(COL_STATUS).setMaxWidth(30);
 
         // Col emp name
         tbEmpployeeList.getColumnModel().getColumn(COL_EMPNAME).setCellEditor(new StringCellEditor(1, 50, SwingUtils.PATTERN_NAMEWITHSPACE));
         tbEmpployeeList.getColumnModel().getColumn(COL_EMPNAME).setMinWidth(160);
         tbEmpployeeList.getColumnModel().getColumn(COL_EMPNAME).setMaxWidth(300);
-        tbEmpployeeList.getColumnModel().getColumn(COL_EMPDES).setCellEditor(new StringCellEditor(1, 50, SwingUtils.PATTERN_NAMEWITHSPACE));
-//        tbEmpployeeList.getColumnModel().getColumn(COL_EMPNAME).setMinWidth(160);
+        tbEmpployeeList.getColumnModel().getColumn(COL_EMPDES).setCellEditor(new StringCellEditor(1, 50, SwingUtils.PATTERN_SERVICECONTENT));
+        tbEmpployeeList.getColumnModel().getColumn(COL_EMPNAME).setMinWidth(120);
 //        tbEmpployeeList.getColumnModel().getColumn(COL_EMPNAME).setMaxWidth(300);
 
         // Col emp phone        
@@ -122,10 +133,12 @@ public class EmployeePanel extends javax.swing.JPanel {
         tbEmpployeeList.getColumnModel().getColumn(COL_EMPPHONE).setMaxWidth(100);
         //col bonus
         tbEmpployeeList.getColumnModel().getColumn(COL_BONUS).setCellEditor(new IntegerCellEditor(500000, 5000000));
+        tbEmpployeeList.getColumnModel().getColumn(COL_BONUS).setCellRenderer(new CurrencyCellRenderer());
         tbEmpployeeList.getColumnModel().getColumn(COL_BONUS).setMinWidth(80);
         tbEmpployeeList.getColumnModel().getColumn(COL_BONUS).setMaxWidth(80);
         //col salary
         tbEmpployeeList.getColumnModel().getColumn(COL_SALARY).setCellEditor(new IntegerCellEditor(100000, 10000000));
+        tbEmpployeeList.getColumnModel().getColumn(COL_SALARY).setCellRenderer(new CurrencyCellRenderer());
         tbEmpployeeList.getColumnModel().getColumn(COL_SALARY).setMinWidth(80);
         tbEmpployeeList.getColumnModel().getColumn(COL_SALARY).setMaxWidth(80);
         // Col birth date
@@ -420,7 +433,7 @@ public class EmployeePanel extends javax.swing.JPanel {
                 .addGroup(pnFilterLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                     .addComponent(tfBonusFilter, javax.swing.GroupLayout.DEFAULT_SIZE, 47, Short.MAX_VALUE)
                     .addComponent(tfIdFilter))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 41, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addGroup(pnFilterLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                     .addComponent(jLabel3, javax.swing.GroupLayout.PREFERRED_SIZE, 1, Short.MAX_VALUE)
                     .addComponent(jLabel5, javax.swing.GroupLayout.DEFAULT_SIZE, 39, Short.MAX_VALUE))
@@ -428,7 +441,7 @@ public class EmployeePanel extends javax.swing.JPanel {
                 .addGroup(pnFilterLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                     .addComponent(tfEmpPhoneFilter, javax.swing.GroupLayout.DEFAULT_SIZE, 116, Short.MAX_VALUE)
                     .addComponent(tfEmpNameFilter))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 34, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addGroup(pnFilterLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                     .addComponent(jLabel7, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(jLabel8, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
@@ -436,7 +449,7 @@ public class EmployeePanel extends javax.swing.JPanel {
                 .addGroup(pnFilterLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                     .addComponent(pnBirthday, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(pnStartDate, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                .addGap(18, 40, Short.MAX_VALUE)
+                .addGap(18, 18, Short.MAX_VALUE)
                 .addGroup(pnFilterLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                     .addComponent(jLabel9, javax.swing.GroupLayout.DEFAULT_SIZE, 73, Short.MAX_VALUE)
                     .addComponent(jLabel6, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
@@ -536,7 +549,7 @@ public class EmployeePanel extends javax.swing.JPanel {
             .addGroup(pnTitleLayout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 450, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 136, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addComponent(btSalary, javax.swing.GroupLayout.PREFERRED_SIZE, 170, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap())
         );
@@ -567,20 +580,17 @@ public class EmployeePanel extends javax.swing.JPanel {
         this.setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(jScrollPane2, javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(javax.swing.GroupLayout.Alignment.LEADING, layout.createSequentialGroup()
-                        .addContainerGap(162, Short.MAX_VALUE)
-                        .addComponent(btAdd, javax.swing.GroupLayout.PREFERRED_SIZE, 150, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(btRemove, javax.swing.GroupLayout.PREFERRED_SIZE, 150, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(btRefresh, javax.swing.GroupLayout.PREFERRED_SIZE, 150, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(0, 156, Short.MAX_VALUE))
-                    .addComponent(pnFilter, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(pnTitle, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                .addContainerGap())
+            .addGroup(layout.createSequentialGroup()
+                .addContainerGap(162, Short.MAX_VALUE)
+                .addComponent(btAdd, javax.swing.GroupLayout.PREFERRED_SIZE, 150, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(btRemove, javax.swing.GroupLayout.PREFERRED_SIZE, 150, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(btRefresh, javax.swing.GroupLayout.PREFERRED_SIZE, 150, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(166, Short.MAX_VALUE))
+            .addComponent(jScrollPane2)
+            .addComponent(pnFilter, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addComponent(pnTitle, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -606,7 +616,11 @@ public class EmployeePanel extends javax.swing.JPanel {
     }//GEN-LAST:event_btAddActionPerformed
 
     private void btSalaryActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btSalaryActionPerformed
-        new SalaryDialog(selectedEmployee).setVisible(true);
+        if (selectedEmployee.getEmpID() == 0) {
+            SwingUtils.showConfirmDialog("Please choose employee !");
+        } else {
+            new SalaryDialog(selectedEmployee).setVisible(true);
+        }
     }//GEN-LAST:event_btSalaryActionPerformed
 
     private void btRefreshActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btRefreshActionPerformed
@@ -822,8 +836,8 @@ public class EmployeePanel extends javax.swing.JPanel {
 
     private void setButtonEnabled(boolean enabled, JButton... exclude) {
         btRemove.setEnabled(enabled);
-        btAdd.setEnabled(enabled);
-        btSalary.setEnabled(enabled);
+//        btAdd.setEnabled(enabled);
+//        btSalary.setEnabled(enabled);
 
         // Ngoai tru may button nay luon luon enable
         if (exclude.length != 0) {
