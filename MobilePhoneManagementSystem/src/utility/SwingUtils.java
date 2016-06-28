@@ -196,10 +196,10 @@ public class SwingUtils {
         Properties props = new Properties();
         props.put("logoString", "");
         props.put("macStyleWindowDecoration", "on");
-        HiFiLookAndFeel laf = new HiFiLookAndFeel();
-        laf.setTheme(props);
+        props.put("macStyleScrollBar", "on");
+        HiFiLookAndFeel.setTheme(props);
         try {
-            UIManager.setLookAndFeel(laf);
+            UIManager.setLookAndFeel(new HiFiLookAndFeel());
         } catch (UnsupportedLookAndFeelException ex) {
             Logger.getLogger(SwingUtils.class.getName()).log(Level.SEVERE, null, ex);
         }

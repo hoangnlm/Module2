@@ -430,7 +430,9 @@ public class SalesOffDialog extends javax.swing.JDialog {
         setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
         boolean result = salesOffTableModel.insert(new SalesOff());
         setCursor(null);
-        SwingUtils.showInfoDialog(result ? SwingUtils.INSERT_SUCCESS : SwingUtils.INSERT_FAIL);
+        if (!result) {
+            SwingUtils.showInfoDialog(SwingUtils.INSERT_FAIL);
+        }
         // Select row vua insert vao
         selectedSaleRowIndex = tbSaleList.getRowCount() - 1;
         scrollToRow(tbSaleList, selectedSaleRowIndex);

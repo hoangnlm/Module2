@@ -53,7 +53,7 @@ public class CustomerPanel extends javax.swing.JPanel {
     public static final int COL_CUSPHONE = 4;
     public static final int COL_CUSADDRESS = 5;
     public static final int COL_STATUS = 6;
-    
+
     //<editor-fold defaultstate="collapsed" desc="Constructor">
     /**
      * Creates new form OrderPanel
@@ -253,17 +253,17 @@ public class CustomerPanel extends javax.swing.JPanel {
         });
 //</editor-fold>
 
-    // Check permission Customer
-        if(!LoginFrame.checkPermission(new UserFunction(UserFunction.FG_CUSTOMER, UserFunction.FN_UPDATE))){
+        // Check permission Customer
+        if (!LoginFrame.checkPermission(new UserFunction(UserFunction.FG_CUSTOMER, UserFunction.FN_UPDATE))) {
             tbCustomerList.setEnabled(false);
             btAdd.setEnabled(false);
             btNewOrder.setEnabled(false);
         }
-        
+
         // Check permission CustomerLevel (chi check view)
-         if(!LoginFrame.checkPermission(new UserFunction(UserFunction.FG_CUSTOMERLEVEL, UserFunction.FN_VIEW))){
-             btCusLevel.setEnabled(false);
-         }       
+        if (!LoginFrame.checkPermission(new UserFunction(UserFunction.FG_CUSTOMERLEVEL, UserFunction.FN_VIEW))) {
+            btCusLevel.setEnabled(false);
+        }
     }
 
     /**
@@ -640,7 +640,7 @@ public class CustomerPanel extends javax.swing.JPanel {
     private void fetchAction() {
         selectedRowIndex = tbCustomerList.getSelectedRow();
         if (selectedRowIndex >= 0) {
-            
+
             selectedCustomer = customerTableModel.getCustomerFromID((int) tbCustomerList.getValueAt(selectedRowIndex, COL_CUSID));
         }
     }
@@ -687,7 +687,9 @@ public class CustomerPanel extends javax.swing.JPanel {
         c.setCusEnabled(true);
         boolean result = customerTableModel.insert(c);
         setCursor(null);
-        SwingUtils.showInfoDialog(result ? SwingUtils.INSERT_SUCCESS : SwingUtils.INSERT_FAIL);
+        if (!result) {
+            SwingUtils.showInfoDialog(SwingUtils.INSERT_FAIL);
+        }
         // Select row vua insert vao
         selectedRowIndex = tbCustomerList.getRowCount() - 1;
         scrollToRow(selectedRowIndex);

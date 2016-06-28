@@ -38,14 +38,14 @@ public class CustomerLevelDialog extends javax.swing.JDialog {
     private static final int COL_CUSLEVEL = 1;
     private static final int COL_CUSLEVELNAME = 2;
     private static final int COL_CUSDISCOUNT = 3;
-    
+
     /**
      * Creates new form CustomerDialog
      */
     public CustomerLevelDialog() {
         initComponents();
         setLocationRelativeTo(null);
-        
+
         // Disable button khi moi khoi dong len
         setButtonEnabled(false);
 
@@ -108,9 +108,9 @@ public class CustomerLevelDialog extends javax.swing.JDialog {
                 updateAction();
             }
         });
-        
+
         // Check permission
-        if(!LoginFrame.checkPermission(new UserFunction(UserFunction.FG_CUSTOMERLEVEL, UserFunction.FN_UPDATE))){
+        if (!LoginFrame.checkPermission(new UserFunction(UserFunction.FG_CUSTOMERLEVEL, UserFunction.FN_UPDATE))) {
             tbLevelList.setEnabled(false);
             btAdd.setEnabled(false);
             btDelete.setEnabled(false);
@@ -273,7 +273,9 @@ public class CustomerLevelDialog extends javax.swing.JDialog {
         setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
         boolean result = customerLevelTableModel.insert(new CustomerLevel());
         setCursor(null);
-        SwingUtils.showInfoDialog(result ? SwingUtils.INSERT_SUCCESS : SwingUtils.INSERT_FAIL);
+        if (!result) {
+            SwingUtils.showInfoDialog(SwingUtils.INSERT_FAIL);
+        }
         // Select row vua insert vao
         selectedRowIndex = tbLevelList.getRowCount() - 1;
         scrollToRow(selectedRowIndex);
