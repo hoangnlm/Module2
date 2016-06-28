@@ -109,6 +109,7 @@ public class LoginFrame extends javax.swing.JFrame {
                 // Load config tu file len, neu file khong ton tai thi tao moi
                 try {
                     config = (Login) IOUtils.readObject(CONFIG_FILENAME);
+                    SwingUtils.showInfoDialog("config: "+config.toString());
                 } catch (Exception e) {
                     // neu bi loi doc file thi config van la null
                     config = null;

@@ -25,7 +25,7 @@ public class LoginDAOImpl implements IDAO<Login> {
     public LoginDAOImpl(String userName) {
         // Chi lay cac user duoc enable
         crs1 = getCRS("select * from Users where UserName=? AND UserEnabled=1", userName);
-        crs2 = getCRS("select FunctionGroup, FunctionName from Users u join Permission p on u.UserID=p.UserID join Functions f on p.FunctionID=f.FunctionID where u.UserName=? order by f.FunctionID", userName);
+        crs2 = getCRS("select FunctionGroup, FunctionName from Users u join Permission p on u.UserID=p.UserID join Functions f on p.FunctionID=f.FunctionID where u.UserName=? AND u.UserEnabled=1 order by f.FunctionID", userName);
     }
 
     @Override

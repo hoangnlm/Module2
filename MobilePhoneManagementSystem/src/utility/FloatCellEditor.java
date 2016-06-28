@@ -19,13 +19,13 @@ import javax.swing.text.NumberFormatter;
  * Implements a cell editor that uses a formatted text field to edit Integer
  * values.
  */
-public class IntegerCellEditor extends DefaultCellEditor {
+public class FloatCellEditor extends DefaultCellEditor {
 
     private JFormattedTextField ftf;
     private NumberFormat integerFormat;
     private int minimum, maximum;
 
-    public IntegerCellEditor(int min, int max) {
+    public FloatCellEditor(int min, int max) {
         super(new JFormattedTextField());
         ftf = (JFormattedTextField) getComponent();
         minimum = min;

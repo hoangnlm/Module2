@@ -41,6 +41,7 @@ public class SwingUtils {
     public static final String PATTERN_ADDRESS = "[A-Za-z0-9 .,\\/-]+";
     public static final String PATTERN_DATE = "MMM dd, yyyy";
     public static final String PATTERN_HOST = "[A-Za-z0-9.]+";
+    public static final String PATTERN_SERVICECONTENT = "[A-Za-z0-9.,-\\/<>% ]+";
 
     public enum FormatType {
         DATE, PERCENT, CURRENCY

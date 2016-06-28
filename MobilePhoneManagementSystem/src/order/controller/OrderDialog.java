@@ -37,14 +37,14 @@ import utility.TableCellListener;
  */
 public class OrderDialog extends javax.swing.JDialog implements ItemListener {
 
-    public static void main(String[] args) {
-        SwingUtilities.invokeLater(new Runnable() {
-            @Override
-            public void run() {
-                new OrderDialog(null).setVisible(true);
-            }
-        });
-    }
+//    public static void main(String[] args) {
+//        SwingUtilities.invokeLater(new Runnable() {
+//            @Override
+//            public void run() {
+//                new OrderDialog(null).setVisible(true);
+//            }
+//        });
+//    }
 
     private Order backup;
     private Order order;
