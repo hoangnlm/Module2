@@ -105,6 +105,13 @@ public class InboundDetailTableModel extends CustomizedTableModel<InboundDetail>
          }
          fireTableCellUpdated(rowIndex, columnIndex);
     }
+
+    @Override
+    public boolean isCellEditable(int rowIndex, int columnIndex) {
+         if(columnIndex==2||columnIndex==3)
+             return true;
+         return false;
+    }
     
     
 }

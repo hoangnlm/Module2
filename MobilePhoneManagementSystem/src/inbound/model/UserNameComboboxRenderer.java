@@ -8,6 +8,7 @@ import java.awt.Color;
 import java.awt.Component;
 import javax.swing.JLabel;
 import javax.swing.JList;
+import javax.swing.JTextField;
 import javax.swing.ListCellRenderer;
 import static javax.swing.SwingConstants.CENTER;
 /**
@@ -15,7 +16,7 @@ import static javax.swing.SwingConstants.CENTER;
  * @author tuan
  */
 public class UserNameComboboxRenderer extends JLabel implements ListCellRenderer<User> {
-    
+    JTextField jtf = new JTextField();
     public UserNameComboboxRenderer(){
         setHorizontalAlignment(CENTER);
     }
@@ -23,17 +24,18 @@ public class UserNameComboboxRenderer extends JLabel implements ListCellRenderer
     public Component getListCellRendererComponent(JList<? extends User> list, User value, int index, boolean isSelected, boolean cellHasFocus) {
         if(value!=null){
         if (isSelected) {
-            setBackground(list.getSelectionBackground());
-            setForeground(Color.PINK);
+            jtf.setBackground(Color.ORANGE);
+            jtf.setForeground(Color.BLACK);
         } else {
-            setBackground(list.getBackground());
-            setForeground(list.getForeground());
+            jtf.setBackground(new java.awt.Color(51, 51, 51));
+            jtf.setForeground(list.getForeground());
         }
         
-        setText(value.getUsername()+ "");
-        
+        jtf.setText(value.getUsername()+ "");
+        jtf.setBorder(null);
+        jtf.setHorizontalAlignment(CENTER);
         }
-        return this;
+        return jtf;
     }
     
     

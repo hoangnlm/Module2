@@ -6,67 +6,52 @@
 package supplier.model;
 
 import java.util.List;
-import javax.swing.table.AbstractTableModel;
 import supplier.dao.SupplierDAOImpl;
+import utility.CustomizedTableModel;
 
 /**
  *
  * @author tuan
  */
-public class SupplierTableModel extends AbstractTableModel {
-    private List<Supplier> supplierList;
-    private Supplier supplier;
-    private SupplierDAOImpl supplierDAOImpl;
-    private String[] columnNames;
+public class SupplierTableModel extends CustomizedTableModel<Supplier> {
+    
+    
 
     public SupplierTableModel() {
-        supplierDAOImpl = new SupplierDAOImpl();
-        supplierList = supplierDAOImpl.getList();
-        columnNames = new String[]{"Supplier ID","Supplier Name","Supplier Address","Status"};
+        super(new SupplierDAOImpl(),new String[]{"Supplier ID","Supplier Name","Supplier Address","Status"});
+        
     }
-    public boolean insert(Supplier supplier) {
-        boolean result = false;
-        if (supplierDAOImpl.insert(supplier)) {
-            supplierList = supplierDAOImpl.getList();
-            fireTableRowsInserted(supplierList.indexOf(supplier), supplierList.indexOf(supplier));
-            result = true;
-        }
-        return result;
-    }
-    
-    public boolean update(Supplier supplier) {
-        boolean result = false;
-        if (supplierDAOImpl.update(supplier)) {
-            supplierList = supplierDAOImpl.getList();
-            
-            result = true;
-        }
-        return result;
-    }
-    
-    public boolean delete(Supplier supplier) {
-        boolean result = false;
-        if (supplierDAOImpl.delete(supplier)) {
-            supplierList = supplierDAOImpl.getList();
-            fireTableRowsDeleted(supplierList.indexOf(supplier), supplierList.indexOf(supplier));
-            result = true;
-        }
-        return result;
-    }
+//    public boolean insert(Supplier supplier) {
+//        boolean result = false;
+//        if (supplierDAOImpl.insert(supplier)) {
+//            supplierList = supplierDAOImpl.getList();
+//            fireTableRowsInserted(supplierList.indexOf(supplier), supplierList.indexOf(supplier));
+//            result = true;
+//        }
+//        return result;
+//    }
+//    
+//    public boolean update(Supplier supplier) {
+//        boolean result = false;
+//        if (supplierDAOImpl.update(supplier)) {
+//            supplierList = supplierDAOImpl.getList();
+//            
+//            result = true;
+//        }
+//        return result;
+//    }
+//    
+//    public boolean delete(Supplier supplier) {
+//        boolean result = false;
+//        if (supplierDAOImpl.delete(supplier)) {
+//            supplierList = supplierDAOImpl.getList();
+//            fireTableRowsDeleted(supplierList.indexOf(supplier), supplierList.indexOf(supplier));
+//            result = true;
+//        }
+//        return result;
+//    }
 
-    @Override
-    public boolean isCellEditable(int rowIndex, int columnIndex) {
-         if (columnIndex == 0) { //Khong cho sua column ID
-            return false;
-        } else {
-            return true;
-        }
-    }
-
-    @Override
-    public String getColumnName(int column) {
-         return columnNames[column];
-    }
+   
 
     @Override
     public Class<?> getColumnClass(int columnIndex) {
@@ -74,19 +59,10 @@ public class SupplierTableModel extends AbstractTableModel {
         return columnClasses[columnIndex];
     }
     
-    @Override
-    public int getRowCount() {
-        return supplierList.size();
-    }
-
-    @Override
-    public int getColumnCount() {
-        return columnNames.length;
-    }
-
+    
     @Override
     public Object getValueAt(int rowIndex, int columnIndex) {
-        supplier = supplierList.get(rowIndex);
+        Supplier supplier = list.get(rowIndex);
          switch(columnIndex){
              case 0 : return supplier.getSupID();
              case 1 : return supplier.getSupName();
@@ -98,7 +74,7 @@ public class SupplierTableModel extends AbstractTableModel {
 
     @Override
     public void setValueAt(Object aValue, int rowIndex, int columnIndex) {
-         supplier = supplierList.get(rowIndex);
+         Supplier supplier = list.get(rowIndex);
          switch(columnIndex){
              case 0 : supplier.setSupID((int) aValue); break;
              case 1 : supplier.setSupName((String) aValue); break;

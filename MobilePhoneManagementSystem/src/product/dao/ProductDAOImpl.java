@@ -62,15 +62,7 @@ public class ProductDAOImpl implements IDAO<Product> {
     @Override
     public boolean insert(Product product) {
         boolean result = false;
-        //khoi tao gia tri 
-        product.setBraname("HTC");
-        product.setProName("default name"+System.currentTimeMillis());
-        product.setProStock(0);
-        product.setProPrice(0);
-        product.setProDesc("");
-        product.setProEnabled(false);
-        product.setSalesoffid(1);
-        product.setProImage(null);
+
         try {
             CachedRowSet crs1 = getCRS("SELECT * from salesoff");
             if(!crs1.first()){
@@ -84,7 +76,7 @@ public class ProductDAOImpl implements IDAO<Product> {
             db.start();
             PreparedStatement ps = db.getPreparedStatement("INSERT INTO products (BraID,ProName,ProStock,ProPrice,ProDescr,ProEnabled,SalesOffID,ProImage) values ((select BraID from Branches where BraName=?),?,?,?,?,?,?,?)"); 
               ps.setString(1, "HTC");
-              ps.setString(2, "default name"+System.currentTimeMillis());
+              ps.setString(2, "Default Product"+System.currentTimeMillis());
               ps.setInt(3,0);
               ps.setFloat(4, 0);
               ps.setString(5, "");
@@ -146,12 +138,16 @@ public class ProductDAOImpl implements IDAO<Product> {
         //kiem tra product co trong order details chua
         CachedRowSet crs1 = getCRS("select * from OrderDetails where ProID=" + product.getProId());
         CachedRowSet crs2 = getCRS("SELECT * FROM InDetails where ProID="+product.getProId());
+        CachedRowSet crs3 = getCRS("SELECT * FROM OutDetails where ProID="+product.getProId());
         try {
             if (crs1.first()) {
                 SwingUtils.showErrorDialog("Product is now in ORDER! Delete failed");
             }
             else if(crs2.first()){
-                SwingUtils.showErrorDialog("Product is now in STOCK! Delete failed");
+                SwingUtils.showErrorDialog("Product is now in inbound! Delete failed");
+            }
+            else if(crs3.first()){
+                SwingUtils.showErrorDialog("Product is now in outbound! Delete failed");
             }
             else {
                 runPS("delete from Products where ProID=?", product.getProId());
@@ -172,7 +168,7 @@ public class ProductDAOImpl implements IDAO<Product> {
             PreparedStatement ps = db.getPreparedStatement("Update Products set ProImage=? where ProID=?");
             ps.setBlob(1, is);
             ps.setInt(2, product.getProId());
-            System.err.println("nanana");
+            
             ps.executeUpdate();
             result = true;
         } catch (SQLException ex) {

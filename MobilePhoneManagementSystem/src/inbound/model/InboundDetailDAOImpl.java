@@ -25,7 +25,7 @@ public class InboundDetailDAOImpl implements IDAO<InboundDetail>{
     private CachedRowSet crs;
     private Inbound currentInbound;
     private int selectingIndex;
-    
+    private static List<InboundDetail> listTemp = new ArrayList<>();
     public void load(int inID) {
         this.crs = getCRS("SELECT Products.ProID,ProName,ProCost,ProQty from InDetails join products on InDetails.ProID = Products.proID where InID=?",inID);
     }
@@ -43,7 +43,14 @@ public class InboundDetailDAOImpl implements IDAO<InboundDetail>{
                             crs.getString("ProName"),
                             crs.getFloat("ProCost"), 
                             crs.getInt("ProQty")));
+                    
+                    //list de xoa lan luot
+                    listTemp.add(new InboundDetail(
                             
+                            crs.getInt("ProID"), 
+                            crs.getString("ProName"),
+                            crs.getFloat("ProCost"), 
+                            crs.getInt("ProQty")));        
                 } while (crs.next());
             }
             
@@ -111,9 +118,13 @@ public class InboundDetailDAOImpl implements IDAO<InboundDetail>{
     }
     
     //dung de update list inboundDetail (update mode)
-    public boolean update(List<InboundDetail> inDetail,Inbound inbound){
+    public boolean update(List<InboundDetail> inDetail,Inbound inbound,Inbound currentInbound){
         boolean result = false;
         try {
+            for(int i =0;i<listTemp.size();i++){
+            // Xoa het outbound details cu cua current outbound
+            runPS("delete InDetails where InID =? and proID=?", currentInbound.getInID(),listTemp.get(i).getProID());
+            }
             
             //check truong hop list co them nhung san pham moi, neu co thi phai INSERT san pham moi trc khi update lai gia tri san pham cu
             for(int i = 0;i<inDetail.size();i++){

@@ -32,6 +32,7 @@ public class LoginPanel extends javax.swing.JPanel {
 
     /**
      * Creates new form LoginPanel
+     * @param parent
      */
     public LoginPanel(Container parent) {
         this.parent = (LoginFrame) parent;

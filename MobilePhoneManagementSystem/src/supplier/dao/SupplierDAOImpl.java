@@ -17,6 +17,7 @@ import static supplier.model.Supplier.COL_Address;
 import static supplier.model.Supplier.COL_ID;
 import static supplier.model.Supplier.COL_Name;
 import static supplier.model.Supplier.COL_Status;
+import utility.SwingUtils;
 
 /**
  *
@@ -56,13 +57,10 @@ public class SupplierDAOImpl implements IDAO<Supplier> {
     @Override
     public boolean insert(Supplier supplier) {
         boolean result = false;
-        crs = getCRS(Supplier.Query_Insert);
-        try {
         
-            crs.setString(1,supplier.getSupName());
-            crs.setString(2, supplier.getSupAddress());
-            crs.setBoolean(3, supplier.getSupStatus());
-            crs.execute();
+        try {
+            runPS("insert into suppliers values(?,?,?)", supplier.getSupName(),supplier.getSupAddress(), supplier.getSupStatus());
+           
             
             // Refresh lai cachedrowset hien thi table
             crs.execute();
@@ -76,13 +74,19 @@ public class SupplierDAOImpl implements IDAO<Supplier> {
     @Override
     public boolean update(Supplier supplier) {
         boolean result = false;
-        crs = getCRS("update suppliers set "+COL_Name+"=?,"+COL_Address+"=?,"+COL_Status+"=?"+" where "+COL_ID+"="+supplier.getSupID());
+       
         try {
-            crs.setString(1,supplier.getSupName());
-            crs.setString(2, supplier.getSupAddress());
-            crs.setBoolean(3, supplier.getSupStatus());
- 
-            crs.execute();
+            CachedRowSet crs1 = getCRS("SELECT * from suppliers where supname=? and supid!=?", supplier.getSupName(),supplier.getSupID());
+            if(crs1.first()){
+                SwingUtils.showInfoDialog("Dupplicate supplier name!");
+                return false;
+            }
+            CachedRowSet crs2 = getCRS("SELECT * from suppliers where supaddress=? and supid!=?",supplier.getSupAddress(),supplier.getSupID());
+            if(crs2.first()){
+                SwingUtils.showInfoDialog("Dupplicate supplier address!");
+                return false;
+            }
+            runPS("Update Suppliers set SupName=?,SupAddress=?,SupEnabled=? where SupID=?", supplier.getSupName(),supplier.getSupAddress(),supplier.getSupStatus(),supplier.getSupID());
             
             result = true;
             } catch (SQLException ex) {
@@ -96,12 +100,21 @@ public class SupplierDAOImpl implements IDAO<Supplier> {
     @Override
     public boolean delete(Supplier model) {
         boolean result = false;
-        crs = getCRS(Supplier.Query_Delete);
+        
         try {
-            if (!crs.first()) {
-                crs.execute();
-                result = true;
+            CachedRowSet crs1 = getCRS("SELECT * from branches where supid=?", model.getSupID());
+            if(crs1.first()){
+                SwingUtils.showInfoDialog("Supplier now associate with branch!");
+                return false;
             }
+            CachedRowSet crs2 = getCRS("SELECT * from inbounds where supid=?", model.getSupID());
+            if(crs2.first()){
+                SwingUtils.showInfoDialog("Supplier now associate with inbound!");
+                return false;
+            }
+            runPS("Delete suppliers where supid=?",model.getSupID());
+                result = true;
+            
         } catch (SQLException ex) {
             Logger.getLogger(SupplierDAOImpl.class.getName()).log(Level.SEVERE, null, ex);
         }

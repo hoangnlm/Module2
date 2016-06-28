@@ -6,7 +6,9 @@
 package branch.dao;
 
 import branch.model.Branch;
+import database.DBProvider;
 import database.IDAO;
+import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
@@ -36,7 +38,9 @@ public class BranchDAOImpl implements IDAO<Branch> {
                 branchList.add(new Branch(
                 tableCrs.getInt(Branch.COL_ID),
                 tableCrs.getString(Branch.COL_Name),
-                tableCrs.getBoolean(Branch.COL_Status)
+                tableCrs.getBoolean(Branch.COL_Status),
+                tableCrs.getString(Branch.COL_SupName),
+                tableCrs.getInt(Branch.COL_SupID)
                 ));
                 }while(tableCrs.next());
             }
@@ -51,15 +55,23 @@ public class BranchDAOImpl implements IDAO<Branch> {
     @Override
     public boolean insert(Branch branch) {
         boolean result = false;
-        dbCrs = getCRS(Branch.Query_Insert);
-        try {
         
-            dbCrs.setString(1,branch.getBraName());
-            dbCrs.setBoolean(2, branch.getBraStatus());
-            dbCrs.execute();
+        try {
+            CachedRowSet crs1 = getCRS("Select min(supid) as supid from suppliers");
+        if(!crs1.first()){
+            SwingUtils.showErrorDialog("Input at least 1 supplier!");
+            return false;
+        }
             
-            // Refresh lai cachedrowset hien thi table
-            tableCrs.execute();
+            DBProvider db = new DBProvider();
+            db.start();
+            PreparedStatement ps = db.getPreparedStatement("Insert into branches(braname,braEnabled,SupID) values(?,?,?)");
+            ps.setString(1,branch.getBraName());
+            ps.setBoolean(2, branch.getBraStatus());
+            ps.setInt(3, crs1.getInt("supid"));
+            
+            
+            ps.executeUpdate();
             result = true;
         } catch (SQLException ex) {
             Logger.getLogger(BranchDAOImpl.class.getName()).log(Level.SEVERE, null, ex);
@@ -72,16 +84,14 @@ public class BranchDAOImpl implements IDAO<Branch> {
         boolean result = false;
         
         try {
-            CachedRowSet crs1 = getCRS("SELECT * from Branches where braName = "+"'"+branch.getBraName()+"'");
+            CachedRowSet crs1 = getCRS("SELECT * from Branches where braName = "+"'"+branch.getBraName()+"'"+"and braID !="+branch.getBraID());
             if (crs1.first()) {
                 SwingUtils.showErrorDialog("Branch name cannot be duplicated !");
+                return false;
             } 
-            dbCrs = getCRS("Update Branches set BraName = ?,BraEnabled = ? Where BraId = "+branch.getBraID());
-            dbCrs.setString(1,branch.getBraName());
-            dbCrs.setBoolean(2, branch.getBraStatus());
- 
-            dbCrs.execute();
-            tableCrs.execute();
+            runPS("Update Branches set BraName = "+"'"+branch.getBraName()+"'"+",BraEnabled = "+((branch.getBraStatus())?1:0)+",SupID = (select supid from Suppliers where supname="+"'"+branch.getSupName()+"'"+") where BraId = "+branch.getBraID());
+            
+            
             result = true;
             } catch (SQLException ex) {
             Logger.getLogger(BranchDAOImpl.class.getName()).log(Level.SEVERE, null, ex);
@@ -95,12 +105,17 @@ public class BranchDAOImpl implements IDAO<Branch> {
     @Override
     public boolean delete(Branch branch) {
         boolean result = false;
-        dbCrs = getCRS(Branch.Query_Delete);
+        
         try {
-            if (!dbCrs.first()) {
-                tableCrs.execute();
-                result = true;
+            CachedRowSet crs1 = getCRS("SELECT * from Products where braID ="+branch.getBraID());
+            if (crs1.first()) {
+                SwingUtils.showErrorDialog("Branch is now in Product table!");
+                return false;
             }
+            runPS("delete branches where braid=?",branch.getBraID());
+            
+                result = true;
+            
         } catch (SQLException ex) {
             Logger.getLogger(BranchDAOImpl.class.getName()).log(Level.SEVERE, null, ex);
         }

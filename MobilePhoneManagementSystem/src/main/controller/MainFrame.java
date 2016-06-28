@@ -30,8 +30,10 @@ import main.model.UserFunction;
 import customer.controller.CustomerPanel;
 import employee.controller.EmployeePanel;
 import order.controller.OrderPanel;
+import outbound.controller.OutboundPanel;
 import product.controller.ProductPanel;
 import service.controller.ServicePanel;
+import supplier.controller.SupplierPanel;
 import user.controller.UserPanel;
 import utility.SwingUtils;
 
@@ -99,7 +101,7 @@ public final class MainFrame extends javax.swing.JFrame {
 
         pn[0] = new HomePanel();
         pn[1] = new BlankPanel();
-        pn[2] = new InboundPanel();
+        pn[2] = new BlankPanel();
         pn[3] = new BlankPanel();
         pn[4] = new BlankPanel();
         pn[5] = new BlankPanel();
@@ -117,7 +119,7 @@ public final class MainFrame extends javax.swing.JFrame {
                 pn[2] = new InboundPanel();
             }
             if (uf.FunctionGroup.equals(UserFunction.FG_OUTBOUND) && uf.FunctionName.equals(UserFunction.FN_VIEW)) {
-//                pn[3] = new OutboundPanel();
+                pn[3] = new OutboundPanel();
             }
             if (uf.FunctionGroup.equals(UserFunction.FG_ORDER) && uf.FunctionName.equals(UserFunction.FN_VIEW)) {
                 pn[4] = new OrderPanel();
@@ -126,7 +128,7 @@ public final class MainFrame extends javax.swing.JFrame {
                 pn[5] = new CustomerPanel();
             }
             if (uf.FunctionGroup.equals(UserFunction.FG_SUPPLIER) && uf.FunctionName.equals(UserFunction.FN_VIEW)) {
-//                pn[6] = new SupplierPanel();
+                pn[6] = new SupplierPanel();
             }
             if (uf.FunctionGroup.equals(UserFunction.FG_SERVICE) && uf.FunctionName.equals(UserFunction.FN_VIEW)) {
                 pn[7] = new ServicePanel();

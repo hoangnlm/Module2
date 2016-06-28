@@ -178,7 +178,9 @@ public class OrderPanel extends javax.swing.JPanel {
             DefaultListSelectionModel model = (DefaultListSelectionModel) e.getSource();
             if (!model.isSelectionEmpty()) {
                 fetchAction();
-                setButtonEnabled(true);
+                if (LoginFrame.checkPermission(new UserFunction(UserFunction.FG_ORDER, UserFunction.FN_UPDATE))) {
+                    setButtonEnabled(true);
+                }
             } else {
                 setButtonEnabled(false);
             }

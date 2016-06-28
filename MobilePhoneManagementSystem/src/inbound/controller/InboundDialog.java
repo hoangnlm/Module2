@@ -6,10 +6,13 @@
 package inbound.controller;
 
 import com.toedter.calendar.JDateChooser;
+import inbound.model.CurrencyCellRenderer;
 import inbound.model.Inbound;
 import inbound.model.InboundDetail;
 import inbound.model.InboundDetailDAOImpl;
 import inbound.model.InboundDetailTableModel;
+import inbound.model.Product;
+import inbound.model.ProductTableModel;
 import inbound.model.SupplierComboboxModel;
 import inbound.model.SupplierComboboxRenderer;
 import java.awt.Color;
@@ -40,8 +43,7 @@ import order.controller.OrderBranchListModel;
 import order.controller.OrderProductComboBoxModel;
 import order.model.OrderBranch;
 import org.jdesktop.xswingx.PromptSupport;
-import product.model.Product;
-import product.model.ProductTableModel;
+
 import inbound.model.Supplier;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -49,6 +51,12 @@ import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import javax.sql.rowset.CachedRowSet;
 import javax.swing.AbstractAction;
+import javax.swing.event.RowSorterEvent;
+import javax.swing.event.RowSorterListener;
+import javax.swing.event.TableModelEvent;
+import javax.swing.event.TableModelListener;
+import javax.swing.table.DefaultTableCellRenderer;
+import main.model.Login;
 import utility.SpinnerCellEditor;
 import utility.SwingUtils;
 import utility.TableCellListener;
@@ -86,6 +94,20 @@ public class InboundDialog extends javax.swing.JDialog implements ItemListener {
     //flag de cho biet co thay doi noi dung gi k
     private boolean trackChanges;
 
+    
+    /*Product table*/
+    private static int COL_ID = 0;
+    private static int COL_BraName = 1;
+    private static int COL_ProName = 2;
+    private static int COL_ProStock = 3;
+    private static int COL_ProPrice = 4;
+    private static int COL_ProDescr = 5;
+    private static int COL_ProEnable = 6;
+    
+    private static int COL_InDID = 0;
+    private static int COL_InDName = 1;
+    private static int COL_InDCost = 2;
+    private static int COL_InDQTy = 3;
     public InboundDialog(Inbound inbound) {
         super((JFrame) null, true);
         insertMode = inbound == null;
@@ -101,7 +123,7 @@ public class InboundDialog extends javax.swing.JDialog implements ItemListener {
             this.inbound.setInDate(new Date());
             this.inbound.setSupID(1);
             this.inbound.setSupInvoiceID("");
-            this.inbound.setUserID(1);
+            this.inbound.setUserName(Login.USER_NAME);
             backup = this.inbound.clone();
             setTrackChanges(false);
         } else {
@@ -138,8 +160,11 @@ public class InboundDialog extends javax.swing.JDialog implements ItemListener {
         TableColumnModel tcm = tbProductList.getColumnModel();
         tcm.removeColumn(tcm.getColumn(8));
 
-        //hide column hinh
+        //hide column saleoff
         tcm.removeColumn(tcm.getColumn(7));
+        
+        //hide column enable
+        tcm.removeColumn(tcm.getColumn(6));
 
         // Set data cho combobox product name
         orderProductComboBoxModel = new OrderProductComboBoxModel();
@@ -193,11 +218,27 @@ public class InboundDialog extends javax.swing.JDialog implements ItemListener {
             DefaultListSelectionModel model = (DefaultListSelectionModel) e.getSource();
             if (!model.isSelectionEmpty()) {
                 fetchProductDetails();
-                
+                btnAdd.setEnabled(true);
                 tbProductList.setSurrendersFocusOnKeystroke(false);
             }
+           
         });
+        
+        //event trong truong hop k co record trong table
+        sorter.addRowSorterListener(new RowSorterListener() {
+        
 
+            @Override
+            public void sorterChanged(RowSorterEvent e) {
+               if(tbProductList.getRowCount()==0)
+                   btnAdd.setEnabled(false);
+               else
+                   btnAdd.setEnabled(true);
+            }
+    });
+        
+        
+        
         // Bat su kien select row tren table Indetail
         tbInDetail.getSelectionModel().addListSelectionListener((ListSelectionEvent e) -> {
             DefaultListSelectionModel model = (DefaultListSelectionModel) e.getSource();
@@ -242,13 +283,66 @@ public class InboundDialog extends javax.swing.JDialog implements ItemListener {
         });
         
        
+        formatTable();
+    }
+    
+    public void formatTable() {
+        //alignment component
+        DefaultTableCellRenderer centerRenderer = new DefaultTableCellRenderer();
+        centerRenderer.setHorizontalAlignment(JLabel.CENTER);
+        //id
+        tbProductList.getColumnModel().getColumn(COL_ID).setMinWidth(30);
+        tbProductList.getColumnModel().getColumn(COL_ID).setMaxWidth(50);
+        tbProductList.getColumnModel().getColumn(COL_ID).setCellRenderer(centerRenderer);
+        //branch
+        tbProductList.getColumnModel().getColumn(COL_BraName).setMinWidth(80);
+        tbProductList.getColumnModel().getColumn(COL_BraName).setMaxWidth(80);
+        tbProductList.getColumnModel().getColumn(COL_BraName).setCellRenderer(centerRenderer);
+        
+        
+        //name
+        tbProductList.getColumnModel().getColumn(COL_ProName).setMinWidth(80);
+        tbProductList.getColumnModel().getColumn(COL_ProName).setCellRenderer(centerRenderer);
+        
+        //stock
+        tbProductList.getColumnModel().getColumn(COL_ProStock).setMinWidth(35);
+        tbProductList.getColumnModel().getColumn(COL_ProStock).setMaxWidth(50);
+        tbProductList.getColumnModel().getColumn(COL_ProStock).setCellRenderer(centerRenderer);
+
+        //price
+        tbProductList.getColumnModel().getColumn(COL_ProPrice).setMinWidth(80);
+        tbProductList.getColumnModel().getColumn(COL_ProPrice).setCellRenderer(new CurrencyCellRenderer());
+
+        //desc
+        tbProductList.getColumnModel().getColumn(COL_ProDescr).setMinWidth(50);
+        tbProductList.getColumnModel().getColumn(COL_ProDescr).setCellRenderer(centerRenderer);
+        
+        
+        //id
+        tbInDetail.getColumnModel().getColumn(COL_InDID).setMinWidth(35);
+        tbInDetail.getColumnModel().getColumn(COL_InDID).setMaxWidth(70);
+        tbInDetail.getColumnModel().getColumn(COL_InDID).setCellRenderer(centerRenderer);
+        //InDetail Name
+        tbInDetail.getColumnModel().getColumn(COL_InDName).setMinWidth(400);
+        tbInDetail.getColumnModel().getColumn(COL_InDName).setMaxWidth(400);
+        tbInDetail.getColumnModel().getColumn(COL_InDName).setCellRenderer(centerRenderer);
+        
+        
+        //InDetail Cost
+        tbInDetail.getColumnModel().getColumn(COL_InDCost).setMinWidth(50);
+        tbInDetail.getColumnModel().getColumn(COL_InDCost).setCellRenderer(new CurrencyCellRenderer());
+        
+        //stock
+        tbInDetail.getColumnModel().getColumn(COL_InDQTy).setMinWidth(35);
+        tbInDetail.getColumnModel().getColumn(COL_InDQTy).setMaxWidth(70);
+        tbInDetail.getColumnModel().getColumn(COL_InDQTy).setCellRenderer(centerRenderer);
 
     }
     private void resetAction(boolean mustInfo) {
         // Load lai vung supplier
-        cbSupplier.setSelectedItem(supplierComboboxModel.getSupplierFromValue(backup.getSupName()));
+        cbSupplier.setSelectedIndex(cbSupplier.getItemCount()-1);
         
-
+        jdcDate.setDate(new Date());
         
         // Load lai table product
         inboundDetailTableModel.load(backup.getInID());
@@ -350,7 +444,7 @@ public class InboundDialog extends javax.swing.JDialog implements ItemListener {
         jScrollPane2 = new javax.swing.JScrollPane();
         tbProductList = new javax.swing.JTable();
         btnSave = new javax.swing.JButton();
-        jButton1 = new javax.swing.JButton();
+        btnAdd = new javax.swing.JButton();
         btDelete = new javax.swing.JButton();
         jScrollPane3 = new javax.swing.JScrollPane();
         list = new javax.swing.JList<>();
@@ -418,40 +512,41 @@ public class InboundDialog extends javax.swing.JDialog implements ItemListener {
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
-                .addContainerGap()
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel3)
                     .addComponent(cbSupplier, javax.swing.GroupLayout.PREFERRED_SIZE, 43, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jPanel1Layout.createSequentialGroup()
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(pnlDate, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                                .addComponent(jLabel5)
-                                .addComponent(txtUser, javax.swing.GroupLayout.PREFERRED_SIZE, 43, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addComponent(txtInvoice, javax.swing.GroupLayout.PREFERRED_SIZE, 43, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addComponent(jLabel4)))
-                        .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                    .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addGap(18, 18, 18)
                         .addComponent(jLabel2)
-                        .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
+                        .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 20, Short.MAX_VALUE)
+                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                            .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                                .addComponent(txtInvoice, javax.swing.GroupLayout.PREFERRED_SIZE, 43, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addComponent(jLabel4)
+                                .addComponent(jLabel5)
+                                .addComponent(txtUser, javax.swing.GroupLayout.PREFERRED_SIZE, 43, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addComponent(pnlDate, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addContainerGap())))
         );
 
         jPanel3.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "Inbound Details", javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Tahoma", 1, 13), new java.awt.Color(255, 153, 0))); // NOI18N
 
+        tbInDetail.setAutoCreateRowSorter(true);
         tbInDetail.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null}
+
             },
             new String [] {
                 "Title 1", "Title 2", "Title 3", "Title 4"
             }
         ));
+        tbInDetail.setFillsViewportHeight(true);
+        tbInDetail.setRowHeight(25);
+        tbInDetail.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
         tbInDetail.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 tbInDetailMouseClicked(evt);
@@ -467,27 +562,31 @@ public class InboundDialog extends javax.swing.JDialog implements ItemListener {
         );
         jPanel3Layout.setVerticalGroup(
             jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel3Layout.createSequentialGroup()
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 156, Short.MAX_VALUE))
+            .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 167, Short.MAX_VALUE)
         );
 
         jPanel4.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "Product", javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Tahoma", 1, 13), new java.awt.Color(255, 153, 0))); // NOI18N
 
+        tbProductList.setAutoCreateRowSorter(true);
         tbProductList.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null}
+
             },
             new String [] {
                 "Title 1", "Title 2", "Title 3", "Title 4"
             }
         ));
+        tbProductList.setFillsViewportHeight(true);
+        tbProductList.setRowHeight(25);
+        tbProductList.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
         tbProductList.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 tbProductListMouseClicked(evt);
+            }
+        });
+        tbProductList.addPropertyChangeListener(new java.beans.PropertyChangeListener() {
+            public void propertyChange(java.beans.PropertyChangeEvent evt) {
+                tbProductListPropertyChange(evt);
             }
         });
         jScrollPane2.setViewportView(tbProductList);
@@ -513,16 +612,16 @@ public class InboundDialog extends javax.swing.JDialog implements ItemListener {
             }
         });
 
-        jButton1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/image/product/Add.png"))); // NOI18N
-        jButton1.setText("Add");
-        jButton1.addActionListener(new java.awt.event.ActionListener() {
+        btnAdd.setIcon(new javax.swing.ImageIcon(getClass().getResource("/image/product/Add.png"))); // NOI18N
+        btnAdd.setText("Add");
+        btnAdd.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton1ActionPerformed(evt);
+                btnAddActionPerformed(evt);
             }
         });
 
         btDelete.setIcon(new javax.swing.ImageIcon(getClass().getResource("/image/product/Delete.png"))); // NOI18N
-        btDelete.setText("Delete");
+        btDelete.setText("Remove");
         btDelete.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btDeleteActionPerformed(evt);
@@ -535,6 +634,11 @@ public class InboundDialog extends javax.swing.JDialog implements ItemListener {
         jScrollPane3.setViewportView(list);
 
         jButton2.setIcon(new javax.swing.ImageIcon(getClass().getResource("/image/product/refresh_1.png"))); // NOI18N
+        jButton2.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton2ActionPerformed(evt);
+            }
+        });
 
         jButton5.setIcon(new javax.swing.ImageIcon(getClass().getResource("/image/product/banned.png"))); // NOI18N
         jButton5.setText("Discard");
@@ -563,24 +667,25 @@ public class InboundDialog extends javax.swing.JDialog implements ItemListener {
                     .addComponent(jPanel1, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(jPanel3, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addGroup(layout.createSequentialGroup()
-                        .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, 651, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(16, 16, 16)
-                        .addComponent(jButton2)
-                        .addGap(0, 0, Short.MAX_VALUE))
-                    .addGroup(layout.createSequentialGroup()
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(jButton1)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(btDelete)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(layout.createSequentialGroup()
+                                .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, 651, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(jButton2))
+                            .addGroup(layout.createSequentialGroup()
+                                .addGap(231, 231, 231)
+                                .addComponent(btnAdd, javax.swing.GroupLayout.PREFERRED_SIZE, 119, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(btDelete)))
+                        .addGap(0, 0, Short.MAX_VALUE)))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(btnSave)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(jButton3)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(jButton5)
+                .addComponent(btnSave, javax.swing.GroupLayout.PREFERRED_SIZE, 136, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jButton3, javax.swing.GroupLayout.PREFERRED_SIZE, 142, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jButton5, javax.swing.GroupLayout.PREFERRED_SIZE, 136, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
@@ -589,18 +694,17 @@ public class InboundDialog extends javax.swing.JDialog implements ItemListener {
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
                         .addContainerGap()
-                        .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, 73, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 9, Short.MAX_VALUE))
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                        .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(jButton2)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
+                        .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, 73, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(layout.createSequentialGroup()
+                        .addGap(35, 35, 35)
+                        .addComponent(jButton2)))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addComponent(jPanel4, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jButton1)
+                    .addComponent(btnAdd)
                     .addComponent(btDelete))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 19, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addComponent(jPanel3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -619,7 +723,7 @@ public class InboundDialog extends javax.swing.JDialog implements ItemListener {
         // TODO add your handling code here:
     }//GEN-LAST:event_txtUserActionPerformed
 
-    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
+    private void btnAddActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAddActionPerformed
 
         InboundDetail inbound = new InboundDetail();
         inbound.setInID(0);
@@ -632,7 +736,7 @@ public class InboundDialog extends javax.swing.JDialog implements ItemListener {
         listIn = inboundDetailTableModel.getList();
         setTrackChanges(true);
         
-    }//GEN-LAST:event_jButton1ActionPerformed
+    }//GEN-LAST:event_btnAddActionPerformed
 
     private void btnSaveActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSaveActionPerformed
         if (insertMode)//insert mode
@@ -666,6 +770,16 @@ public class InboundDialog extends javax.swing.JDialog implements ItemListener {
     private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton3ActionPerformed
         resetAction(true);
     }//GEN-LAST:event_jButton3ActionPerformed
+
+    private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
+       list.clearSelection();
+    }//GEN-LAST:event_jButton2ActionPerformed
+
+    private void tbProductListPropertyChange(java.beans.PropertyChangeEvent evt) {//GEN-FIRST:event_tbProductListPropertyChange
+       if(tbProductList.getRowCount()==0){
+        btnAdd.setEnabled(false);
+    }
+    }//GEN-LAST:event_tbProductListPropertyChange
     public void deleteAction() {
 
         inboundDetailTableModel.delete(selectedInDetail);
@@ -691,6 +805,11 @@ public class InboundDialog extends javax.swing.JDialog implements ItemListener {
 
         if (txtInvoice.getText().equals("")) {
             SwingUtils.showInfoDialog("You have not input invoice id");
+            txtInvoice.requestFocus();
+            return;
+        }
+        else if(!txtInvoice.getText().matches("[a-zA-Z0-9 ]+")){
+            SwingUtils.showInfoDialog("Invalid input");
             txtInvoice.requestFocus();
             return;
         }
@@ -738,7 +857,13 @@ public class InboundDialog extends javax.swing.JDialog implements ItemListener {
             SwingUtils.showInfoDialog("You have not input invoice id");
             txtInvoice.requestFocus();
             return;
-        } else{
+        } 
+        else if(!txtInvoice.getText().matches("[a-zA-Z0-9 ]+")){
+            SwingUtils.showInfoDialog("Invalid input");
+            txtInvoice.requestFocus();
+            return;
+        }
+        else{
 
             //update lai nhung gia tri moi
             Inbound ib = new Inbound();
@@ -752,8 +877,8 @@ public class InboundDialog extends javax.swing.JDialog implements ItemListener {
             
             ib.setSupInvoiceID(txtInvoice.getText());
             
-            System.err.println(listIn);
-             if (new InboundDetailDAOImpl().update(listIn,ib)){
+            
+             if (new InboundDetailDAOImpl().update(listIn,ib,inbound)){
                  SwingUtils.showInfoDialog(SwingUtils.UPDATE_SUCCESS);//update thanh cong
                  //tat dialog
                  dispose();
@@ -778,7 +903,7 @@ public class InboundDialog extends javax.swing.JDialog implements ItemListener {
         selectedProduct.setProStock((int) tbProductList.getValueAt(selectedRowIndex, 3));
         selectedProduct.setProPrice((float) tbProductList.getValueAt(selectedRowIndex, 4));
         selectedProduct.setProDesc((String) tbProductList.getValueAt(selectedRowIndex, 5));
-        selectedProduct.setProEnabled((boolean) tbProductList.getValueAt(selectedRowIndex, 6));
+//        selectedProduct.setProEnabled((boolean) tbProductList.getValueAt(selectedRowIndex, 6));
         //cot sale off k cho update
 
         //cot image
@@ -808,9 +933,9 @@ public class InboundDialog extends javax.swing.JDialog implements ItemListener {
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btDelete;
+    private javax.swing.JButton btnAdd;
     private javax.swing.JButton btnSave;
     private javax.swing.JComboBox<Supplier> cbSupplier;
-    private javax.swing.JButton jButton1;
     private javax.swing.JButton jButton2;
     private javax.swing.JButton jButton3;
     private javax.swing.JButton jButton5;
