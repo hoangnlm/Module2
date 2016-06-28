@@ -7,6 +7,7 @@ package employee.controller;
 
 //import utility.ComboBoxCellEditor;
 import com.toedter.calendar.JDateChooser;
+import static customer.controller.CustomerPanel.COL_CUSPHONE;
 import employee.model.Employee;
 import java.awt.Cursor;
 import java.awt.Dimension;
@@ -103,9 +104,7 @@ public class EmployeePanel extends javax.swing.JPanel {
         //Set CellEditor cho table
         //col empid
         tbEmpployeeList.getColumnModel().getColumn(COL_EMPID).setMaxWidth(30);
-        tbEmpployeeList.getColumnModel().getColumn(COL_BONUS).setCellEditor(new IntegerCellEditor(4000000, 20000000));
-        tbEmpployeeList.getColumnModel().getColumn(COL_BONUS).setMinWidth(80);
-        tbEmpployeeList.getColumnModel().getColumn(COL_BONUS).setMaxWidth(80);
+
         tbEmpployeeList.getColumnModel().getColumn(COL_STATUS).setMinWidth(30);
         tbEmpployeeList.getColumnModel().getColumn(COL_STATUS).setMaxWidth(70);
 
@@ -117,10 +116,14 @@ public class EmployeePanel extends javax.swing.JPanel {
 //        tbEmpployeeList.getColumnModel().getColumn(COL_EMPNAME).setMinWidth(160);
 //        tbEmpployeeList.getColumnModel().getColumn(COL_EMPNAME).setMaxWidth(300);
 
-        // Col emp phone
-        tbEmpployeeList.getColumnModel().getColumn(COL_EMPPHONE).setCellEditor(new StringCellEditor(6, 15, SwingUtils.PATTERN_NUMBER));
+        // Col emp phone        
+        tbEmpployeeList.getColumnModel().getColumn(COL_EMPPHONE).setCellEditor(new StringCellEditor(1, 20, SwingUtils.PATTERN_NUMBER));
         tbEmpployeeList.getColumnModel().getColumn(COL_EMPPHONE).setMinWidth(80);
         tbEmpployeeList.getColumnModel().getColumn(COL_EMPPHONE).setMaxWidth(100);
+        //col bonus
+        tbEmpployeeList.getColumnModel().getColumn(COL_BONUS).setCellEditor(new IntegerCellEditor(500000, 5000000));
+        tbEmpployeeList.getColumnModel().getColumn(COL_BONUS).setMinWidth(80);
+        tbEmpployeeList.getColumnModel().getColumn(COL_BONUS).setMaxWidth(80);
         //col salary
         tbEmpployeeList.getColumnModel().getColumn(COL_SALARY).setCellEditor(new IntegerCellEditor(100000, 10000000));
         tbEmpployeeList.getColumnModel().getColumn(COL_SALARY).setMinWidth(80);
@@ -177,13 +180,13 @@ public class EmployeePanel extends javax.swing.JPanel {
                         break;
                     case COL_BONUS:
                         selectedEmployee.setEmpBonus((int) tcl.getNewValue());
-//                        break;
+                        break;
                     case COL_STATUS:
                         selectedEmployee.setEmpEnabled((boolean) tcl.getNewValue());
                         break;
                 }
                 if (SwingUtils.showConfirmDialog("Are you sure to update ?") == JOptionPane.NO_OPTION) {
-                    return;
+                    refreshAction(false);
                 } else {
                     updateAction();
                 }

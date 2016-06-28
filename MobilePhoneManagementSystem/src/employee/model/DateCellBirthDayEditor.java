@@ -24,7 +24,7 @@ public class DateCellBirthDayEditor extends DefaultCellEditor {
         Calendar c = Calendar.getInstance();
         c.set(1945, 0, 1);
         dc.getJCalendar().setMinSelectableDate(c.getTime());
-        c.set(2000, 11, 31);
+        c.set(2000, 11, 30);
         dc.getJCalendar().setMaxSelectableDate(c.getTime());
         dc.getDateEditor().setEnabled(false);
     }

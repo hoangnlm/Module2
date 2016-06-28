@@ -25,7 +25,7 @@ public class EmployeeTableModel extends CustomizedTableModel<Employee> {
     @Override
     public Class<?> getColumnClass(int column) {
         Class[] columnClasses = {Integer.class, String.class, String.class, Date.class,
-            int.class, String.class, Date.class, int.class, Boolean.class};
+            Integer.class, String.class, Date.class, Integer.class, Boolean.class};
         return columnClasses[column];
     }
 

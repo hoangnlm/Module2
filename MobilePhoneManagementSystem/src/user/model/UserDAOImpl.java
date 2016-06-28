@@ -77,7 +77,7 @@ public class UserDAOImpl implements IDAO<User> {
                         funtionIDOnline = 2;
                     }
                 } while (crs2.next());
-            } 
+            }
             if (crs1.first()) {
                 do {
                     if (crs1.getInt("FunctionID") == 2) {
@@ -91,13 +91,13 @@ public class UserDAOImpl implements IDAO<User> {
         if (!userName.equals("root")) {
             if (funtionIDOnline == 2 && funtionIDSelected != 2) {
                 result = true;
-            } else if(funtionIDOnline == 2&&userName.equals(selectedUser.getUserName())){
+            } else if (funtionIDOnline == 2 && userName.equals(selectedUser.getUserName())) {
                 result = true;
-            }else{
+            } else {
                 return false;
             }
-        }else{
-            result=true;
+        } else {
+            result = true;
         }
         return result;
     }
@@ -122,6 +122,49 @@ public class UserDAOImpl implements IDAO<User> {
         } catch (SQLException ex) {
             Logger.getLogger(UserDAOImpl.class
                     .getName()).log(Level.SEVERE, null, ex);
+        }
+        return result;
+    }
+
+    public boolean checkUpdateRecord(String userName, User selectedUser) {
+        boolean result = false;
+        CachedRowSet crs1, crs2;
+        int funtionIDOnline = 0, funtionIDSelected = 0;
+        //functionID cua row selected
+        crs1 = getCRS("select FunctionID from Permission where UserID = ?", selectedUser.getUserID());
+        //funtionID cua user dang online
+        crs2 = getCRS("select FunctionID from Permission where UserID=(select UserID from Users where UserName=?)", userName);
+        try {
+            if (crs2.first()) {
+                do {
+                    if (crs2.getInt("FunctionID") == 2) {
+                        funtionIDOnline = 2;
+                    }
+                } while (crs2.next());
+            }
+            if (crs1.first()) {
+                do {
+                    if (crs1.getInt("FunctionID") == 2) {
+                        funtionIDSelected = 2;
+                    }
+                } while (crs1.next());
+            }
+        } catch (SQLException ex) {
+            Logger.getLogger(UserDAOImpl.class.getName()).log(Level.SEVERE, null, ex);
+        }
+
+        if (funtionIDOnline == 2) {
+            if (userName.equals("root")) {
+                result = true;
+            } else if (funtionIDSelected != 2) {
+                result = true;
+            } else if (userName.equals(selectedUser.getUserName())) {
+                result = false;
+            } else {
+                result = false;
+            }
+        } else if (funtionIDOnline != 2) {
+            result = false;
         }
         return result;
     }
@@ -210,6 +253,7 @@ public class UserDAOImpl implements IDAO<User> {
                     + "where UserName = ? AND UserID <>?", user.getUserName(), user.getUserID());
             CachedRowSet crs2 = getCRS("select * from Users "
                     + "where EmpID = ? AND UserID <>?", user.getEmpID(), user.getUserID());
+
             if (user.getUserID() == 1) {
                 SwingUtils.showErrorDialog("ADMIN ROOT can't be update !");
             } else if (crs1.first()) {
@@ -217,7 +261,7 @@ public class UserDAOImpl implements IDAO<User> {
             } else if (crs2.first()) {
                 SwingUtils.showErrorDialog("EmpID cannot be duplicated !");
             } else {
-                System.out.println(user.toString());
+//                System.out.println(user.toString());
                 runPS("update Users set UserName=?, "
                         + " EmpID=?, UserEnabled=? where UserID=?",
                         user.getUserName(),
@@ -244,12 +288,21 @@ public class UserDAOImpl implements IDAO<User> {
     ) {
         boolean result = false;
         try {
-            //Check emp co salary khong, neu co thi khong cho delete
-            CachedRowSet crs1 = getCRS("select * from Orders  where UserID=?", user.getUserID());
+            //Check user co o table khac khong, neu co thi khong cho delete            
+            CachedRowSet crs3 = getCRS("select * from Orders Where UserID=?", user.getUserID());
+            CachedRowSet crs4 = getCRS("select * from Service Where UserID=?", user.getUserID());
+            CachedRowSet crs5 = getCRS("select * from Inbounds Where UserID=?", user.getUserID());
+            CachedRowSet crs6 = getCRS("select * from Outbounds Where UserID=?", user.getUserID());
             if (user.getUserID() == 1) {
                 SwingUtils.showErrorDialog("ADMIN ROOT can't be delete !");
-            } else if (crs1.first()) {
-                SwingUtils.showErrorDialog("Orders have user !");
+            } else if (crs3.first()) {
+                SwingUtils.showErrorDialog("This user is working at Order !");
+            } else if (crs4.first()) {
+                SwingUtils.showErrorDialog("This user is working at Service !");
+            } else if (crs5.first()) {
+                SwingUtils.showErrorDialog("This user is working at Inbounds !");
+            } else if (crs6.first()) {
+                SwingUtils.showErrorDialog("This user is working at Outbounds !");
             } else {
                 runPS("delete from Users where UserID=?", user.getUserID());
 

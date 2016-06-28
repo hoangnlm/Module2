@@ -74,11 +74,17 @@ public class SalaryDialog extends javax.swing.JDialog {
         dcFilter.setDateFormatString("MMMM dd,yyyy");
 //        pnPayday.add(dcFilter);
         setLocationRelativeTo(null);
+        //Disable button khi moi khoi dong len
+        setButtonEnabled(false);
 
+        // Selecting customer in the table
+        selectedSalary = new Salary();
         // Set data cho table
         salaryTableModel = new SalaryTableModel();
         tbSalaryList.setModel(salaryTableModel);
-
+// Set sorter cho table
+        sorter = new TableRowSorter<>(salaryTableModel);
+        tbSalaryList.setRowSorter(sorter);
         // Set height cho table header
         tbSalaryList.getTableHeader().setPreferredSize(new Dimension(300, 30));
 
@@ -109,14 +115,12 @@ public class SalaryDialog extends javax.swing.JDialog {
             DefaultListSelectionModel model = (DefaultListSelectionModel) e.getSource();
             if (!model.isSelectionEmpty()) {
                 fetchAction();
-                if (salaryTableModel.getRowCount() > 1) {
-                    btRemove.setEnabled(true);
-                    setButtonEnabled(true);
-                }
+                setButtonEnabled(true);
+
             } else {
                 setButtonEnabled(false);
-                btRemove.setEnabled(false);
             }
+            updateItemsLabel();
         });
 
 //</editor-fold>
@@ -149,9 +153,6 @@ public class SalaryDialog extends javax.swing.JDialog {
             }
         });
 //</editor-fold>
-
-        // Set data cho cac label
-        updateItemsLabel();
 
         if (!LoginFrame.checkPermission(new UserFunction(UserFunction.FG_SALARY, UserFunction.FN_UPDATE))) {
             tbSalaryList.setEnabled(false);
@@ -309,16 +310,16 @@ public class SalaryDialog extends javax.swing.JDialog {
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 296, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 309, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(9, 9, 9)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(btAdd, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(btRemove, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(btRefresh, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(btCancel, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addContainerGap())
         );
 
         pack();
@@ -362,34 +363,31 @@ public class SalaryDialog extends javax.swing.JDialog {
         details.setWorkDays(22);
         details.setOffDays(0);
         Calendar calendar = Calendar.getInstance();
-        calendar.set(Calendar.MONTH, calendar.get(Calendar.MONTH) + 1);
         details.setPayDay(calendar.getTime());
-        details.setMonth(calendar.getTime().getMonth() + 1);
+//        calendar.set(Calendar.MONTH, calendar.get(Calendar.MONTH) + 1);        
+        details.setMonth(calendar.get(Calendar.MONDAY));
         details.setEmpID(employee.getEmpID());
 //        System.out.println("zzzzzzz:   " + details);
         salaryTableModel.insert(details);
         refreshAction(false);
-       // salaryTableModel.refresh();
 
         scrollToRow(tbSalaryList.getRowCount() - 1);
         updateItemsLabel();
     }
 
     private void deleteAction() {
-        btAdd.setEnabled(true);
         if (SwingUtils.showConfirmDialog("Are you sure to delete ?") == JOptionPane.NO_OPTION) {
             return;
         } else if (salaryTableModel.delete(selectedSalary)) {
-            refreshAction(false);
             SwingUtils.showInfoDialog(SwingUtils.DELETE_SUCCESS);
 
         } else {
-            refreshAction(false);
             SwingUtils.showInfoDialog(SwingUtils.DELETE_FAIL);
         }
+        refreshAction(false);
         // Neu row xoa la row cuoi thi lui cursor ve
         // Neu row xoa la row khac cuoi thi tien cursor ve truoc
-        selectedRowIndex = (selectedRowIndex == tbSalaryList.getRowCount() ? tbSalaryList.getRowCount() - 1 : selectedRowIndex++);
+        selectedRowIndex = 1;
         scrollToRow(selectedRowIndex);
         updateItemsLabel();
     }
@@ -397,7 +395,7 @@ public class SalaryDialog extends javax.swing.JDialog {
     private void refreshAction(boolean mustInfo) {
         if (mustInfo) {
             setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
-            
+
             // Refresh table
             salaryTableModel.load(employee.getEmpID());
 //            salaryTableModel.refresh();
@@ -414,22 +412,18 @@ public class SalaryDialog extends javax.swing.JDialog {
 
     // Ham goi khi bam nut Save
     private void updateAction() {
-
-        if (salaryTableModel.update(selectedSalary)) { 
-            refreshAction(false);
+        if (salaryTableModel.update(selectedSalary)) {
             SwingUtils.showInfoDialog(SwingUtils.UPDATE_SUCCESS);
-            
+
         } else {
-            refreshAction(false);
             SwingUtils.showInfoDialog(SwingUtils.UPDATE_FAIL);
         }
+        refreshAction(false);
+
     }
 
     private void cancelAction() {
-
-        if (SwingUtils.showConfirmDialog("Discard change(s) and quit ?") == JOptionPane.YES_OPTION) {
-            dispose();
-        }
+        dispose();
     }
 
     private void scrollToRow(int row) {
@@ -439,17 +433,24 @@ public class SalaryDialog extends javax.swing.JDialog {
 
     private void fetchAction() {
         selectedRowIndex = tbSalaryList.getSelectedRow();
-        if (selectedRowIndex >= 0) {
-            int idx = tbSalaryList.convertRowIndexToModel(selectedRowIndex);
-            selectedSalary = salaryTableModel.getSalaryFromIndex(idx);
-            salaryTableModel.setSelectingIndex(idx);
-        } else {
-            selectedSalary = null;
-            salaryTableModel.setSelectingIndex(-1);
-        }
+        selectedSalary.setSalID((int) tbSalaryList.getValueAt(selectedRowIndex, 0));
+        selectedSalary.setEmpID((int) tbSalaryList.getValueAt(selectedRowIndex, 1));
+        selectedSalary.setMonth((int) tbSalaryList.getValueAt(selectedRowIndex, 2));
+        selectedSalary.setPayDay((Date) tbSalaryList.getValueAt(selectedRowIndex, 3));
+        selectedSalary.setWorkDays((int) tbSalaryList.getValueAt(selectedRowIndex, 4));
+        selectedSalary.setOffDays((int) tbSalaryList.getValueAt(selectedRowIndex, 5));
+//        if (selectedRowIndex >= 0) {
+//            int idx = tbSalaryList.convertRowIndexToModel(selectedRowIndex);
+//            selectedSalary = salaryTableModel.getSalaryFromIndex(idx);
+//            salaryTableModel.setSelectingIndex(idx);
+//        } else {
+//            selectedSalary = null;
+//            salaryTableModel.setSelectingIndex(-1);
+//        }
     }
 
     private void updateItemsLabel() {
+        float sum;
 //        int sum = tbProduct.getRowCount();
 //        int sale = 0;float bonusSale=0;
 //        int service=0;
@@ -462,7 +463,11 @@ public class SalaryDialog extends javax.swing.JDialog {
 //        lblBonusSale.setText(String.format("%12.2lf", bonusSale));
         lblBasicSalary.setText(String.format("%d", employee.getEmpSalary()));
         lblBonusDes.setText(String.format("%d", employee.getEmpBonus()));
-        lblSumary.setText(String.format("%d", employee.getEmpBonus() + employee.getEmpSalary()));
+        
+//        System.out.println("Salary: "+selectedSalary.toString());
+        sum = (employee.getEmpBonus() / selectedSalary.getWorkDays()) * (selectedSalary.getWorkDays() - selectedSalary.getOffDays()) + employee.getEmpSalary();
+
+        lblSumary.setText(String.format("%.2f", sum));
         updateTotalLabel();
     }
 
@@ -478,7 +483,7 @@ public class SalaryDialog extends javax.swing.JDialog {
 
     private void setButtonEnabled(boolean enabled, JButton... exclude) {
         btRemove.setEnabled(enabled);
-        btAdd.setEnabled(enabled);
+//        btAdd.setEnabled(enabled);
 
         // Ngoai tru may button nay luon luon enable
         if (exclude.length != 0) {

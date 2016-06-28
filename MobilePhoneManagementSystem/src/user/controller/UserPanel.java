@@ -583,7 +583,11 @@ public class UserPanel extends javax.swing.JPanel {
         boolean result = u.checkChangePassForAdmin(userName, selectedUser);
         return result;
     }
-
+    private boolean checkUpdate(){
+        UserDAOImpl u = new UserDAOImpl();
+        boolean result = u.checkUpdateRecord(userName, selectedUser);
+        return result;
+    }
     private void insertAction() {
         setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
         boolean result = userTableModel.insert(new User());
@@ -597,7 +601,7 @@ public class UserPanel extends javax.swing.JPanel {
     }
 
     private void updateAction() {
-        if (checkChangePass()) {
+        if (checkUpdate()==true) {
             setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
             boolean result = userTableModel.update(selectedUser);
             refreshAction(false);
@@ -605,7 +609,7 @@ public class UserPanel extends javax.swing.JPanel {
             SwingUtils.showInfoDialog(result ? SwingUtils.UPDATE_SUCCESS : SwingUtils.UPDATE_FAIL);
             scrollToRow(selectedRowIndex);
         } else {
-            SwingUtils.showErrorDialog("You don't have permission to update this user !");
+            SwingUtils.showErrorDialog("You can't update this user !");
             refreshAction(false);
         }
 //        
