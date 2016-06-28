@@ -159,6 +159,7 @@ public class SalaryDialog extends javax.swing.JDialog {
             btRemove.setEnabled(false);
         }
 
+        tbSalaryList.setAutoCreateColumnsFromModel(false);
     }
 
     /**
@@ -367,7 +368,8 @@ public class SalaryDialog extends javax.swing.JDialog {
         details.setEmpID(employee.getEmpID());
 //        System.out.println("zzzzzzz:   " + details);
         salaryTableModel.insert(details);
-//        salaryTableModel.refresh();
+        refreshAction(false);
+       // salaryTableModel.refresh();
 
         scrollToRow(tbSalaryList.getRowCount() - 1);
         updateItemsLabel();
@@ -378,9 +380,11 @@ public class SalaryDialog extends javax.swing.JDialog {
         if (SwingUtils.showConfirmDialog("Are you sure to delete ?") == JOptionPane.NO_OPTION) {
             return;
         } else if (salaryTableModel.delete(selectedSalary)) {
+            refreshAction(false);
             SwingUtils.showInfoDialog(SwingUtils.DELETE_SUCCESS);
 
         } else {
+            refreshAction(false);
             SwingUtils.showInfoDialog(SwingUtils.DELETE_FAIL);
         }
         // Neu row xoa la row cuoi thi lui cursor ve
@@ -411,10 +415,12 @@ public class SalaryDialog extends javax.swing.JDialog {
     // Ham goi khi bam nut Save
     private void updateAction() {
 
-        if (salaryTableModel.update(selectedSalary)) { // Update mode
+        if (salaryTableModel.update(selectedSalary)) { 
+            refreshAction(false);
             SwingUtils.showInfoDialog(SwingUtils.UPDATE_SUCCESS);
             
         } else {
+            refreshAction(false);
             SwingUtils.showInfoDialog(SwingUtils.UPDATE_FAIL);
         }
     }
