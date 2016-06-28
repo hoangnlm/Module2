@@ -257,7 +257,6 @@ public class LoginPanel extends javax.swing.JPanel {
         boolean result = false;
         // Moc database len check
         List<Login> list = new LoginDAOImpl(tfUserName.getText().trim()).getList();
-        SwingUtils.showInfoDialog("List login: "+list);
         if (list.isEmpty()) {
             SwingUtils.showInfoDialog("Username not correct ! Please try again !");
             tfUserName.requestFocus();

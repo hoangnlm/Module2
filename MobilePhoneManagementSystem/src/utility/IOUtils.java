@@ -27,7 +27,6 @@ public class IOUtils {
         try {
             // Dam bao file phai ton tai
             File file = new File(path);
-            SwingUtils.showInfoDialog("IOUtils: "+path);
             ObjectOutputStream objectOutputStream = new ObjectOutputStream(new FileOutputStream(file));
             objectOutputStream.writeObject(obj);
             objectOutputStream.close();
