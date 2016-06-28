@@ -22,8 +22,8 @@ public class DBProvider {
 //    public static final String HOST = "10.211.55.7";
     public static final String HOST = "localhost";
     public static final String PORT = "1433";
-    public static final String DBNAME = "MobileF21508";
-//    public static final String DBNAME = "Mobile";
+//    public static final String DBNAME = "MobileF21508";
+    public static final String DBNAME = "Mobile";
     public static final String NAME = "sa";
     public static final String PASSWORD = "1";
 //    public static final String PASSWORD = "111";

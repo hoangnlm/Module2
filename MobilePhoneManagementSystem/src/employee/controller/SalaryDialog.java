@@ -125,7 +125,7 @@ public class SalaryDialog extends javax.swing.JDialog {
 
 //</editor-fold>
         // Set data cho table chinh
-        salaryTableModel.load(employee.getEmpID());    //Emply list neu o mode insert
+        salaryTableModel.load(employee.getEmpID());  
 
         //<editor-fold defaultstate="collapsed" desc="Set cell listener cho updating">
         TableCellListener tcl = new TableCellListener(tbSalaryList, new AbstractAction() {
@@ -140,16 +140,20 @@ public class SalaryDialog extends javax.swing.JDialog {
                         break;
                     case COL_WORKDAYS:
                         selectedSalary.setWorkDays((int) tcl.getNewValue());
+                        updateItemsLabel();
                         break;
                     case COL_OFFDAYS:
                         selectedSalary.setOffDays((int) tcl.getNewValue());
+                        updateItemsLabel();
                         break;
                 }
                 if (SwingUtils.showConfirmDialog("Are you sure to update ?") == JOptionPane.NO_OPTION) {
                     return;
                 } else {
                     updateAction();
+                    
                 }
+                updateItemsLabel();
             }
         });
 //</editor-fold>
@@ -395,11 +399,14 @@ public class SalaryDialog extends javax.swing.JDialog {
     private void refreshAction(boolean mustInfo) {
         if (mustInfo) {
             setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
-
+            lblBasicSalary.setText("");
+            lblBonusDes.setText("");
+            lblSumary.setText("");
+            
             // Refresh table
             salaryTableModel.load(employee.getEmpID());
 //            salaryTableModel.refresh();
-
+            
             setCursor(null);
             SwingUtils.showInfoDialog(SwingUtils.DB_REFRESH);
         } else {
@@ -407,7 +414,9 @@ public class SalaryDialog extends javax.swing.JDialog {
             salaryTableModel.load(employee.getEmpID());
 //            salaryTableModel.refresh();
         }
+        updateItemsLabel();
         scrollToRow(selectedRowIndex);
+        
     }
 
     // Ham goi khi bam nut Save
@@ -419,7 +428,7 @@ public class SalaryDialog extends javax.swing.JDialog {
             SwingUtils.showInfoDialog(SwingUtils.UPDATE_FAIL);
         }
         refreshAction(false);
-
+        updateItemsLabel();
     }
 
     private void cancelAction() {
@@ -461,6 +470,7 @@ public class SalaryDialog extends javax.swing.JDialog {
 //        bonusSale=(float) arr.get(2);
 //        lblTotalItemSale.setText(sale+"");
 //        lblBonusSale.setText(String.format("%12.2lf", bonusSale));
+
         lblBasicSalary.setText(String.format("%d", employee.getEmpSalary()));
         lblBonusDes.setText(String.format("%d", employee.getEmpBonus()));
         
