@@ -28,7 +28,8 @@ public class UserFunction implements Serializable {
     public static final String FG_CUSTOMER = "Customer";
     public static final String FG_CUSTOMERLEVEL = "CustomerLevel";
     public static final String FG_SERVICE = "Service";
-    public static final String FG_EMPLOYEE = "Employee";    //13 features
+    public static final String FG_EMPLOYEE = "Employee";   
+    public static final String FG_SALARY= "Salary";    //14 features
     public static final String FN_VIEW = "View";
     public static final String FN_UPDATE = "Update";
     
