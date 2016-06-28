@@ -23,7 +23,8 @@ public class LoginDAOImpl implements IDAO<Login> {
     private CachedRowSet crs2;
 
     public LoginDAOImpl(String userName) {
-        crs1 = getCRS("select * from Users where UserName=?", userName);
+        // Chi lay cac user duoc enable
+        crs1 = getCRS("select * from Users where UserName=? AND UserEnabled=1", userName);
         crs2 = getCRS("select FunctionGroup, FunctionName from Users u join Permission p on u.UserID=p.UserID join Functions f on p.FunctionID=f.FunctionID where u.UserName=? order by f.FunctionID", userName);
     }
 
