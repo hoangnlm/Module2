@@ -236,7 +236,18 @@ public class InboundDialog extends javax.swing.JDialog implements ItemListener {
                    btnAdd.setEnabled(true);
             }
     });
-        
+        txtInvoice.getDocument().addDocumentListener(new DocumentListener() {
+  public void changedUpdate(DocumentEvent e) {
+    btnSave.setEnabled(true);
+  }
+  public void removeUpdate(DocumentEvent e) {
+    btnSave.setEnabled(true);
+  }
+  public void insertUpdate(DocumentEvent e) {
+    btnSave.setEnabled(true);
+  }
+        });
+
         
         
         // Bat su kien select row tren table Indetail

@@ -150,10 +150,11 @@ public class InboundDetailDAOImpl implements IDAO<InboundDetail>{
             }
             
             //update cho table inbound
-            runPS("Update inbounds set SupID = (SELECT supid from suppliers where supname=?),SupInvoiceID=? where InID=(SELECT max(InID) from inbounds)",
+            runPS("Update inbounds set SupID = (SELECT supid from suppliers where supname=?),SupInvoiceID=? where InID=?",
                     
                     inbound.getSupName(),
-                    inbound.getSupInvoiceID());
+                    inbound.getSupInvoiceID(),
+                    inbound.getInID());
             
             result = true;
         } catch (SQLException ex) {
