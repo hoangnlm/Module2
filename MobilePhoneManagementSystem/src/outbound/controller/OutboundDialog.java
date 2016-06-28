@@ -144,7 +144,7 @@ public class OutboundDialog extends javax.swing.JDialog implements ItemListener 
         //update lai list
        listOut = outboundDetailTableModel.getList();//null neu insert mode
        
-       
+       btnAdd.setEnabled(false);
     }
 
     
@@ -216,7 +216,8 @@ public class OutboundDialog extends javax.swing.JDialog implements ItemListener 
             DefaultListSelectionModel model = (DefaultListSelectionModel) e.getSource();
             if (!model.isSelectionEmpty()) {
                 fetchProductDetails();
-                
+                btnAdd.setEnabled(true);
+                btDelete.setEnabled(true);
                 if(selectedProduct.getProStock()>0)
                 //spinner cho table, lay maximum la so luong ton kho
                 tbInDetail.getColumnModel().getColumn(2).setCellEditor(new SpinnerCellEditor(1, selectedProduct.getProStock()));
@@ -224,19 +225,29 @@ public class OutboundDialog extends javax.swing.JDialog implements ItemListener 
                 tbProductList.setSurrendersFocusOnKeystroke(false);
             }
         });
+        
+        txtContent.getDocument().addDocumentListener(new DocumentListener() {
+  public void changedUpdate(DocumentEvent e) {
+    btnSave.setEnabled(true);
+  }
+  public void removeUpdate(DocumentEvent e) {
+    btnSave.setEnabled(true);
+  }
+  public void insertUpdate(DocumentEvent e) {
+    btnSave.setEnabled(true);
+  }
+        });
 
         //event trong truong hop k co record trong table
         sorter.addRowSorterListener(new RowSorterListener() {
-        
-
             @Override
             public void sorterChanged(RowSorterEvent e) {
-               if(tbProductList.getRowCount()==0)
+               if(tbInDetail.getRowCount()==0)
                    btnAdd.setEnabled(false);
                else
                    btnAdd.setEnabled(true);
             }
-    });
+        });
         // Bat su kien select row tren table Indetail
         tbInDetail.getSelectionModel().addListSelectionListener((ListSelectionEvent e) -> {
             DefaultListSelectionModel model = (DefaultListSelectionModel) e.getSource();
@@ -479,7 +490,7 @@ public class OutboundDialog extends javax.swing.JDialog implements ItemListener 
         );
         pnlDateLayout.setVerticalGroup(
             pnlDateLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 42, Short.MAX_VALUE)
+            .addGap(0, 27, Short.MAX_VALUE)
         );
 
         jLabel4.setText("Content");
@@ -505,7 +516,7 @@ public class OutboundDialog extends javax.swing.JDialog implements ItemListener 
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addContainerGap(47, Short.MAX_VALUE)
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jPanel1Layout.createSequentialGroup()
                         .addComponent(jLabel2)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
@@ -513,7 +524,7 @@ public class OutboundDialog extends javax.swing.JDialog implements ItemListener 
                     .addGroup(jPanel1Layout.createSequentialGroup()
                         .addComponent(jLabel5)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(txtUser)))
+                        .addComponent(txtUser, javax.swing.GroupLayout.PREFERRED_SIZE, 148, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 128, Short.MAX_VALUE)
                 .addComponent(jLabel4)
                 .addGap(18, 18, 18)
@@ -524,22 +535,23 @@ public class OutboundDialog extends javax.swing.JDialog implements ItemListener 
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
                         .addComponent(jScrollPane4, javax.swing.GroupLayout.PREFERRED_SIZE, 105, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addContainerGap())
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
-                        .addComponent(jLabel4)
-                        .addGap(14, 14, 14)
-                        .addComponent(jLabel2)
-                        .addGap(26, 26, 26))
-                    .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(txtUser, javax.swing.GroupLayout.PREFERRED_SIZE, 54, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(jLabel5))
+                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                            .addGroup(javax.swing.GroupLayout.Alignment.LEADING, jPanel1Layout.createSequentialGroup()
+                                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                                    .addComponent(txtUser, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addComponent(jLabel5))
+                                .addGap(0, 40, Short.MAX_VALUE))
+                            .addComponent(jLabel4))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(pnlDate, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addContainerGap())))
+                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                            .addComponent(jLabel2)
+                            .addComponent(pnlDate, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addGap(26, 26, 26))))
         );
 
         jPanel3.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "Outbound Details", javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Tahoma", 1, 13), new java.awt.Color(255, 153, 0))); // NOI18N

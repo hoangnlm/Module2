@@ -180,10 +180,7 @@ public class ProductPanel extends javax.swing.JPanel {
             @Override
             public void actionPerformed(ActionEvent e) {
                 TableCellListener tcl = (TableCellListener) e.getSource();
-//                System.out.println("Row   : " + tcl.getRow());
-//                System.out.println("Column: " + tcl.getColumn());
-//                System.out.println("Old   : " + tcl.getOldValue());
-//                System.out.println("New   : " + tcl.getNewValue());
+                
 
                 switch (tcl.getColumn()) {
                     case 0:
@@ -353,7 +350,7 @@ public class ProductPanel extends javax.swing.JPanel {
         tbProductList.getColumnModel().getColumn(COL_ID).setMinWidth(30);
         tbProductList.getColumnModel().getColumn(COL_ID).setMaxWidth(50);
         tbProductList.getColumnModel().getColumn(COL_ID).setCellRenderer(centerRenderer);
-        //branch
+        //branch 
         tbProductList.getColumnModel().getColumn(COL_BraName).setMinWidth(80);
         tbProductList.getColumnModel().getColumn(COL_BraName).setMaxWidth(80);
         tbProductList.getColumnModel().getColumn(COL_BraName).setCellRenderer(centerRenderer);
@@ -362,7 +359,7 @@ public class ProductPanel extends javax.swing.JPanel {
         //name
         tbProductList.getColumnModel().getColumn(COL_ProName).setMinWidth(80);
         tbProductList.getColumnModel().getColumn(COL_ProName).setCellRenderer(centerRenderer);
-        tbProductList.getColumnModel().getColumn(COL_ProName).setCellEditor(new StringCellEditor(1, 70, "[a-zA-Z ]+"));
+        tbProductList.getColumnModel().getColumn(COL_ProName).setCellEditor(new StringCellEditor(1, 70, "[a-zA-Z1-9 ]+"));
         //stock
         tbProductList.getColumnModel().getColumn(COL_ProStock).setMinWidth(35);
         tbProductList.getColumnModel().getColumn(COL_ProStock).setMaxWidth(50);
@@ -375,7 +372,7 @@ public class ProductPanel extends javax.swing.JPanel {
         //desc
         tbProductList.getColumnModel().getColumn(COL_ProDescr).setMinWidth(150);
         tbProductList.getColumnModel().getColumn(COL_ProDescr).setCellRenderer(centerRenderer);
-        tbProductList.getColumnModel().getColumn(COL_ProDescr).setCellEditor(new StringCellEditor(1, 100, "[a-zA-Z ]+"));
+        tbProductList.getColumnModel().getColumn(COL_ProDescr).setCellEditor(new StringCellEditor(1, 100, "[a-zA-Z1-9 ]+"));
 
         //enable
         tbProductList.getColumnModel().getColumn(COL_ProEnable).setMinWidth(45);

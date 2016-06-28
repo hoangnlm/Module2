@@ -70,8 +70,7 @@ public class ProductDAOImpl implements IDAO<Product> {
                 return false;
             }
             //lay saleoffid nho nhat
-            CachedRowSet crs2 = getCRS("Select Min(Salesoffid) as salesoffid from salesoff");
-            crs2.next();
+            
             DBProvider db = new DBProvider();
             db.start();
             PreparedStatement ps = db.getPreparedStatement("INSERT INTO products (BraID,ProName,ProStock,ProPrice,ProDescr,ProEnabled,SalesOffID,ProImage) values ((select BraID from Branches where BraName=?),?,?,?,?,?,?,?)"); 
@@ -81,7 +80,7 @@ public class ProductDAOImpl implements IDAO<Product> {
               ps.setFloat(4, 0);
               ps.setString(5, "");
               ps.setBoolean(6, false);
-              ps.setInt(7,crs2.getInt("Salesoffid"));//gan saleoffid vao
+              ps.setNull(7,java.sql.Types.INTEGER);//gan saleoffid vao
               ps.setBytes(8,null);
                     
             
