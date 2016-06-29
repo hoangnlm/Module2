@@ -23,7 +23,7 @@ public class UserDAOImpl implements IDAO<User> {
     private CachedRowSet crs;   //CRS to update table
 
     public UserDAOImpl() {
-        crs = getCRS("select u.UserID,u.UserName,u.UserPassword,e.EmpName,u.EmpID,u.UserEnabled from Users u join Employees e on u.EmpID=e.EmpID");
+        crs = getCRS("select u.UserID,u.UserName,u.UserPassword,e.EmpName,u.EmpID,u.UserEnabled from Users u join Employees e on u.EmpID=e.EmpID where UserID<>1");
     }
 
     public User getUserFromName(String name) {

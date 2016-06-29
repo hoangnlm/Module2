@@ -115,8 +115,9 @@ public class UserPanel extends javax.swing.JPanel {
                 if (!LoginFrame.checkPermission(new UserFunction(UserFunction.FG_PERMISSION, UserFunction.FN_VIEW))) {
                     btPermission.setEnabled(false);
                 } else {
-                    setButtonPermissionEnabled(checkChangePass());
+//                    setButtonPermissionEnabled(checkChangePass());
                 }
+                setButtonEnabled(checkUpdate());
                 setButtonChangePassEnabled(checkChangePass());
             } else {
                 setButtonEnabled(false);
@@ -651,7 +652,7 @@ public class UserPanel extends javax.swing.JPanel {
     private void setButtonChangePassEnabled(boolean enabled, JButton... exclude) {
 
         btChangePass.setEnabled(enabled);
-        btRemove.setEnabled(enabled);
+//        btRemove.setEnabled(enabled);
         // Ngoai tru may button nay luon luon enable
         if (exclude.length != 0) {
             Arrays.stream(exclude).forEach(b -> b.setEnabled(true));

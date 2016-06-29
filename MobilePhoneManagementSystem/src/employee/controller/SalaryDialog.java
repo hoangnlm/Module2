@@ -38,7 +38,7 @@ import utility.TableCellListener;
  * @author Hoang
  */
 public class SalaryDialog extends javax.swing.JDialog {
-
+    
     private JDateChooser dcFilter;
     private SalaryTableModel salaryTableModel;
     private TableRowSorter<SalaryTableModel> sorter;

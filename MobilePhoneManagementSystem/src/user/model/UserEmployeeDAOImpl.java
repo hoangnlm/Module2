@@ -24,7 +24,7 @@ public class UserEmployeeDAOImpl implements IDAO<UserEmployee> {
 
     public UserEmployeeDAOImpl() {
 //        crs = getCRS("select EmpID,EmpName from Employees WHERE  EmpID NOT IN (select u.EmpID from  Users u ) ");       
-        crs = getCRS("select EmpID,EmpName from Employees");
+        crs = getCRS("select EmpID,EmpName from Employees where EmpID<>1");
     }
 
     @Override

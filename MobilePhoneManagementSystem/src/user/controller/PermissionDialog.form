@@ -28,10 +28,19 @@
   <Layout>
     <DimensionLayout dim="0">
       <Group type="103" groupAlignment="0" attributes="0">
+          <Group type="102" alignment="1" attributes="0">
+              <EmptySpace max="32767" attributes="0"/>
+              <Component id="btSave" min="-2" pref="100" max="-2" attributes="0"/>
+              <EmptySpace max="-2" attributes="0"/>
+              <Component id="btCancel" min="-2" pref="100" max="-2" attributes="0"/>
+              <EmptySpace max="-2" attributes="0"/>
+              <Component id="btClose" min="-2" pref="100" max="-2" attributes="0"/>
+              <EmptySpace max="32767" attributes="0"/>
+          </Group>
           <Group type="102" attributes="0">
+              <EmptySpace max="-2" attributes="0"/>
               <Group type="103" groupAlignment="0" attributes="0">
                   <Group type="102" attributes="0">
-                      <EmptySpace max="-2" attributes="0"/>
                       <Group type="103" groupAlignment="0" attributes="0">
                           <Group type="102" alignment="0" attributes="0">
                               <Component id="jPanel22" min="-2" max="-2" attributes="0"/>
@@ -50,19 +59,8 @@
                               <Component id="lblID1" min="-2" pref="143" max="-2" attributes="0"/>
                           </Group>
                       </Group>
+                      <EmptySpace pref="16" max="32767" attributes="0"/>
                   </Group>
-                  <Group type="102" alignment="0" attributes="0">
-                      <EmptySpace min="-2" pref="137" max="-2" attributes="0"/>
-                      <Component id="btOK" min="-2" pref="100" max="-2" attributes="0"/>
-                      <EmptySpace type="separate" max="-2" attributes="0"/>
-                      <Component id="btCancel" min="-2" pref="100" max="-2" attributes="0"/>
-                  </Group>
-              </Group>
-              <EmptySpace pref="16" max="32767" attributes="0"/>
-          </Group>
-          <Group type="102" attributes="0">
-              <EmptySpace max="-2" attributes="0"/>
-              <Group type="103" groupAlignment="0" attributes="0">
                   <Group type="102" alignment="0" attributes="0">
                       <Group type="103" groupAlignment="0" attributes="0">
                           <Group type="102" alignment="0" attributes="0">
@@ -138,18 +136,19 @@
                   <Component id="jPanel23" min="-2" max="-2" attributes="0"/>
                   <Component id="jPanel26" min="-2" max="-2" attributes="0"/>
               </Group>
-              <EmptySpace type="separate" max="-2" attributes="0"/>
+              <EmptySpace min="-2" pref="19" max="-2" attributes="0"/>
               <Group type="103" groupAlignment="3" attributes="0">
-                  <Component id="btOK" alignment="3" min="-2" pref="30" max="-2" attributes="0"/>
+                  <Component id="btSave" alignment="3" min="-2" pref="30" max="-2" attributes="0"/>
                   <Component id="btCancel" alignment="3" min="-2" pref="30" max="-2" attributes="0"/>
+                  <Component id="btClose" alignment="3" min="-2" pref="30" max="-2" attributes="0"/>
               </Group>
-              <EmptySpace min="-2" pref="12" max="-2" attributes="0"/>
+              <EmptySpace max="-2" attributes="0"/>
           </Group>
       </Group>
     </DimensionLayout>
   </Layout>
   <SubComponents>
-    <Component class="javax.swing.JButton" name="btOK">
+    <Component class="javax.swing.JButton" name="btSave">
       <Properties>
         <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
           <Font name="Lucida Grande" size="14" style="0"/>
@@ -160,7 +159,7 @@
         <Property name="text" type="java.lang.String" value="Save"/>
       </Properties>
       <Events>
-        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="btOKActionPerformed"/>
+        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="btSaveActionPerformed"/>
       </Events>
     </Component>
     <Component class="javax.swing.JButton" name="btCancel">
@@ -225,6 +224,9 @@
           <Properties>
             <Property name="text" type="java.lang.String" value="View"/>
           </Properties>
+          <Events>
+            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="userViewActionPerformed"/>
+          </Events>
         </Component>
       </SubComponents>
     </Container>
@@ -276,6 +278,9 @@
           <Properties>
             <Property name="text" type="java.lang.String" value="View"/>
           </Properties>
+          <Events>
+            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="productViewActionPerformed"/>
+          </Events>
         </Component>
       </SubComponents>
     </Container>
@@ -327,6 +332,9 @@
           <Properties>
             <Property name="text" type="java.lang.String" value="View"/>
           </Properties>
+          <Events>
+            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="outboundViewActionPerformed"/>
+          </Events>
         </Component>
       </SubComponents>
     </Container>
@@ -378,6 +386,9 @@
           <Properties>
             <Property name="text" type="java.lang.String" value="View"/>
           </Properties>
+          <Events>
+            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="inboundViewActionPerformed"/>
+          </Events>
         </Component>
       </SubComponents>
     </Container>
@@ -429,6 +440,9 @@
           <Properties>
             <Property name="text" type="java.lang.String" value="View"/>
           </Properties>
+          <Events>
+            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="branchViewActionPerformed"/>
+          </Events>
         </Component>
       </SubComponents>
     </Container>
@@ -480,6 +494,9 @@
           <Properties>
             <Property name="text" type="java.lang.String" value="View"/>
           </Properties>
+          <Events>
+            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="cusViewActionPerformed"/>
+          </Events>
         </Component>
       </SubComponents>
     </Container>
@@ -531,6 +548,9 @@
           <Properties>
             <Property name="text" type="java.lang.String" value="View"/>
           </Properties>
+          <Events>
+            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="saleoffViewActionPerformed"/>
+          </Events>
         </Component>
       </SubComponents>
     </Container>
@@ -582,6 +602,9 @@
           <Properties>
             <Property name="text" type="java.lang.String" value="View"/>
           </Properties>
+          <Events>
+            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="orderViewActionPerformed"/>
+          </Events>
         </Component>
       </SubComponents>
     </Container>
@@ -633,6 +656,9 @@
           <Properties>
             <Property name="text" type="java.lang.String" value="View"/>
           </Properties>
+          <Events>
+            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="salaryViewActionPerformed"/>
+          </Events>
         </Component>
       </SubComponents>
     </Container>
@@ -684,6 +710,9 @@
           <Properties>
             <Property name="text" type="java.lang.String" value="View"/>
           </Properties>
+          <Events>
+            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="serviceViewActionPerformed"/>
+          </Events>
         </Component>
       </SubComponents>
     </Container>
@@ -735,6 +764,9 @@
           <Properties>
             <Property name="text" type="java.lang.String" value="View"/>
           </Properties>
+          <Events>
+            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="cusLevelViewActionPerformed"/>
+          </Events>
         </Component>
       </SubComponents>
     </Container>
@@ -804,6 +836,9 @@
           <Properties>
             <Property name="text" type="java.lang.String" value="View"/>
           </Properties>
+          <Events>
+            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="permissionViewActionPerformed"/>
+          </Events>
         </Component>
       </SubComponents>
     </Container>
@@ -857,6 +892,9 @@
           <Properties>
             <Property name="text" type="java.lang.String" value="View"/>
           </Properties>
+          <Events>
+            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="empViewActionPerformed"/>
+          </Events>
         </Component>
       </SubComponents>
     </Container>
@@ -908,8 +946,25 @@
           <Properties>
             <Property name="text" type="java.lang.String" value="View"/>
           </Properties>
+          <Events>
+            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="supplierViewActionPerformed"/>
+          </Events>
         </Component>
       </SubComponents>
     </Container>
+    <Component class="javax.swing.JButton" name="btClose">
+      <Properties>
+        <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
+          <Font name="Lucida Grande" size="14" style="0"/>
+        </Property>
+        <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
+          <Image iconType="3" name="/image/order/Delete2.png"/>
+        </Property>
+        <Property name="text" type="java.lang.String" value="Close"/>
+      </Properties>
+      <Events>
+        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="btCloseActionPerformed"/>
+      </Events>
+    </Component>
   </SubComponents>
 </Form>

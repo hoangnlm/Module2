@@ -33,6 +33,7 @@ import main.model.UserFunction;
 
 import employee.model.DateCellBirthDayEditor;
 import employee.model.DateCellWorkingDateEditor;
+import employee.model.EmployeeDAOImpl;
 import utility.IntegerCellEditor;
 import utility.StringCellEditor;
 import utility.TableCellListener;
@@ -166,7 +167,7 @@ public class EmployeePanel extends javax.swing.JPanel {
                 setButtonEnabled(false);
             }
         });
-        
+
         // Check permission employee
         if (!LoginFrame.checkPermission(new UserFunction(UserFunction.FG_EMPLOYEE, UserFunction.FN_UPDATE))) {
             tbEmpployeeList.setEnabled(false);
@@ -318,7 +319,6 @@ public class EmployeePanel extends javax.swing.JPanel {
             }
         });
 //</editor-fold>
-
 
     }
 
@@ -621,9 +621,17 @@ public class EmployeePanel extends javax.swing.JPanel {
 
     private void btSalaryActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btSalaryActionPerformed
         if (selectedEmployee.getEmpID() == 0) {
-            SwingUtils.showInfoDialog("Please choose employee !");
+            EmployeeDAOImpl e = new EmployeeDAOImpl();
+            Employee emp = e.getEmpFromUserName(LoginFrame.config.userName);
+            SalaryDialog sd = new SalaryDialog(emp);
+            
+            sd.setTitle("Salary Details of     " + emp.getEmpName() + "     Working with Account     " + LoginFrame.config.userName);
+            sd.setVisible(true);
         } else {
-            new SalaryDialog(selectedEmployee).setVisible(true);
+            EmployeeDAOImpl e = new EmployeeDAOImpl();
+            SalaryDialog sd = new SalaryDialog(selectedEmployee);
+            sd.setTitle("Salary Details of     " + selectedEmployee.getEmpName() + "     working with account     " + e.getUserNameFromEmpID(selectedEmployee.getEmpID()));
+            sd.setVisible(true);
         }
     }//GEN-LAST:event_btSalaryActionPerformed
 
