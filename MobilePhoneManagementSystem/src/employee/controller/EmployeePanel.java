@@ -7,7 +7,6 @@ package employee.controller;
 
 //import utility.ComboBoxCellEditor;
 import com.toedter.calendar.JDateChooser;
-import static customer.controller.CustomerPanel.COL_CUSPHONE;
 import employee.model.Employee;
 import java.awt.Cursor;
 import java.awt.Dimension;
@@ -82,9 +81,9 @@ public class EmployeePanel extends javax.swing.JPanel {
         dcFilter.setBounds(0, 0, 110, 20);
         dcFilter.setDateFormatString("dd/MM/yyyy");
         dcFilter.setDate(null);
-        c.set(1945, 1, 1);
+        c.set(1944, 11, 31);
         dcFilter.getJCalendar().setMinSelectableDate(c.getTime());
-        c.set(2000, 1, 1);
+        c.set(1999, 11, 31);
         dcFilter.getJCalendar().setMaxSelectableDate(c.getTime());
         pnBirthday.add(dcFilter);
         //work day
@@ -92,7 +91,7 @@ public class EmployeePanel extends javax.swing.JPanel {
         dcFilter1.setBounds(0, 0, 110, 20);
         dcFilter1.setDateFormatString("dd/MM/yyyy");
         dcFilter1.setDate(null);
-        c.set(2010, 1, 1);
+        c.set(2010, 0, 1);
         dcFilter1.getJCalendar().setMinSelectableDate(c.getTime());
         Calendar c1 = Calendar.getInstance();
         dcFilter1.getJCalendar().setMaxSelectableDate(c1.getTime());
@@ -134,12 +133,15 @@ public class EmployeePanel extends javax.swing.JPanel {
         
 
         tbEmpployeeList.getColumnModel().getColumn(COL_EMPDES).setMinWidth(120);
-        tbEmpployeeList.getColumnModel().getColumn(COL_EMPDES).setCellEditor(new StringCellEditor(1, 50, SwingUtils.PATTERN_NAMEWITHSPACE));
+        tbEmpployeeList.getColumnModel().getColumn(COL_EMPDES).setCellEditor(new StringCellEditor(1, 30, SwingUtils.PATTERN_NAMEWITHSPACE));
 
         // Col emp phone        
-        tbEmpployeeList.getColumnModel().getColumn(COL_EMPPHONE).setMinWidth(100);
-        tbEmpployeeList.getColumnModel().getColumn(COL_CUSPHONE).setCellEditor(new StringCellEditor(1, 20, utility.SwingUtils.PATTERN_NUMBER));
-
+//        tbEmpployeeList.getColumnModel().getColumn(COL_EMPPHONE).setMinWidth(100);
+//        
+//        tbEmpployeeList.getColumnModel().getColumn(COL_EMPPHONE).setCellEditor(new StringCellEditor(1, 20, SwingUtils.PATTERN_NUMBER));
+// Col cus phone
+        tbEmpployeeList.getColumnModel().getColumn(2).setMinWidth(100);
+        tbEmpployeeList.getColumnModel().getColumn(2).setCellEditor(new StringCellEditor(1, 20, SwingUtils.PATTERN_NUMBER));
 //        tbEmpployeeList.getColumnModel().getColumn(COL_EMPPHONE).setMaxWidth(100);
         //col bonus
         tbEmpployeeList.getColumnModel().getColumn(COL_BONUS).setMinWidth(80);

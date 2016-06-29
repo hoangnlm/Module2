@@ -24,7 +24,7 @@ public class DateCellWorkingDateEditor extends DefaultCellEditor {
         Calendar c = Calendar.getInstance();
         dc.getJCalendar().setMaxSelectableDate(c.getTime());
         
-        c.set(2009, 12, 1);
+        c.set(2010, 0, 1);
         dc.getJCalendar().setMinSelectableDate(c.getTime());
         dc.getDateEditor().setEnabled(false);
     }

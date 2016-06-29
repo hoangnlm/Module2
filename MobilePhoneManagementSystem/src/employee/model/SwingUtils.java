@@ -41,7 +41,9 @@ public class SwingUtils {
     public static final String PATTERN_ADDRESS = "[A-Za-z0-9 .,\\/-]+";
     public static final String PATTERN_DATE = "MMM dd, yyyy";
     public static final String PATTERN_HOST = "[A-Za-z0-9.]+";
-    public static final String PATTERN_SERVICECONTENT = "[A-Za-z0-9.,?-\\/% ]+";
+    public static final String PATTERN_SERVICECONTENT = "[A-Za-z0-9 .,-]+";
+    public static final String PATTERN_PASS ="[A-Za-z0-9]{1,30}";
+    public static final String PATTERN_PHONE2="[0-9]{1,20}";
 
     public enum FormatType {
         DATE, PERCENT, CURRENCY, CURRENCYINTERGER, CURRENCYDOUBLE
@@ -191,7 +193,7 @@ public class SwingUtils {
                 if (text.matches(regex)) {
                     int totalLength = fb.getDocument().getLength() + text.length();
                     if (totalLength <= maxLength) {
-                        super.replace(fb, offset, length, text, attrs);
+//                        super.replace(fb, offset, length, text, attrs);
                     } else {
                         SwingUtils.showErrorDialog("Maximum length: " + maxLength + " characters!");
                     }

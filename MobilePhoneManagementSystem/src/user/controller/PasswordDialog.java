@@ -37,7 +37,7 @@ public class PasswordDialog extends javax.swing.JDialog implements IDAO<User> {
         try {
             if(txtPass1.getText().isEmpty()){
                 SwingUtils.showErrorDialog("Must be not empty !");
-            }else if (!(txtPass1.getText().matches("[A-Za-z0-9]+"))){
+            }else if (!(txtPass1.getText().matches("[A-Za-z0-9]{1,30}"))){
                 SwingUtils.showErrorDialog("Must be character !");
             }else if (!txtPass1.getText().equals(txtPass2.getText())) {
                 SwingUtils.showErrorDialog("Repassword do not match !");

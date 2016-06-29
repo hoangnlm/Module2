@@ -91,7 +91,7 @@ public class UserPanel extends javax.swing.JPanel {
         tbUserList.getColumnModel().getColumn(COL_USERID).setMinWidth(40);
         tbUserList.getColumnModel().getColumn(COL_USERID).setMaxWidth(60);
         // Col user name
-        tbUserList.getColumnModel().getColumn(COL_USERNAME).setCellEditor(new StringCellEditor(1, 50, SwingUtils.PATTERN_NAMENOSPACE));
+        tbUserList.getColumnModel().getColumn(COL_USERNAME).setCellEditor(new StringCellEditor(1, 30, SwingUtils.PATTERN_NAMENOSPACE));
         // Col emp name
         tbUserList.getColumnModel().getColumn(COL_EMPNAME).setMinWidth(150);
         tbUserList.getColumnModel().getColumn(COL_EMPNAME).setCellEditor(new UserEmployeeComboBoxCellEditor(employeeComboBoxModel1));

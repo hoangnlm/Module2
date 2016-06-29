@@ -90,7 +90,7 @@ public class ServicePanel extends javax.swing.JPanel {
         dcFilter.setBounds(0, 0, 120, 20);
         dcFilter.setDateFormatString("dd/MM/yyyy");
         dcFilter.setDate(null);
-        c.set(2010, 1, 1);
+        c.set(2010,0, 1);
         dcFilter.setMinSelectableDate(c.getTime());
         Calendar c1 = Calendar.getInstance();
         dcFilter.setMaxSelectableDate(c1.getTime());
@@ -102,7 +102,7 @@ public class ServicePanel extends javax.swing.JPanel {
         dcFilter1.setDate(null);
         dcFilter1.getJCalendar().setMinSelectableDate(c.getTime());
 
-        c1.add(Calendar.DATE, +15);
+        c1.add(Calendar.DATE, +30);
         dcFilter1.getJCalendar().setMaxSelectableDate(c1.getTime());
         pnReturnDate.add(dcFilter1);
         //Disable button khi moi khoi dong len
