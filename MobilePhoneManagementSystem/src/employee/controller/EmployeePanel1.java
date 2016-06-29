@@ -47,7 +47,7 @@ import utility.SwingUtils;
  *
  * @author BonBon
  */
-public class EmployeePanel extends javax.swing.JPanel {
+public class EmployeePanel1 extends javax.swing.JPanel {
 
     private JDateChooser dcFilter;
     private JDateChooser dcFilter1;
@@ -73,7 +73,7 @@ public class EmployeePanel extends javax.swing.JPanel {
     /**
      * Creates new form EmployeePanel
      */
-    public EmployeePanel() {
+    public EmployeePanel1() {
         initComponents();
 // Set date picker len giao dien
         Calendar c = Calendar.getInstance();

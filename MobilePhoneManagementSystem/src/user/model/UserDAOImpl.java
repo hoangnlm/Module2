@@ -23,7 +23,8 @@ public class UserDAOImpl implements IDAO<User> {
     private CachedRowSet crs;   //CRS to update table
 
     public UserDAOImpl() {
-        crs = getCRS("select u.UserID,u.UserName,u.UserPassword,e.EmpName,u.EmpID,u.UserEnabled from Users u join Employees e on u.EmpID=e.EmpID where UserID<>1");
+        crs = getCRS("select u.UserID,u.UserName,u.UserPassword,e.EmpName,u.EmpID,u.UserEnabled from Users u join Employees e on u.EmpID=e.EmpID"); 
+        //where UserID<>1
     }
 
     public User getUserFromName(String name) {
@@ -93,6 +94,8 @@ public class UserDAOImpl implements IDAO<User> {
                 result = true;
             } else if (funtionIDOnline == 2 && userName.equals(selectedUser.getUserName())) {
                 result = true;
+            } else if (funtionIDOnline != 2) {
+                return true;
             } else {
                 return false;
             }

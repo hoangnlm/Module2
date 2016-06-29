@@ -27,7 +27,7 @@ import javax.swing.event.ListSelectionEvent;
 import javax.swing.table.TableRowSorter;
 import main.controller.LoginFrame;
 import main.model.UserFunction;
-import employee.model.SwingUtils;
+import employee.model.EmployeeSwingUtils;
 import javax.swing.JLabel;
 import javax.swing.table.DefaultTableCellRenderer;
 import utility.SpinnerCellEditor;
@@ -151,7 +151,7 @@ public class SalaryDialog extends javax.swing.JDialog {
                         //
                         break;
                 }
-                if (SwingUtils.showConfirmDialog("Are you sure to update ?") == JOptionPane.NO_OPTION) {
+                if (EmployeeSwingUtils.showConfirmDialog("Are you sure to update ?") == JOptionPane.NO_OPTION) {
                     return;
                 } else {
                     System.out.println("Update: "+selectedSalary.toString());
@@ -323,20 +323,20 @@ public class SalaryDialog extends javax.swing.JDialog {
     }
 
     private void deleteAction() {
-        if (SwingUtils.showConfirmDialog("Are you sure to delete ?") == JOptionPane.NO_OPTION) {
+        if (EmployeeSwingUtils.showConfirmDialog("Are you sure to delete ?") == JOptionPane.NO_OPTION) {
             return;
         }else if(selectedRowIndex==-1){
-            SwingUtils.showErrorDialog("Choose salary to delete !");
+            EmployeeSwingUtils.showErrorDialog("Choose salary to delete !");
             return;
         }else if(tbSalaryList.getRowCount()==1){
-            SwingUtils.showErrorDialog("At least 1 details !");
+            EmployeeSwingUtils.showErrorDialog("At least 1 details !");
             return;
         }
         if (salaryTableModel.delete(selectedSalary)) {
-            SwingUtils.showInfoDialog(SwingUtils.DELETE_SUCCESS);
+            EmployeeSwingUtils.showInfoDialog(EmployeeSwingUtils.DELETE_SUCCESS);
 
         } else {
-            SwingUtils.showInfoDialog(SwingUtils.DELETE_FAIL);
+            EmployeeSwingUtils.showInfoDialog(EmployeeSwingUtils.DELETE_FAIL);
         }
         refreshAction(false);
         System.out.println("RowCount: "+tbSalaryList.getRowCount());
@@ -356,7 +356,7 @@ public class SalaryDialog extends javax.swing.JDialog {
 //            salaryTableModel.refresh();
 
             setCursor(null);
-            SwingUtils.showInfoDialog(SwingUtils.DB_REFRESH);
+            EmployeeSwingUtils.showInfoDialog(EmployeeSwingUtils.DB_REFRESH);
         } else {
             // Refresh table
             salaryTableModel.load(employee.getEmpID());
@@ -370,10 +370,10 @@ public class SalaryDialog extends javax.swing.JDialog {
     // Ham goi khi bam nut Save
     private void updateAction() {
         if (salaryTableModel.update(selectedSalary)) {
-            SwingUtils.showInfoDialog(SwingUtils.UPDATE_SUCCESS);
+            EmployeeSwingUtils.showInfoDialog(EmployeeSwingUtils.UPDATE_SUCCESS);
 
         } else {
-            SwingUtils.showInfoDialog(SwingUtils.UPDATE_FAIL);
+            EmployeeSwingUtils.showInfoDialog(EmployeeSwingUtils.UPDATE_FAIL);
         }
         refreshAction(false);
         //

@@ -34,7 +34,7 @@ import service.model.ServiceStatus;
 import service.model.ServiceType;
 import employee.model.IntegerCurrencyCellRenderer;
 import employee.model.DateCellWorkingDateEditor;
-import employee.model.SwingUtils;
+import employee.model.EmployeeSwingUtils;
 import javax.swing.JLabel;
 import javax.swing.table.DefaultTableCellRenderer;
 import utility.TableCellListener;
@@ -744,13 +744,13 @@ public class ServicePanel extends javax.swing.JPanel {
     }
 
     private void deleteAction() {
-        if (SwingUtils.showConfirmDialog("Are you sure to delete this service ?") == JOptionPane.NO_OPTION) {
+        if (EmployeeSwingUtils.showConfirmDialog("Are you sure to delete this service ?") == JOptionPane.NO_OPTION) {
             return;
         }
         setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
         boolean result = serviceTableModel.delete(selectedService);
         setCursor(null);
-        SwingUtils.showInfoDialog(result ? SwingUtils.DELETE_SUCCESS : SwingUtils.DELETE_FAIL);
+        EmployeeSwingUtils.showInfoDialog(result ? EmployeeSwingUtils.DELETE_SUCCESS : EmployeeSwingUtils.DELETE_FAIL);
 
         // Neu row xoa la row cuoi thi lui cursor ve
         // Neu row xoa la row khac cuoi thi tien cursor ve truoc
@@ -765,7 +765,7 @@ public class ServicePanel extends javax.swing.JPanel {
             setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
             serviceTableModel.refresh();
             setCursor(null);
-            SwingUtils.showInfoDialog(SwingUtils.DB_REFRESH);
+            EmployeeSwingUtils.showInfoDialog(EmployeeSwingUtils.DB_REFRESH);
         } else {
             serviceTableModel.refresh();
         }

@@ -35,7 +35,7 @@ public class UserEmployeeComboBoxRenderer extends JLabel implements ListCellRend
             setForeground(list.getForeground());
         }
         if (value != null) {
-            setText(value.getEmpName()+ "");
+            setText(value.getEmpName()+ "         EmpID:  "+value.getEmpID());
         }
         return this;
 

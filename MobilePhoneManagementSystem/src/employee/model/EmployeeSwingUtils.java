@@ -22,7 +22,7 @@ import javax.swing.text.BadLocationException;
 import javax.swing.text.DocumentFilter;
 import javax.swing.text.PlainDocument;
 
-public class SwingUtils {
+public class EmployeeSwingUtils {
 
     // Define some string sentences
     public static final String INSERT_SUCCESS = "Inserted successfully !";
@@ -81,7 +81,7 @@ public class SwingUtils {
                 try {
                     return dateFormat.parse(str);
                 } catch (ParseException ex) {
-                    Logger.getLogger(SwingUtils.class.getName()).log(Level.SEVERE, null, ex);
+                    Logger.getLogger(EmployeeSwingUtils.class.getName()).log(Level.SEVERE, null, ex);
                 }
                 break;
             case PERCENT:
@@ -89,7 +89,7 @@ public class SwingUtils {
                 try {
                     return percentFormat.parse(str);
                 } catch (ParseException ex) {
-                    Logger.getLogger(SwingUtils.class.getName()).log(Level.SEVERE, null, ex);
+                    Logger.getLogger(EmployeeSwingUtils.class.getName()).log(Level.SEVERE, null, ex);
                 }
                 break;
             case CURRENCY:
@@ -156,7 +156,7 @@ public class SwingUtils {
                 @Override
                 public boolean verify(JComponent input) {
                     if (tf.getText().length() < minLength) {
-                        SwingUtils.showErrorDialog("At least " + minLength + " character(s) !");
+                        EmployeeSwingUtils.showErrorDialog("At least " + minLength + " character(s) !");
                         return false;
                     }
                     return true;
@@ -172,7 +172,7 @@ public class SwingUtils {
             if (text.matches(PATTERN_NUMBER)) {
                 super.replace(fb, offset, length, text, attrs);
             } else {
-                SwingUtils.showErrorDialog("Invalid input!");
+                EmployeeSwingUtils.showErrorDialog("Invalid input!");
             }
         }
     }
@@ -195,11 +195,11 @@ public class SwingUtils {
                     if (totalLength <= maxLength) {
 //                        super.replace(fb, offset, length, text, attrs);
                     } else {
-                        SwingUtils.showErrorDialog("Maximum length: " + maxLength + " characters!");
+                        EmployeeSwingUtils.showErrorDialog("Maximum length: " + maxLength + " characters!");
                     }
                 } else {
                     Toolkit.getDefaultToolkit().beep();
-                    SwingUtils.showErrorDialog("Invalid input!");
+                    EmployeeSwingUtils.showErrorDialog("Invalid input!");
                 }
             }
         }
@@ -214,7 +214,7 @@ public class SwingUtils {
         try {
             UIManager.setLookAndFeel(new HiFiLookAndFeel());
         } catch (UnsupportedLookAndFeelException ex) {
-            Logger.getLogger(SwingUtils.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(EmployeeSwingUtils.class.getName()).log(Level.SEVERE, null, ex);
         }
         UIManager.getLookAndFeelDefaults().put("TableHeader.foreground", Color.ORANGE);
         UIManager.getLookAndFeelDefaults().put("TableHeader.font", new Font("Calibri", Font.BOLD, 15));

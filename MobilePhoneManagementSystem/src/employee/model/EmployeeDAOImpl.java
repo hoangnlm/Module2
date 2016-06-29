@@ -26,7 +26,8 @@ public class EmployeeDAOImpl implements IDAO<Employee> {
     private CachedRowSet crs;   //CRS to update table
 
     public EmployeeDAOImpl() {
-        crs = getCRS("select EmpID, EmpName, EmpPhone, Birthday, BasicSalary,Designation, WorkingStartDate,Bonus, EmpEnabled from Employees where EmpID<>1");
+        crs = getCRS("select EmpID, EmpName, EmpPhone, Birthday, BasicSalary,Designation, WorkingStartDate,Bonus, EmpEnabled from Employees ");
+        //where EmpID<>1
 
     }
 
@@ -115,7 +116,12 @@ public class EmployeeDAOImpl implements IDAO<Employee> {
                         empl.isEmpEnabled(),
                         empl.getEmpID()
                 );
-
+            if(empl.isEmpEnabled()==false){
+//                CachedRowSet crs11=getCRS("select UserID ",);
+                runPS("update Users set UserEnabled=? where EmpID =?",0,empl.getEmpID());
+            }else{
+                runPS("update Users set UserEnabled=? where EmpID =?",1,empl.getEmpID());
+            }        
                 // Refresh lai cachedrowset hien thi table                
                 crs.execute();
                 result = true;

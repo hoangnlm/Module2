@@ -11,6 +11,8 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JFrame;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
 import user.model.User;
 import utility.SwingUtils;
 
@@ -27,19 +29,61 @@ public class PasswordDialog extends javax.swing.JDialog implements IDAO<User> {
         initComponents();
         setLocationRelativeTo(null);
         this.user = user;
-//        lblName.setText(user.getUserName());
-//        lblID.setText(user.getUserID() + "");
+        btOK.setEnabled(false);
+
+        txtPass1.getDocument().addDocumentListener(
+                new DocumentListener() {
+            @Override
+            public void changedUpdate(DocumentEvent e) {
+                setButton();
+            }
+
+            @Override
+            public void insertUpdate(DocumentEvent e) {
+                setButton();
+            }
+
+            @Override
+            public void removeUpdate(DocumentEvent e) {
+                setButton();
+            }
+        });
+        txtPass2.getDocument().addDocumentListener(
+                new DocumentListener() {
+            @Override
+            public void changedUpdate(DocumentEvent e) {
+                setButton();
+            }
+
+            @Override
+            public void insertUpdate(DocumentEvent e) {
+                setButton();
+            }
+
+            @Override
+            public void removeUpdate(DocumentEvent e) {
+                setButton();
+            }
+        });
+    }
+
+    private void setButton() {
+        if (txtPass1.getText().isEmpty() || txtPass2.getText().isEmpty()) {
+            btOK.setEnabled(false);
+        } else {
+            btOK.setEnabled(true);
+        }
     }
 
     @Override
     public boolean update(User user) {
         boolean result = false;
         try {
-            if(txtPass1.getText().isEmpty()){
+            if (txtPass1.getText().isEmpty()) {
                 SwingUtils.showErrorDialog("Must be not empty !");
-            }else if (!(txtPass1.getText().matches("[A-Za-z0-9]{1,30}"))){
+            } else if (!(txtPass1.getText().matches("[A-Za-z0-9]{1,30}"))) {
                 SwingUtils.showErrorDialog("Must be character !");
-            }else if (!txtPass1.getText().equals(txtPass2.getText())) {
+            } else if (!txtPass1.getText().equals(txtPass2.getText())) {
                 SwingUtils.showErrorDialog("Repassword do not match !");
             } else {
 
@@ -118,31 +162,30 @@ public class PasswordDialog extends javax.swing.JDialog implements IDAO<User> {
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addGap(51, 51, 51)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addGroup(layout.createSequentialGroup()
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
-                            .addComponent(jLabel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(jLabel3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                        .addGap(30, 30, 30)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                            .addComponent(txtPass1)
-                            .addComponent(txtPass2, javax.swing.GroupLayout.PREFERRED_SIZE, 157, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                    .addGroup(layout.createSequentialGroup()
-                        .addComponent(btOK, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(28, 28, 28)
-                        .addComponent(btCancel, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(16, 16, 16)))
+                .addContainerGap(24, Short.MAX_VALUE)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                    .addComponent(jLabel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(jLabel3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addGap(21, 21, 21)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addComponent(txtPass1)
+                    .addComponent(txtPass2, javax.swing.GroupLayout.PREFERRED_SIZE, 157, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jLabel9, javax.swing.GroupLayout.PREFERRED_SIZE, 14, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel10, javax.swing.GroupLayout.PREFERRED_SIZE, 14, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(43, Short.MAX_VALUE))
+                .addContainerGap(19, Short.MAX_VALUE))
+            .addGroup(layout.createSequentialGroup()
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(btOK, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(18, 18, 18)
+                .addComponent(btCancel, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addGap(45, 45, 45)
+                .addGap(30, 30, 30)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
                         .addComponent(jLabel2)
@@ -156,11 +199,11 @@ public class PasswordDialog extends javax.swing.JDialog implements IDAO<User> {
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                             .addComponent(txtPass2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addComponent(jLabel10))))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 35, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 29, Short.MAX_VALUE)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(btOK, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(btCancel, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(12, 12, 12))
+                .addContainerGap())
         );
 
         pack();

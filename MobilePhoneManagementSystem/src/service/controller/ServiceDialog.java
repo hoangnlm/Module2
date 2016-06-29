@@ -33,8 +33,8 @@ import service.model.ServiceType;
 import utility.IntegerCellEditor;
 import utility.SpinnerCellEditor;
 import utility.StringCellEditor;
-import employee.model.SwingUtils;
-import employee.model.SwingUtils.FormatType;
+import employee.model.EmployeeSwingUtils;
+import employee.model.EmployeeSwingUtils.FormatType;
 import javax.swing.JLabel;
 import utility.TableCellListener;
 
@@ -137,7 +137,7 @@ public class ServiceDialog extends javax.swing.JDialog implements ItemListener {
 
         // Col content
         tbProduct.getColumnModel().getColumn(COL_CONTENT).setMinWidth(150);
-        tbProduct.getColumnModel().getColumn(COL_CONTENT).setCellEditor(new StringCellEditor(1, 300, SwingUtils.PATTERN_SERVICECONTENT));
+        tbProduct.getColumnModel().getColumn(COL_CONTENT).setCellEditor(new StringCellEditor(1, 300, EmployeeSwingUtils.PATTERN_SERVICECONTENT));
 
         // Col quantity
         tbProduct.getColumnModel().getColumn(COL_PROQTY).setMinWidth(50);
@@ -177,7 +177,7 @@ public class ServiceDialog extends javax.swing.JDialog implements ItemListener {
                             // Check duplicate product
                             // Check duplicate product
                             if (checkDuplicate((String) tcl.getNewValue())) {
-                                SwingUtils.showErrorDialog("Duplicated item is not allowed in an service !");
+                                EmployeeSwingUtils.showErrorDialog("Duplicated item is not allowed in an service !");
                                 tbProduct.setValueAt(oldValue, tbProduct.getSelectedRow(), COL_PRONAME);
                             } else {
                                 // Lay product moi tu combo box gan cho product
@@ -255,7 +255,7 @@ public class ServiceDialog extends javax.swing.JDialog implements ItemListener {
             backup = this.service.clone(); // Backup
 
             tfID.setText(LoginFrame.config.userName);
-            tfReceiveDate.setText(SwingUtils.formatString(new Date(), FormatType.DATE));
+            tfReceiveDate.setText(EmployeeSwingUtils.formatString(new Date(), FormatType.DATE));
             returnDate = new Date();
             dcFilter.setDate(returnDate);
             pnReturnDate.add(dcFilter);
@@ -271,7 +271,7 @@ public class ServiceDialog extends javax.swing.JDialog implements ItemListener {
 
             tfID.setText(this.service.getSerID() + "");
 
-            tfReceiveDate.setText(SwingUtils.formatString(this.service.getReceiveDate(), FormatType.DATE));
+            tfReceiveDate.setText(EmployeeSwingUtils.formatString(this.service.getReceiveDate(), FormatType.DATE));
             returnDate = this.service.getReturnDate();
             dcFilter.setDate(returnDate);
             pnReturnDate.add(dcFilter);
@@ -826,18 +826,18 @@ public class ServiceDialog extends javax.swing.JDialog implements ItemListener {
         int kq = serviceDetailsTableModelDialog.checkOrdID(ordID);
         switch (kq) {
             case 0:
-                SwingUtils.showErrorDialog("OrderID does not exist !");
+                EmployeeSwingUtils.showErrorDialog("OrderID does not exist !");
                 tbProduct.setValueAt(0, tbProduct.getSelectedRow(), COL_ODERID);
                 track = false;
                 break;
             //Check warranty
             case 1:
-                SwingUtils.showErrorDialog("Warranty period has expired !");
+                EmployeeSwingUtils.showErrorDialog("Warranty period has expired !");
                 tbProduct.setValueAt(0, tbProduct.getSelectedRow(), COL_ODERID);
                 track = false;
                 break;
             case 2:
-                SwingUtils.showInfoDialog("In warranty  !");
+                EmployeeSwingUtils.showInfoDialog("In warranty  !");
 //                tbProduct.setValueAt(selectedDetails.getOrdID(), tbProduct.getSelectedRow(), COL_ODERID);
 
                 track = true;
@@ -849,7 +849,7 @@ public class ServiceDialog extends javax.swing.JDialog implements ItemListener {
     private void insertAction() {
         // Toi da 20 items
         if (serviceDetailsTableModelDialog.getRowCount() == 4) {
-            SwingUtils.showInfoDialog("Maximum 5 item in 01 service  !");
+            EmployeeSwingUtils.showInfoDialog("Maximum 5 item in 01 service  !");
             btAdd.setEnabled(false);
         }
         ServiceDetails details = new ServiceDetails();
@@ -870,7 +870,7 @@ public class ServiceDialog extends javax.swing.JDialog implements ItemListener {
 
         // Toi thieu 01 item
         if (serviceDetailsTableModelDialog.getRowCount() == 2) {
-            SwingUtils.showInfoDialog("At least 01 item in 01 Service !");
+            EmployeeSwingUtils.showInfoDialog("At least 01 item in 01 Service !");
             btRemove.setEnabled(false);
         }
 
@@ -887,35 +887,35 @@ public class ServiceDialog extends javax.swing.JDialog implements ItemListener {
     private void updateAction() {
         // Check da co product chua va product da chon het chua
         if (checkProductEmpty()) {
-            SwingUtils.showInfoDialog("Please choose product name !");
+            EmployeeSwingUtils.showInfoDialog("Please choose product name !");
             return;
         }
         if (cbType.getSelectedIndex() == 1 && checkOrdIDEmpty()) {
-            SwingUtils.showInfoDialog("Please input OrdID !");
+            EmployeeSwingUtils.showInfoDialog("Please input OrdID !");
             return;
         }
         if (cbType.getSelectedIndex() == 0 && checkCostEmpty()) {
-            SwingUtils.showInfoDialog("Please input Cost !");
+            EmployeeSwingUtils.showInfoDialog("Please input Cost !");
             return;
         }
         if (service.getSerID() == -1) { // Insert mode
             if (serviceDetailsTableModelDialog.insert(service)) {
-                SwingUtils.showInfoDialog(SwingUtils.INSERT_SUCCESS);
+                EmployeeSwingUtils.showInfoDialog(EmployeeSwingUtils.INSERT_SUCCESS);
                 dispose(); //Tat dialog sau khi da update db
             } else {
-                SwingUtils.showInfoDialog(SwingUtils.INSERT_FAIL);
+                EmployeeSwingUtils.showInfoDialog(EmployeeSwingUtils.INSERT_FAIL);
             }
         } else if (serviceDetailsTableModelDialog.update(service)) { // Update mode
-            SwingUtils.showInfoDialog(SwingUtils.UPDATE_SUCCESS);
+            EmployeeSwingUtils.showInfoDialog(EmployeeSwingUtils.UPDATE_SUCCESS);
             dispose(); //Tat dialog sau khi da update db
         } else {
-            SwingUtils.showInfoDialog(SwingUtils.UPDATE_FAIL);
+            EmployeeSwingUtils.showInfoDialog(EmployeeSwingUtils.UPDATE_FAIL);
         }
     }
 
     private void cancelAction() {
         if (trackChanges) {
-            if (SwingUtils.showConfirmDialog("Discard change(s) and quit ?") == JOptionPane.YES_OPTION) {
+            if (EmployeeSwingUtils.showConfirmDialog("Discard change(s) and quit ?") == JOptionPane.YES_OPTION) {
                 dispose();
             }
         } else {
@@ -947,7 +947,7 @@ public class ServiceDialog extends javax.swing.JDialog implements ItemListener {
         updateItemsLabel();
 
         if (mustInfo) {
-            SwingUtils.showInfoDialog(SwingUtils.DB_RESET);
+            EmployeeSwingUtils.showInfoDialog(EmployeeSwingUtils.DB_RESET);
         }
         setTrackChanges(false);
     }
