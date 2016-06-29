@@ -138,7 +138,7 @@ public class UserPanel extends javax.swing.JPanel {
                     case COL_EMPNAME:
                         selectedUser.setEmpName((String) tcl.getNewValue());
                         selectedUser.setEmpID(employeeComboBoxModel1.getUserEmployeeNameFromValue((String) tcl.getNewValue()).getEmpID());
-
+                        
                         break;
                     case COL_STATUS:
                         selectedUser.setUserEnable((boolean) tcl.getNewValue());

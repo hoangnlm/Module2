@@ -143,8 +143,7 @@ public class SalaryDialog extends javax.swing.JDialog {
                 switch (tcl.getColumn()) {
 
                     case COL_WORKDAYS:
-//                        selectedSalary.setWorkDays((int) tcl.getNewValue());
-                        selectedSalary.setWorkDays(77);
+                        selectedSalary.setWorkDays((int) tcl.getNewValue());
                         //
                         break;
                     case COL_OFFDAYS:
@@ -266,7 +265,7 @@ public class SalaryDialog extends javax.swing.JDialog {
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 370, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 380, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(btAdd, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)

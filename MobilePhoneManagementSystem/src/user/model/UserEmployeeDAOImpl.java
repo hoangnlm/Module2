@@ -23,8 +23,8 @@ public class UserEmployeeDAOImpl implements IDAO<UserEmployee> {
     private CachedRowSet crs;  //CRS to update table
 
     public UserEmployeeDAOImpl() {
-//        crs = getCRS("select EmpID,EmpName from Employees WHERE  EmpID NOT IN (select u.EmpID from  Users u ) ");       
-        crs = getCRS("select EmpID,EmpName from Employees where EmpID<>1");
+        crs = getCRS("select EmpID,EmpName from Employees WHERE  EmpID NOT IN (select u.EmpID from  Users u ) ");       
+//        crs = getCRS("select EmpID,EmpName from Employees where EmpID<>1");
     }
 
     @Override

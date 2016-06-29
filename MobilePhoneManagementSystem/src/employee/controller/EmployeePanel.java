@@ -7,6 +7,7 @@ package employee.controller;
 
 //import utility.ComboBoxCellEditor;
 import com.toedter.calendar.JDateChooser;
+import static customer.controller.CustomerPanel.COL_CUSPHONE;
 import employee.model.Employee;
 import java.awt.Cursor;
 import java.awt.Dimension;
@@ -119,7 +120,7 @@ public class EmployeePanel extends javax.swing.JPanel {
         DefaultTableCellRenderer centerRenderer = new DefaultTableCellRenderer();
         centerRenderer.setHorizontalAlignment(JLabel.CENTER);
         tbEmpployeeList.getColumnModel().getColumn(COL_EMPID).setCellRenderer(centerRenderer);
-//        tbEmpployeeList.getColumnModel().getColumn(COL_STATUS).setCellRenderer(centerRenderer);        
+
         //col empid
         tbEmpployeeList.getColumnModel().getColumn(COL_EMPID).setMaxWidth(30);
 
@@ -127,35 +128,40 @@ public class EmployeePanel extends javax.swing.JPanel {
         tbEmpployeeList.getColumnModel().getColumn(COL_STATUS).setMaxWidth(30);
 
         // Col emp name
-        tbEmpployeeList.getColumnModel().getColumn(COL_EMPNAME).setCellEditor(new StringCellEditor(1, 50, SwingUtils.PATTERN_NAMEWITHSPACE));
         tbEmpployeeList.getColumnModel().getColumn(COL_EMPNAME).setMinWidth(160);
         tbEmpployeeList.getColumnModel().getColumn(COL_EMPNAME).setMaxWidth(300);
-        tbEmpployeeList.getColumnModel().getColumn(COL_EMPDES).setCellEditor(new StringCellEditor(1, 50, SwingUtils.PATTERN_SERVICECONTENT));
-        tbEmpployeeList.getColumnModel().getColumn(COL_EMPNAME).setMinWidth(120);
-//        tbEmpployeeList.getColumnModel().getColumn(COL_EMPNAME).setMaxWidth(300);
+        tbEmpployeeList.getColumnModel().getColumn(COL_EMPNAME).setCellEditor(new StringCellEditor(1, 50, SwingUtils.PATTERN_NAMEWITHSPACE));
+        
+
+        tbEmpployeeList.getColumnModel().getColumn(COL_EMPDES).setMinWidth(120);
+        tbEmpployeeList.getColumnModel().getColumn(COL_EMPDES).setCellEditor(new StringCellEditor(1, 50, SwingUtils.PATTERN_NAMEWITHSPACE));
 
         // Col emp phone        
-        tbEmpployeeList.getColumnModel().getColumn(COL_EMPPHONE).setCellEditor(new StringCellEditor(1, 20, SwingUtils.PATTERN_NUMBER));
         tbEmpployeeList.getColumnModel().getColumn(COL_EMPPHONE).setMinWidth(100);
-        tbEmpployeeList.getColumnModel().getColumn(COL_EMPPHONE).setMaxWidth(100);
+        tbEmpployeeList.getColumnModel().getColumn(COL_CUSPHONE).setCellEditor(new StringCellEditor(1, 20, utility.SwingUtils.PATTERN_NUMBER));
+
+//        tbEmpployeeList.getColumnModel().getColumn(COL_EMPPHONE).setMaxWidth(100);
         //col bonus
-        tbEmpployeeList.getColumnModel().getColumn(COL_BONUS).setCellEditor(new IntegerCellEditor(0, 20000000));
-        tbEmpployeeList.getColumnModel().getColumn(COL_BONUS).setCellRenderer(new IntegerCurrencyCellRenderer());
         tbEmpployeeList.getColumnModel().getColumn(COL_BONUS).setMinWidth(80);
         tbEmpployeeList.getColumnModel().getColumn(COL_BONUS).setMaxWidth(80);
+        tbEmpployeeList.getColumnModel().getColumn(COL_BONUS).setCellEditor(new IntegerCellEditor(0, 20000000));
+        tbEmpployeeList.getColumnModel().getColumn(COL_BONUS).setCellRenderer(new IntegerCurrencyCellRenderer());
+
         //col salary
-        tbEmpployeeList.getColumnModel().getColumn(COL_SALARY).setCellEditor(new IntegerCellEditor(5000000, 20000000));
-        tbEmpployeeList.getColumnModel().getColumn(COL_SALARY).setCellRenderer(new IntegerCurrencyCellRenderer());
         tbEmpployeeList.getColumnModel().getColumn(COL_SALARY).setMinWidth(80);
         tbEmpployeeList.getColumnModel().getColumn(COL_SALARY).setMaxWidth(80);
+        tbEmpployeeList.getColumnModel().getColumn(COL_SALARY).setCellEditor(new IntegerCellEditor(5000000, 20000000));
+        tbEmpployeeList.getColumnModel().getColumn(COL_SALARY).setCellRenderer(new IntegerCurrencyCellRenderer());
+        
         // Col birth date
-        tbEmpployeeList.getColumnModel().getColumn(COL_EMPBIRTH).setCellEditor(new DateCellBirthDayEditor());
         tbEmpployeeList.getColumnModel().getColumn(COL_EMPBIRTH).setMinWidth(90);
         tbEmpployeeList.getColumnModel().getColumn(COL_EMPBIRTH).setMaxWidth(90);
+        tbEmpployeeList.getColumnModel().getColumn(COL_EMPBIRTH).setCellEditor(new DateCellBirthDayEditor());
+        
         // Col work start date
-        tbEmpployeeList.getColumnModel().getColumn(COL_WORKSTART).setCellEditor(new DateCellWorkingDateEditor());
         tbEmpployeeList.getColumnModel().getColumn(COL_WORKSTART).setMinWidth(90);
         tbEmpployeeList.getColumnModel().getColumn(COL_WORKSTART).setMaxWidth(90);
+        tbEmpployeeList.getColumnModel().getColumn(COL_WORKSTART).setCellEditor(new DateCellWorkingDateEditor());        
 
         // Bat su kien select row tren table
         tbEmpployeeList.getSelectionModel().addListSelectionListener((ListSelectionEvent e) -> {
@@ -624,13 +630,17 @@ public class EmployeePanel extends javax.swing.JPanel {
             EmployeeDAOImpl e = new EmployeeDAOImpl();
             Employee emp = e.getEmpFromUserName(LoginFrame.config.userName);
             SalaryDialog sd = new SalaryDialog(emp);
-            
+
             sd.setTitle("Salary Details of     " + emp.getEmpName() + "     Working with Account     " + LoginFrame.config.userName);
             sd.setVisible(true);
         } else {
             EmployeeDAOImpl e = new EmployeeDAOImpl();
             SalaryDialog sd = new SalaryDialog(selectedEmployee);
-            sd.setTitle("Salary Details of     " + selectedEmployee.getEmpName() + "     working with account     " + e.getUserNameFromEmpID(selectedEmployee.getEmpID()));
+            if (e.getUserNameFromEmpID(selectedEmployee.getEmpID()).isEmpty() == false) {
+                sd.setTitle("Salary Details of     " + selectedEmployee.getEmpName() + "     working with account     " + e.getUserNameFromEmpID(selectedEmployee.getEmpID()));
+            } else {
+                sd.setTitle("Salary Details of     " + selectedEmployee.getEmpName());
+            }
             sd.setVisible(true);
         }
     }//GEN-LAST:event_btSalaryActionPerformed
