@@ -28,6 +28,8 @@ import static javax.swing.SwingConstants.CENTER;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.RowSorterEvent;
+import javax.swing.event.RowSorterListener;
 import javax.swing.event.TableModelEvent;
 import javax.swing.event.TableModelListener;
 import javax.swing.table.DefaultTableCellRenderer;
@@ -36,6 +38,7 @@ import main.controller.LoginFrame;
 import main.model.UserFunction;
 import org.jdesktop.xswingx.PromptSupport;
 import supplier.model.Supplier;
+import supplier.model.SupplierBranchTableModel;
 import supplier.model.SupplierTableModel;
 import utility.StringCellEditor;
 import utility.SwingUtils;
@@ -48,6 +51,7 @@ import utility.TableCellListener;
 public class SupplierPanel extends javax.swing.JPanel {
     
      private SupplierTableModel supplierTableModel;
+     private SupplierBranchTableModel supplierBranchTableModel;
    private final TableRowSorter<SupplierTableModel> sorter;
    
    // Branch dang duoc chon trong table
@@ -66,11 +70,27 @@ public class SupplierPanel extends javax.swing.JPanel {
         //set data cho table
         supplierTableModel = new SupplierTableModel();
         tbSupplierList.setModel(supplierTableModel);
+        supplierBranchTableModel = new SupplierBranchTableModel();
+        tbBranchList.setModel(supplierBranchTableModel);
         
         // Set sorter cho table
         sorter = new TableRowSorter<>(supplierTableModel);
         tbSupplierList.setRowSorter(sorter);
         
+        //bat su kien cho sorter
+        sorter.addRowSorterListener(new RowSorterListener() {
+
+            @Override
+            public void sorterChanged(RowSorterEvent e) {
+                if (tbSupplierList.getRowCount() == 0|| tbSupplierList.getSelectedRow()==-1) {
+                    btRemove.setEnabled(false);
+                    
+                } else {
+                    btRemove.setEnabled(true);
+                    
+                }
+            }
+        });
         // Bat su kien select row tren table
         tbSupplierList.getSelectionModel().addListSelectionListener((ListSelectionEvent e) -> {
             
@@ -231,8 +251,17 @@ public class SupplierPanel extends javax.swing.JPanel {
         tbSupplierList.getColumnModel().getColumn(COL_Status).setMaxWidth(73);
         
        
+        //id
+        tbBranchList.getColumnModel().getColumn(COL_ID).setMinWidth(73);
+        tbBranchList.getColumnModel().getColumn(COL_ID).setMaxWidth(73);
+        tbBranchList.getColumnModel().getColumn(COL_ID).setCellRenderer(centerRenderer);
+        //name
+        tbBranchList.getColumnModel().getColumn(COL_SupName).setCellRenderer(centerRenderer);
         
-    
+        //status
+        tbBranchList.getColumnModel().getColumn(2).setMinWidth(73);
+        tbBranchList.getColumnModel().getColumn(2).setMaxWidth(73);
+        
     }
     private void doFilter() {
         RowFilter<SupplierTableModel, Object> rf = null;
@@ -263,6 +292,7 @@ public class SupplierPanel extends javax.swing.JPanel {
         selectedSupplier.setSupName((String) tbSupplierList.getValueAt(selectedRowIndex, 1));
         selectedSupplier.setSupAddress((String) tbSupplierList.getValueAt(selectedRowIndex, 2));
         selectedSupplier.setSupStatus((boolean) tbSupplierList.getValueAt(selectedRowIndex, 3));
+        supplierBranchTableModel.load(selectedSupplier.getSupID());
     }
     private void updateAction() {
         if (supplierTableModel.update(selectedSupplier)) {
@@ -321,6 +351,8 @@ public class SupplierPanel extends javax.swing.JPanel {
         btRemove = new javax.swing.JButton();
         jPanel2 = new javax.swing.JPanel();
         jLabel5 = new javax.swing.JLabel();
+        jScrollPane1 = new javax.swing.JScrollPane();
+        tbBranchList = new javax.swing.JTable();
 
         jPanel1.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "Filter", javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Tahoma", 1, 18), new java.awt.Color(255, 153, 0))); // NOI18N
 
@@ -477,6 +509,19 @@ public class SupplierPanel extends javax.swing.JPanel {
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
+        tbBranchList.setAutoCreateRowSorter(true);
+        tbBranchList.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+
+            },
+            new String [] {
+                "Title 1", "Title 2", "Title 3", "Title 4"
+            }
+        ));
+        tbBranchList.setFillsViewportHeight(true);
+        tbBranchList.setRowHeight(25);
+        jScrollPane1.setViewportView(tbBranchList);
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
         layout.setHorizontalGroup(
@@ -492,6 +537,7 @@ public class SupplierPanel extends javax.swing.JPanel {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(btRefresh, javax.swing.GroupLayout.PREFERRED_SIZE, 144, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap(181, Short.MAX_VALUE))
+            .addComponent(jScrollPane1)
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -500,8 +546,10 @@ public class SupplierPanel extends javax.swing.JPanel {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED, 14, Short.MAX_VALUE)
                 .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, 92, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 427, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 239, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 175, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(btAdd)
                     .addComponent(btRemove)
@@ -590,7 +638,9 @@ public class SupplierPanel extends javax.swing.JPanel {
     private javax.swing.JLabel jLabel5;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
+    private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane2;
+    private javax.swing.JTable tbBranchList;
     private javax.swing.JTable tbSupplierList;
     private javax.swing.JTextField tfAddressFilter;
     private javax.swing.JTextField tfIdFilter;
