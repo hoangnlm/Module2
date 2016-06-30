@@ -209,8 +209,7 @@ public class OutboundPanel extends javax.swing.JPanel {
             }
         });
         
-        // Set auto-select all when FocusGained
-        FrameWork.setAutoSelectAll(pnlSearch);
+        
 
         // Start editing
         tfIdFilter.requestFocus();
