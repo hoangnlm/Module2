@@ -30,6 +30,7 @@ import user.model.UserEmployee;
 import utility.StringCellEditor;
 import utility.TableCellListener;
 import employee.model.EmployeeSwingUtils;
+import javax.swing.JOptionPane;
 
 /**
  *
@@ -139,8 +140,11 @@ public class UserPanel extends javax.swing.JPanel {
                         selectedUser.setUserEnable((boolean) tcl.getNewValue());
                         break;
                 }
-
-                updateAction();
+                if (EmployeeSwingUtils.showConfirmDialog("Are you sure to update ?") == JOptionPane.NO_OPTION) {
+                    refreshAction(false);
+                } else {
+                    updateAction();
+                }
             }
         });
 //</editor-fold>
@@ -328,7 +332,7 @@ public class UserPanel extends javax.swing.JPanel {
 
         btAdd.setFont(new java.awt.Font("Lucida Grande", 0, 14)); // NOI18N
         btAdd.setIcon(new javax.swing.ImageIcon(getClass().getResource("/image/order/Add.png"))); // NOI18N
-        btAdd.setText("Add New");
+        btAdd.setText("Add New...");
         btAdd.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btAddActionPerformed(evt);
@@ -347,7 +351,7 @@ public class UserPanel extends javax.swing.JPanel {
         pnTitle.setBorder(javax.swing.BorderFactory.createEtchedBorder());
 
         jLabel1.setFont(new java.awt.Font("Lucida Grande", 1, 24)); // NOI18N
-        jLabel1.setForeground(new java.awt.Color(0, 255, 255));
+        jLabel1.setForeground(new java.awt.Color(255, 153, 0));
         jLabel1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/image/main/User.png"))); // NOI18N
         jLabel1.setText("<html><u><i><font color='red'>U</font>ser <font color='red'>M</font>anagement</i></u></html>");
 
@@ -462,7 +466,11 @@ public class UserPanel extends javax.swing.JPanel {
     }//GEN-LAST:event_btRefreshActionPerformed
 
     private void btRemoveActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btRemoveActionPerformed
-        deleteAction();
+        if (EmployeeSwingUtils.showConfirmDialog("Are you sure to delete ?") == JOptionPane.NO_OPTION) {
+            return;
+        } else {
+            deleteAction();
+        }
     }//GEN-LAST:event_btRemoveActionPerformed
 
     private void cbStatusFilterItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_cbStatusFilterItemStateChanged
