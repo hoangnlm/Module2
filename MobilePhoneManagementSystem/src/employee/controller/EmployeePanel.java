@@ -782,6 +782,7 @@ public class EmployeePanel extends javax.swing.JPanel {
     }
 //</editor-fold>
 
+    // Test commit ti
     private void clearFilter() {
         tfIdFilter.setText(null);
         tfBonusFilter.setText(null);
