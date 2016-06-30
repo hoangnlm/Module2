@@ -6,6 +6,8 @@
 
 package main.controller;
 
+import java.awt.Color;
+
 /**
  *
  * @author Thang
@@ -31,7 +33,7 @@ public class BlankPanel extends javax.swing.JPanel {
         lbMessage = new javax.swing.JLabel();
 
         lbMessage.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
-        lbMessage.setForeground(new java.awt.Color(67, 120, 243));
+        lbMessage.setForeground(Color.ORANGE);
         lbMessage.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         lbMessage.setText("<html><p align='center'><b>You don't have permission to access this feature.</b><br><i>Please contact your admin for permission !</i><p></html>");
 

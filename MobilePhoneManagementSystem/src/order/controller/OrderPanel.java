@@ -830,9 +830,9 @@ public class OrderPanel extends javax.swing.JPanel {
             DBProvider db = new DBProvider();
             db.setDbHost(LoginFrame.config.host);
             db.setDbPort(LoginFrame.config.port);
-            db.setDbName(LoginFrame.config.name);
-            db.setDbUsername(LoginFrame.config.userName);
-            db.setDbPassword(LoginFrame.config.userPassword);
+            db.setDbName(LoginFrame.config.DBName);
+            db.setDbUsername(LoginFrame.config.name);
+            db.setDbPassword(LoginFrame.config.password);
             db.start();
             Connection connection = db.getConnection();
             // Pass parameters
