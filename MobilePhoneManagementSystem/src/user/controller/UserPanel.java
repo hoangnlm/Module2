@@ -89,7 +89,7 @@ public class UserPanel extends javax.swing.JPanel {
         // Col cus id
         tbUserList.getColumnModel().getColumn(COL_USERID).setMinWidth(40);
         tbUserList.getColumnModel().getColumn(COL_USERID).setMaxWidth(60);
-        
+
         // Col emp name
         tbUserList.getColumnModel().getColumn(COL_EMPNAME).setMinWidth(150);
         tbUserList.getColumnModel().getColumn(COL_EMPNAME).setCellEditor(new UserEmployeeComboBoxCellEditor(employeeComboBoxModel1));
@@ -133,7 +133,7 @@ public class UserPanel extends javax.swing.JPanel {
                     case COL_EMPNAME:
                         selectedUser.setEmpName((String) tcl.getNewValue());
                         selectedUser.setEmpID(employeeComboBoxModel1.getUserEmployeeNameFromValue((String) tcl.getNewValue()).getEmpID());
-
+                        employeeComboBoxModel1.refresh();
                         break;
                     case COL_STATUS:
                         selectedUser.setUserEnable((boolean) tcl.getNewValue());
@@ -559,12 +559,13 @@ public class UserPanel extends javax.swing.JPanel {
             setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
             // Refresh table
             userTableModel.refresh();
+            employeeComboBoxModel1.refresh();
             setCursor(null);
             EmployeeSwingUtils.showInfoDialog(EmployeeSwingUtils.DB_REFRESH);
         } else {
             // Refresh table
             userTableModel.refresh();
-
+            employeeComboBoxModel1.refresh();
         }
         scrollToRow(selectedRowIndex);
     }

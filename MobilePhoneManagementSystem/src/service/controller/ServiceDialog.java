@@ -967,21 +967,21 @@ public class ServiceDialog extends javax.swing.JDialog implements ItemListener {
     private boolean checkProductEmpty() {
         List<ServiceDetails> tmp = new ArrayList();
         serviceDetailsTableModelDialog.getList().stream().filter(op -> op.getProName().equals(OrderProduct.DEFAULT_PRONAME)).forEach(op -> tmp.add(op));
-        System.out.println("product emty:" + tmp.size());
+//        System.out.println("product emty:" + tmp.size());
         return tmp.size() > 0; //Da chon product day du
     }
 
     private boolean checkOrdIDEmpty() {
         List<ServiceDetails> tmp = new ArrayList();
         serviceDetailsTableModelDialog.getList().stream().filter(op -> op.getOrdID() == 0).forEach(op -> tmp.add(op));
-        System.out.println("ordID emty:" + tmp.size());
+//        System.out.println("ordID emty:" + tmp.size());
         return tmp.size() > 0; //Da chon ordid day du
     }
 
     private boolean checkCostEmpty() {
         List<ServiceDetails> tmp = new ArrayList();
         serviceDetailsTableModelDialog.getList().stream().filter(op -> op.getSerCost() == 0).forEach(op -> tmp.add(op));
-        System.out.println("cost emty:" + tmp.size());
+//        System.out.println("cost emty:" + tmp.size());
         return tmp.size() > 0; //Da chon ordid day du
     }
 

@@ -154,7 +154,7 @@ public class SalaryDialog extends javax.swing.JDialog {
                 if (EmployeeSwingUtils.showConfirmDialog("Are you sure to update ?") == JOptionPane.NO_OPTION) {
                     return;
                 } else {
-                    System.out.println("Update: "+selectedSalary.toString());
+//                    System.out.println("Update: "+selectedSalary.toString());
                     updateAction();
 
                 }
@@ -314,7 +314,7 @@ public class SalaryDialog extends javax.swing.JDialog {
         details.setEmpID(employee.getEmpID());
         details.setBasicSalary(employee.getEmpSalary());
         details.setBonus(employee.getEmpBonus());
-        System.out.println("zzzzzzz:   " + details);
+//        System.out.println("zzzzzzz:   " + details);
         salaryTableModel.insert(details);
         refreshAction(false);
 
@@ -339,7 +339,7 @@ public class SalaryDialog extends javax.swing.JDialog {
             EmployeeSwingUtils.showInfoDialog(EmployeeSwingUtils.DELETE_FAIL);
         }
         refreshAction(false);
-        System.out.println("RowCount: "+tbSalaryList.getRowCount());
+//        System.out.println("RowCount: "+tbSalaryList.getRowCount());
         // Neu row xoa la row cuoi thi lui cursor ve
         // Neu row xoa la row khac cuoi thi tien cursor ve truoc
         selectedRowIndex = 0;

@@ -32,7 +32,7 @@ public class IOUtils {
             objectOutputStream.close();
         } catch (Exception e) {
             // TODO Auto-generated catch block
-            e.printStackTrace();
+//            e.printStackTrace();
         }
     }
 
@@ -51,7 +51,7 @@ public class IOUtils {
             objectInputStream.close();
         } catch (Exception e) {
             // TODO Auto-generated catch block
-            e.printStackTrace();
+//            e.printStackTrace();
         }
 
         return obj;

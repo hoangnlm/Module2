@@ -809,7 +809,7 @@ public class EmployeePanel extends javax.swing.JPanel {
 
             // Refresh table
             employeeTableModel.refresh();
-
+            
             setCursor(null);
             EmployeeSwingUtils.showInfoDialog(EmployeeSwingUtils.DB_REFRESH);
         } else {
