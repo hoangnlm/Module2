@@ -138,12 +138,12 @@ public class AddNewUser extends javax.swing.JDialog implements IDAO<User> {
             SwingUtils.showErrorDialog("Choose employee !");
         } else {
             try {
-                CachedRowSet crs = getCRS("select * from Users where UserName=?", txtUserName.getText());
+                CachedRowSet crs = getCRS("select * from Users where UserName=?", txtUserName.getText().trim());
                 if (crs.first()) {
                     SwingUtils.showErrorDialog("Username can't be duplicate !");
                     txtUserName.requestFocus();
                 } else {
-                    runPS("insert into Users values(?,?,?,?)", txtUserName.getText(), txtNew.getText(), 1, empID);
+                    runPS("insert into Users values(?,?,?,?)", txtUserName.getText().trim(), txtNew.getText().trim(), 1, empID);
                     result = true;
                     SwingUtils.showInfoDialog(SwingUtils.INSERT_SUCCESS);
                 }

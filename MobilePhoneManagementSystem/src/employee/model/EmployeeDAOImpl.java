@@ -101,10 +101,9 @@ public class EmployeeDAOImpl implements IDAO<Employee> {
             CachedRowSet crs1 = getCRS("select * from Employees "
                     + "where EmpPhone = ? AND EmpID <>?", empl.getEmpPhone(), empl.getEmpID());
             CachedRowSet crs2 = getCRS("select UserID from Users where EmpID=?", empl.getEmpID());
-            if (crs2.first()) {
-                if (crs2.getInt("UserID") == 1 && empl.isEmpEnabled() == false) {
+            if (crs2.first()&&crs2.getInt("UserID") == 1 && empl.isEmpEnabled() == false) {                
                     SwingUtils.showErrorDialog("Can't disable employee with permission ROOT !"); 
-                }
+                
             } else if (crs1.first()) {
                 SwingUtils.showErrorDialog("Phone cannot be duplicated !");
             } else {

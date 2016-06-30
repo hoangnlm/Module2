@@ -108,9 +108,9 @@ public class UserPasswordDialog extends javax.swing.JDialog implements IDAO<User
                         user.getUserID()
                 );
                 if (crs.first()) {
-                    if (crs.getString("UserPassword").equals(txtOld.getText())) {
+                    if (crs.getString("UserPassword").equals(txtOld.getText().trim())) {
                         runPS("update Users set  UserPassword=? where UserID=?",
-                                txtNew.getText(),
+                                txtNew.getText().trim(),
                                 user.getUserID()
                         );
                         result = true;
