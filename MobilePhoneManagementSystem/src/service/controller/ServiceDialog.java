@@ -86,7 +86,8 @@ public class ServiceDialog extends javax.swing.JDialog implements ItemListener {
         dcFilter.setDateFormatString("MMMM dd,yyyy");
 
         Calendar cal = Calendar.getInstance();
-        dcFilter.setMinSelectableDate(cal.getTime());
+
+//        dcFilter.setMinSelectableDate(cal.getTime());
         cal.add(Calendar.DATE, +30);
         dcFilter.setMaxSelectableDate(cal.getTime());
 
@@ -763,23 +764,7 @@ public class ServiceDialog extends javax.swing.JDialog implements ItemListener {
     }//GEN-LAST:event_cbTypeItemStateChanged
 
     private void cbStatusItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_cbStatusItemStateChanged
-        if (insertMode == false) {
-            if (cbStatus.getSelectedIndex() == 2) {
-                returnDate = new Date();
-                dcFilter.setDate(returnDate);
-                pnReturnDate.add(dcFilter);
-                this.service.setReturnDate(returnDate);
-                setTrackWhenSerTypeChange();
-            } else {
-                returnDate = backup.getReturnDate();
-                this.service.setReturnDate(returnDate);
-                dcFilter.setDate(returnDate);
-                pnReturnDate.add(dcFilter);
-                setTrackWhenSerTypeChange();
-            }//            
-        } else {
-            setTrackWhenSerTypeChange();
-        }
+        
     }//GEN-LAST:event_cbStatusItemStateChanged
     //</editor-fold>
     //<editor-fold>

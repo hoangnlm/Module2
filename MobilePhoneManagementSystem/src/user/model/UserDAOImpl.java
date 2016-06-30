@@ -212,8 +212,7 @@ public class UserDAOImpl implements IDAO<User> {
                     list.add(new UserEmployee(
                             crs1.getInt(UserEmployee.COL_ID),
                             crs1.getString(UserEmployee.COL_NAME)));
-                } while (crs1.next());
-                System.out.println("name:" + list.get(0).getEmpName());
+                } while (crs1.next());                
                 // Khoi tao tri default de insert vao db
                 user.setUserName(System.currentTimeMillis() + "");
                 user.setPassword("1");
@@ -296,6 +295,7 @@ public class UserDAOImpl implements IDAO<User> {
             CachedRowSet crs4 = getCRS("select * from Service Where UserID=?", user.getUserID());
             CachedRowSet crs5 = getCRS("select * from Inbounds Where UserID=?", user.getUserID());
             CachedRowSet crs6 = getCRS("select * from Outbounds Where UserID=?", user.getUserID());
+            CachedRowSet crs7 = getCRS("select * from Permission Where UserID=?", user.getUserID());
             if (user.getUserID() == 1) {
                 SwingUtils.showErrorDialog("ADMIN ROOT can't be delete !");
             } else if (crs3.first()) {
@@ -306,6 +306,8 @@ public class UserDAOImpl implements IDAO<User> {
                 SwingUtils.showErrorDialog("This user is working at Inbounds !");
             } else if (crs6.first()) {
                 SwingUtils.showErrorDialog("This user is working at Outbounds !");
+            } else if (crs7.first()) {
+                SwingUtils.showErrorDialog("Please disable all permission of this user first !");
             } else {
                 runPS("delete from Users where UserID=?", user.getUserID());
 

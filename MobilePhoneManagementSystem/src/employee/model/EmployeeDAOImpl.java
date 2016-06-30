@@ -98,10 +98,14 @@ public class EmployeeDAOImpl implements IDAO<Employee> {
         boolean result = false;
         try {
             // Check cus phone khong duoc trung            
-            CachedRowSet crs3 = getCRS("select * from Employees "
+            CachedRowSet crs1 = getCRS("select * from Employees "
                     + "where EmpPhone = ? AND EmpID <>?", empl.getEmpPhone(), empl.getEmpID());
-
-            if (crs3.first()) {
+            CachedRowSet crs2 = getCRS("select UserID from Users where EmpID=?", empl.getEmpID());
+            if (crs2.first()) {
+                if (crs2.getInt("UserID") == 1 && empl.isEmpEnabled() == false) {
+                    SwingUtils.showErrorDialog("Can't disable employee with permission ROOT !"); 
+                }
+            } else if (crs1.first()) {
                 SwingUtils.showErrorDialog("Phone cannot be duplicated !");
             } else {
                 runPS("update Employees set EmpName=?, EmpPhone=?,"
@@ -116,12 +120,12 @@ public class EmployeeDAOImpl implements IDAO<Employee> {
                         empl.isEmpEnabled(),
                         empl.getEmpID()
                 );
-            if(empl.isEmpEnabled()==false){
+                if (empl.isEmpEnabled() == false) {
 //                CachedRowSet crs11=getCRS("select UserID ",);
-                runPS("update Users set UserEnabled=? where EmpID =?",0,empl.getEmpID());
-            }else{
-                runPS("update Users set UserEnabled=? where EmpID =?",1,empl.getEmpID());
-            }        
+                    runPS("update Users set UserEnabled=? where EmpID =?", 0, empl.getEmpID());
+                } else {
+                    runPS("update Users set UserEnabled=? where EmpID =?", 1, empl.getEmpID());
+                }
                 // Refresh lai cachedrowset hien thi table                
                 crs.execute();
                 result = true;
@@ -159,10 +163,10 @@ public class EmployeeDAOImpl implements IDAO<Employee> {
 
     public String getUserNameFromEmpID(int id) {
         String username = "";
-        CachedRowSet crs = getCRS("select UserName from Users where EmpID = ?",id);
+        CachedRowSet crs = getCRS("select UserName from Users where EmpID = ?", id);
         try {
-            if(crs.first()){
-                username=crs.getString("UserName");                
+            if (crs.first()) {
+                username = crs.getString("UserName");
             }
         } catch (SQLException ex) {
             Logger.getLogger(EmployeeDAOImpl.class.getName()).log(Level.SEVERE, null, ex);

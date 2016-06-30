@@ -46,8 +46,6 @@ public class PermissionDialog extends javax.swing.JDialog {
         //Lay data
         permissionDAOImpl = new PermissionDAOImpl(user.getUserID());
         perList = permissionDAOImpl.getList();
-//        permission=perList.get(0);
-//        System.out.println(permission.toString());
         setCheckBox();
         oldUser = userUpdate.isSelected();
         oldPermission = permissionUpdate.isSelected();
@@ -58,7 +56,7 @@ public class PermissionDialog extends javax.swing.JDialog {
         } else if (user.getUserName().equals(LoginFrame.config.userName)) {
             setButton(false);
             setCheckBoxEnable(false);
-        } else if (userUpdate.isSelected() == true || permissionUpdate.isSelected() == true) {
+        } else if ((userUpdate.isSelected() == true || permissionUpdate.isSelected() == true)&&(!LoginFrame.config.userName.equals("root"))) {
             setButton(false);
             setCheckBoxEnable(false);
         } else {
@@ -1201,6 +1199,7 @@ public class PermissionDialog extends javax.swing.JDialog {
                 SwingUtils.showErrorDialog("Only ADMIN ROOT can set permission: UPDATE PERMISSION & UPDATE USER !");
                 clearChkBox(false);
                 setCheckBox();
+                setButton(false);
                 return;
             }
         } else {

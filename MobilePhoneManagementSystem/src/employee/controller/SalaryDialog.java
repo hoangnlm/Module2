@@ -363,7 +363,7 @@ public class SalaryDialog extends javax.swing.JDialog {
 //            salaryTableModel.refresh();
         }
         //
-        scrollToRow(selectedRowIndex);
+//        scrollToRow(selectedRowIndex);
 
     }
 

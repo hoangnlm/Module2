@@ -45,7 +45,6 @@ public class UserPanel extends javax.swing.JPanel {
     private User selectedUser;
     private int selectedRowIndex = -1;
     private UserEmployeeComboBoxModel employeeComboBoxModel1;
-    private UserEmployeeComboBoxModel employeeComboBoxModel2;
     UserEmployee filterEmployee;
 
 // Define some column constants
@@ -91,7 +90,7 @@ public class UserPanel extends javax.swing.JPanel {
         tbUserList.getColumnModel().getColumn(COL_USERID).setMinWidth(40);
         tbUserList.getColumnModel().getColumn(COL_USERID).setMaxWidth(60);
         // Col user name
-        tbUserList.getColumnModel().getColumn(COL_USERNAME).setCellEditor(new StringCellEditor(1, 30, EmployeeSwingUtils.PATTERN_NAMENOSPACE));
+//        tbUserList.getColumnModel().getColumn(COL_USERNAME).setCellEditor(new StringCellEditor(1, 30, EmployeeSwingUtils.PATTERN_NAMENOSPACE));
         // Col emp name
         tbUserList.getColumnModel().getColumn(COL_EMPNAME).setMinWidth(150);
         tbUserList.getColumnModel().getColumn(COL_EMPNAME).setCellEditor(new UserEmployeeComboBoxCellEditor(employeeComboBoxModel1));
@@ -102,8 +101,8 @@ public class UserPanel extends javax.swing.JPanel {
         tbUserList.getColumnModel().getColumn(COL_PASS).setMinWidth(0);
         tbUserList.getColumnModel().getColumn(COL_PASS).setMaxWidth(0);
         //Col EmpID
-        tbUserList.getColumnModel().getColumn(COL_EMPID).setMinWidth(40);
-        tbUserList.getColumnModel().getColumn(COL_EMPID).setMaxWidth(40);
+        tbUserList.getColumnModel().getColumn(COL_EMPID).setMinWidth(0);
+        tbUserList.getColumnModel().getColumn(COL_EMPID).setMaxWidth(0);
 
         // Bat su kien select row tren table
         tbUserList.getSelectionModel().addListSelectionListener((ListSelectionEvent e) -> {
@@ -132,9 +131,6 @@ public class UserPanel extends javax.swing.JPanel {
                 TableCellListener tcl = (TableCellListener) e.getSource();
 
                 switch (tcl.getColumn()) {
-                    case COL_USERNAME:
-                        selectedUser.setUserName((String) tcl.getNewValue());
-                        break;
                     case COL_EMPNAME:
                         selectedUser.setEmpName((String) tcl.getNewValue());
                         selectedUser.setEmpID(employeeComboBoxModel1.getUserEmployeeNameFromValue((String) tcl.getNewValue()).getEmpID());
@@ -448,7 +444,8 @@ public class UserPanel extends javax.swing.JPanel {
 
     // <editor-fold defaultstate="collapsed" desc="Khai bao event">    
     private void btAddActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btAddActionPerformed
-        insertAction();
+        new AddNewUser().setVisible(true);
+        refreshAction(false);
     }//GEN-LAST:event_btAddActionPerformed
 
     private void btPermissionActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btPermissionActionPerformed
@@ -478,14 +475,14 @@ public class UserPanel extends javax.swing.JPanel {
     }//GEN-LAST:event_jButton1ActionPerformed
 
     private void btChangePassActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btChangePassActionPerformed
-        if (selectedUser.getUserID() == 0) {
+        if (selectedUser.getUserID() == 0 || selectedUser.getUserName().equals(LoginFrame.config.userName)) {
             selectedUser = new UserDAOImpl().getUserFromName(LoginFrame.config.userName);
-            PasswordDialog pw = new PasswordDialog(selectedUser);
-            pw.setTitle("Change your password !");            
-            pw.setVisible(true);
+            UserPasswordDialog upw = new UserPasswordDialog(selectedUser);
+            upw.setTitle("Change your password !");
+            upw.setVisible(true);
         } else {
-            PasswordDialog pw = new PasswordDialog(selectedUser); 
-            pw.setTitle("Change password for user:    "+selectedUser.getUserName());
+            AdminPasswordDialog pw = new AdminPasswordDialog(selectedUser);
+            pw.setTitle("Change password for user:    " + selectedUser.getUserName());
             pw.setVisible(true);
             refreshAction(false);
         }
@@ -561,7 +558,6 @@ public class UserPanel extends javax.swing.JPanel {
     private void refreshAction(boolean mustInfo) {
         if (mustInfo) {
             setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
-
             // Refresh table
             userTableModel.refresh();
             setCursor(null);
@@ -607,7 +603,6 @@ public class UserPanel extends javax.swing.JPanel {
         selectedRowIndex = tbUserList.getRowCount() - 1;
         scrollToRow(selectedRowIndex);
         tbUserList.editCellAt(tbUserList.getSelectedRow(), 1);
-        tbUserList.getEditorComponent().requestFocus();
     }
 
     private void updateAction() {
@@ -622,11 +617,7 @@ public class UserPanel extends javax.swing.JPanel {
             EmployeeSwingUtils.showErrorDialog("You can't update this user !");
             refreshAction(false);
         }
-//        
-//        //load lai combobox cho cell
-//        UserPanel u= new UserPanel();
-//        employeeComboBoxModel2 = new UserEmployeeComboBoxModel();
-//        tbUserList.getColumnModel().getColumn(COL_EMPNAME).setCellEditor(new UserEmployeeComboBoxCellEditor(employeeComboBoxModel2));
+
     }
 
     private void deleteAction() {
