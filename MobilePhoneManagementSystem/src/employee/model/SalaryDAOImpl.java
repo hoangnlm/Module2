@@ -76,7 +76,7 @@ public class SalaryDAOImpl implements IDAO<Salary> {
     public boolean update(Salary salary) {
         boolean result = false;
         try {
-            System.out.println("Run update: "+salary.toString());
+//            System.out.println("Run update: "+salary.toString());
             
             runPS("update Salaries set PayDay=?,WorkDays=?,OffDays=?,BonusNow=?,BasicSalaryNow=? WHERE SalaryID=?", salary.getPayDay(), salary.getWorkDays(), salary.getOffDays(),salary.getBonus(),salary.getBasicSalary(), salary.getSalID());
 

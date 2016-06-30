@@ -37,6 +37,7 @@ import employee.model.DateCellWorkingDateEditor;
 import employee.model.EmployeeSwingUtils;
 import javax.swing.JLabel;
 import javax.swing.table.DefaultTableCellRenderer;
+import utility.SwingUtils;
 import utility.TableCellListener;
 
 /**
@@ -607,6 +608,7 @@ public class ServicePanel extends javax.swing.JPanel {
     }//GEN-LAST:event_btUpdateActionPerformed
 
     private void btRemoveActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btRemoveActionPerformed
+//        SwingUtils.showErrorDialog(TOOL_TIP_TEXT_KEY);
         deleteAction();
     }//GEN-LAST:event_btRemoveActionPerformed
 
