@@ -148,7 +148,7 @@ public class FloatEditor extends DefaultCellEditor {
             SwingUtilities.getWindowAncestor(ftf),
             "The value must be an number between "
             + "1 million" + " and "
-            + "1 bilion" + ".\n"
+            + "30 million" + ".\n"
             + "You can either continue editing "
             + "or revert to the last valid value.",
             "Invalid Text Entered",

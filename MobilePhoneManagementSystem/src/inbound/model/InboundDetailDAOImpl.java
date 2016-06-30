@@ -70,20 +70,20 @@ public class InboundDetailDAOImpl implements IDAO<InboundDetail>{
     public boolean insert(List<InboundDetail> inDetail,String supid){
         boolean result = false;
         try {
+            
+            //insert record mac dinh
+            runPS("Insert into Inbounds values('06/06/2016',(select min(supid) from suppliers),'AAAAA',(select min(userid) from users))");
+            CachedRowSet crs2 = getCRS("Select Max(InID) as Inid from Inbounds");
+            crs2.next();
+            
+            //check duplicate
             CachedRowSet crs1 = getCRS("Select * from inbounds where supInvoiceID = ? and InID!=(SELECT max(InID) from inbounds)",supid);
             if(crs1.first()){
                 SwingUtils.showInfoDialog("Duplicate Supplier Invoice ID!");
                 return false;
             }
             
-            
-            
-            
-            runPS("Insert into Inbounds values('06/06/2016',(select min(supid) from suppliers),'AAAAA',(select min(userid) from users))");
-            CachedRowSet crs2 = getCRS("Select Max(InID) as Inid from Inbounds");
-            crs2.next();
-            DBProvider db = new DBProvider();
-            db.start();
+            //insert indetail
             for(int i = 0;i<inDetail.size();i++){
             runPS("Insert into InDetails(InID,ProID,ProCost,ProQty) values(?,?,?,?)",
                     crs2.getInt("InId"),
@@ -150,10 +150,11 @@ public class InboundDetailDAOImpl implements IDAO<InboundDetail>{
             }
             
             //update cho table inbound
-            runPS("Update inbounds set SupID = (SELECT supid from suppliers where supname=?),SupInvoiceID=? where InID=(SELECT max(InID) from inbounds)",
+            runPS("Update inbounds set SupID = (SELECT supid from suppliers where supname=?),SupInvoiceID=? where InID=?",
                     
                     inbound.getSupName(),
-                    inbound.getSupInvoiceID());
+                    inbound.getSupInvoiceID(),
+                    inbound.getInID());
             
             result = true;
         } catch (SQLException ex) {

@@ -14,7 +14,7 @@ import utility.CustomizedTableModel;
 public class SalaryTableModel extends CustomizedTableModel<Salary> {
 
     public SalaryTableModel() {
-        super(new SalaryDAOImpl(), new String[]{"ID", "EmpID", "Month", "PayDay", "WorkDays", "OffDays"});
+        super(new SalaryDAOImpl(), new String[]{"ID", "EmpID", "Month Work ", "PayDay", "WorkDays", "OffDays","Bonus","Basic Salary","Total Salary"});
     }
 
     public Salary getSalaryFromIndex(int index) {
@@ -29,12 +29,12 @@ public class SalaryTableModel extends CustomizedTableModel<Salary> {
 
     @Override
     public boolean isCellEditable(int rowIndex, int columnIndex) {
-        return columnIndex==3||columnIndex==4||columnIndex==5;
+        return columnIndex == 4 || columnIndex == 5;
     }
 
     @Override
     public Class<?> getColumnClass(int column) {
-        Class[] columnClasses = {Integer.class, Integer.class, Integer.class, Date.class, Integer.class, Integer.class};
+        Class[] columnClasses = {Integer.class, Integer.class, Integer.class, Date.class, Integer.class, Integer.class, Integer.class, Integer.class, Double.class};
         return columnClasses[column];
     }
 
@@ -61,6 +61,16 @@ public class SalaryTableModel extends CustomizedTableModel<Salary> {
             case 5:
                 result = item.getOffDays();
                 break;
+            case 6:
+                result = item.getBonus();
+                break;
+            case 7:
+                result = item.getBasicSalary();
+                break;
+            case 8:
+                result = item.getTotal();
+                break;
+
         }
         return result;
     }
@@ -87,7 +97,15 @@ public class SalaryTableModel extends CustomizedTableModel<Salary> {
             case 5:
                 item.setOffDays((int) aValue);
                 break;
-
+            case 6:
+                item.setBonus((int) aValue);
+                break;
+            case 7:
+                item.setBasicSalary((int) aValue);
+                break;
+            case 8:
+                item.setTotal((double) aValue);
+                break;
         }
         fireTableCellUpdated(rowIndex, columnIndex);
     }

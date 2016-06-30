@@ -22,7 +22,7 @@ public class ServiceDAOImpl implements IDAO<Service> {
     private int selectingIndex;
 
     public  ServiceDAOImpl() {
-        crs = getCRS("select a.ServiceID, b.UserName, a.ReceiveDate, a.ReturnDate, c.ServiceTypeName,s.SttName,a.UserID,a.ServiceTypeID,a.SttID from Service a join Users b on a.UserID=b.UserID join ServiceTypes c on a.ServiceTypeID=c.ServiceTypeID join Status s on a.SttID=s.SttID");
+        crs = getCRS("select a.ServiceID, b.UserName, a.ReceiveDate, a.ReturnDate, c.ServiceTypeName,s.SttName,a.UserID,a.ServiceTypeID,a.SttID from Service a join Users b on a.UserID=b.UserID join ServiceTypes c on a.ServiceTypeID=c.ServiceTypeID join Status s on a.SttID=s.SttID ORDER BY a.ReceiveDate DESC");
     }
     @Override
     public List<Service> getList() {

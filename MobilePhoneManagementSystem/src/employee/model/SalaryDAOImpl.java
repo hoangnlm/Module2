@@ -8,8 +8,6 @@ package employee.model;
 import database.IDAO;
 import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
 import java.util.List;
 import java.util.Vector;
 import java.util.logging.Level;
@@ -32,7 +30,7 @@ public class SalaryDAOImpl implements IDAO<Salary> {
      * @param ordID
      */
     public void load(int empID) {
-        crs = getCRS("select SalaryID,EmpID,PayDay,WorkDays,OffDays from Salaries WHERE EmpID=? ", empID);
+        crs = getCRS("select SalaryID,EmpID,PayDay,WorkDays,OffDays,BonusNow,BasicSalaryNow from Salaries WHERE EmpID=? ", empID);
     }
 
     @Override
@@ -44,10 +42,13 @@ public class SalaryDAOImpl implements IDAO<Salary> {
                     list.add(new Salary(
                             crs.getInt(Salary.COL_SALID),
                             crs.getInt(Salary.COL_EMPID),
-                            (crs.getDate(Salary.COL_PAYDAY).getMonth() + 1),
+                            (crs.getDate(Salary.COL_PAYDAY).getMonth()),
                             crs.getDate(Salary.COL_PAYDAY),
                             crs.getInt(Salary.COL_WORKDAYS),
-                            crs.getInt(Salary.COL_OFFDAYS)
+                            crs.getInt(Salary.COL_OFFDAYS),
+                            crs.getInt(Salary.COL_BONUSNOW),
+                            crs.getInt(Salary.COL_SALARYNOW),
+                            1
                     ));
                 } while (crs.next());
             }
@@ -62,7 +63,7 @@ public class SalaryDAOImpl implements IDAO<Salary> {
         boolean result = false;
         try {
 
-            runPS("insert into Salaries values(?,?,?,?)", salary.getEmpID(), salary.getPayDay(), salary.getWorkDays(), salary.getOffDays());
+            runPS("insert into Salaries(EmpID,PayDay,WorkDays,OffDays,BonusNow,BasicSalaryNow) values(?,?,?,?,?,?)", salary.getEmpID(), salary.getPayDay(), salary.getWorkDays(), salary.getOffDays(),salary.getBonus(),salary.getBasicSalary());
 
             result = true;
         } catch (SQLException ex) {
@@ -75,8 +76,9 @@ public class SalaryDAOImpl implements IDAO<Salary> {
     public boolean update(Salary salary) {
         boolean result = false;
         try {
-
-            runPS("update Salaries set PayDay=?,WorkDays=?,OffDays=? WHERE SalaryID=?", salary.getPayDay(), salary.getWorkDays(), salary.getOffDays(), salary.getSalID());
+            System.out.println("Run update: "+salary.toString());
+            
+            runPS("update Salaries set PayDay=?,WorkDays=?,OffDays=?,BonusNow=?,BasicSalaryNow=? WHERE SalaryID=?", salary.getPayDay(), salary.getWorkDays(), salary.getOffDays(),salary.getBonus(),salary.getBasicSalary(), salary.getSalID());
 
             result = true;
         } catch (SQLException ex) {

@@ -32,9 +32,11 @@ import main.model.UserFunction;
 import service.model.Service;
 import service.model.ServiceStatus;
 import service.model.ServiceType;
+import employee.model.IntegerCurrencyCellRenderer;
 import employee.model.DateCellWorkingDateEditor;
-import utility.SpinnerCellEditor;
-import utility.SwingUtils;
+import employee.model.EmployeeSwingUtils;
+import javax.swing.JLabel;
+import javax.swing.table.DefaultTableCellRenderer;
 import utility.TableCellListener;
 
 /**
@@ -83,16 +85,25 @@ public class ServicePanel extends javax.swing.JPanel {
         initComponents();
 
         // Set date picker len giao dien
+        Calendar c = Calendar.getInstance();
         dcFilter = new JDateChooser();
         dcFilter.setBounds(0, 0, 120, 20);
         dcFilter.setDateFormatString("dd/MM/yyyy");
         dcFilter.setDate(null);
+        c.set(2010,0, 1);
+        dcFilter.setMinSelectableDate(c.getTime());
+        Calendar c1 = Calendar.getInstance();
+        dcFilter.setMaxSelectableDate(c1.getTime());
         pnReceiveDate.add(dcFilter);
         // Set date picker1 len giao dien
         dcFilter1 = new JDateChooser();
         dcFilter1.setBounds(0, 0, 120, 20);
         dcFilter1.setDateFormatString("dd/MM/yyyy");
         dcFilter1.setDate(null);
+        dcFilter1.getJCalendar().setMinSelectableDate(c.getTime());
+
+        c1.add(Calendar.DATE, +30);
+        dcFilter1.getJCalendar().setMaxSelectableDate(c1.getTime());
         pnReturnDate.add(dcFilter1);
         //Disable button khi moi khoi dong len
         setButtonEnabled(false);
@@ -136,7 +147,13 @@ public class ServicePanel extends javax.swing.JPanel {
         // Set height cho table header
         tbServiceList.getTableHeader().setPreferredSize(new Dimension(300, 30));
         tbDetailsList.getTableHeader().setPreferredSize(new Dimension(300, 30));
-        // Col order ID
+        DefaultTableCellRenderer centerRenderer = new DefaultTableCellRenderer();
+        centerRenderer.setHorizontalAlignment(JLabel.CENTER);
+        tbDetailsList.getColumnModel().getColumn(COL_ODERID).setCellRenderer(centerRenderer);
+        tbServiceList.getColumnModel().getColumn(COL_SERID).setCellRenderer(centerRenderer);
+        tbDetailsList.getColumnModel().getColumn(COL_PROID).setCellRenderer(centerRenderer);
+        tbDetailsList.getColumnModel().getColumn(COL_PROQTY).setCellRenderer(centerRenderer);
+// Col order ID
         tbServiceList.getColumnModel().getColumn(COL_SERID).setMinWidth(30);
         tbServiceList.getColumnModel().getColumn(COL_SERID).setMaxWidth(50);
         tbServiceList.getColumnModel().getColumn(COL_SERID).sizeWidthToFit();
@@ -159,11 +176,11 @@ public class ServicePanel extends javax.swing.JPanel {
         tbServiceList.getColumnModel().getColumn(COL_STATUS).setMinWidth(90);
 
 ////    table detailslist
-        tbDetailsList.getColumnModel().getColumn(COL_PROID).setMinWidth(30);
-        tbDetailsList.getColumnModel().getColumn(COL_PROID).setMaxWidth(50);
+        tbDetailsList.getColumnModel().getColumn(COL_PROID).setMinWidth(50);
+        tbDetailsList.getColumnModel().getColumn(COL_PROID).setMaxWidth(60);
 
         // Col pro name
-        tbDetailsList.getColumnModel().getColumn(COL_PRONAME).setMinWidth(300);
+        tbDetailsList.getColumnModel().getColumn(COL_PRONAME).setMinWidth(250);
 
         // Col braname
         tbDetailsList.getColumnModel().getColumn(COL_BRANAME).setMinWidth(100);
@@ -177,8 +194,10 @@ public class ServicePanel extends javax.swing.JPanel {
 //        tbDetailsList.getColumnModel().getColumn(COL_PROQTY).setCellEditor(new SpinnerCellEditor(1, 10));
 
         // Col oderid
-        tbDetailsList.getColumnModel().getColumn(COL_ODERID).setMinWidth(50);
+        tbDetailsList.getColumnModel().getColumn(COL_ODERID).setMinWidth(60);
+        tbDetailsList.getColumnModel().getColumn(COL_ODERID).setMaxWidth(70);
 //        tbDetailsList.getColumnModel().getColumn(COL_ODERID).setCellEditor(new SpinnerCellEditor(1, 10000));
+        tbDetailsList.getColumnModel().getColumn(COL_COST).setCellRenderer(new IntegerCurrencyCellRenderer());
         tbDetailsList.getColumnModel().getColumn(COL_COST).setMinWidth(100);
         // Col SER ID (HIDDEN)
         tbDetailsList.getColumnModel().getColumn(COL_SERVICEID).setMinWidth(0);
@@ -402,7 +421,7 @@ public class ServicePanel extends javax.swing.JPanel {
                     .addComponent(tfUserFilter))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 44, Short.MAX_VALUE)
                 .addGroup(pnFilterLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(lbOrderDate, javax.swing.GroupLayout.PREFERRED_SIZE, 77, Short.MAX_VALUE)
+                    .addComponent(lbOrderDate, javax.swing.GroupLayout.DEFAULT_SIZE, 77, Short.MAX_VALUE)
                     .addComponent(lbOrderDate1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addGap(5, 5, 5)
                 .addGroup(pnFilterLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -562,11 +581,11 @@ public class ServicePanel extends javax.swing.JPanel {
                 .addComponent(pnTitle, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(pnFilter, javax.swing.GroupLayout.PREFERRED_SIZE, 76, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 222, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 201, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 210, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(btRemove, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(btUpdate, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -725,13 +744,13 @@ public class ServicePanel extends javax.swing.JPanel {
     }
 
     private void deleteAction() {
-        if (SwingUtils.showConfirmDialog("Are you sure to delete this service ?") == JOptionPane.NO_OPTION) {
+        if (EmployeeSwingUtils.showConfirmDialog("Are you sure to delete this service ?") == JOptionPane.NO_OPTION) {
             return;
         }
         setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
         boolean result = serviceTableModel.delete(selectedService);
         setCursor(null);
-        SwingUtils.showInfoDialog(result ? SwingUtils.DELETE_SUCCESS : SwingUtils.DELETE_FAIL);
+        EmployeeSwingUtils.showInfoDialog(result ? EmployeeSwingUtils.DELETE_SUCCESS : EmployeeSwingUtils.DELETE_FAIL);
 
         // Neu row xoa la row cuoi thi lui cursor ve
         // Neu row xoa la row khac cuoi thi tien cursor ve truoc
@@ -746,7 +765,7 @@ public class ServicePanel extends javax.swing.JPanel {
             setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
             serviceTableModel.refresh();
             setCursor(null);
-            SwingUtils.showInfoDialog(SwingUtils.DB_REFRESH);
+            EmployeeSwingUtils.showInfoDialog(EmployeeSwingUtils.DB_REFRESH);
         } else {
             serviceTableModel.refresh();
         }

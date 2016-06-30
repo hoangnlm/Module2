@@ -13,6 +13,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -25,9 +26,10 @@ import utility.SwingUtils;
  */
 public class OutboundDAOImpl implements IDAO<Outbound> {
     private CachedRowSet crs;
+    public static String mainCRS = "SELECT OutID,OutDate,OutContent,UserName,u.UserID from Outbounds o join Users u on u.UserID=o.UserID order by OutID desc";
 
     public OutboundDAOImpl() {
-        this.crs = getCRS("SELECT OutID,OutDate,OutContent,UserName,u.UserID from Outbounds o join Users u on u.UserID=o.UserID order by OutID desc");
+        this.crs = getCRS(mainCRS);
     }
     
     
@@ -89,6 +91,27 @@ public class OutboundDAOImpl implements IDAO<Outbound> {
         return result;
     }
 
+    public void filterDate(Date fromDate,Date toDate){
+        if(fromDate!=null&& toDate !=null){
+        java.sql.Date sqlFromDate = new java.sql.Date(fromDate.getTime());
+        java.sql.Date sqlToDate = new java.sql.Date(toDate.getTime());
+        mainCRS ="SELECT OutID,OutDate,OutContent,UserName,u.UserID from Outbounds o join Users u on u.UserID=o.UserID where OutDate >= "+"'"+sqlFromDate+"'"+"and OutDate <="+"'"+sqlToDate+"'"+" order by OutID DESC";
+        }
+        
+        else{
+            if(fromDate!=null&&toDate==null){
+                java.sql.Date sqlFromDate = new java.sql.Date(fromDate.getTime());
+                mainCRS="SELECT OutID,OutDate,OutContent,UserName,u.UserID from Outbounds o join Users u on u.UserID=o.UserID  where OutDate >= "+"'"+sqlFromDate+"'"+" order by OutID DESC";
+            }
+            if(fromDate==null&&toDate!=null){
+                java.sql.Date sqlToDate = new java.sql.Date(toDate.getTime());
+                mainCRS="SELECT OutID,OutDate,OutContent,UserName,u.UserID from Outbounds o join Users u on u.UserID=o.UserID  where OutDate <= "+"'"+sqlToDate+"'"+" order by OutID DESC";
+            }
+          
+        }
+        
+        
+    }
     @Override
     public boolean insert(Outbound model) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
@@ -102,6 +125,14 @@ public class OutboundDAOImpl implements IDAO<Outbound> {
     @Override
     public void setSelectingIndex(int idx) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    public static String getMainCRS() {
+        return mainCRS;
+    }
+
+    public static void setMainCRS(String mainCRS) {
+        OutboundDAOImpl.mainCRS = mainCRS;
     }
     
 }

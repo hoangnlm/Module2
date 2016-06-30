@@ -46,19 +46,23 @@ public class PermissionDialog extends javax.swing.JDialog {
         //Lay data
         permissionDAOImpl = new PermissionDAOImpl(user.getUserID());
         perList = permissionDAOImpl.getList();
-//        permission=perList.get(0);
-//        System.out.println(permission.toString());
         setCheckBox();
         oldUser = userUpdate.isSelected();
         oldPermission = permissionUpdate.isSelected();
+
         if (!LoginFrame.checkPermission(new UserFunction(UserFunction.FG_PERMISSION, UserFunction.FN_UPDATE))) {
-            btOK.setEnabled(false);
-        } else if (user.getUserName().equals(LoginFrame.config.userName) && (!LoginFrame.config.userName.equals("root"))) {
-            btOK.setEnabled(false);
-        } else if (user.getUserID() == 1 && (!LoginFrame.config.userName.equals("root"))) {
-            SwingUtils.showErrorDialog("You can't set permission for ADMIN ROOT");
-            btOK.setEnabled(false);
+            setButton(false);
+            setCheckBoxEnable(false);
+        } else if (user.getUserName().equals(LoginFrame.config.userName)) {
+            setButton(false);
+            setCheckBoxEnable(false);
+        } else if ((userUpdate.isSelected() == true || permissionUpdate.isSelected() == true)&&(!LoginFrame.config.userName.equals("root"))) {
+            setButton(false);
+            setCheckBoxEnable(false);
+        } else {
+            setButton(false);
         }
+
     }
 
     //</editor-fold>
@@ -71,7 +75,7 @@ public class PermissionDialog extends javax.swing.JDialog {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        btOK = new javax.swing.JButton();
+        btSave = new javax.swing.JButton();
         btCancel = new javax.swing.JButton();
         jPanel4 = new javax.swing.JPanel();
         userUpdate = new javax.swing.JCheckBox();
@@ -119,17 +123,18 @@ public class PermissionDialog extends javax.swing.JDialog {
         jPanel26 = new javax.swing.JPanel();
         supplierUpdate = new javax.swing.JCheckBox();
         supplierView = new javax.swing.JCheckBox();
+        btClose = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setTitle("Permission");
         setMinimumSize(new java.awt.Dimension(500, 435));
 
-        btOK.setFont(new java.awt.Font("Lucida Grande", 0, 14)); // NOI18N
-        btOK.setIcon(new javax.swing.ImageIcon(getClass().getResource("/image/order/OK2.png"))); // NOI18N
-        btOK.setText("Save");
-        btOK.addActionListener(new java.awt.event.ActionListener() {
+        btSave.setFont(new java.awt.Font("Lucida Grande", 0, 14)); // NOI18N
+        btSave.setIcon(new javax.swing.ImageIcon(getClass().getResource("/image/order/OK2.png"))); // NOI18N
+        btSave.setText("Save");
+        btSave.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btOKActionPerformed(evt);
+                btSaveActionPerformed(evt);
             }
         });
 
@@ -152,6 +157,11 @@ public class PermissionDialog extends javax.swing.JDialog {
         });
 
         userView.setText("View");
+        userView.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                userViewActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout jPanel4Layout = new javax.swing.GroupLayout(jPanel4);
         jPanel4.setLayout(jPanel4Layout);
@@ -182,6 +192,11 @@ public class PermissionDialog extends javax.swing.JDialog {
         });
 
         productView.setText("View");
+        productView.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                productViewActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout jPanel5Layout = new javax.swing.GroupLayout(jPanel5);
         jPanel5.setLayout(jPanel5Layout);
@@ -212,6 +227,11 @@ public class PermissionDialog extends javax.swing.JDialog {
         });
 
         outboundView.setText("View");
+        outboundView.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                outboundViewActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout outboundLayout = new javax.swing.GroupLayout(outbound);
         outbound.setLayout(outboundLayout);
@@ -242,6 +262,11 @@ public class PermissionDialog extends javax.swing.JDialog {
         });
 
         inboundView.setText("View");
+        inboundView.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                inboundViewActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout jPanel7Layout = new javax.swing.GroupLayout(jPanel7);
         jPanel7.setLayout(jPanel7Layout);
@@ -272,6 +297,11 @@ public class PermissionDialog extends javax.swing.JDialog {
         });
 
         branchView.setText("View");
+        branchView.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                branchViewActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout jPanel8Layout = new javax.swing.GroupLayout(jPanel8);
         jPanel8.setLayout(jPanel8Layout);
@@ -302,6 +332,11 @@ public class PermissionDialog extends javax.swing.JDialog {
         });
 
         cusView.setText("View");
+        cusView.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                cusViewActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout jPanel10Layout = new javax.swing.GroupLayout(jPanel10);
         jPanel10.setLayout(jPanel10Layout);
@@ -332,6 +367,11 @@ public class PermissionDialog extends javax.swing.JDialog {
         });
 
         saleoffView.setText("View");
+        saleoffView.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                saleoffViewActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout jPanel13Layout = new javax.swing.GroupLayout(jPanel13);
         jPanel13.setLayout(jPanel13Layout);
@@ -362,6 +402,11 @@ public class PermissionDialog extends javax.swing.JDialog {
         });
 
         orderView.setText("View");
+        orderView.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                orderViewActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout jPanel14Layout = new javax.swing.GroupLayout(jPanel14);
         jPanel14.setLayout(jPanel14Layout);
@@ -392,6 +437,11 @@ public class PermissionDialog extends javax.swing.JDialog {
         });
 
         salaryView.setText("View");
+        salaryView.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                salaryViewActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout jPanel16Layout = new javax.swing.GroupLayout(jPanel16);
         jPanel16.setLayout(jPanel16Layout);
@@ -422,6 +472,11 @@ public class PermissionDialog extends javax.swing.JDialog {
         });
 
         serviceView.setText("View");
+        serviceView.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                serviceViewActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout jPanel22Layout = new javax.swing.GroupLayout(jPanel22);
         jPanel22.setLayout(jPanel22Layout);
@@ -452,6 +507,11 @@ public class PermissionDialog extends javax.swing.JDialog {
         });
 
         cusLevelView.setText("View");
+        cusLevelView.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                cusLevelViewActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout jPanel23Layout = new javax.swing.GroupLayout(jPanel23);
         jPanel23.setLayout(jPanel23Layout);
@@ -488,6 +548,11 @@ public class PermissionDialog extends javax.swing.JDialog {
         });
 
         permissionView.setText("View");
+        permissionView.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                permissionViewActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout jPanel24Layout = new javax.swing.GroupLayout(jPanel24);
         jPanel24.setLayout(jPanel24Layout);
@@ -518,6 +583,11 @@ public class PermissionDialog extends javax.swing.JDialog {
         });
 
         empView.setText("View");
+        empView.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                empViewActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout jPanel25Layout = new javax.swing.GroupLayout(jPanel25);
         jPanel25.setLayout(jPanel25Layout);
@@ -548,6 +618,11 @@ public class PermissionDialog extends javax.swing.JDialog {
         });
 
         supplierView.setText("View");
+        supplierView.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                supplierViewActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout jPanel26Layout = new javax.swing.GroupLayout(jPanel26);
         jPanel26.setLayout(jPanel26Layout);
@@ -568,14 +643,31 @@ public class PermissionDialog extends javax.swing.JDialog {
                 .addContainerGap())
         );
 
+        btClose.setFont(new java.awt.Font("Lucida Grande", 0, 14)); // NOI18N
+        btClose.setIcon(new javax.swing.ImageIcon(getClass().getResource("/image/order/Delete2.png"))); // NOI18N
+        btClose.setText("Close");
+        btClose.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btCloseActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(btSave, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(btCancel, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(btClose, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
             .addGroup(layout.createSequentialGroup()
+                .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
-                        .addContainerGap()
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addGroup(layout.createSequentialGroup()
                                 .addComponent(jPanel22, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -590,16 +682,8 @@ public class PermissionDialog extends javax.swing.JDialog {
                                 .addGap(39, 39, 39)
                                 .addComponent(jLabel4)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(lblID1, javax.swing.GroupLayout.PREFERRED_SIZE, 143, javax.swing.GroupLayout.PREFERRED_SIZE))))
-                    .addGroup(layout.createSequentialGroup()
-                        .addGap(137, 137, 137)
-                        .addComponent(btOK, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(18, 18, 18)
-                        .addComponent(btCancel, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addContainerGap(16, Short.MAX_VALUE))
-            .addGroup(layout.createSequentialGroup()
-                .addContainerGap()
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                .addComponent(lblID1, javax.swing.GroupLayout.PREFERRED_SIZE, 143, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .addContainerGap(16, Short.MAX_VALUE))
                     .addGroup(layout.createSequentialGroup()
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addGroup(layout.createSequentialGroup()
@@ -660,15 +744,21 @@ public class PermissionDialog extends javax.swing.JDialog {
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jPanel23, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jPanel26, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(18, 18, 18)
+                .addGap(19, 19, 19)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(btOK, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(btCancel, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(12, 12, 12))
+                    .addComponent(btSave, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(btCancel, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(btClose, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addContainerGap())
         );
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
+
+    private void setButton(boolean enabled) {
+        btSave.setEnabled(enabled);
+        btCancel.setEnabled(enabled);
+    }
 //<editor-fold defaultstate="collapsed" desc="If else -- met vai linh hon">
 
     private void setCheckBox() {
@@ -712,54 +802,52 @@ public class PermissionDialog extends javax.swing.JDialog {
                     outboundUpdate.setSelected(true);
                     break;
                 case 13:
-                    orderView.setSelected(true);
-                    break;
-                case 14:
-                    orderUpdate.setSelected(true);
-                    break;
-                case 15:
-                    saleoffView.setSelected(true);
-                    break;
-                case 16:
-                    saleoffUpdate.setSelected(true);
-                    break;
-                case 17:
-                    cusView.setSelected(true);
-                    break;
-                case 18:
-                    cusUpdate.setSelected(true);
-                    break;
-                case 19:
-                    cusLevelView.setSelected(true);
-                    break;
-                case 20:
-                    cusLevelUpdate.setSelected(true);
-                    break;
-                case 21:
-                    serviceView.setSelected(true);
-                    break;
-                case 22:
-                    serviceUpdate.setSelected(true);
-                    break;
-                case 23:
-                    empView.setSelected(true);
-                    break;
-                case 24:
-                    empUpdate.setSelected(true);
-                    break;
-                case 25:
-                    salaryView.setSelected(true);
-                    break;
-                case 26:
-                    salaryUpdate.setSelected(true);
-                    break;
-                case 27:
                     supplierView.setSelected(true);
                     break;
-                case 28:
+                case 14:
                     supplierUpdate.setSelected(true);
                     break;
-                default:
+                case 15:
+                    orderView.setSelected(true);
+                    break;
+                case 16:
+                    orderUpdate.setSelected(true);
+                    break;
+                case 17:
+                    saleoffView.setSelected(true);
+                    break;
+                case 18:
+                    saleoffUpdate.setSelected(true);
+                    break;
+                case 19:
+                    cusView.setSelected(true);
+                    break;
+                case 20:
+                    cusUpdate.setSelected(true);
+                    break;
+                case 21:
+                    cusLevelView.setSelected(true);
+                    break;
+                case 22:
+                    cusLevelUpdate.setSelected(true);
+                    break;
+                case 23:
+                    serviceView.setSelected(true);
+                    break;
+                case 24:
+                    serviceUpdate.setSelected(true);
+                    break;
+                case 25:
+                    empView.setSelected(true);
+                    break;
+                case 26:
+                    empUpdate.setSelected(true);
+                    break;
+                case 27:
+                    salaryView.setSelected(true);
+                    break;
+                case 28:
+                    salaryUpdate.setSelected(true);
                     break;
             }
 
@@ -817,72 +905,136 @@ public class PermissionDialog extends javax.swing.JDialog {
             permission = new Permission(user.getUserID(), 12);
             permissionDAOImpl.insert(permission);
         }
-        if (orderView.isSelected()) {
+        if (supplierView.isSelected()) {
             permission = new Permission(user.getUserID(), 13);
             permissionDAOImpl.insert(permission);
         }
-        if (orderUpdate.isSelected()) {
+        if (supplierUpdate.isSelected()) {
             permission = new Permission(user.getUserID(), 14);
             permissionDAOImpl.insert(permission);
         }
-        if (saleoffView.isSelected()) {
+        if (orderView.isSelected()) {
             permission = new Permission(user.getUserID(), 15);
             permissionDAOImpl.insert(permission);
         }
-        if (saleoffUpdate.isSelected()) {
+        if (orderUpdate.isSelected()) {
             permission = new Permission(user.getUserID(), 16);
             permissionDAOImpl.insert(permission);
         }
-        if (cusView.isSelected()) {
+        if (saleoffView.isSelected()) {
             permission = new Permission(user.getUserID(), 17);
             permissionDAOImpl.insert(permission);
         }
-        if (cusUpdate.isSelected()) {
+        if (saleoffUpdate.isSelected()) {
             permission = new Permission(user.getUserID(), 18);
             permissionDAOImpl.insert(permission);
         }
-        if (cusLevelView.isSelected()) {
+        if (cusView.isSelected()) {
             permission = new Permission(user.getUserID(), 19);
             permissionDAOImpl.insert(permission);
         }
-        if (cusLevelUpdate.isSelected()) {
+        if (cusUpdate.isSelected()) {
             permission = new Permission(user.getUserID(), 20);
             permissionDAOImpl.insert(permission);
         }
-        if (serviceView.isSelected()) {
+        if (cusLevelView.isSelected()) {
             permission = new Permission(user.getUserID(), 21);
             permissionDAOImpl.insert(permission);
         }
-        if (serviceUpdate.isSelected()) {
+        if (cusLevelUpdate.isSelected()) {
             permission = new Permission(user.getUserID(), 22);
             permissionDAOImpl.insert(permission);
         }
-        if (empView.isSelected()) {
+        if (serviceView.isSelected()) {
             permission = new Permission(user.getUserID(), 23);
             permissionDAOImpl.insert(permission);
         }
-        if (empUpdate.isSelected()) {
+        if (serviceUpdate.isSelected()) {
             permission = new Permission(user.getUserID(), 24);
             permissionDAOImpl.insert(permission);
         }
-        if (salaryView.isSelected()) {
+        if (empView.isSelected()) {
             permission = new Permission(user.getUserID(), 25);
             permissionDAOImpl.insert(permission);
         }
-        if (salaryUpdate.isSelected()) {
+        if (empUpdate.isSelected()) {
             permission = new Permission(user.getUserID(), 26);
             permissionDAOImpl.insert(permission);
         }
-        if (supplierView.isSelected()) {
+        if (salaryView.isSelected()) {
             permission = new Permission(user.getUserID(), 27);
             permissionDAOImpl.insert(permission);
         }
-        if (supplierUpdate.isSelected()) {
+        if (salaryUpdate.isSelected()) {
             permission = new Permission(user.getUserID(), 28);
             permissionDAOImpl.insert(permission);
         }
+
 //        System.out.println("List: " + perList1.size());
     }
+
+    public boolean checkChange() {
+        return !(!userView.isSelected()
+                || !userUpdate.isSelected()
+                || !permissionView.isSelected()
+                || !permissionUpdate.isSelected()
+                || !productView.isSelected()
+                || !productUpdate.isSelected()
+                || !salaryView.isSelected()
+                || !salaryUpdate.isSelected()
+                || !saleoffUpdate.isSelected()
+                || !saleoffView.isSelected()
+                || !serviceUpdate.isSelected()
+                || !serviceView.isSelected()
+                || !supplierUpdate.isSelected()
+                || !supplierView.isSelected()
+                || !empUpdate.isSelected()
+                || !empView.isSelected()
+                || !cusLevelUpdate.isSelected()
+                || !cusLevelView.isSelected()
+                || !cusUpdate.isSelected()
+                || !cusView.isSelected()
+                || !orderUpdate.isSelected()
+                || !orderView.isSelected()
+                || !outboundUpdate.isSelected()
+                || !outboundView.isSelected()
+                || !inboundUpdate.isSelected()
+                || !inboundView.isSelected()
+                || !branchUpdate.isSelected()
+                || !branchView.isSelected());
+    }
+
+    private void setCheckBoxEnable(boolean enabled) {
+        userView.setEnabled(enabled);
+        userUpdate.setEnabled(enabled);
+        permissionView.setEnabled(enabled);
+        permissionUpdate.setEnabled(enabled);
+        productView.setEnabled(enabled);
+        productUpdate.setEnabled(enabled);
+        salaryView.setEnabled(enabled);
+        salaryUpdate.setEnabled(enabled);
+        saleoffUpdate.setEnabled(enabled);
+        saleoffView.setEnabled(enabled);
+        serviceUpdate.setEnabled(enabled);
+        serviceView.setEnabled(enabled);
+        supplierUpdate.setEnabled(enabled);
+        supplierView.setEnabled(enabled);
+        empUpdate.setEnabled(enabled);
+        empView.setEnabled(enabled);
+        cusLevelUpdate.setEnabled(enabled);
+        cusLevelView.setEnabled(enabled);
+        cusUpdate.setEnabled(enabled);
+        cusView.setEnabled(enabled);
+        orderUpdate.setEnabled(enabled);
+        orderView.setEnabled(enabled);
+        outboundUpdate.setEnabled(enabled);
+        outboundView.setEnabled(enabled);
+        inboundUpdate.setEnabled(enabled);
+        inboundView.setEnabled(enabled);
+        branchUpdate.setEnabled(enabled);
+        branchView.setEnabled(enabled);
+    }
+//</editor-fold >
 
     public boolean isCkBoxChange(JCheckBox j, boolean old) {
         if (j.isSelected() == old) {
@@ -923,69 +1075,120 @@ public class PermissionDialog extends javax.swing.JDialog {
         branchView.setSelected(enabled);
 //        btOK.setEnabled(enabled);
     }
-//        </editor-fold>  
-    private void btCancelActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btCancelActionPerformed
-        dispose();
-    }//GEN-LAST:event_btCancelActionPerformed
-//<editor-fold defaultstate="collapsed" desc="Sorry baby Em lo~ tay">
+//<editor-fold defaultstate="collapsed" desc="cai dong action @@">   
     private void userUpdateActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_userUpdateActionPerformed
-        // TODO add your handling code here:
+        setButton(true);
     }//GEN-LAST:event_userUpdateActionPerformed
 
     private void productUpdateActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_productUpdateActionPerformed
-        // TODO add your handling code here:
+        setButton(true);
     }//GEN-LAST:event_productUpdateActionPerformed
 
     private void outboundUpdateActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_outboundUpdateActionPerformed
-        // TODO add your handling code here:
+        setButton(true);
     }//GEN-LAST:event_outboundUpdateActionPerformed
 
     private void inboundUpdateActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_inboundUpdateActionPerformed
-        // TODO add your handling code here:
+        setButton(true);
     }//GEN-LAST:event_inboundUpdateActionPerformed
 
     private void branchUpdateActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_branchUpdateActionPerformed
-        // TODO add your handling code here:
+        setButton(true);
     }//GEN-LAST:event_branchUpdateActionPerformed
 
     private void cusUpdateActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cusUpdateActionPerformed
-        // TODO add your handling code here:
+        setButton(true);
     }//GEN-LAST:event_cusUpdateActionPerformed
 
     private void saleoffUpdateActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_saleoffUpdateActionPerformed
-        // TODO add your handling code here:
+        setButton(true);
     }//GEN-LAST:event_saleoffUpdateActionPerformed
 
     private void orderUpdateActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_orderUpdateActionPerformed
-        // TODO add your handling code here:
+        setButton(true);
     }//GEN-LAST:event_orderUpdateActionPerformed
 
     private void salaryUpdateActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_salaryUpdateActionPerformed
-        // TODO add your handling code here:
+        setButton(true);
     }//GEN-LAST:event_salaryUpdateActionPerformed
 
     private void serviceUpdateActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_serviceUpdateActionPerformed
-        // TODO add your handling code here:
+        setButton(true);
     }//GEN-LAST:event_serviceUpdateActionPerformed
 
     private void cusLevelUpdateActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cusLevelUpdateActionPerformed
-        // TODO add your handling code here:
+        setButton(true);
     }//GEN-LAST:event_cusLevelUpdateActionPerformed
 
     private void permissionUpdateActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_permissionUpdateActionPerformed
-        // TODO add your handling code here:
+        setButton(true);
     }//GEN-LAST:event_permissionUpdateActionPerformed
 
     private void empUpdateActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_empUpdateActionPerformed
-        // TODO add your handling code here:
+        setButton(true);
     }//GEN-LAST:event_empUpdateActionPerformed
 
     private void supplierUpdateActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_supplierUpdateActionPerformed
-        // TODO add your handling code here:
+        setButton(true);
     }//GEN-LAST:event_supplierUpdateActionPerformed
-//</editor-fold>
-    private void btOKActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btOKActionPerformed
 
+    private void saleoffViewActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_saleoffViewActionPerformed
+        setButton(true);
+    }//GEN-LAST:event_saleoffViewActionPerformed
+
+    private void userViewActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_userViewActionPerformed
+        setButton(true);
+    }//GEN-LAST:event_userViewActionPerformed
+
+    private void permissionViewActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_permissionViewActionPerformed
+        setButton(true);
+    }//GEN-LAST:event_permissionViewActionPerformed
+
+    private void productViewActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_productViewActionPerformed
+        setButton(true);
+    }//GEN-LAST:event_productViewActionPerformed
+
+    private void branchViewActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_branchViewActionPerformed
+        setButton(true);
+    }//GEN-LAST:event_branchViewActionPerformed
+
+    private void inboundViewActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_inboundViewActionPerformed
+        setButton(true);
+    }//GEN-LAST:event_inboundViewActionPerformed
+
+    private void outboundViewActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_outboundViewActionPerformed
+        setButton(true);
+    }//GEN-LAST:event_outboundViewActionPerformed
+
+    private void orderViewActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_orderViewActionPerformed
+        setButton(true);
+    }//GEN-LAST:event_orderViewActionPerformed
+
+    private void cusViewActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cusViewActionPerformed
+        setButton(true);
+    }//GEN-LAST:event_cusViewActionPerformed
+
+    private void serviceViewActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_serviceViewActionPerformed
+        setButton(true);
+    }//GEN-LAST:event_serviceViewActionPerformed
+
+    private void empViewActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_empViewActionPerformed
+        setButton(true);
+    }//GEN-LAST:event_empViewActionPerformed
+
+    private void salaryViewActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_salaryViewActionPerformed
+        setButton(true);
+    }//GEN-LAST:event_salaryViewActionPerformed
+
+    private void cusLevelViewActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cusLevelViewActionPerformed
+        setButton(true);
+    }//GEN-LAST:event_cusLevelViewActionPerformed
+
+    private void supplierViewActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_supplierViewActionPerformed
+        setButton(true);
+    }//GEN-LAST:event_supplierViewActionPerformed
+//   </editor-fold>  
+    private void btSaveActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btSaveActionPerformed
         if (isCkBoxChange(userUpdate, oldUser) || isCkBoxChange(permissionUpdate, oldPermission)) {
             if (permissionDAOImpl.checkRootPermission()) {
                 permissionDAOImpl.delete(user);
@@ -996,6 +1199,7 @@ public class PermissionDialog extends javax.swing.JDialog {
                 SwingUtils.showErrorDialog("Only ADMIN ROOT can set permission: UPDATE PERMISSION & UPDATE USER !");
                 clearChkBox(false);
                 setCheckBox();
+                setButton(false);
                 return;
             }
         } else {
@@ -1004,15 +1208,24 @@ public class PermissionDialog extends javax.swing.JDialog {
             SwingUtils.showInfoDialog(SwingUtils.UPDATE_SUCCESS);
             dispose();
         }
+    }//GEN-LAST:event_btSaveActionPerformed
 
+    private void btCloseActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btCloseActionPerformed
+        dispose();
+    }//GEN-LAST:event_btCloseActionPerformed
 
-    }//GEN-LAST:event_btOKActionPerformed
-//        <editor-fold>  
+    private void btCancelActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btCancelActionPerformed
+        clearChkBox(false);
+        setCheckBox();
+    }//GEN-LAST:event_btCancelActionPerformed
+
+    //   <editor-fold>  
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JCheckBox branchUpdate;
     private javax.swing.JCheckBox branchView;
     private javax.swing.JButton btCancel;
-    private javax.swing.JButton btOK;
+    private javax.swing.JButton btClose;
+    private javax.swing.JButton btSave;
     private javax.swing.JCheckBox cusLevelUpdate;
     private javax.swing.JCheckBox cusLevelView;
     private javax.swing.JCheckBox cusUpdate;

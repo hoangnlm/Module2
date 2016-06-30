@@ -110,6 +110,13 @@ public class OutboundDetailTableModel extends CustomizedTableModel<OutboundDetai
          }
          fireTableCellUpdated(rowIndex, columnIndex);
     }
+
+    @Override
+    public boolean isCellEditable(int rowIndex, int columnIndex) {
+         if(columnIndex==1||columnIndex==0)
+             return false;
+         return true;
+    }
     
     
 }

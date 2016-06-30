@@ -1,6 +1,7 @@
 package service.controller;
 
 import com.toedter.calendar.JDateChooser;
+import employee.model.IntegerCurrencyCellRenderer;
 import order.controller.*;
 import java.awt.Dimension;
 import java.awt.Rectangle;
@@ -32,8 +33,9 @@ import service.model.ServiceType;
 import utility.IntegerCellEditor;
 import utility.SpinnerCellEditor;
 import utility.StringCellEditor;
-import utility.SwingUtils;
-import utility.SwingUtils.FormatType;
+import employee.model.EmployeeSwingUtils;
+import employee.model.EmployeeSwingUtils.FormatType;
+import javax.swing.JLabel;
 import utility.TableCellListener;
 
 /**
@@ -84,7 +86,8 @@ public class ServiceDialog extends javax.swing.JDialog implements ItemListener {
         dcFilter.setDateFormatString("MMMM dd,yyyy");
 
         Calendar cal = Calendar.getInstance();
-        dcFilter.setMinSelectableDate(cal.getTime());
+
+//        dcFilter.setMinSelectableDate(cal.getTime());
         cal.add(Calendar.DATE, +30);
         dcFilter.setMaxSelectableDate(cal.getTime());
 
@@ -114,7 +117,10 @@ public class ServiceDialog extends javax.swing.JDialog implements ItemListener {
 
         // Set height cho table header
         tbProduct.getTableHeader().setPreferredSize(new Dimension(300, 30));
-
+        DefaultTableCellRenderer centerRenderer = new DefaultTableCellRenderer();
+        centerRenderer.setHorizontalAlignment(JLabel.CENTER);
+        tbProduct.getColumnModel().getColumn(COL_PROQTY).setCellRenderer(centerRenderer);
+        tbProduct.getColumnModel().getColumn(COL_ODERID).setCellRenderer(centerRenderer);
         // Col Ser ID (HIDDEN)
         tbProduct.getColumnModel().getColumn(COL_SERID).setMinWidth(0);
         tbProduct.getColumnModel().getColumn(COL_SERID).setMaxWidth(0);
@@ -132,7 +138,7 @@ public class ServiceDialog extends javax.swing.JDialog implements ItemListener {
 
         // Col content
         tbProduct.getColumnModel().getColumn(COL_CONTENT).setMinWidth(150);
-        tbProduct.getColumnModel().getColumn(COL_CONTENT).setCellEditor(new StringCellEditor(1, 200, SwingUtils.PATTERN_SERVICECONTENT));
+        tbProduct.getColumnModel().getColumn(COL_CONTENT).setCellEditor(new StringCellEditor(1, 300, EmployeeSwingUtils.PATTERN_SERVICECONTENT));
 
         // Col quantity
         tbProduct.getColumnModel().getColumn(COL_PROQTY).setMinWidth(50);
@@ -143,7 +149,8 @@ public class ServiceDialog extends javax.swing.JDialog implements ItemListener {
         tbProduct.getColumnModel().getColumn(COL_ODERID).setCellEditor(new IntegerCellEditor(1, 100000));
         // Col oderid
         tbProduct.getColumnModel().getColumn(COL_COST).setMinWidth(100);
-        tbProduct.getColumnModel().getColumn(COL_COST).setCellEditor(new IntegerCellEditor(0, 200000));
+        tbProduct.getColumnModel().getColumn(COL_COST).setCellRenderer(new IntegerCurrencyCellRenderer());
+        tbProduct.getColumnModel().getColumn(COL_COST).setCellEditor(new IntegerCellEditor(50000, 500000));
 
         // Bat su kien select row tren table product
         tbProduct.getSelectionModel().addListSelectionListener((ListSelectionEvent e) -> {
@@ -171,7 +178,7 @@ public class ServiceDialog extends javax.swing.JDialog implements ItemListener {
                             // Check duplicate product
                             // Check duplicate product
                             if (checkDuplicate((String) tcl.getNewValue())) {
-                                SwingUtils.showErrorDialog("Duplicated item is not allowed in an service !");
+                                EmployeeSwingUtils.showErrorDialog("Duplicated item is not allowed in an service !");
                                 tbProduct.setValueAt(oldValue, tbProduct.getSelectedRow(), COL_PRONAME);
                             } else {
                                 // Lay product moi tu combo box gan cho product
@@ -188,7 +195,7 @@ public class ServiceDialog extends javax.swing.JDialog implements ItemListener {
                                 tbProduct.setValueAt(selectedDetails.getProID(), tbProduct.getSelectedRow(), COL_PROID);
                                 // Update label
                                 updateTotalLabel();
-                                setTrackChanges(true);
+                                setTrackWhenSerTypeChange();
                             }
                         } else if (!newValue.equals(oldValue)) {
                             tbProduct.setValueAt(oldValue, tbProduct.getSelectedRow(), COL_PRONAME);
@@ -199,15 +206,17 @@ public class ServiceDialog extends javax.swing.JDialog implements ItemListener {
                         selectedDetails.setProQty((int) tbProduct.getValueAt(tbProduct.getSelectedRow(), COL_PROQTY));
                         // Update label
                         updateItemsLabel();
-                        setTrackChanges(true);
+                        setTrackWhenSerTypeChange();
                         break;
 
                     case COL_ODERID:
-                        if (cbType.getSelectedIndex() == 0) {
-                            setTrackChanges(true);
-                        } else {
-                            setTrackChanges(checkOrdID());
-                        }
+//                        if (cbType.getSelectedIndex() == 0) {
+//                            setTrackChanges(!checkCostEmpty() && !checkProductEmpty());
+//                        } else {
+//                            setTrackChanges(checkOrdID() && !checkOrdIDEmpty() && !checkProductEmpty());
+//                        }
+                        checkOrdID();
+                        setTrackWhenSerTypeChange();
                         // Update label
                         updateItemsLabel();
 
@@ -217,14 +226,14 @@ public class ServiceDialog extends javax.swing.JDialog implements ItemListener {
                         selectedDetails.setSerContent((String) tbProduct.getValueAt(tbProduct.getSelectedRow(), COL_CONTENT));
                         // Update label
                         updateItemsLabel();
-                        setTrackChanges(true);
+                        setTrackWhenSerTypeChange();
                         break;
                     case COL_COST:
                         // Gan cost moi cho servicedetails tren row
                         selectedDetails.setSerCost((int) tbProduct.getValueAt(tbProduct.getSelectedRow(), COL_COST));
                         // Update label
                         updateItemsLabel();
-                        setTrackChanges(true);
+                        setTrackWhenSerTypeChange();
                         break;
                 }
             }
@@ -247,7 +256,7 @@ public class ServiceDialog extends javax.swing.JDialog implements ItemListener {
             backup = this.service.clone(); // Backup
 
             tfID.setText(LoginFrame.config.userName);
-            tfReceiveDate.setText(SwingUtils.formatString(new Date(), FormatType.DATE));
+            tfReceiveDate.setText(EmployeeSwingUtils.formatString(new Date(), FormatType.DATE));
             returnDate = new Date();
             dcFilter.setDate(returnDate);
             pnReturnDate.add(dcFilter);
@@ -263,7 +272,7 @@ public class ServiceDialog extends javax.swing.JDialog implements ItemListener {
 
             tfID.setText(this.service.getSerID() + "");
 
-            tfReceiveDate.setText(SwingUtils.formatString(this.service.getReceiveDate(), FormatType.DATE));
+            tfReceiveDate.setText(EmployeeSwingUtils.formatString(this.service.getReceiveDate(), FormatType.DATE));
             returnDate = this.service.getReturnDate();
             dcFilter.setDate(returnDate);
             pnReturnDate.add(dcFilter);
@@ -286,9 +295,12 @@ public class ServiceDialog extends javax.swing.JDialog implements ItemListener {
 
             @Override
             public void propertyChange(PropertyChangeEvent evt) {
-                setTrackChanges(true);
-//                valDate = setReturnDate(dcFilter.getDate());
-
+                if (insertMode) {
+                    setTrackWhenSerTypeChange();
+//                    setTrackChanges(selectedRowIndex == -1 ? false : true);
+                } else {
+                    setTrackWhenSerTypeChange();
+                }
             }
         });
 //<editor-fold defaultstate="collapsed" desc="xu ly cho vung filter">
@@ -334,25 +346,6 @@ public class ServiceDialog extends javax.swing.JDialog implements ItemListener {
             }
         });
 //</editor-fold>
-    }
-
-    private boolean setReturnDate(Date d) {
-        boolean result = false;
-        Date Receive = this.service.getReceiveDate();
-        Date now = new Date();
-//    Date oldReturn = this.service.getReturnDate();
-        Date datePick = d;
-        Date newReturn = datePick;
-        if (!(newReturn.compareTo(Receive) > 0)) {
-            result = true;
-        } else {
-//            if ((newReturn.compareTo(now)<=0)) {
-//            result = true;
-//        } else {
-            result = false;
-        }
-
-        return result;
     }
 
 //<editor-fold defaultstate="collapsed" desc="Bat su kien">
@@ -729,19 +722,7 @@ public class ServiceDialog extends javax.swing.JDialog implements ItemListener {
     }//GEN-LAST:event_btResetActionPerformed
 
     private void btSaveActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btSaveActionPerformed
-        int ordID = 0;
-        if (selectedRowIndex == -1) {
-//            System.out.println("sssssss");
-            SwingUtils.showErrorDialog("Choose service details to update !");
-            return;
-        } else {
-            ordID = (int) tbProduct.getValueAt(tbProduct.getSelectedRow(), COL_ODERID);
-        }
-        if ((cbType.getSelectedIndex() == 1) && (ordID == 0)) {
-            SwingUtils.showErrorDialog("Please input OrderID to check warranty of product !");
-            setTrackChanges(false);
-            return;
-        }
+
         updateAction();
 
     }//GEN-LAST:event_btSaveActionPerformed
@@ -749,7 +730,13 @@ public class ServiceDialog extends javax.swing.JDialog implements ItemListener {
     private void btClearActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btClearActionPerformed
         clearFilter();
     }//GEN-LAST:event_btClearActionPerformed
-
+    private void setTrackWhenSerTypeChange() {
+        if (cbType.getSelectedIndex() == 0) {
+            setTrackChanges(!checkCostEmpty() && !checkProductEmpty());
+        } else {
+            setTrackChanges(!checkOrdIDEmpty() && !checkProductEmpty());
+        }
+    }
     private void cbTypeItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_cbTypeItemStateChanged
         if (insertMode == true) {
             if (cbType.getSelectedIndex() == 1) {
@@ -761,35 +748,23 @@ public class ServiceDialog extends javax.swing.JDialog implements ItemListener {
                 dcFilter.setDate(returnDate);
                 pnReturnDate.add(dcFilter);
                 this.service.setReturnDate(returnDate);
+                setTrackChanges(!checkOrdIDEmpty() && !checkProductEmpty());
             } else {
                 returnDate = new Date();
                 this.service.setReturnDate(returnDate);
                 dcFilter.setDate(returnDate);
                 pnReturnDate.add(dcFilter);
+                setTrackChanges(!checkCostEmpty() && !checkProductEmpty());
             }
+//            setTrackChanges(!checkOrdIDEmpty() && !checkProductEmpty());
         } else {
-
+            setTrackWhenSerTypeChange();
         }
 
     }//GEN-LAST:event_cbTypeItemStateChanged
 
     private void cbStatusItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_cbStatusItemStateChanged
-        if (insertMode == false) {
-            if (cbStatus.getSelectedIndex() == 2) {
-
-                returnDate = new Date();
-                dcFilter.setDate(returnDate);
-                pnReturnDate.add(dcFilter);
-                this.service.setReturnDate(returnDate);
-            } else {
-                returnDate = backup.getReturnDate();
-                this.service.setReturnDate(returnDate);
-                dcFilter.setDate(returnDate);
-                pnReturnDate.add(dcFilter);
-            }
-        } else {
-
-        }
+        
     }//GEN-LAST:event_cbStatusItemStateChanged
     //</editor-fold>
     //<editor-fold>
@@ -836,18 +811,18 @@ public class ServiceDialog extends javax.swing.JDialog implements ItemListener {
         int kq = serviceDetailsTableModelDialog.checkOrdID(ordID);
         switch (kq) {
             case 0:
-                SwingUtils.showErrorDialog("OrderID does not exist !");
+                EmployeeSwingUtils.showErrorDialog("OrderID does not exist !");
                 tbProduct.setValueAt(0, tbProduct.getSelectedRow(), COL_ODERID);
                 track = false;
                 break;
             //Check warranty
             case 1:
-                SwingUtils.showErrorDialog("Warranty period has expired !");
+                EmployeeSwingUtils.showErrorDialog("Warranty period has expired !");
                 tbProduct.setValueAt(0, tbProduct.getSelectedRow(), COL_ODERID);
                 track = false;
                 break;
             case 2:
-                SwingUtils.showInfoDialog("In warranty  !");
+                EmployeeSwingUtils.showInfoDialog("In warranty  !");
 //                tbProduct.setValueAt(selectedDetails.getOrdID(), tbProduct.getSelectedRow(), COL_ODERID);
 
                 track = true;
@@ -859,19 +834,20 @@ public class ServiceDialog extends javax.swing.JDialog implements ItemListener {
     private void insertAction() {
         // Toi da 20 items
         if (serviceDetailsTableModelDialog.getRowCount() == 4) {
-            SwingUtils.showInfoDialog("Maximum 5 item in 01 service  !");
+            EmployeeSwingUtils.showInfoDialog("Maximum 5 item in 01 service  !");
             btAdd.setEnabled(false);
         }
         ServiceDetails details = new ServiceDetails();
         details.setSerID(this.service.getSerID());
         details.setProQty(1);
         details.setProName(ServiceDetails.DEFAULT_PRONAME);
-
+        serviceDetailsTableModelDialog.addElement(details);
 //        details.setSerID(selectedDetails.getSerID());
-        serviceDetailsTableModelDialog.insert(details);
+//        serviceDetailsTableModelDialog.insert(details);
         scrollToRow(tbProduct.getRowCount() - 1);
         updateItemsLabel();
-        setTrackChanges(true);
+        btSave.setEnabled(false);
+//        setTrackChanges(false);
     }
 
     private void deleteAction() {
@@ -879,7 +855,7 @@ public class ServiceDialog extends javax.swing.JDialog implements ItemListener {
 
         // Toi thieu 01 item
         if (serviceDetailsTableModelDialog.getRowCount() == 2) {
-            SwingUtils.showInfoDialog("At least 01 item in 01 Service !");
+            EmployeeSwingUtils.showInfoDialog("At least 01 item in 01 Service !");
             btRemove.setEnabled(false);
         }
 
@@ -896,33 +872,35 @@ public class ServiceDialog extends javax.swing.JDialog implements ItemListener {
     private void updateAction() {
         // Check da co product chua va product da chon het chua
         if (checkProductEmpty()) {
-            SwingUtils.showInfoDialog("Please choose product name !");
+            EmployeeSwingUtils.showInfoDialog("Please choose product name !");
             return;
         }
-//        if (valDate == false) {
-//            SwingUtils.showErrorDialog("Return date must be today or after !");
-//            return;
-//        } else {
-//            this.service.setReturnDate(dcFilter.getDate());
-//        }
+        if (cbType.getSelectedIndex() == 1 && checkOrdIDEmpty()) {
+            EmployeeSwingUtils.showInfoDialog("Please input OrdID !");
+            return;
+        }
+        if (cbType.getSelectedIndex() == 0 && checkCostEmpty()) {
+            EmployeeSwingUtils.showInfoDialog("Please input Cost !");
+            return;
+        }
         if (service.getSerID() == -1) { // Insert mode
             if (serviceDetailsTableModelDialog.insert(service)) {
-                SwingUtils.showInfoDialog(SwingUtils.INSERT_SUCCESS);
+                EmployeeSwingUtils.showInfoDialog(EmployeeSwingUtils.INSERT_SUCCESS);
                 dispose(); //Tat dialog sau khi da update db
             } else {
-                SwingUtils.showInfoDialog(SwingUtils.INSERT_FAIL);
+                EmployeeSwingUtils.showInfoDialog(EmployeeSwingUtils.INSERT_FAIL);
             }
         } else if (serviceDetailsTableModelDialog.update(service)) { // Update mode
-            SwingUtils.showInfoDialog(SwingUtils.UPDATE_SUCCESS);
+            EmployeeSwingUtils.showInfoDialog(EmployeeSwingUtils.UPDATE_SUCCESS);
             dispose(); //Tat dialog sau khi da update db
         } else {
-            SwingUtils.showInfoDialog(SwingUtils.UPDATE_FAIL);
+            EmployeeSwingUtils.showInfoDialog(EmployeeSwingUtils.UPDATE_FAIL);
         }
     }
 
     private void cancelAction() {
         if (trackChanges) {
-            if (SwingUtils.showConfirmDialog("Discard change(s) and quit ?") == JOptionPane.YES_OPTION) {
+            if (EmployeeSwingUtils.showConfirmDialog("Discard change(s) and quit ?") == JOptionPane.YES_OPTION) {
                 dispose();
             }
         } else {
@@ -954,7 +932,7 @@ public class ServiceDialog extends javax.swing.JDialog implements ItemListener {
         updateItemsLabel();
 
         if (mustInfo) {
-            SwingUtils.showInfoDialog(SwingUtils.DB_RESET);
+            EmployeeSwingUtils.showInfoDialog(EmployeeSwingUtils.DB_RESET);
         }
         setTrackChanges(false);
     }
@@ -982,19 +960,33 @@ public class ServiceDialog extends javax.swing.JDialog implements ItemListener {
     }
 
     /**
-     * Kiem tra da chon product name day du het chua
+     * Kiem tra da chon product name + ordid day du het chua
      *
-     * @return true neu da chon product name day du
+     * @return true neu da chon day du
      */
     private boolean checkProductEmpty() {
         List<ServiceDetails> tmp = new ArrayList();
         serviceDetailsTableModelDialog.getList().stream().filter(op -> op.getProName().equals(OrderProduct.DEFAULT_PRONAME)).forEach(op -> tmp.add(op));
-        System.out.println(tmp.size());
+        System.out.println("product emty:" + tmp.size());
         return tmp.size() > 0; //Da chon product day du
     }
 
+    private boolean checkOrdIDEmpty() {
+        List<ServiceDetails> tmp = new ArrayList();
+        serviceDetailsTableModelDialog.getList().stream().filter(op -> op.getOrdID() == 0).forEach(op -> tmp.add(op));
+        System.out.println("ordID emty:" + tmp.size());
+        return tmp.size() > 0; //Da chon ordid day du
+    }
+
+    private boolean checkCostEmpty() {
+        List<ServiceDetails> tmp = new ArrayList();
+        serviceDetailsTableModelDialog.getList().stream().filter(op -> op.getSerCost() == 0).forEach(op -> tmp.add(op));
+        System.out.println("cost emty:" + tmp.size());
+        return tmp.size() > 0; //Da chon ordid day du
+    }
+
     /**
-     * Kiem tra duplicate product trong order
+     * Kiem tra duplicate product trong service
      *
      * @param proName
      * @return true if duplicated

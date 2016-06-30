@@ -12,6 +12,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -24,9 +25,11 @@ import utility.SwingUtils;
  */
 public class InboundDAOImpl implements IDAO<Inbound> {
     private CachedRowSet crs;
-
+    public static String mainCRS="SELECT InID,InDate,SupName,SupInvoiceID,UserName,s.SupID,u.UserID from Inbounds i join Suppliers s on i.SupID=s.SupID join Users u on u.UserID=i.UserID order by InID desc";
     public InboundDAOImpl() {
-        this.crs = getCRS("SELECT InID,InDate,SupName,SupInvoiceID,UserName,s.SupID,u.UserID from Inbounds i join Suppliers s on i.SupID=s.SupID join Users u on u.UserID=i.UserID order by InID DESC");
+        this.crs = getCRS(mainCRS);
+        
+       
     }
     
     
@@ -114,6 +117,38 @@ public class InboundDAOImpl implements IDAO<Inbound> {
     @Override
     public void setSelectingIndex(int idx) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+    
+    public void filterDate(Date fromDate,Date toDate){
+        if(fromDate!=null&& toDate !=null){
+        java.sql.Date sqlFromDate = new java.sql.Date(fromDate.getTime());
+        java.sql.Date sqlToDate = new java.sql.Date(toDate.getTime());
+        mainCRS ="SELECT InID,InDate,SupName,SupInvoiceID,UserName,s.SupID,u.UserID from Inbounds i join Suppliers s on i.SupID=s.SupID join Users u on u.UserID=i.UserID  where InDate >= "+"'"+sqlFromDate+"'"+"and InDate <="+"'"+sqlToDate+"'"+" order by InID DESC";
+        }
+        
+        else{
+            if(fromDate!=null&&toDate==null){
+                java.sql.Date sqlFromDate = new java.sql.Date(fromDate.getTime());
+                mainCRS="SELECT InID,InDate,SupName,SupInvoiceID,UserName,s.SupID,u.UserID from Inbounds i join Suppliers s on i.SupID=s.SupID join Users u on u.UserID=i.UserID  where InDate >= "+"'"+sqlFromDate+"'"+" order by InID DESC";
+            }
+            if(fromDate==null&&toDate!=null){
+                java.sql.Date sqlToDate = new java.sql.Date(toDate.getTime());
+                mainCRS="SELECT InID,InDate,SupName,SupInvoiceID,UserName,s.SupID,u.UserID from Inbounds i join Suppliers s on i.SupID=s.SupID join Users u on u.UserID=i.UserID  where InDate <= "+"'"+sqlToDate+"'"+" order by InID DESC";
+            }
+          
+        }
+        
+        
+    }
+    
+   
+
+    public static String getMainCRS() {
+        return mainCRS;
+    }
+
+    public static void setMainCRS(String mainCRS) {
+        InboundDAOImpl.mainCRS = mainCRS;
     }
     
 }

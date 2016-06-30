@@ -62,7 +62,13 @@ public class ProductDAOImpl implements IDAO<Product> {
     @Override
     public boolean insert(Product product) {
         boolean result = false;
-
+        product.setBraname("HTC");
+        product.setProName("Default Product"+System.currentTimeMillis());
+        product.setProStock(0);
+        product.setProPrice(0);
+        product.setProDesc("");
+        product.setProEnabled(true);
+        
         try {
             CachedRowSet crs1 = getCRS("SELECT * from salesoff");
             if(!crs1.first()){
@@ -70,23 +76,13 @@ public class ProductDAOImpl implements IDAO<Product> {
                 return false;
             }
             //lay saleoffid nho nhat
-            CachedRowSet crs2 = getCRS("Select Min(Salesoffid) as salesoffid from salesoff");
-            crs2.next();
-            DBProvider db = new DBProvider();
-            db.start();
-            PreparedStatement ps = db.getPreparedStatement("INSERT INTO products (BraID,ProName,ProStock,ProPrice,ProDescr,ProEnabled,SalesOffID,ProImage) values ((select BraID from Branches where BraName=?),?,?,?,?,?,?,?)"); 
-              ps.setString(1, "HTC");
-              ps.setString(2, "Default Product"+System.currentTimeMillis());
-              ps.setInt(3,0);
-              ps.setFloat(4, 0);
-              ps.setString(5, "");
-              ps.setBoolean(6, false);
-              ps.setInt(7,crs2.getInt("Salesoffid"));//gan saleoffid vao
-              ps.setBytes(8,null);
+            
+           
+            runPS("INSERT INTO products (BraID,ProName,ProStock,ProPrice,ProDescr,ProEnabled) values ((select BraID from Branches where BraName=?),?,?,?,?,?)",product.getBraname(),product.getProName(),product.getProStock(),product.getProPrice(),product.getProDesc(),product.getProEnabled()); 
+              
                     
             
-            // Refresh lai cachedrowset hien thi table
-            ps.executeUpdate();
+            
             result = true;
         } catch (SQLException ex) {
             Logger.getLogger(ProductDAOImpl.class.getName()).log(Level.SEVERE, null, ex);

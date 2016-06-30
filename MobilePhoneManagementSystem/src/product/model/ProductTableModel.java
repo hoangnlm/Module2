@@ -7,11 +7,12 @@ package product.model;
 
 
 
-import branch.model.Branch;
+
 import database.IDAO;
 import java.awt.Image;
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
+import product.dao.Branch;
 import product.dao.ProductDAOImpl;
 import utility.CustomizedTableModel;
 

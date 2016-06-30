@@ -32,10 +32,13 @@ import javax.swing.RowFilter;
 import javax.swing.RowFilter.ComparisonType;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
+import javax.swing.event.RowSorterEvent;
+import javax.swing.event.RowSorterListener;
 import javax.swing.table.TableColumnModel;
 import main.controller.LoginFrame;
 import main.model.UserFunction;
 import outbound.model.Outbound;
+import outbound.model.OutboundDAOImpl;
 import outbound.model.OutboundProductTableModel;
 import outbound.model.User;
 import outbound.model.UserComboboxModel;
@@ -113,6 +116,22 @@ public class OutboundPanel extends javax.swing.JPanel {
         sorter = new TableRowSorter<>(outboundTableModel);
         tbOutboundList.setRowSorter(sorter);
         
+        //event trong truong hop k co record trong table
+        sorter.addRowSorterListener(new RowSorterListener() {
+
+            @Override
+            public void sorterChanged(RowSorterEvent e) {
+                if (tbOutboundList.getRowCount() == 0||tbOutboundList.getSelectedRow()==-1) {
+                    btRemove.setEnabled(false);
+                    btUpdate.setEnabled(false);
+                } else {
+                    btRemove.setEnabled(true);
+                    btUpdate.setEnabled(true);
+                }
+            }
+        });
+        
+        
         // Select mac dinh cho level filter
         cbUserFilter.setSelectedIndex(cbUserFilter.getItemCount() - 1);
         
@@ -140,9 +159,9 @@ public class OutboundPanel extends javax.swing.JPanel {
        
         
         // ---------- Settup Jdatechooser
-        jdcFromDate.setBounds(0, 0, 130,20);
+        jdcFromDate.setBounds(0, 0, 120, 20);
         jdcFromDate.setDateFormatString("MMM dd, yyyy");
-        jdcToDate.setBounds(0, 0, 130, 20);
+        jdcToDate.setBounds(0, 0, 120, 20);
         jdcToDate.setDateFormatString("MMM dd, yyyy");
         jdcFromDate.getDateEditor().setEnabled(false);
         jdcToDate.getDateEditor().setEnabled(false);
@@ -156,14 +175,20 @@ public class OutboundPanel extends javax.swing.JPanel {
 
             @Override
             public void propertyChange(PropertyChangeEvent evt) {
-                doFilter();
+                String crs = new OutboundDAOImpl().mainCRS;
+                new OutboundDAOImpl().filterDate(jdcFromDate.getDate(),jdcToDate.getDate());
+                outboundTableModel.refresh();
+                new OutboundDAOImpl().setMainCRS(crs);
             }
         });
         jdcToDate.addPropertyChangeListener(new PropertyChangeListener() {
 
             @Override
             public void propertyChange(PropertyChangeEvent evt) {
-                doFilter();
+                String crs = new OutboundDAOImpl().mainCRS;
+                new OutboundDAOImpl().filterDate(jdcFromDate.getDate(),jdcToDate.getDate());
+                outboundTableModel.refresh();
+                new OutboundDAOImpl().setMainCRS(crs);
             }
         });
 
@@ -207,6 +232,7 @@ public class OutboundPanel extends javax.swing.JPanel {
             }
         });
         
+        
 //        // Set table cell listener to update table sales off
 //        TableCellListener tcl1 = new TableCellListener(tbOutboundList, new AbstractAction() {
 //            @Override
@@ -239,22 +265,7 @@ public class OutboundPanel extends javax.swing.JPanel {
             List<RowFilter<OutboundTableModel, Object>> filters = new ArrayList<>();
             filters.add(RowFilter.regexFilter("^" + tfIdFilter.getText(), 0));
             
-            if(jdcFromDate.getDate()!=null){
-                
-                
-            if(jdcFromDate.getDate()!=null||jdcToDate.getDate()!=null){
-                
-                if(jdcFromDate.getDate()!=null)
-                filters.add( RowFilter.dateFilter(ComparisonType.AFTER, jdcFromDate.getDate(),1) );
-                if(jdcToDate.getDate()!=null)
-                filters.add( RowFilter.dateFilter(ComparisonType.BEFORE, jdcToDate.getDate(),1) );
-                
-            }
-            }
-            if(jdcFromDate.getDate()==null&&jdcToDate.getDate()==null){
-                
-                
-            }
+            
             // Neu co chon cus level thi moi filter level
             if (cbUserFilter.getSelectedIndex() != cbUserFilter.getItemCount() - 1) {
                 filters.add(RowFilter.regexFilter("^" + ((User) cbUserFilter.getSelectedItem()).getUsername(), 3));
@@ -279,8 +290,8 @@ public class OutboundPanel extends javax.swing.JPanel {
         selectedRowIndex = tbOutboundList.getSelectedRow();
         selectedOutbound.setOutID((int) tbOutboundList.getValueAt(selectedRowIndex, 0));
         selectedOutbound.setOutDate((Date) tbOutboundList.getValueAt(selectedRowIndex, 1));
-        selectedOutbound.setUserName((String) tbOutboundList.getValueAt(selectedRowIndex, 2));
-        selectedOutbound.setOutContent((String) tbOutboundList.getValueAt(selectedRowIndex, 3));
+        selectedOutbound.setUserName((String) tbOutboundList.getValueAt(selectedRowIndex, 3));
+        selectedOutbound.setOutContent((String) tbOutboundList.getValueAt(selectedRowIndex, 2));
         // Reload table product list voi Order moi chon
         outboundProductTableModel.load(selectedOutbound.getOutID());
     }
@@ -300,11 +311,11 @@ public class OutboundPanel extends javax.swing.JPanel {
         centerRenderer.setHorizontalAlignment(JLabel.CENTER);
         //id
         tbOutboundList.getColumnModel().getColumn(COL_InID).setMinWidth(70);
-        tbOutboundList.getColumnModel().getColumn(COL_InID).setMaxWidth(70);
+//        tbOutboundList.getColumnModel().getColumn(COL_InID).setMaxWidth(70);
         tbOutboundList.getColumnModel().getColumn(COL_InID).setCellRenderer(centerRenderer);
         
         tbOutboundList.getColumnModel().getColumn(COL_InDate).setMinWidth(150);
-        tbOutboundList.getColumnModel().getColumn(COL_InDate).setMaxWidth(150);
+//        tbOutboundList.getColumnModel().getColumn(COL_InDate).setMaxWidth(150);
         tbOutboundList.getColumnModel().getColumn(COL_InDate).setCellRenderer(centerRenderer);
         
         
@@ -317,11 +328,11 @@ public class OutboundPanel extends javax.swing.JPanel {
         
         
         tbOutboundList.getColumnModel().getColumn(COL_Content).setMinWidth(475);
-        tbOutboundList.getColumnModel().getColumn(COL_Content).setMaxWidth(475);
+//        tbOutboundList.getColumnModel().getColumn(COL_Content).setMaxWidth(475);
         tbOutboundList.getColumnModel().getColumn(COL_Content).setCellRenderer(centerRenderer); 
         
           tbOutboundList.getColumnModel().getColumn(COL_UserName).setMinWidth(105);
-        tbOutboundList.getColumnModel().getColumn(COL_UserName).setMaxWidth(105);
+//        tbOutboundList.getColumnModel().getColumn(COL_UserName).setMaxWidth(105);
         tbOutboundList.getColumnModel().getColumn(COL_UserName).setCellRenderer(centerRenderer);
         
         
@@ -435,7 +446,7 @@ public class OutboundPanel extends javax.swing.JPanel {
         );
         pnlFromLayout.setVerticalGroup(
             pnlFromLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 0, Short.MAX_VALUE)
+            .addGap(0, 22, Short.MAX_VALUE)
         );
 
         jLabel3.setText("From Date:");
@@ -448,7 +459,7 @@ public class OutboundPanel extends javax.swing.JPanel {
         );
         pnlToLayout.setVerticalGroup(
             pnlToLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 30, Short.MAX_VALUE)
+            .addGap(0, 22, Short.MAX_VALUE)
         );
 
         javax.swing.GroupLayout pnlSearchLayout = new javax.swing.GroupLayout(pnlSearch);
@@ -456,15 +467,15 @@ public class OutboundPanel extends javax.swing.JPanel {
         pnlSearchLayout.setHorizontalGroup(
             pnlSearchLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(pnlSearchLayout.createSequentialGroup()
-                .addContainerGap(113, Short.MAX_VALUE)
-                .addGroup(pnlSearchLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(jLabel1)
-                    .addComponent(jLabel6))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addGroup(pnlSearchLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jLabel1, javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addComponent(jLabel6, javax.swing.GroupLayout.Alignment.TRAILING))
+                .addGap(18, 18, 18)
                 .addGroup(pnlSearchLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                     .addComponent(tfIdFilter)
-                    .addComponent(cbUserFilter, 0, 197, Short.MAX_VALUE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 17, Short.MAX_VALUE)
+                    .addComponent(cbUserFilter, 0, 165, Short.MAX_VALUE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addGroup(pnlSearchLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jLabel4, javax.swing.GroupLayout.Alignment.TRAILING)
                     .addComponent(jLabel3, javax.swing.GroupLayout.Alignment.TRAILING))
@@ -472,28 +483,26 @@ public class OutboundPanel extends javax.swing.JPanel {
                 .addGroup(pnlSearchLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(pnlTo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(pnlFrom, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 18, Short.MAX_VALUE)
+                .addGap(18, 18, 18)
                 .addComponent(jButton5)
-                .addContainerGap(101, Short.MAX_VALUE))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         pnlSearchLayout.setVerticalGroup(
             pnlSearchLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(pnlSearchLayout.createSequentialGroup()
                 .addGroup(pnlSearchLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(pnlSearchLayout.createSequentialGroup()
-                        .addGroup(pnlSearchLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(jLabel1)
-                            .addComponent(tfIdFilter, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addGap(0, 0, Short.MAX_VALUE))
-                    .addComponent(jLabel3)
-                    .addComponent(pnlFrom, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addGroup(pnlSearchLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(pnlSearchLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                        .addComponent(jLabel1)
+                        .addComponent(tfIdFilter, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(jLabel3))
+                    .addComponent(pnlFrom, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addGroup(pnlSearchLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, pnlSearchLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                         .addComponent(jLabel4)
                         .addComponent(jLabel6)
                         .addComponent(cbUserFilter, javax.swing.GroupLayout.PREFERRED_SIZE, 22, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addComponent(pnlTo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(pnlTo, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
             .addGroup(pnlSearchLayout.createSequentialGroup()
                 .addContainerGap()
@@ -515,7 +524,6 @@ public class OutboundPanel extends javax.swing.JPanel {
         ));
         tbOutboundList.setFillsViewportHeight(true);
         tbOutboundList.setRowHeight(25);
-        tbOutboundList.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
         tbOutboundList.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 tbOutboundListMouseClicked(evt);
@@ -524,7 +532,6 @@ public class OutboundPanel extends javax.swing.JPanel {
         tableScrollPane.setViewportView(tbOutboundList);
 
         jScroll.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "Outbound Note Details", javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Tahoma", 1, 18), new java.awt.Color(255, 153, 0))); // NOI18N
-        jScroll.setAutoscrolls(true);
 
         tbProductList.setAutoCreateRowSorter(true);
         tbProductList.setModel(new javax.swing.table.DefaultTableModel(
@@ -537,7 +544,6 @@ public class OutboundPanel extends javax.swing.JPanel {
         ));
         tbProductList.setFillsViewportHeight(true);
         tbProductList.setRowHeight(25);
-        tbProductList.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
         jScroll.setViewportView(tbProductList);
 
         btAdd.setIcon(new javax.swing.ImageIcon(getClass().getResource("/image/product/Add.png"))); // NOI18N
@@ -566,6 +572,11 @@ public class OutboundPanel extends javax.swing.JPanel {
 
         jButton1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/image/product/Refresh.png"))); // NOI18N
         jButton1.setText("Refresh");
+        jButton1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton1ActionPerformed(evt);
+            }
+        });
 
         jPanel1.setBorder(javax.swing.BorderFactory.createEtchedBorder());
 
@@ -586,9 +597,9 @@ public class OutboundPanel extends javax.swing.JPanel {
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
-                .addContainerGap()
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addComponent(jLabel7)
-                .addContainerGap())
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
@@ -596,38 +607,38 @@ public class OutboundPanel extends javax.swing.JPanel {
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addContainerGap(129, Short.MAX_VALUE)
+                .addContainerGap(106, Short.MAX_VALUE)
                 .addComponent(btAdd, javax.swing.GroupLayout.PREFERRED_SIZE, 141, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(btUpdate, javax.swing.GroupLayout.PREFERRED_SIZE, 135, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(btUpdate, javax.swing.GroupLayout.PREFERRED_SIZE, 153, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(btRemove, javax.swing.GroupLayout.PREFERRED_SIZE, 138, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(btRemove, javax.swing.GroupLayout.PREFERRED_SIZE, 155, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 130, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(0, 116, Short.MAX_VALUE))
+                .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 141, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(106, Short.MAX_VALUE))
+            .addComponent(pnlSearch, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
             .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
             .addComponent(tableScrollPane)
             .addComponent(jScroll)
-            .addComponent(pnlSearch, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, 67, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(pnlSearch, javax.swing.GroupLayout.PREFERRED_SIZE, 103, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(tableScrollPane, javax.swing.GroupLayout.PREFERRED_SIZE, 218, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jScroll, javax.swing.GroupLayout.PREFERRED_SIZE, 191, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(pnlSearch, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(tableScrollPane, javax.swing.GroupLayout.PREFERRED_SIZE, 223, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(jScroll, javax.swing.GroupLayout.PREFERRED_SIZE, 217, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(btAdd)
                     .addComponent(btUpdate)
                     .addComponent(btRemove)
                     .addComponent(jButton1))
-                .addContainerGap())
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
     }// </editor-fold>//GEN-END:initComponents
 
@@ -636,7 +647,7 @@ public class OutboundPanel extends javax.swing.JPanel {
             new OutboundDialog(null).setVisible(true);
             refreshAction(false);
             new ProductPanel().getProductTableModel().refresh();
-            scrollToRow(tbOutboundList.getRowCount() - 1);
+            scrollToRow(selectedRowIndex);
        
     }//GEN-LAST:event_btAddActionPerformed
 
@@ -680,7 +691,13 @@ public class OutboundPanel extends javax.swing.JPanel {
     private void btUpdateActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btUpdateActionPerformed
         new OutboundDialog(selectedOutbound).setVisible(true);
         refreshAction(false);
+        scrollToRow(selectedRowIndex);
     }//GEN-LAST:event_btUpdateActionPerformed
+
+    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
+        refreshAction(true);
+        SwingUtils.showInfoDialog(SwingUtils.DB_REFRESH);
+    }//GEN-LAST:event_jButton1ActionPerformed
     public void setTableColumnType(JTable tbl, Integer colID, Class type) {
         TableColumn col = tbl.getColumnModel().getColumn(colID);
         col.setCellEditor(tbl.getDefaultEditor(type));
@@ -709,8 +726,8 @@ public class OutboundPanel extends javax.swing.JPanel {
     }
     
     private void scrollToRow(int row) {
-        tbProductList.getSelectionModel().setSelectionInterval(row, row);
-        tbProductList.scrollRectToVisible(new Rectangle(tbProductList.getCellRect(row, 0, true)));
+        tbOutboundList.getSelectionModel().setSelectionInterval(row, row);
+        tbOutboundList.scrollRectToVisible(new Rectangle(tbOutboundList.getCellRect(row, 0, true)));
     }
    private void deleteAction() {
         setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));

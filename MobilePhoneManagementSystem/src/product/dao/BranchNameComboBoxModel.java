@@ -5,8 +5,7 @@
  */
 package product.dao;
 
-import branch.dao.BranchDAOImpl;
-import branch.model.Branch;
+
 import database.DBProvider;
 import java.sql.SQLException;
 import java.util.logging.Level;
