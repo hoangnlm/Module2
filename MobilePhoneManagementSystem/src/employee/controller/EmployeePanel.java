@@ -7,7 +7,6 @@ package employee.controller;
 
 //import utility.ComboBoxCellEditor;
 import com.toedter.calendar.JDateChooser;
-import static customer.controller.CustomerPanel.COL_CUSPHONE;
 import employee.model.Employee;
 import java.awt.Cursor;
 import java.awt.Dimension;
@@ -34,9 +33,14 @@ import main.model.UserFunction;
 
 import employee.model.DateCellBirthDayEditor;
 import employee.model.DateCellWorkingDateEditor;
+import employee.model.EmployeeDAOImpl;
 import utility.IntegerCellEditor;
 import utility.StringCellEditor;
 import utility.TableCellListener;
+import employee.model.EmployeeSwingUtils;
+import employee.model.IntegerCurrencyCellRenderer;
+import javax.swing.JLabel;
+import javax.swing.table.DefaultTableCellRenderer;
 import utility.SwingUtils;
 
 /**
@@ -72,15 +76,26 @@ public class EmployeePanel extends javax.swing.JPanel {
     public EmployeePanel() {
         initComponents();
 // Set date picker len giao dien
+        Calendar c = Calendar.getInstance();
+
         dcFilter = new JDateChooser();
         dcFilter.setBounds(0, 0, 110, 20);
         dcFilter.setDateFormatString("dd/MM/yyyy");
         dcFilter.setDate(null);
+        c.set(1944, 11, 31);
+        dcFilter.getJCalendar().setMinSelectableDate(c.getTime());
+        c.set(1999, 11, 31);
+        dcFilter.getJCalendar().setMaxSelectableDate(c.getTime());
         pnBirthday.add(dcFilter);
+        //work day
         dcFilter1 = new JDateChooser();
         dcFilter1.setBounds(0, 0, 110, 20);
         dcFilter1.setDateFormatString("dd/MM/yyyy");
         dcFilter1.setDate(null);
+        c.set(2010, 0, 1);
+        dcFilter1.getJCalendar().setMinSelectableDate(c.getTime());
+        Calendar c1 = Calendar.getInstance();
+        dcFilter1.getJCalendar().setMaxSelectableDate(c1.getTime());
         pnStartDate.add(dcFilter1);
         //Disable button khi moi khoi dong len
         setButtonEnabled(false);
@@ -102,40 +117,54 @@ public class EmployeePanel extends javax.swing.JPanel {
         // Set height cho table header
         tbEmpployeeList.getTableHeader().setPreferredSize(new Dimension(100, 30));
         //Set CellEditor cho table
+        DefaultTableCellRenderer centerRenderer = new DefaultTableCellRenderer();
+        centerRenderer.setHorizontalAlignment(JLabel.CENTER);
+        tbEmpployeeList.getColumnModel().getColumn(COL_EMPID).setCellRenderer(centerRenderer);
+
         //col empid
         tbEmpployeeList.getColumnModel().getColumn(COL_EMPID).setMaxWidth(30);
 
         tbEmpployeeList.getColumnModel().getColumn(COL_STATUS).setMinWidth(30);
-        tbEmpployeeList.getColumnModel().getColumn(COL_STATUS).setMaxWidth(70);
+        tbEmpployeeList.getColumnModel().getColumn(COL_STATUS).setMaxWidth(30);
 
         // Col emp name
-        tbEmpployeeList.getColumnModel().getColumn(COL_EMPNAME).setCellEditor(new StringCellEditor(1, 50, SwingUtils.PATTERN_NAMEWITHSPACE));
         tbEmpployeeList.getColumnModel().getColumn(COL_EMPNAME).setMinWidth(160);
         tbEmpployeeList.getColumnModel().getColumn(COL_EMPNAME).setMaxWidth(300);
-        tbEmpployeeList.getColumnModel().getColumn(COL_EMPDES).setCellEditor(new StringCellEditor(1, 50, SwingUtils.PATTERN_NAMEWITHSPACE));
-//        tbEmpployeeList.getColumnModel().getColumn(COL_EMPNAME).setMinWidth(160);
-//        tbEmpployeeList.getColumnModel().getColumn(COL_EMPNAME).setMaxWidth(300);
+        tbEmpployeeList.getColumnModel().getColumn(COL_EMPNAME).setCellEditor(new StringCellEditor(1, 50, EmployeeSwingUtils.PATTERN_NAMEWITHSPACE));
+        
+
+        tbEmpployeeList.getColumnModel().getColumn(COL_EMPDES).setMinWidth(120);
+        tbEmpployeeList.getColumnModel().getColumn(COL_EMPDES).setCellEditor(new StringCellEditor(1, 30, EmployeeSwingUtils.PATTERN_NAMEWITHSPACE));
 
         // Col emp phone        
-        tbEmpployeeList.getColumnModel().getColumn(COL_EMPPHONE).setCellEditor(new StringCellEditor(1, 20, SwingUtils.PATTERN_NUMBER));
-        tbEmpployeeList.getColumnModel().getColumn(COL_EMPPHONE).setMinWidth(80);
-        tbEmpployeeList.getColumnModel().getColumn(COL_EMPPHONE).setMaxWidth(100);
+//        tbEmpployeeList.getColumnModel().getColumn(COL_EMPPHONE).setMinWidth(100);
+//        
+//        tbEmpployeeList.getColumnModel().getColumn(COL_EMPPHONE).setCellEditor(new StringCellEditor(1, 20, SwingUtils.PATTERN_NUMBER));
+// Col cus phone
+        tbEmpployeeList.getColumnModel().getColumn(2).setMinWidth(100);
+        tbEmpployeeList.getColumnModel().getColumn(2).setCellEditor(new StringCellEditor(1, 20, SwingUtils.PATTERN_NUMBER));
+//        tbEmpployeeList.getColumnModel().getColumn(COL_EMPPHONE).setMaxWidth(100);
         //col bonus
-        tbEmpployeeList.getColumnModel().getColumn(COL_BONUS).setCellEditor(new IntegerCellEditor(500000, 5000000));
         tbEmpployeeList.getColumnModel().getColumn(COL_BONUS).setMinWidth(80);
         tbEmpployeeList.getColumnModel().getColumn(COL_BONUS).setMaxWidth(80);
+        tbEmpployeeList.getColumnModel().getColumn(COL_BONUS).setCellEditor(new IntegerCellEditor(0, 20000000));
+        tbEmpployeeList.getColumnModel().getColumn(COL_BONUS).setCellRenderer(new IntegerCurrencyCellRenderer());
+
         //col salary
-        tbEmpployeeList.getColumnModel().getColumn(COL_SALARY).setCellEditor(new IntegerCellEditor(100000, 10000000));
         tbEmpployeeList.getColumnModel().getColumn(COL_SALARY).setMinWidth(80);
         tbEmpployeeList.getColumnModel().getColumn(COL_SALARY).setMaxWidth(80);
+        tbEmpployeeList.getColumnModel().getColumn(COL_SALARY).setCellEditor(new IntegerCellEditor(5000000, 20000000));
+        tbEmpployeeList.getColumnModel().getColumn(COL_SALARY).setCellRenderer(new IntegerCurrencyCellRenderer());
+        
         // Col birth date
-        tbEmpployeeList.getColumnModel().getColumn(COL_EMPBIRTH).setCellEditor(new DateCellBirthDayEditor());
         tbEmpployeeList.getColumnModel().getColumn(COL_EMPBIRTH).setMinWidth(90);
         tbEmpployeeList.getColumnModel().getColumn(COL_EMPBIRTH).setMaxWidth(90);
+        tbEmpployeeList.getColumnModel().getColumn(COL_EMPBIRTH).setCellEditor(new DateCellBirthDayEditor());
+        
         // Col work start date
-        tbEmpployeeList.getColumnModel().getColumn(COL_WORKSTART).setCellEditor(new DateCellWorkingDateEditor());
         tbEmpployeeList.getColumnModel().getColumn(COL_WORKSTART).setMinWidth(90);
         tbEmpployeeList.getColumnModel().getColumn(COL_WORKSTART).setMaxWidth(90);
+        tbEmpployeeList.getColumnModel().getColumn(COL_WORKSTART).setCellEditor(new DateCellWorkingDateEditor());        
 
         // Bat su kien select row tren table
         tbEmpployeeList.getSelectionModel().addListSelectionListener((ListSelectionEvent e) -> {
@@ -147,6 +176,17 @@ public class EmployeePanel extends javax.swing.JPanel {
                 setButtonEnabled(false);
             }
         });
+
+        // Check permission employee
+        if (!LoginFrame.checkPermission(new UserFunction(UserFunction.FG_EMPLOYEE, UserFunction.FN_UPDATE))) {
+            tbEmpployeeList.setEnabled(false);
+            btAdd.setEnabled(false);
+            btRemove.setEnabled(false);
+        }
+        // Check permission salary
+        if (!LoginFrame.checkPermission(new UserFunction(UserFunction.FG_SALARY, UserFunction.FN_VIEW))) {
+            btSalary.setEnabled(false);
+        }
 //</editor-fold>
 
 //<editor-fold defaultstate="collapsed" desc="Set cell listener cho updating">
@@ -154,11 +194,6 @@ public class EmployeePanel extends javax.swing.JPanel {
             @Override
             public void actionPerformed(ActionEvent e) {
                 TableCellListener tcl = (TableCellListener) e.getSource();
-//                System.out.println("Row   : " + tcl.getRow());
-//                System.out.println("Column: " + tcl.getColumn());
-//                System.out.println("Old   : " + tcl.getOldValue());
-//                System.out.println("New   : " + tcl.getNewValue());
-
                 switch (tcl.getColumn()) {
                     case COL_EMPNAME:
                         selectedEmployee.setEmpName((String) tcl.getNewValue());
@@ -185,7 +220,7 @@ public class EmployeePanel extends javax.swing.JPanel {
                         selectedEmployee.setEmpEnabled((boolean) tcl.getNewValue());
                         break;
                 }
-                if (SwingUtils.showConfirmDialog("Are you sure to update ?") == JOptionPane.NO_OPTION) {
+                if (EmployeeSwingUtils.showConfirmDialog("Are you sure to update ?") == JOptionPane.NO_OPTION) {
                     refreshAction(false);
                 } else {
                     updateAction();
@@ -293,16 +328,7 @@ public class EmployeePanel extends javax.swing.JPanel {
             }
         });
 //</editor-fold>
-// Check permission employee
-        if (!LoginFrame.checkPermission(new UserFunction(UserFunction.FG_EMPLOYEE, UserFunction.FN_UPDATE))) {
-            tbEmpployeeList.setEnabled(false);
-            btAdd.setEnabled(false);
-            btRemove.setEnabled(false);
-        }
-        // Check permission salary
-        if (!LoginFrame.checkPermission(new UserFunction(UserFunction.FG_SALARY, UserFunction.FN_VIEW))) {
-            btSalary.setEnabled(false);
-        }
+
     }
 
     /**
@@ -420,7 +446,7 @@ public class EmployeePanel extends javax.swing.JPanel {
                 .addGroup(pnFilterLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                     .addComponent(tfBonusFilter, javax.swing.GroupLayout.DEFAULT_SIZE, 47, Short.MAX_VALUE)
                     .addComponent(tfIdFilter))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 41, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addGroup(pnFilterLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                     .addComponent(jLabel3, javax.swing.GroupLayout.PREFERRED_SIZE, 1, Short.MAX_VALUE)
                     .addComponent(jLabel5, javax.swing.GroupLayout.DEFAULT_SIZE, 39, Short.MAX_VALUE))
@@ -428,7 +454,7 @@ public class EmployeePanel extends javax.swing.JPanel {
                 .addGroup(pnFilterLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                     .addComponent(tfEmpPhoneFilter, javax.swing.GroupLayout.DEFAULT_SIZE, 116, Short.MAX_VALUE)
                     .addComponent(tfEmpNameFilter))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 34, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addGroup(pnFilterLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                     .addComponent(jLabel7, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(jLabel8, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
@@ -436,7 +462,7 @@ public class EmployeePanel extends javax.swing.JPanel {
                 .addGroup(pnFilterLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                     .addComponent(pnBirthday, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(pnStartDate, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                .addGap(18, 40, Short.MAX_VALUE)
+                .addGap(18, 18, Short.MAX_VALUE)
                 .addGroup(pnFilterLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                     .addComponent(jLabel9, javax.swing.GroupLayout.DEFAULT_SIZE, 73, Short.MAX_VALUE)
                     .addComponent(jLabel6, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
@@ -536,7 +562,7 @@ public class EmployeePanel extends javax.swing.JPanel {
             .addGroup(pnTitleLayout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 450, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 136, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addComponent(btSalary, javax.swing.GroupLayout.PREFERRED_SIZE, 170, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap())
         );
@@ -567,20 +593,17 @@ public class EmployeePanel extends javax.swing.JPanel {
         this.setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(jScrollPane2, javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(javax.swing.GroupLayout.Alignment.LEADING, layout.createSequentialGroup()
-                        .addContainerGap(162, Short.MAX_VALUE)
-                        .addComponent(btAdd, javax.swing.GroupLayout.PREFERRED_SIZE, 150, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(btRemove, javax.swing.GroupLayout.PREFERRED_SIZE, 150, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(btRefresh, javax.swing.GroupLayout.PREFERRED_SIZE, 150, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(0, 156, Short.MAX_VALUE))
-                    .addComponent(pnFilter, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(pnTitle, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                .addContainerGap())
+            .addGroup(layout.createSequentialGroup()
+                .addContainerGap(164, Short.MAX_VALUE)
+                .addComponent(btAdd, javax.swing.GroupLayout.PREFERRED_SIZE, 150, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(btRemove, javax.swing.GroupLayout.PREFERRED_SIZE, 150, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(btRefresh, javax.swing.GroupLayout.PREFERRED_SIZE, 150, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(164, Short.MAX_VALUE))
+            .addComponent(jScrollPane2)
+            .addComponent(pnFilter, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addComponent(pnTitle, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -606,7 +629,23 @@ public class EmployeePanel extends javax.swing.JPanel {
     }//GEN-LAST:event_btAddActionPerformed
 
     private void btSalaryActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btSalaryActionPerformed
-        new SalaryDialog(selectedEmployee).setVisible(true);
+        if (selectedEmployee.getEmpID() == 0) {
+            EmployeeDAOImpl e = new EmployeeDAOImpl();
+            Employee emp = e.getEmpFromUserName(LoginFrame.config.userName);
+            SalaryDialog sd = new SalaryDialog(emp);
+
+            sd.setTitle("Salary Details of     " + emp.getEmpName() + "     Working with Account     " + LoginFrame.config.userName);
+            sd.setVisible(true);
+        } else {
+            EmployeeDAOImpl e = new EmployeeDAOImpl();
+            SalaryDialog sd = new SalaryDialog(selectedEmployee);
+            if (e.getUserNameFromEmpID(selectedEmployee.getEmpID()).isEmpty() == false) {
+                sd.setTitle("Salary Details of     " + selectedEmployee.getEmpName() + "     working with account     " + e.getUserNameFromEmpID(selectedEmployee.getEmpID()));
+            } else {
+                sd.setTitle("Salary Details of     " + selectedEmployee.getEmpName());
+            }
+            sd.setVisible(true);
+        }
     }//GEN-LAST:event_btSalaryActionPerformed
 
     private void btRefreshActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btRefreshActionPerformed
@@ -772,7 +811,7 @@ public class EmployeePanel extends javax.swing.JPanel {
             employeeTableModel.refresh();
 
             setCursor(null);
-            SwingUtils.showInfoDialog(SwingUtils.DB_REFRESH);
+            EmployeeSwingUtils.showInfoDialog(EmployeeSwingUtils.DB_REFRESH);
         } else {
             // Refresh table
             employeeTableModel.refresh();
@@ -785,7 +824,7 @@ public class EmployeePanel extends javax.swing.JPanel {
         setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
         boolean result = employeeTableModel.insert(new Employee());
         setCursor(null);
-        SwingUtils.showInfoDialog(result ? SwingUtils.INSERT_SUCCESS : SwingUtils.INSERT_FAIL);
+        EmployeeSwingUtils.showInfoDialog(result ? EmployeeSwingUtils.INSERT_SUCCESS : EmployeeSwingUtils.INSERT_FAIL);
         // Select row vua insert vao
         selectedRowIndex = tbEmpployeeList.getRowCount() - 1;
         scrollToRow(selectedRowIndex);
@@ -799,7 +838,7 @@ public class EmployeePanel extends javax.swing.JPanel {
         boolean result = employeeTableModel.update(selectedEmployee);
         refreshAction(false);
         setCursor(null);
-        SwingUtils.showInfoDialog(result ? SwingUtils.UPDATE_SUCCESS : SwingUtils.UPDATE_FAIL);
+        EmployeeSwingUtils.showInfoDialog(result ? EmployeeSwingUtils.UPDATE_SUCCESS : EmployeeSwingUtils.UPDATE_FAIL);
         scrollToRow(selectedRowIndex);
     }
 
@@ -807,7 +846,7 @@ public class EmployeePanel extends javax.swing.JPanel {
         setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
         boolean result = employeeTableModel.delete(selectedEmployee);
         setCursor(null);
-        SwingUtils.showInfoDialog(result ? SwingUtils.DELETE_SUCCESS : SwingUtils.DELETE_FAIL);
+        EmployeeSwingUtils.showInfoDialog(result ? EmployeeSwingUtils.DELETE_SUCCESS : EmployeeSwingUtils.DELETE_FAIL);
 
         // Neu row xoa la row cuoi thi lui cursor ve
         // Neu row xoa la row khac cuoi thi tien cursor ve truoc
@@ -822,8 +861,8 @@ public class EmployeePanel extends javax.swing.JPanel {
 
     private void setButtonEnabled(boolean enabled, JButton... exclude) {
         btRemove.setEnabled(enabled);
-        btAdd.setEnabled(enabled);
-        btSalary.setEnabled(enabled);
+//        btAdd.setEnabled(enabled);
+//        btSalary.setEnabled(enabled);
 
         // Ngoai tru may button nay luon luon enable
         if (exclude.length != 0) {

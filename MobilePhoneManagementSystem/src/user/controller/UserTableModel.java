@@ -20,7 +20,10 @@ public class UserTableModel extends CustomizedTableModel<User> {
         Class[] columnClasses = {Integer.class, String.class, String.class, Boolean.class, String.class,Integer.class};
         return columnClasses[column];
     }
-
+    @Override
+    public boolean isCellEditable(int rowIndex, int columnIndex) {
+        return columnIndex == 2 || columnIndex == 3 ; //Chi sua empname va stt
+    }
     @Override
     public Object getValueAt(int rowIndex, int columnIndex) {
         item = list.get(rowIndex);

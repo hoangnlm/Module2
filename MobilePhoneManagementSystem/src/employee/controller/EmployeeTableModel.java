@@ -15,7 +15,7 @@ public class EmployeeTableModel extends CustomizedTableModel<Employee> {
 
     public EmployeeTableModel() {
         super(new EmployeeDAOImpl(), new String[]{"ID", "Name", "Phone", "Birthday", "BasicSalary", "EmpDes",
-            "WorkStart", "Bonus", "Status"});
+            "WorkStart", "Bonus", "STT"});
     }
 
     public Employee getEmpAtIndex(int index) {

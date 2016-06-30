@@ -22,9 +22,9 @@ public class DateCellBirthDayEditor extends DefaultCellEditor {
         super(new JTextField());
         dc = new JDateChooser();
         Calendar c = Calendar.getInstance();
-        c.set(1945, 0, 1);
+        c.set(1945, 11, 31);
         dc.getJCalendar().setMinSelectableDate(c.getTime());
-        c.set(2000, 11, 30);
+        c.set(1999, 11, 31);
         dc.getJCalendar().setMaxSelectableDate(c.getTime());
         dc.getDateEditor().setEnabled(false);
     }

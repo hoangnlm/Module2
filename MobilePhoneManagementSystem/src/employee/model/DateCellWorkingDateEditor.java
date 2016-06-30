@@ -22,10 +22,10 @@ public class DateCellWorkingDateEditor extends DefaultCellEditor {
         super(new JTextField());
         dc = new JDateChooser();
         Calendar c = Calendar.getInstance();
-        c.set(2000, 0, 1);
-        dc.getJCalendar().setMinSelectableDate(c.getTime());
-        c.set(2016, 7, 6);
         dc.getJCalendar().setMaxSelectableDate(c.getTime());
+        
+        c.set(2010, 0, 1);
+        dc.getJCalendar().setMinSelectableDate(c.getTime());
         dc.getDateEditor().setEnabled(false);
     }
 
