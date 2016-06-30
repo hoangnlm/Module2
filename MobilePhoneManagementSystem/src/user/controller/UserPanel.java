@@ -21,8 +21,11 @@ import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.table.TableRowSorter;
+import main.controller.LoginFrame;
+import main.model.UserFunction;
 
 import user.model.User;
+import user.model.UserDAOImpl;
 import user.model.UserEmployee;
 import utility.StringCellEditor;
 import utility.TableCellListener;
@@ -53,16 +56,18 @@ public class UserPanel extends javax.swing.JPanel {
     private static final int COL_PASS = 4;
     private static final int COL_EMPID = 5;
 
+    private String userName = LoginFrame.config.userName;
+
     //<editor-fold defaultstate="collapsed" desc="Constructor">
     /**
-     * Creates new form OrderPanel
+     * Creates new form UserPanel
      */
     public UserPanel() {
         initComponents();
         // Disable button khi moi khoi dong len
         setButtonEnabled(false);
-        
-        // Selecting customer in the table
+
+        // Selecting user in the table
         selectedUser = new User();
 
         // Set data cho column employee Username combobox
@@ -105,13 +110,20 @@ public class UserPanel extends javax.swing.JPanel {
             DefaultListSelectionModel model = (DefaultListSelectionModel) e.getSource();
             if (!model.isSelectionEmpty()) {
                 fetchAction();
+                // Check permission Permission (chi check view)
                 setButtonEnabled(true);
+                if (!LoginFrame.checkPermission(new UserFunction(UserFunction.FG_PERMISSION, UserFunction.FN_VIEW))) {
+                    btPermission.setEnabled(false);
+                } else {
+                    setButtonPermissionEnabled(checkChangePass());
+                }
+                setButtonChangePassEnabled(checkChangePass());
             } else {
                 setButtonEnabled(false);
             }
         });
-//</editor-fold>
 
+//</editor-fold>
 //<editor-fold defaultstate="collapsed" desc="Set cell listener cho updating">
         TableCellListener tcl = new TableCellListener(tbUserList, new AbstractAction() {
             @Override
@@ -191,6 +203,18 @@ public class UserPanel extends javax.swing.JPanel {
         });
 
 //</editor-fold>
+// Check permission order
+        if (!LoginFrame.checkPermission(new UserFunction(UserFunction.FG_USER, UserFunction.FN_UPDATE))) {
+            tbUserList.setEnabled(false);
+            btAdd.setEnabled(false);
+            btChangePass.setEnabled(false);
+            btRemove.setEnabled(false);
+        }
+        // Check permission Permission (chi check view)
+        if (!LoginFrame.checkPermission(new UserFunction(UserFunction.FG_PERMISSION, UserFunction.FN_VIEW))) {
+            btPermission.setEnabled(false);
+        }
+
     }
 
     /**
@@ -334,7 +358,7 @@ public class UserPanel extends javax.swing.JPanel {
         btPermission.setFont(new java.awt.Font("Lucida Grande", 3, 14)); // NOI18N
         btPermission.setForeground(new java.awt.Color(255, 153, 0));
         btPermission.setIcon(new javax.swing.ImageIcon(getClass().getResource("/image/user/rsz_permission.png"))); // NOI18N
-        btPermission.setText("<html><u>Permission</u></html>");
+        btPermission.setText("<html><u>Permission...</u></html>");
         btPermission.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btPermissionActionPerformed(evt);
@@ -343,7 +367,7 @@ public class UserPanel extends javax.swing.JPanel {
 
         btChangePass.setFont(new java.awt.Font("Lucida Grande", 3, 14)); // NOI18N
         btChangePass.setForeground(new java.awt.Color(255, 153, 0));
-        btChangePass.setText("<html><u>Change Password</u></html>");
+        btChangePass.setText("<html><u>Change Password...</u></html>");
         btChangePass.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btChangePassActionPerformed(evt);
@@ -356,9 +380,9 @@ public class UserPanel extends javax.swing.JPanel {
             pnTitleLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(pnTitleLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 295, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(btChangePass, javax.swing.GroupLayout.PREFERRED_SIZE, 247, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 322, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(18, 18, 18)
+                .addComponent(btChangePass, javax.swing.GroupLayout.PREFERRED_SIZE, 212, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addComponent(btPermission, javax.swing.GroupLayout.PREFERRED_SIZE, 170, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap())
@@ -427,7 +451,13 @@ public class UserPanel extends javax.swing.JPanel {
     }//GEN-LAST:event_btAddActionPerformed
 
     private void btPermissionActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btPermissionActionPerformed
+
+        if (selectedUser.getUserID() == 0) {
+            selectedUser = new UserDAOImpl().getUserFromName(LoginFrame.config.userName);
+        }
         new PermissionDialog(selectedUser).setVisible(true);
+
+
     }//GEN-LAST:event_btPermissionActionPerformed
 
     private void btRefreshActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btRefreshActionPerformed
@@ -447,8 +477,11 @@ public class UserPanel extends javax.swing.JPanel {
     }//GEN-LAST:event_jButton1ActionPerformed
 
     private void btChangePassActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btChangePassActionPerformed
-         new PasswordDialog(selectedUser).setVisible(true);
-         refreshAction(false);
+        if (selectedUser.getUserID() == 0) {
+            selectedUser = new UserDAOImpl().getUserFromName(LoginFrame.config.userName);
+        }
+        new PasswordDialog(selectedUser).setVisible(true);
+        refreshAction(false);
     }//GEN-LAST:event_btChangePassActionPerformed
     //// </editor-fold>
     //<editor-fold defaultstate="collapsed" desc="khai bao component">
@@ -533,6 +566,28 @@ public class UserPanel extends javax.swing.JPanel {
         scrollToRow(selectedRowIndex);
     }
 
+    private boolean checkRoot() {
+        UserDAOImpl u = new UserDAOImpl();
+        boolean result = u.checkRoot(userName);
+        return result;
+    }
+
+    private boolean checkPermissionUpdate() {
+        UserDAOImpl u = new UserDAOImpl();
+        boolean result = u.checkPermissionUpdate(userName);
+        return result;
+    }
+
+    private boolean checkChangePass() {
+        UserDAOImpl u = new UserDAOImpl();
+        boolean result = u.checkChangePassForAdmin(userName, selectedUser);
+        return result;
+    }
+    private boolean checkUpdate(){
+        UserDAOImpl u = new UserDAOImpl();
+        boolean result = u.checkUpdateRecord(userName, selectedUser);
+        return result;
+    }
     private void insertAction() {
         setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
         boolean result = userTableModel.insert(new User());
@@ -546,13 +601,17 @@ public class UserPanel extends javax.swing.JPanel {
     }
 
     private void updateAction() {
-        setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
-        boolean result = userTableModel.update(selectedUser);
-        refreshAction(false);
-        setCursor(null);
-        SwingUtils.showInfoDialog(result ? SwingUtils.UPDATE_SUCCESS : SwingUtils.UPDATE_FAIL);
-        scrollToRow(selectedRowIndex);
-        
+        if (checkUpdate()==true) {
+            setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
+            boolean result = userTableModel.update(selectedUser);
+            refreshAction(false);
+            setCursor(null);
+            SwingUtils.showInfoDialog(result ? SwingUtils.UPDATE_SUCCESS : SwingUtils.UPDATE_FAIL);
+            scrollToRow(selectedRowIndex);
+        } else {
+            SwingUtils.showErrorDialog("You can't update this user !");
+            refreshAction(false);
+        }
 //        
 //        //load lai combobox cho cell
 //        UserPanel u= new UserPanel();
@@ -580,9 +639,28 @@ public class UserPanel extends javax.swing.JPanel {
     private void setButtonEnabled(boolean enabled, JButton... exclude) {
         btRemove.setEnabled(enabled);
         btAdd.setEnabled(enabled);
-        btChangePass.setEnabled(enabled);
-        btPermission.setEnabled(enabled);
+//        btChangePass.setEnabled(enabled);
+//        btPermission.setEnabled(enabled);
 
+        // Ngoai tru may button nay luon luon enable
+        if (exclude.length != 0) {
+            Arrays.stream(exclude).forEach(b -> b.setEnabled(true));
+        }
+    }
+
+    private void setButtonChangePassEnabled(boolean enabled, JButton... exclude) {
+
+        btChangePass.setEnabled(enabled);
+        btRemove.setEnabled(enabled);
+        // Ngoai tru may button nay luon luon enable
+        if (exclude.length != 0) {
+            Arrays.stream(exclude).forEach(b -> b.setEnabled(true));
+        }
+    }
+
+    private void setButtonPermissionEnabled(boolean enabled, JButton... exclude) {
+
+        btPermission.setEnabled(enabled);
         // Ngoai tru may button nay luon luon enable
         if (exclude.length != 0) {
             Arrays.stream(exclude).forEach(b -> b.setEnabled(true));

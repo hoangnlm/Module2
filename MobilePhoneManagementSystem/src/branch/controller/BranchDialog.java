@@ -40,6 +40,8 @@ import static javax.swing.SwingConstants.CENTER;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.RowSorterEvent;
+import javax.swing.event.RowSorterListener;
 import javax.swing.event.TableModelEvent;
 import javax.swing.event.TableModelListener;
 import javax.swing.table.DefaultTableCellRenderer;
@@ -103,9 +105,12 @@ public class BranchDialog extends javax.swing.JDialog {
             DefaultListSelectionModel model = (DefaultListSelectionModel) e.getSource();
             if (!model.isSelectionEmpty()) {
                 fetchBranchDetails();
-                btnDelete.setEnabled(true);
+                btRemove.setEnabled(true);
                 tbBranchList.setSurrendersFocusOnKeystroke(false);
-            } 
+            }
+            else{
+                btRemove.setEnabled(false);
+            }
         });
         
         //bat su kien update cho table
@@ -113,13 +118,10 @@ public class BranchDialog extends javax.swing.JDialog {
             @Override
             public void actionPerformed(ActionEvent e) {
                 TableCellListener tcl = (TableCellListener) e.getSource();
-//                System.out.println("Row   : " + tcl.getRow());
-//                System.out.println("Column: " + tcl.getColumn());
-//                System.out.println("Old   : " + tcl.getOldValue());
-//                System.out.println("New   : " + tcl.getNewValue());
 
                 switch (tcl.getColumn()) {
                     case 1:
+                        
                         selectedBranch.setBraName((String) tcl.getNewValue());
                         
                         break;
@@ -130,9 +132,24 @@ public class BranchDialog extends javax.swing.JDialog {
                         selectedBranch.setSupName((String) tcl.getNewValue());
                         break;
                     }
+                int ans = SwingUtils.showConfirmDialog("Are you sure to update?");
+                if(ans==JOptionPane.YES_OPTION)
+                    updateAction();
+                else
+                    branchTableModel.refresh();
+            }
+        });
+        
+        //event trong truong hop k co record trong table
+        sorter.addRowSorterListener(new RowSorterListener() {
 
-                updateAction();
-                formatTable();
+            @Override
+            public void sorterChanged(RowSorterEvent e) {
+                if (tbBranchList.getRowCount() == 0||tbBranchList.getSelectedRow()==-1) {
+                    btRemove.setEnabled(false);
+                } else {
+                    btRemove.setEnabled(true);
+                }
             }
         });
         
@@ -197,7 +214,7 @@ public class BranchDialog extends javax.swing.JDialog {
         formatTable();
         
         //button delete
-        btnDelete.setEnabled(false);
+        btRemove.setEnabled(false);
     }
     
     public void formatTable(){
@@ -214,7 +231,7 @@ public class BranchDialog extends javax.swing.JDialog {
         tbBranchList.getColumnModel().getColumn(COL_BraName).setMinWidth(100);
         tbBranchList.getColumnModel().getColumn(COL_BraName).setMaxWidth(100);
         tbBranchList.getColumnModel().getColumn(COL_BraName).setCellRenderer(centerRenderer);
-        tbBranchList.getColumnModel().getColumn(COL_BraName).setCellEditor(new StringCellEditor(1, 50, "[a-zA-Z ]+"));
+        tbBranchList.getColumnModel().getColumn(COL_BraName).setCellEditor(new StringCellEditor(1, 50,SwingUtils.PATTERN_ADDRESS));
         //status
         tbBranchList.getColumnModel().getColumn(COL_Status).setMinWidth(73);
         tbBranchList.getColumnModel().getColumn(COL_Status).setMaxWidth(73);
@@ -268,6 +285,7 @@ public class BranchDialog extends javax.swing.JDialog {
             JOptionPane.showMessageDialog(this, "Update failed");
         }
         branchTableModel.refresh();
+        formatTable();
     }
     private void insertAction() {
         Branch branch = new Branch();
@@ -283,11 +301,7 @@ public class BranchDialog extends javax.swing.JDialog {
             
             
             
-            // Select row vua insert vao
-            selectedRowIndex = 0;
-            moveScrollToRow(selectedRowIndex);
-            tbBranchList.editCellAt(tbBranchList.getSelectedRow(), 1);
-            tbBranchList.getEditorComponent().requestFocus();
+            
         } else {
             JOptionPane.showMessageDialog(this, "insert failed");
         }
@@ -318,7 +332,7 @@ public class BranchDialog extends javax.swing.JDialog {
         jButton3 = new javax.swing.JButton();
         jLabel4 = new javax.swing.JLabel();
         cbSupplier = new javax.swing.JComboBox<>();
-        btnDelete = new javax.swing.JButton();
+        btRemove = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setResizable(false);
@@ -443,11 +457,11 @@ public class BranchDialog extends javax.swing.JDialog {
             }
         });
 
-        btnDelete.setIcon(new javax.swing.ImageIcon(getClass().getResource("/image/product/Delete.png"))); // NOI18N
-        btnDelete.setText("Delete");
-        btnDelete.addActionListener(new java.awt.event.ActionListener() {
+        btRemove.setIcon(new javax.swing.ImageIcon(getClass().getResource("/image/product/Delete.png"))); // NOI18N
+        btRemove.setText("Remove");
+        btRemove.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btnDeleteActionPerformed(evt);
+                btRemoveActionPerformed(evt);
             }
         });
 
@@ -458,21 +472,20 @@ public class BranchDialog extends javax.swing.JDialog {
             .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
             .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
             .addGroup(layout.createSequentialGroup()
-                .addContainerGap()
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
-                        .addComponent(jButton2)
+                        .addComponent(jButton1)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(btnDelete)
+                        .addComponent(btRemove)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(jButton1))
+                        .addComponent(jButton2))
                     .addGroup(layout.createSequentialGroup()
                         .addComponent(jLabel4)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addComponent(cbSupplier, javax.swing.GroupLayout.PREFERRED_SIZE, 281, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(18, 18, 18)
-                        .addComponent(jButton3, javax.swing.GroupLayout.PREFERRED_SIZE, 43, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(0, 0, Short.MAX_VALUE)))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(jButton3, javax.swing.GroupLayout.PREFERRED_SIZE, 43, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addContainerGap())
         );
         layout.setVerticalGroup(
@@ -488,14 +501,14 @@ public class BranchDialog extends javax.swing.JDialog {
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                         .addGap(47, 47, 47)
                         .addComponent(jButton3, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addGap(18, 18, 18)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 18, Short.MAX_VALUE)
                 .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                        .addComponent(jButton1)
-                        .addComponent(jButton2))
-                    .addComponent(btnDelete))
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jButton1)
+                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                        .addComponent(jButton2)
+                        .addComponent(btRemove)))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
@@ -504,6 +517,11 @@ public class BranchDialog extends javax.swing.JDialog {
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
         insertAction();
+        // Select row vua insert vao
+        selectedRowIndex = 0;
+        scrollToRow(selectedRowIndex);
+        tbBranchList.editCellAt(tbBranchList.getSelectedRow(), 1);
+        tbBranchList.getEditorComponent().requestFocus();
     }//GEN-LAST:event_jButton1ActionPerformed
 
     private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
@@ -543,9 +561,9 @@ public class BranchDialog extends javax.swing.JDialog {
         doFilter();
     }//GEN-LAST:event_cbSupplierItemStateChanged
 
-    private void btnDeleteActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnDeleteActionPerformed
+    private void btRemoveActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btRemoveActionPerformed
        deleteAction();
-    }//GEN-LAST:event_btnDeleteActionPerformed
+    }//GEN-LAST:event_btRemoveActionPerformed
 
     public void deleteAction(){
         int ans = SwingUtils.showConfirmDialog("Are you sure to delete?");
@@ -557,7 +575,7 @@ public class BranchDialog extends javax.swing.JDialog {
         }
         branchTableModel.refresh();
         formatTable();
-        btnDelete.setEnabled(false);
+        btRemove.setEnabled(false);
         }
     }
    public void refreshAction(){
@@ -566,13 +584,13 @@ public class BranchDialog extends javax.swing.JDialog {
        tbBranchList.getSelectionModel().clearSelection();
        setCursor(null);
    }
-   private void moveScrollToRow(int row) {
+   private void scrollToRow(int row) {
         tbBranchList.getSelectionModel().setSelectionInterval(row, row);
         tbBranchList.scrollRectToVisible(new Rectangle(tbBranchList.getCellRect(row, 0, true)));
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JButton btnDelete;
+    private javax.swing.JButton btRemove;
     private javax.swing.JComboBox<String> cbStatusFilter;
     private javax.swing.JComboBox<Supplier> cbSupplier;
     private javax.swing.JButton jButton1;

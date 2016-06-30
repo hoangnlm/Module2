@@ -12,6 +12,7 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.sql.rowset.CachedRowSet;
+import main.controller.LoginFrame;
 import utility.SwingUtils;
 
 /**
@@ -52,6 +53,7 @@ public class PermissionDAOImpl implements IDAO<Permission> {
     @Override
     public boolean insert(Permission permission) {
         boolean result = false;
+        
         try {
 
             runPS("INSERT INTO Permission(UserID,FunctionID) values(?,?)",
@@ -87,7 +89,7 @@ public class PermissionDAOImpl implements IDAO<Permission> {
 
     public boolean checkRootPermission() {
 //        config = (LoginConfig) IOUtils.readObject(getClass().getResource("config").getPath());
-        String name = "root";
+        String name = LoginFrame.config.userName;
         boolean result = false;
         CachedRowSet crs1 = getCRS("SELECT UserID from Users WHERE UserName=?",
                 name
@@ -95,9 +97,9 @@ public class PermissionDAOImpl implements IDAO<Permission> {
         try {
             if (crs1.first()) {
                 if (!(crs1.getInt(1) == 1)) {
-                    SwingUtils.showErrorDialog("You are not ADMIN ROOT");
+                    result=false;
                 } else {
-                    SwingUtils.showErrorDialog("You are ADMIN ROOT");
+                    
                     result = true;
                 }
             }

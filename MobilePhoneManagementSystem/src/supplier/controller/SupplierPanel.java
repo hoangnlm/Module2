@@ -126,9 +126,11 @@ public class SupplierPanel extends javax.swing.JPanel {
                         selectedSupplier.setSupStatus((boolean) tcl.getNewValue());
                         break;
                     }
-
-                updateAction();
-                formatTable();
+                int ans = SwingUtils.showConfirmDialog("Are you sure to update?");
+                if(ans==JOptionPane.YES_OPTION)
+                    updateAction();
+                else
+                    supplierTableModel.refresh();
             }
         });
         
@@ -216,13 +218,13 @@ public class SupplierPanel extends javax.swing.JPanel {
 //        tbSupplierList.getColumnModel().getColumn(COL_SupName).setMinWidth(100);
 //        tbSupplierList.getColumnModel().getColumn(COL_SupName).setMaxWidth(100);
         tbSupplierList.getColumnModel().getColumn(COL_SupName).setCellRenderer(centerRenderer);
-        tbSupplierList.getColumnModel().getColumn(COL_SupName).setCellEditor(new StringCellEditor(1, 50, "[a-zA-Z ]+"));
+        tbSupplierList.getColumnModel().getColumn(COL_SupName).setCellEditor(new StringCellEditor(1, 50, SwingUtils.PATTERN_NAMEWITHSPACE));
         
          //address
 //        tbSupplierList.getColumnModel().getColumn(COL_SupAddress).setMinWidth(200);
 //        tbSupplierList.getColumnModel().getColumn(COL_SupAddress).setMaxWidth(200);
         tbSupplierList.getColumnModel().getColumn(COL_SupAddress).setCellRenderer(centerRenderer);
-        tbSupplierList.getColumnModel().getColumn(COL_SupAddress).setCellEditor(new StringCellEditor(1, 300, "[a-zA-Z1-9 ]+"));
+        tbSupplierList.getColumnModel().getColumn(COL_SupAddress).setCellEditor(new StringCellEditor(1, 300, SwingUtils.PATTERN_ADDRESS));
 
         //status
         tbSupplierList.getColumnModel().getColumn(COL_Status).setMinWidth(73);
@@ -269,6 +271,7 @@ public class SupplierPanel extends javax.swing.JPanel {
             JOptionPane.showMessageDialog(this, "Update failed");
         }
         supplierTableModel.refresh();
+        formatTable();
     }
     
     private void insertAction() {
@@ -276,18 +279,15 @@ public class SupplierPanel extends javax.swing.JPanel {
         
         supplier.setSupName("Default Name "+ System.currentTimeMillis());
         supplier.setSupAddress("Default address "+ System.currentTimeMillis());
-        supplier.setSupStatus(false);
+        supplier.setSupStatus(true);
         if (supplierTableModel.insert(supplier)) {
             JOptionPane.showMessageDialog(this, "Insert successfully");
 
-            // Select row vua insert vao
-            moveScrollToRow(tbSupplierList.getRowCount() - 1);
-            tbSupplierList.editCellAt(tbSupplierList.getSelectedRow(), 1);
-            tbSupplierList.setSurrendersFocusOnKeystroke(true);
-            tbSupplierList.getEditorComponent().requestFocus();
+          supplierTableModel.refresh();
         } else {
             JOptionPane.showMessageDialog(this, "Insert failed");
         }
+        formatTable();
     }
     
     private void moveScrollToRow(int row) {
@@ -485,7 +485,7 @@ public class SupplierPanel extends javax.swing.JPanel {
             .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
             .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
             .addGroup(layout.createSequentialGroup()
-                .addGap(201, 201, 201)
+                .addContainerGap(201, Short.MAX_VALUE)
                 .addComponent(btAdd, javax.swing.GroupLayout.PREFERRED_SIZE, 144, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(2, 2, 2)
                 .addComponent(btRemove, javax.swing.GroupLayout.PREFERRED_SIZE, 146, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -516,6 +516,11 @@ public class SupplierPanel extends javax.swing.JPanel {
 
     private void btAddActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btAddActionPerformed
         insertAction();
+        // Select row vua insert vao
+        selectedRowIndex = 0;
+        scrollToRow(selectedRowIndex);
+        tbSupplierList.editCellAt(tbSupplierList.getSelectedRow(), 1);
+        tbSupplierList.getEditorComponent().requestFocus();
     }//GEN-LAST:event_btAddActionPerformed
 
     private void btRefreshActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btRefreshActionPerformed
@@ -524,6 +529,7 @@ public class SupplierPanel extends javax.swing.JPanel {
         tfNameFilter.setText("");
         cbStatusFilter.setSelectedIndex(0);
         supplierTableModel.refresh();
+        SwingUtils.showInfoDialog(SwingUtils.DB_REFRESH);
     }//GEN-LAST:event_btRefreshActionPerformed
 
     private void tfAddressFilterActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_tfAddressFilterActionPerformed

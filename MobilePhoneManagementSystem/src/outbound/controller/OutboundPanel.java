@@ -32,10 +32,13 @@ import javax.swing.RowFilter;
 import javax.swing.RowFilter.ComparisonType;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
+import javax.swing.event.RowSorterEvent;
+import javax.swing.event.RowSorterListener;
 import javax.swing.table.TableColumnModel;
 import main.controller.LoginFrame;
 import main.model.UserFunction;
 import outbound.model.Outbound;
+import outbound.model.OutboundDAOImpl;
 import outbound.model.OutboundProductTableModel;
 import outbound.model.User;
 import outbound.model.UserComboboxModel;
@@ -113,6 +116,22 @@ public class OutboundPanel extends javax.swing.JPanel {
         sorter = new TableRowSorter<>(outboundTableModel);
         tbOutboundList.setRowSorter(sorter);
         
+        //event trong truong hop k co record trong table
+        sorter.addRowSorterListener(new RowSorterListener() {
+
+            @Override
+            public void sorterChanged(RowSorterEvent e) {
+                if (tbOutboundList.getRowCount() == 0||tbOutboundList.getSelectedRow()==-1) {
+                    btRemove.setEnabled(false);
+                    btUpdate.setEnabled(false);
+                } else {
+                    btRemove.setEnabled(true);
+                    btUpdate.setEnabled(true);
+                }
+            }
+        });
+        
+        
         // Select mac dinh cho level filter
         cbUserFilter.setSelectedIndex(cbUserFilter.getItemCount() - 1);
         
@@ -156,14 +175,20 @@ public class OutboundPanel extends javax.swing.JPanel {
 
             @Override
             public void propertyChange(PropertyChangeEvent evt) {
-                doFilter();
+                String crs = new OutboundDAOImpl().mainCRS;
+                new OutboundDAOImpl().filterDate(jdcFromDate.getDate(),jdcToDate.getDate());
+                outboundTableModel.refresh();
+                new OutboundDAOImpl().setMainCRS(crs);
             }
         });
         jdcToDate.addPropertyChangeListener(new PropertyChangeListener() {
 
             @Override
             public void propertyChange(PropertyChangeEvent evt) {
-                doFilter();
+                String crs = new OutboundDAOImpl().mainCRS;
+                new OutboundDAOImpl().filterDate(jdcFromDate.getDate(),jdcToDate.getDate());
+                outboundTableModel.refresh();
+                new OutboundDAOImpl().setMainCRS(crs);
             }
         });
 
@@ -207,6 +232,7 @@ public class OutboundPanel extends javax.swing.JPanel {
             }
         });
         
+        
 //        // Set table cell listener to update table sales off
 //        TableCellListener tcl1 = new TableCellListener(tbOutboundList, new AbstractAction() {
 //            @Override
@@ -239,22 +265,7 @@ public class OutboundPanel extends javax.swing.JPanel {
             List<RowFilter<OutboundTableModel, Object>> filters = new ArrayList<>();
             filters.add(RowFilter.regexFilter("^" + tfIdFilter.getText(), 0));
             
-            if(jdcFromDate.getDate()!=null){
-                
-                
-            if(jdcFromDate.getDate()!=null||jdcToDate.getDate()!=null){
-                
-                if(jdcFromDate.getDate()!=null)
-                filters.add( RowFilter.dateFilter(ComparisonType.AFTER, jdcFromDate.getDate(),1) );
-                if(jdcToDate.getDate()!=null)
-                filters.add( RowFilter.dateFilter(ComparisonType.BEFORE, jdcToDate.getDate(),1) );
-                
-            }
-            }
-            if(jdcFromDate.getDate()==null&&jdcToDate.getDate()==null){
-                
-                
-            }
+            
             // Neu co chon cus level thi moi filter level
             if (cbUserFilter.getSelectedIndex() != cbUserFilter.getItemCount() - 1) {
                 filters.add(RowFilter.regexFilter("^" + ((User) cbUserFilter.getSelectedItem()).getUsername(), 3));
@@ -279,8 +290,8 @@ public class OutboundPanel extends javax.swing.JPanel {
         selectedRowIndex = tbOutboundList.getSelectedRow();
         selectedOutbound.setOutID((int) tbOutboundList.getValueAt(selectedRowIndex, 0));
         selectedOutbound.setOutDate((Date) tbOutboundList.getValueAt(selectedRowIndex, 1));
-        selectedOutbound.setUserName((String) tbOutboundList.getValueAt(selectedRowIndex, 2));
-        selectedOutbound.setOutContent((String) tbOutboundList.getValueAt(selectedRowIndex, 3));
+        selectedOutbound.setUserName((String) tbOutboundList.getValueAt(selectedRowIndex, 3));
+        selectedOutbound.setOutContent((String) tbOutboundList.getValueAt(selectedRowIndex, 2));
         // Reload table product list voi Order moi chon
         outboundProductTableModel.load(selectedOutbound.getOutID());
     }
@@ -300,11 +311,11 @@ public class OutboundPanel extends javax.swing.JPanel {
         centerRenderer.setHorizontalAlignment(JLabel.CENTER);
         //id
         tbOutboundList.getColumnModel().getColumn(COL_InID).setMinWidth(70);
-        tbOutboundList.getColumnModel().getColumn(COL_InID).setMaxWidth(70);
+//        tbOutboundList.getColumnModel().getColumn(COL_InID).setMaxWidth(70);
         tbOutboundList.getColumnModel().getColumn(COL_InID).setCellRenderer(centerRenderer);
         
         tbOutboundList.getColumnModel().getColumn(COL_InDate).setMinWidth(150);
-        tbOutboundList.getColumnModel().getColumn(COL_InDate).setMaxWidth(150);
+//        tbOutboundList.getColumnModel().getColumn(COL_InDate).setMaxWidth(150);
         tbOutboundList.getColumnModel().getColumn(COL_InDate).setCellRenderer(centerRenderer);
         
         
@@ -317,11 +328,11 @@ public class OutboundPanel extends javax.swing.JPanel {
         
         
         tbOutboundList.getColumnModel().getColumn(COL_Content).setMinWidth(475);
-        tbOutboundList.getColumnModel().getColumn(COL_Content).setMaxWidth(475);
+//        tbOutboundList.getColumnModel().getColumn(COL_Content).setMaxWidth(475);
         tbOutboundList.getColumnModel().getColumn(COL_Content).setCellRenderer(centerRenderer); 
         
           tbOutboundList.getColumnModel().getColumn(COL_UserName).setMinWidth(105);
-        tbOutboundList.getColumnModel().getColumn(COL_UserName).setMaxWidth(105);
+//        tbOutboundList.getColumnModel().getColumn(COL_UserName).setMaxWidth(105);
         tbOutboundList.getColumnModel().getColumn(COL_UserName).setCellRenderer(centerRenderer);
         
         
@@ -381,7 +392,6 @@ public class OutboundPanel extends javax.swing.JPanel {
         pnlFrom = new javax.swing.JPanel();
         jLabel3 = new javax.swing.JLabel();
         pnlTo = new javax.swing.JPanel();
-        jLabel7 = new javax.swing.JLabel();
         tableScrollPane = new javax.swing.JScrollPane();
         tbOutboundList = new javax.swing.JTable();
         jScroll = new javax.swing.JScrollPane();
@@ -389,6 +399,9 @@ public class OutboundPanel extends javax.swing.JPanel {
         btAdd = new javax.swing.JButton();
         btUpdate = new javax.swing.JButton();
         btRemove = new javax.swing.JButton();
+        jButton1 = new javax.swing.JButton();
+        jPanel1 = new javax.swing.JPanel();
+        jLabel7 = new javax.swing.JLabel();
 
         setPreferredSize(new java.awt.Dimension(810, 680));
 
@@ -454,15 +467,15 @@ public class OutboundPanel extends javax.swing.JPanel {
         pnlSearchLayout.setHorizontalGroup(
             pnlSearchLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(pnlSearchLayout.createSequentialGroup()
-                .addContainerGap(78, Short.MAX_VALUE)
-                .addGroup(pnlSearchLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(jLabel1)
-                    .addComponent(jLabel6))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 71, Short.MAX_VALUE)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addGroup(pnlSearchLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jLabel1, javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addComponent(jLabel6, javax.swing.GroupLayout.Alignment.TRAILING))
+                .addGap(18, 18, 18)
                 .addGroup(pnlSearchLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                     .addComponent(tfIdFilter)
                     .addComponent(cbUserFilter, 0, 165, Short.MAX_VALUE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 74, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addGroup(pnlSearchLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jLabel4, javax.swing.GroupLayout.Alignment.TRAILING)
                     .addComponent(jLabel3, javax.swing.GroupLayout.Alignment.TRAILING))
@@ -497,25 +510,20 @@ public class OutboundPanel extends javax.swing.JPanel {
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
-        jLabel7.setFont(new java.awt.Font("Lucida Sans", 1, 24)); // NOI18N
-        jLabel7.setForeground(new java.awt.Color(0, 255, 255));
-        jLabel7.setIcon(new javax.swing.ImageIcon(getClass().getResource("/image/main/Outbound.png"))); // NOI18N
-        jLabel7.setText("<html><u><i><font color='red'>O</font>utbound <font color='red'>M</font>anagement</i></u></html>");
-
         tableScrollPane.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "Outbound Note", javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Tahoma", 1, 18), new java.awt.Color(255, 153, 0))); // NOI18N
         tableScrollPane.setAutoscrolls(true);
 
+        tbOutboundList.setAutoCreateRowSorter(true);
         tbOutboundList.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null}
+
             },
             new String [] {
                 "Title 1", "Title 2", "Title 3", "Title 4"
             }
         ));
+        tbOutboundList.setFillsViewportHeight(true);
+        tbOutboundList.setRowHeight(25);
         tbOutboundList.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 tbOutboundListMouseClicked(evt);
@@ -525,21 +533,21 @@ public class OutboundPanel extends javax.swing.JPanel {
 
         jScroll.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "Outbound Note Details", javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Tahoma", 1, 18), new java.awt.Color(255, 153, 0))); // NOI18N
 
+        tbProductList.setAutoCreateRowSorter(true);
         tbProductList.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null}
+
             },
             new String [] {
                 "Title 1", "Title 2", "Title 3", "Title 4"
             }
         ));
+        tbProductList.setFillsViewportHeight(true);
+        tbProductList.setRowHeight(25);
         jScroll.setViewportView(tbProductList);
 
         btAdd.setIcon(new javax.swing.ImageIcon(getClass().getResource("/image/product/Add.png"))); // NOI18N
-        btAdd.setText("Insert");
+        btAdd.setText("Add New...");
         btAdd.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btAddActionPerformed(evt);
@@ -547,7 +555,7 @@ public class OutboundPanel extends javax.swing.JPanel {
         });
 
         btUpdate.setIcon(new javax.swing.ImageIcon(getClass().getResource("/image/product/Save.png"))); // NOI18N
-        btUpdate.setText("Update");
+        btUpdate.setText("Update...");
         btUpdate.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btUpdateActionPerformed(evt);
@@ -562,46 +570,75 @@ public class OutboundPanel extends javax.swing.JPanel {
             }
         });
 
+        jButton1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/image/product/Refresh.png"))); // NOI18N
+        jButton1.setText("Refresh");
+        jButton1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton1ActionPerformed(evt);
+            }
+        });
+
+        jPanel1.setBorder(javax.swing.BorderFactory.createEtchedBorder());
+
+        jLabel7.setFont(new java.awt.Font("Lucida Sans", 1, 24)); // NOI18N
+        jLabel7.setForeground(new java.awt.Color(0, 255, 255));
+        jLabel7.setIcon(new javax.swing.ImageIcon(getClass().getResource("/image/main/Outbound.png"))); // NOI18N
+        jLabel7.setText("<html><u><i><font color='red'>O</font>utbound <font color='red'>M</font>anagement</i></u></html>");
+
+        javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
+        jPanel1.setLayout(jPanel1Layout);
+        jPanel1Layout.setHorizontalGroup(
+            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel1Layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(jLabel7, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addContainerGap())
+        );
+        jPanel1Layout.setVerticalGroup(
+            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel1Layout.createSequentialGroup()
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(jLabel7)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+        );
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addContainerGap(106, Short.MAX_VALUE)
                 .addComponent(btAdd, javax.swing.GroupLayout.PREFERRED_SIZE, 141, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(btUpdate, javax.swing.GroupLayout.PREFERRED_SIZE, 153, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(btRemove, javax.swing.GroupLayout.PREFERRED_SIZE, 155, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(0, 0, Short.MAX_VALUE))
-            .addGroup(layout.createSequentialGroup()
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(layout.createSequentialGroup()
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
-                            .addComponent(jScroll, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 811, Short.MAX_VALUE)
-                            .addComponent(tableScrollPane, javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(pnlSearch, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                        .addGap(0, 0, Short.MAX_VALUE))
-                    .addComponent(jLabel7, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                .addContainerGap())
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 141, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(106, Short.MAX_VALUE))
+            .addComponent(pnlSearch, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addComponent(tableScrollPane)
+            .addComponent(jScroll)
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addContainerGap(15, Short.MAX_VALUE)
-                .addComponent(jLabel7)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, 67, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addComponent(pnlSearch, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addComponent(tableScrollPane, javax.swing.GroupLayout.PREFERRED_SIZE, 223, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addComponent(jScroll, javax.swing.GroupLayout.PREFERRED_SIZE, 217, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(btAdd)
                     .addComponent(btUpdate)
-                    .addComponent(btRemove))
-                .addContainerGap())
+                    .addComponent(btRemove)
+                    .addComponent(jButton1))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
     }// </editor-fold>//GEN-END:initComponents
 
@@ -610,7 +647,7 @@ public class OutboundPanel extends javax.swing.JPanel {
             new OutboundDialog(null).setVisible(true);
             refreshAction(false);
             new ProductPanel().getProductTableModel().refresh();
-            scrollToRow(tbOutboundList.getRowCount() - 1);
+            scrollToRow(selectedRowIndex);
        
     }//GEN-LAST:event_btAddActionPerformed
 
@@ -654,7 +691,13 @@ public class OutboundPanel extends javax.swing.JPanel {
     private void btUpdateActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btUpdateActionPerformed
         new OutboundDialog(selectedOutbound).setVisible(true);
         refreshAction(false);
+        scrollToRow(selectedRowIndex);
     }//GEN-LAST:event_btUpdateActionPerformed
+
+    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
+        refreshAction(true);
+        SwingUtils.showInfoDialog(SwingUtils.DB_REFRESH);
+    }//GEN-LAST:event_jButton1ActionPerformed
     public void setTableColumnType(JTable tbl, Integer colID, Class type) {
         TableColumn col = tbl.getColumnModel().getColumn(colID);
         col.setCellEditor(tbl.getDefaultEditor(type));
@@ -683,8 +726,8 @@ public class OutboundPanel extends javax.swing.JPanel {
     }
     
     private void scrollToRow(int row) {
-        tbProductList.getSelectionModel().setSelectionInterval(row, row);
-        tbProductList.scrollRectToVisible(new Rectangle(tbProductList.getCellRect(row, 0, true)));
+        tbOutboundList.getSelectionModel().setSelectionInterval(row, row);
+        tbOutboundList.scrollRectToVisible(new Rectangle(tbOutboundList.getCellRect(row, 0, true)));
     }
    private void deleteAction() {
         setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
@@ -714,12 +757,14 @@ public class OutboundPanel extends javax.swing.JPanel {
     private javax.swing.JButton btRemove;
     private javax.swing.JButton btUpdate;
     private javax.swing.JComboBox<User> cbUserFilter;
+    private javax.swing.JButton jButton1;
     private javax.swing.JButton jButton5;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabel6;
     private javax.swing.JLabel jLabel7;
+    private javax.swing.JPanel jPanel1;
     private javax.swing.JScrollPane jScroll;
     private javax.swing.JPanel pnlFrom;
     private javax.swing.JPanel pnlSearch;

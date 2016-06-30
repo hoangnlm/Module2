@@ -132,7 +132,7 @@ public class ServiceDialog extends javax.swing.JDialog implements ItemListener {
 
         // Col content
         tbProduct.getColumnModel().getColumn(COL_CONTENT).setMinWidth(150);
-        tbProduct.getColumnModel().getColumn(COL_CONTENT).setCellEditor(new StringCellEditor(1, 200, SwingUtils.PATTERN_NAMEWITHSPACE));
+        tbProduct.getColumnModel().getColumn(COL_CONTENT).setCellEditor(new StringCellEditor(1, 200, SwingUtils.PATTERN_SERVICECONTENT));
 
         // Col quantity
         tbProduct.getColumnModel().getColumn(COL_PROQTY).setMinWidth(50);

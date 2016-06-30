@@ -63,15 +63,8 @@ public class BranchDAOImpl implements IDAO<Branch> {
             return false;
         }
             
-            DBProvider db = new DBProvider();
-            db.start();
-            PreparedStatement ps = db.getPreparedStatement("Insert into branches(braname,braEnabled,SupID) values(?,?,?)");
-            ps.setString(1,branch.getBraName());
-            ps.setBoolean(2, branch.getBraStatus());
-            ps.setInt(3, crs1.getInt("supid"));
-            
-            
-            ps.executeUpdate();
+            runPS("Insert into branches(braname,braEnabled,SupID) values(?,?,?)",branch.getBraName(),branch.getBraStatus(),crs1.getInt("supid"));
+           
             result = true;
         } catch (SQLException ex) {
             Logger.getLogger(BranchDAOImpl.class.getName()).log(Level.SEVERE, null, ex);
@@ -88,7 +81,8 @@ public class BranchDAOImpl implements IDAO<Branch> {
             if (crs1.first()) {
                 SwingUtils.showErrorDialog("Branch name cannot be duplicated !");
                 return false;
-            } 
+            }
+            System.err.println("eeee");
             runPS("Update Branches set BraName = "+"'"+branch.getBraName()+"'"+",BraEnabled = "+((branch.getBraStatus())?1:0)+",SupID = (select supid from Suppliers where supname="+"'"+branch.getSupName()+"'"+") where BraId = "+branch.getBraID());
             
             

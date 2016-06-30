@@ -14,7 +14,7 @@ public class UserTableModel extends CustomizedTableModel<User> {
     public UserTableModel() {
         super(new UserDAOImpl(), new String[]{"ID", "User Name", "Empployee Name", "Status", "Password","EmpID"});
     }
-
+   
     @Override
     public Class<?> getColumnClass(int column) {
         Class[] columnClasses = {Integer.class, String.class, String.class, Boolean.class, String.class,Integer.class};

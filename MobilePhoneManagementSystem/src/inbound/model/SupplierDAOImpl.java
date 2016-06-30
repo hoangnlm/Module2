@@ -82,4 +82,25 @@ public class SupplierDAOImpl implements IDAO<Supplier> {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
     
+    public ArrayList getBranchFromValue(Supplier sup) {
+        ArrayList arr = new ArrayList<String>();
+        String result = null;
+        CachedRowSet crs1 = null;
+        try {
+            
+            
+            
+            crs1 = getCRS("SELECT * from Branches where SupID="+sup.getSupID());
+            
+           
+            while(crs1.next())
+            
+            arr.add(crs1.getString("BraName"));
+                
+            
+        } catch (SQLException ex) {
+            Logger.getLogger(SupplierComboboxModel.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return arr;
+    }
 }

@@ -27,10 +27,13 @@ import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.table.TableRowSorter;
+import main.controller.LoginFrame;
+import main.model.UserFunction;
 import service.model.Service;
 import service.model.ServiceStatus;
 import service.model.ServiceType;
-import utility.DateCellEditor;
+import employee.model.DateCellWorkingDateEditor;
+import utility.SpinnerCellEditor;
 import utility.SwingUtils;
 import utility.TableCellListener;
 
@@ -72,9 +75,9 @@ public class ServicePanel extends javax.swing.JPanel {
     private static final int COL_ODERID = 5;
     private static final int COL_COST = 6;
     //hidden
-    private static final int COL_SERVICEID = 7;    
+    private static final int COL_SERVICEID = 7;
     private static final int COL_BRAID = 8;
-    
+
 //<editor-fold defaultstate="collapsed" desc="constructor">
     public ServicePanel() {
         initComponents();
@@ -85,7 +88,7 @@ public class ServicePanel extends javax.swing.JPanel {
         dcFilter.setDateFormatString("dd/MM/yyyy");
         dcFilter.setDate(null);
         pnReceiveDate.add(dcFilter);
-        // Set date picker len giao dien
+        // Set date picker1 len giao dien
         dcFilter1 = new JDateChooser();
         dcFilter1.setBounds(0, 0, 120, 20);
         dcFilter1.setDateFormatString("dd/MM/yyyy");
@@ -94,7 +97,7 @@ public class ServicePanel extends javax.swing.JPanel {
         //Disable button khi moi khoi dong len
         setButtonEnabled(false);
 
-        // Selecting order in the table
+        // Selecting service in the table
         selectedService = new Service();
 
         // Set data cho combobox status filter
@@ -104,7 +107,7 @@ public class ServicePanel extends javax.swing.JPanel {
         cbStatusFilter.setModel(serviceStatusComboBoxModel);
         serviceStatusComboBoxRenderer = new ServiceStatusComboBoxRenderer();
         cbStatusFilter.setRenderer(serviceStatusComboBoxRenderer);
-        
+
         // Set data cho combobox service type filter
         serviceTypeComboBoxModel = new ServiceTypeComboBoxModel();
         filterType = new ServiceType(0, "All");
@@ -112,7 +115,7 @@ public class ServicePanel extends javax.swing.JPanel {
         cbTypeFilter.setModel(serviceTypeComboBoxModel);
         serviceTypeComboBoxRenderer = new ServiceTypeComboBoxRenderer();
         cbTypeFilter.setRenderer(serviceTypeComboBoxRenderer);
-        
+
         // Set data cho table
         serviceTableModel = new ServiceTableModel();
         serviceDetailsTableModel = new ServiceDetailsTableModel();
@@ -142,11 +145,11 @@ public class ServicePanel extends javax.swing.JPanel {
 //        tbServiceList.getColumnModel().getColumn(COL_USERNAME).setMaxWidth(120);
 
         // Col receivedate
-        tbServiceList.getColumnModel().getColumn(COL_RECEIVEDATE).setCellEditor(new DateCellEditor());
+        tbServiceList.getColumnModel().getColumn(COL_RECEIVEDATE).setCellEditor(new DateCellWorkingDateEditor());
         tbServiceList.getColumnModel().getColumn(COL_RECEIVEDATE).setMinWidth(120);
 //        tbServiceList.getColumnModel().getColumn(COL_RECEIVEDATE).setMaxWidth(120);
         // Col receive date
-        tbServiceList.getColumnModel().getColumn(COL_RETURNDATE).setCellEditor(new DateCellEditor());
+        tbServiceList.getColumnModel().getColumn(COL_RETURNDATE).setCellEditor(new DateCellWorkingDateEditor());
         tbServiceList.getColumnModel().getColumn(COL_RETURNDATE).setMinWidth(120);
 //        tbServiceList.getColumnModel().getColumn(COL_RETURNDATE).setMaxWidth(120);
         // Col type
@@ -154,15 +157,14 @@ public class ServicePanel extends javax.swing.JPanel {
 //        tbServiceList.getColumnModel().getColumn(COL_SERTYPENAME).setMaxWidth(90);
         // Col status
         tbServiceList.getColumnModel().getColumn(COL_STATUS).setMinWidth(90);
-        
+
 ////    table detailslist
-        
         tbDetailsList.getColumnModel().getColumn(COL_PROID).setMinWidth(30);
         tbDetailsList.getColumnModel().getColumn(COL_PROID).setMaxWidth(50);
-                
+
         // Col pro name
         tbDetailsList.getColumnModel().getColumn(COL_PRONAME).setMinWidth(300);
-        
+
         // Col braname
         tbDetailsList.getColumnModel().getColumn(COL_BRANAME).setMinWidth(100);
 
@@ -187,18 +189,24 @@ public class ServicePanel extends javax.swing.JPanel {
         // Bat su kien select row tren table service list
         tbServiceList.getSelectionModel().addListSelectionListener((ListSelectionEvent e) -> {
             DefaultListSelectionModel model = (DefaultListSelectionModel) e.getSource();
-            
+
             if (!model.isSelectionEmpty()) {
                 fetchAction();
                 setButtonEnabled(true);
+                if (!this.selectedService.getSerStatus().equals("Done")) {
+                    setButtonRemoveEnabled(true);
+                } else {
+                    setButtonRemoveEnabled(false);
+                }
+                if (!LoginFrame.checkPermission(new UserFunction(UserFunction.FG_SERVICE, UserFunction.FN_UPDATE))) {
+                    btAdd.setEnabled(false);
+                    btUpdate.setEnabled(false);
+                    btRemove.setEnabled(false);
+                }
             } else {
                 setButtonEnabled(false);
             }
-            if(!this.selectedService.getSerStatus().equals("Done")){
-                setButtonRemoveEnabled(true);
-            } else {
-                setButtonRemoveEnabled(false);
-            }
+
         });
 
 //<editor-fold defaultstate="collapsed" desc="Set cell listener cho updating">
@@ -275,6 +283,12 @@ public class ServicePanel extends javax.swing.JPanel {
             }
         });
 //</editor-fold>
+//check 
+        if (!LoginFrame.checkPermission(new UserFunction(UserFunction.FG_SERVICE, UserFunction.FN_UPDATE))) {
+            btAdd.setEnabled(false);
+            btUpdate.setEnabled(false);
+            btRemove.setEnabled(false);
+        }
 
     }
 //</editor-fold>
@@ -685,7 +699,6 @@ public class ServicePanel extends javax.swing.JPanel {
                 filters.add(RowFilter.regexFilter("^" + stt, 5));
             }
 
-            
             rf = RowFilter.andFilter(filters);
         } catch (java.util.regex.PatternSyntaxException e) {
             return;
@@ -699,7 +712,7 @@ public class ServicePanel extends javax.swing.JPanel {
         tfUserFilter.setText(null);
         dcFilter.setDate(null);
         dcFilter1.setDate(null);
-        cbStatusFilter.setSelectedIndex(cbStatusFilter.getItemCount()- 1);
+        cbStatusFilter.setSelectedIndex(cbStatusFilter.getItemCount() - 1);
         cbTypeFilter.setSelectedIndex(cbTypeFilter.getItemCount() - 1);
     }
 
@@ -754,7 +767,8 @@ public class ServicePanel extends javax.swing.JPanel {
             Arrays.stream(exclude).forEach(b -> b.setEnabled(true));
         }
     }
-    private void setButtonRemoveEnabled(boolean enabled, JButton... exclude) {        
+
+    private void setButtonRemoveEnabled(boolean enabled, JButton... exclude) {
         btRemove.setEnabled(enabled);
 
         // Ngoai tru may button nay luon luon enable

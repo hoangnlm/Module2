@@ -12,6 +12,7 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.sql.rowset.CachedRowSet;
+import main.controller.LoginFrame;
 
 /**
  * Apply DAO design pattern
@@ -28,16 +29,26 @@ public interface IDAO<T> {
     boolean update(T model);
 
     boolean delete(T model);
-    
+
     int getSelectingIndex(int idx);
-    
+
     void setSelectingIndex(int idx);
+
+    default DBProvider createDB() {
+        DBProvider db = new DBProvider();
+        db.setDbHost(LoginFrame.config.host);
+        db.setDbPort(LoginFrame.config.port);
+        db.setDbName(LoginFrame.config.DBName);
+        db.setDbUsername(LoginFrame.config.name);
+        db.setDbPassword(LoginFrame.config.password);
+        return db;
+    }
 
     // Chay CRS de lay ve ket qua query select
     default CachedRowSet getCRS(String query, Object... args) {
         CachedRowSet crs = null;
         try {
-            crs = new DBProvider().getCRS(query);
+            crs = createDB().getCRS(query);
             if (args.length > 0) {
                 for (int i = 0; i < args.length; i++) {
                     if (args[i].getClass() == Integer.class) {
@@ -75,7 +86,7 @@ public interface IDAO<T> {
 
     // Chay prepared statement de insert, update, delete
     default void runPS(String query, Object... args) throws SQLException {
-        DBProvider db = new DBProvider();
+        DBProvider db = createDB();
         db.start();
         PreparedStatement ps = db.getPreparedStatement(query);
         if (args.length > 0) {

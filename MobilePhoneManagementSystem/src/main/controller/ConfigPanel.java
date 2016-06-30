@@ -7,11 +7,9 @@ package main.controller;
 
 import main.model.Login;
 import java.awt.Color;
-import javax.swing.JPanel;
 import javax.swing.JTextField;
 import org.jdesktop.xswingx.PromptSupport;
 import database.DBProvider;
-import java.awt.CardLayout;
 import java.awt.Container;
 import java.awt.Cursor;
 import utility.SwingUtils;
@@ -27,6 +25,7 @@ public class ConfigPanel extends javax.swing.JPanel {
 
     /**
      * Creates new form LoginPanel
+     * @param parent
      */
     public ConfigPanel(Container parent) {
         this.parent = (LoginFrame) parent;

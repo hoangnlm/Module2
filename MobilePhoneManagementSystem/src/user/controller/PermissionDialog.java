@@ -6,8 +6,13 @@
 package user.controller;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+import javax.swing.JButton;
+import javax.swing.JCheckBox;
 import javax.swing.JFrame;
+import main.controller.LoginFrame;
+import main.model.UserFunction;
 import user.model.Permission;
 import user.model.PermissionDAOImpl;
 import user.model.User;
@@ -24,6 +29,7 @@ public class PermissionDialog extends javax.swing.JDialog {
     PermissionDAOImpl permissionDAOImpl;
     List<Permission> perList = new ArrayList<>();
     List<Permission> perList1 = new ArrayList<>();
+    boolean oldUser, oldPermission;
 
     //<editor-fold defaultstate="collapsed" desc="Constructor">
     /**
@@ -43,6 +49,16 @@ public class PermissionDialog extends javax.swing.JDialog {
 //        permission=perList.get(0);
 //        System.out.println(permission.toString());
         setCheckBox();
+        oldUser = userUpdate.isSelected();
+        oldPermission = permissionUpdate.isSelected();
+        if (!LoginFrame.checkPermission(new UserFunction(UserFunction.FG_PERMISSION, UserFunction.FN_UPDATE))) {
+            btOK.setEnabled(false);
+        } else if (user.getUserName().equals(LoginFrame.config.userName) && (!LoginFrame.config.userName.equals("root"))) {
+            btOK.setEnabled(false);
+        } else if (user.getUserID() == 1 && (!LoginFrame.config.userName.equals("root"))) {
+            SwingUtils.showErrorDialog("You can't set permission for ADMIN ROOT");
+            btOK.setEnabled(false);
+        }
     }
 
     //</editor-fold>
@@ -750,10 +766,6 @@ public class PermissionDialog extends javax.swing.JDialog {
         }
     }
 
-    private void getUserNameOnline() {
-
-    }
-
     private void insertPermission() {
         if (userView.isSelected()) {
             permission = new Permission(user.getUserID(), 1);
@@ -762,10 +774,8 @@ public class PermissionDialog extends javax.swing.JDialog {
 
         }
         if (userUpdate.isSelected()) {
-            if (permissionDAOImpl.checkRootPermission()) {
-                permission = new Permission(user.getUserID(), 2);
-                permissionDAOImpl.insert(permission);
-            }
+            permission = new Permission(user.getUserID(), 2);
+            permissionDAOImpl.insert(permission);
         }
         if (permissionView.isSelected()) {
             permission = new Permission(user.getUserID(), 3);
@@ -873,6 +883,46 @@ public class PermissionDialog extends javax.swing.JDialog {
         }
 //        System.out.println("List: " + perList1.size());
     }
+
+    public boolean isCkBoxChange(JCheckBox j, boolean old) {
+        if (j.isSelected() == old) {
+            return false;
+        } else {
+            return true;
+        }
+    }
+
+    public void clearChkBox(boolean enabled) {
+        userView.setSelected(enabled);
+        userUpdate.setSelected(enabled);
+        permissionView.setSelected(enabled);
+        permissionUpdate.setSelected(enabled);
+        productView.setSelected(enabled);
+        productUpdate.setSelected(enabled);
+        salaryView.setSelected(enabled);
+        salaryUpdate.setSelected(enabled);
+        saleoffUpdate.setSelected(enabled);
+        saleoffView.setSelected(enabled);
+        serviceUpdate.setSelected(enabled);
+        serviceView.setSelected(enabled);
+        supplierUpdate.setSelected(enabled);
+        supplierView.setSelected(enabled);
+        empUpdate.setSelected(enabled);
+        empView.setSelected(enabled);
+        cusLevelUpdate.setSelected(enabled);
+        cusLevelView.setSelected(enabled);
+        cusUpdate.setSelected(enabled);
+        cusView.setSelected(enabled);
+        orderUpdate.setSelected(enabled);
+        orderView.setSelected(enabled);
+        outboundUpdate.setSelected(enabled);
+        outboundView.setSelected(enabled);
+        inboundUpdate.setSelected(enabled);
+        inboundView.setSelected(enabled);
+        branchUpdate.setSelected(enabled);
+        branchView.setSelected(enabled);
+//        btOK.setEnabled(enabled);
+    }
 //        </editor-fold>  
     private void btCancelActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btCancelActionPerformed
         dispose();
@@ -936,14 +986,25 @@ public class PermissionDialog extends javax.swing.JDialog {
 //</editor-fold>
     private void btOKActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btOKActionPerformed
 
-        boolean result = permissionDAOImpl.delete(user);
-        if (result) {
+        if (isCkBoxChange(userUpdate, oldUser) || isCkBoxChange(permissionUpdate, oldPermission)) {
+            if (permissionDAOImpl.checkRootPermission()) {
+                permissionDAOImpl.delete(user);
+                insertPermission();
+                SwingUtils.showInfoDialog(SwingUtils.UPDATE_SUCCESS);
+                dispose();
+            } else {
+                SwingUtils.showErrorDialog("Only ADMIN ROOT can set permission: UPDATE PERMISSION & UPDATE USER !");
+                clearChkBox(false);
+                setCheckBox();
+                return;
+            }
+        } else {
+            permissionDAOImpl.delete(user);
+            insertPermission();
             SwingUtils.showInfoDialog(SwingUtils.UPDATE_SUCCESS);
             dispose();
-        } else {
-            SwingUtils.showErrorDialog(SwingUtils.UPDATE_FAIL);
         }
-        insertPermission();
+
 
     }//GEN-LAST:event_btOKActionPerformed
 //        <editor-fold>  

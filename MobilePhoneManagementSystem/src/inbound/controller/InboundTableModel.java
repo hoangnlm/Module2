@@ -83,4 +83,7 @@ public class InboundTableModel extends CustomizedTableModel<Inbound> {
          return false;
     }
     
+     public Inbound getInboundAtIndex(int index) {
+        return list.get(index);
+    }
 }

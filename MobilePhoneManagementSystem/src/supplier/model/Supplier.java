@@ -20,7 +20,7 @@ public class Supplier {
     public static final String COL_Address = "SupAddress";
     public static final String COL_Status = "SupEnabled";
     
-    public static final String Query_Show = "select SupID,SupName,SupAddress,SupEnabled from suppliers";
+    public static final String Query_Show = "select SupID,SupName,SupAddress,SupEnabled from suppliers order by SupID DESC";
     public static final String Query_Insert = "insert into suppliers values(?,?,?)";
     public static final String Query_Update = "update suppliers set "+COL_Name+"=?,"+COL_Address+"=?,"+COL_Status+"=?"+" where "+COL_ID+"=?";
     public static final String Query_Delete = "delete suppliers where "+COL_ID+"=?";

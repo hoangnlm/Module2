@@ -44,7 +44,7 @@ public class IntegerCellEditor extends DefaultCellEditor {
         ftf.setFocusLostBehavior(JFormattedTextField.PERSIST);
 
     }
-
+    
     //Override to ensure that the value remains an Integer.
     @Override
     public Object getCellEditorValue() {

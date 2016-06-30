@@ -8,6 +8,7 @@ package inbound.controller;
 import com.toedter.calendar.JDateChooser;
 import inbound.model.CurrencyCellRenderer;
 import inbound.model.Inbound;
+import inbound.model.InboundDAOImpl;
 import inbound.model.InboundProductTableModel;
 import inbound.model.SupplierComboboxModel;
 import inbound.model.SupplierComboboxRenderer;
@@ -39,6 +40,9 @@ import javax.swing.RowFilter.ComparisonType;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import inbound.model.Supplier;
+import java.util.Calendar;
+import javax.swing.event.RowSorterEvent;
+import javax.swing.event.RowSorterListener;
 import main.controller.LoginFrame;
 import main.model.UserFunction;
 import product.controller.ProductPanel;
@@ -131,6 +135,21 @@ public class InboundPanel extends javax.swing.JPanel {
         sorter = new TableRowSorter<>(inboundTableModel);
         tbInboundList.setRowSorter(sorter);
         
+        //event trong truong hop k co record trong table
+        sorter.addRowSorterListener(new RowSorterListener() {
+
+            @Override
+            public void sorterChanged(RowSorterEvent e) {
+                if (tbInboundList.getRowCount() == 0|| tbInboundList.getSelectedRow()==-1) {
+                    btRemove.setEnabled(false);
+                    btUpdate.setEnabled(false);
+                } else {
+                    btRemove.setEnabled(true);
+                    btUpdate.setEnabled(true);
+                }
+            }
+        });
+        
         // Select mac dinh cho level filter
         cbUserFilter.setSelectedIndex(cbUserFilter.getItemCount() - 1);
         cbSupFilter.setSelectedIndex(cbSupFilter.getItemCount() - 1);
@@ -178,14 +197,20 @@ public class InboundPanel extends javax.swing.JPanel {
 
             @Override
             public void propertyChange(PropertyChangeEvent evt) {
-                doFilter();
+                String crs = new InboundDAOImpl().mainCRS;
+                new InboundDAOImpl().filterDate(jdcFromDate.getDate(),jdcToDate.getDate());
+                inboundTableModel.refresh();
+                new InboundDAOImpl().setMainCRS(crs);
             }
         });
         jdcToDate.addPropertyChangeListener(new PropertyChangeListener() {
 
             @Override
             public void propertyChange(PropertyChangeEvent evt) {
-                doFilter();
+               String crs = new InboundDAOImpl().mainCRS;
+                new InboundDAOImpl().filterDate(jdcFromDate.getDate(),jdcToDate.getDate());
+                inboundTableModel.refresh();
+                new InboundDAOImpl().setMainCRS(crs);
             }
         });
 
@@ -277,22 +302,12 @@ public class InboundPanel extends javax.swing.JPanel {
             filters.add(RowFilter.regexFilter("^" + tfIdFilter.getText(), 0));
             filters.add(RowFilter.regexFilter("^" + tfSupInID.getText(), 3));
             
-            if(jdcFromDate.getDate()!=null){
+            
+            
+            
                 
-                
-            if(jdcFromDate.getDate()!=null||jdcToDate.getDate()!=null){
-                System.err.println("bbbbb");
-                if(jdcFromDate.getDate()!=null)
-                filters.add( RowFilter.dateFilter(ComparisonType.AFTER, jdcFromDate.getDate(),1) );
-                if(jdcToDate.getDate()!=null)
-                filters.add( RowFilter.dateFilter(ComparisonType.BEFORE, jdcToDate.getDate(),1) );
-                
-            }
-            }
-            if(jdcFromDate.getDate()==null&&jdcToDate.getDate()==null){
-//                System.err.println("aaa");
-                
-            }
+            
+           
             // Neu co chon cus level thi moi filter level
             if (cbUserFilter.getSelectedIndex() != cbUserFilter.getItemCount() - 1) {
                 filters.add(RowFilter.regexFilter("^" + ((User) cbUserFilter.getSelectedItem()).getUsername(), 4));
@@ -308,6 +323,28 @@ public class InboundPanel extends javax.swing.JPanel {
         } catch (java.util.regex.PatternSyntaxException e) {
             return;
         }
+        sorter.setRowFilter(rf);
+    }
+    
+    private void doFilterDate(){
+        RowFilter<InboundTableModel, Integer> rf = null;
+        List<RowFilter<InboundTableModel, Integer>> filters = new ArrayList<>();
+            if(jdcFromDate.getDate()!=null){
+                
+                
+            if(jdcFromDate.getDate()!=null||jdcToDate.getDate()!=null){
+                
+                if(jdcFromDate.getDate()!=null)
+                filters.add( RowFilter.dateFilter(ComparisonType.AFTER, jdcFromDate.getDate(),1) );
+                if(jdcToDate.getDate()!=null)
+                filters.add( RowFilter.dateFilter(ComparisonType.BEFORE, jdcToDate.getDate(),1) );
+                
+            }
+            
+            }
+            
+      
+        rf = RowFilter.andFilter(filters);
         sorter.setRowFilter(rf);
     }
     
@@ -337,25 +374,25 @@ public class InboundPanel extends javax.swing.JPanel {
         centerRenderer.setHorizontalAlignment(JLabel.CENTER);
         //id
         tbInboundList.getColumnModel().getColumn(COL_InID).setMinWidth(70);
-        tbInboundList.getColumnModel().getColumn(COL_InID).setMaxWidth(70);
+        
         tbInboundList.getColumnModel().getColumn(COL_InID).setCellRenderer(centerRenderer);
         
         tbInboundList.getColumnModel().getColumn(COL_InDate).setMinWidth(150);
-        tbInboundList.getColumnModel().getColumn(COL_InDate).setMaxWidth(150);
+        
         tbInboundList.getColumnModel().getColumn(COL_InDate).setCellRenderer(centerRenderer);
         
         
         tbInboundList.getColumnModel().getColumn(COL_SupName).setMinWidth(250);
-        tbInboundList.getColumnModel().getColumn(COL_SupName).setMaxWidth(250);
+        
         tbInboundList.getColumnModel().getColumn(COL_SupName).setCellRenderer(centerRenderer);
         
         tbInboundList.getColumnModel().getColumn(COL_SupInID).setMinWidth(150);
-        tbInboundList.getColumnModel().getColumn(COL_SupInID).setMaxWidth(150);
+        
         tbInboundList.getColumnModel().getColumn(COL_SupInID).setCellRenderer(centerRenderer); 
         
         
         tbInboundList.getColumnModel().getColumn(COL_UserName).setMinWidth(175);
-        tbInboundList.getColumnModel().getColumn(COL_UserName).setMaxWidth(175);
+        
         tbInboundList.getColumnModel().getColumn(COL_UserName).setCellRenderer(centerRenderer);
         
         
@@ -394,6 +431,7 @@ public class InboundPanel extends javax.swing.JPanel {
         cbUserFilter.setSelectedIndex(cbUserFilter.getItemCount() - 1);
         
         tfSupInID.setText(null);
+        
         
     }
     
@@ -491,7 +529,7 @@ public class InboundPanel extends javax.swing.JPanel {
         );
         pnlFromLayout.setVerticalGroup(
             pnlFromLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 32, Short.MAX_VALUE)
+            .addGap(0, 22, Short.MAX_VALUE)
         );
 
         jLabel3.setText("From Date:");
@@ -500,11 +538,11 @@ public class InboundPanel extends javax.swing.JPanel {
         pnlTo.setLayout(pnlToLayout);
         pnlToLayout.setHorizontalGroup(
             pnlToLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 0, Short.MAX_VALUE)
+            .addGap(0, 132, Short.MAX_VALUE)
         );
         pnlToLayout.setVerticalGroup(
             pnlToLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 29, Short.MAX_VALUE)
+            .addGap(0, 22, Short.MAX_VALUE)
         );
 
         javax.swing.GroupLayout pnlSearchLayout = new javax.swing.GroupLayout(pnlSearch);
@@ -512,67 +550,66 @@ public class InboundPanel extends javax.swing.JPanel {
         pnlSearchLayout.setHorizontalGroup(
             pnlSearchLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(pnlSearchLayout.createSequentialGroup()
+                .addContainerGap(23, Short.MAX_VALUE)
                 .addGroup(pnlSearchLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(pnlSearchLayout.createSequentialGroup()
-                        .addContainerGap(25, Short.MAX_VALUE)
-                        .addComponent(jLabel1)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 45, Short.MAX_VALUE)
-                        .addComponent(tfIdFilter, javax.swing.GroupLayout.PREFERRED_SIZE, 165, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(jLabel3)
-                        .addGap(0, 9, Short.MAX_VALUE))
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, pnlSearchLayout.createSequentialGroup()
-                        .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addComponent(jLabel2)
-                        .addGap(18, 18, 18)
-                        .addComponent(cbSupFilter, javax.swing.GroupLayout.PREFERRED_SIZE, 165, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(18, 18, 18)
-                        .addComponent(jLabel4)
-                        .addGap(18, 18, 18)))
-                .addGroup(pnlSearchLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(pnlFrom, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(pnlTo, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                .addGroup(pnlSearchLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 16, Short.MAX_VALUE)
+                        .addComponent(cbSupFilter, javax.swing.GroupLayout.PREFERRED_SIZE, 165, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addGroup(pnlSearchLayout.createSequentialGroup()
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jLabel6)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(cbUserFilter, javax.swing.GroupLayout.PREFERRED_SIZE, 135, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(jLabel1)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(tfIdFilter, javax.swing.GroupLayout.PREFERRED_SIZE, 165, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGroup(pnlSearchLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jLabel4)
+                    .addComponent(jLabel3))
+                .addGap(18, 18, 18)
+                .addGroup(pnlSearchLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(pnlFrom, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(pnlTo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 11, Short.MAX_VALUE)
+                .addGroup(pnlSearchLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                    .addGroup(pnlSearchLayout.createSequentialGroup()
+                        .addComponent(jLabel6)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(cbUserFilter, javax.swing.GroupLayout.PREFERRED_SIZE, 135, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                         .addComponent(jButton5))
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, pnlSearchLayout.createSequentialGroup()
-                        .addGap(0, 12, Short.MAX_VALUE)
+                    .addGroup(pnlSearchLayout.createSequentialGroup()
                         .addComponent(jLabel5, javax.swing.GroupLayout.PREFERRED_SIZE, 117, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(9, 9, 9)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addComponent(tfSupInID, javax.swing.GroupLayout.PREFERRED_SIZE, 122, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addGap(0, 21, Short.MAX_VALUE))
+                .addGap(0, 14, Short.MAX_VALUE))
         );
         pnlSearchLayout.setVerticalGroup(
             pnlSearchLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, pnlSearchLayout.createSequentialGroup()
-                .addGroup(pnlSearchLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel1)
-                    .addComponent(tfIdFilter, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel3))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addGroup(pnlSearchLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel4)
-                    .addComponent(cbSupFilter, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel2))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
             .addGroup(pnlSearchLayout.createSequentialGroup()
-                .addGroup(pnlSearchLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(pnlSearchLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                        .addComponent(jLabel5)
-                        .addComponent(tfSupInID, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addComponent(pnlFrom, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addGroup(pnlSearchLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(pnlTo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jButton5)
-                    .addGroup(pnlSearchLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                        .addComponent(jLabel6)
-                        .addComponent(cbUserFilter, javax.swing.GroupLayout.PREFERRED_SIZE, 19, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addGroup(pnlSearchLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel5)
+                    .addComponent(tfSupInID, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 11, Short.MAX_VALUE)
+                .addGroup(pnlSearchLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addComponent(jButton5, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(jLabel6)
+                    .addComponent(cbUserFilter, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE))
+                .addContainerGap(17, Short.MAX_VALUE))
+            .addGroup(pnlSearchLayout.createSequentialGroup()
+                .addGroup(pnlSearchLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addGroup(pnlSearchLayout.createSequentialGroup()
+                        .addComponent(pnlFrom, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(pnlTo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(pnlSearchLayout.createSequentialGroup()
+                        .addGroup(pnlSearchLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(jLabel1)
+                            .addComponent(tfIdFilter, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(jLabel3))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addGroup(pnlSearchLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(jLabel2)
+                            .addComponent(cbSupFilter, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(jLabel4))))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
@@ -590,7 +627,6 @@ public class InboundPanel extends javax.swing.JPanel {
         ));
         tbInboundList.setFillsViewportHeight(true);
         tbInboundList.setRowHeight(25);
-        tbInboundList.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
         tbInboundList.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 tbInboundListMouseClicked(evt);
@@ -611,7 +647,6 @@ public class InboundPanel extends javax.swing.JPanel {
         ));
         tbProductList.setFillsViewportHeight(true);
         tbProductList.setRowHeight(25);
-        tbProductList.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
         jScroll.setViewportView(tbProductList);
 
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
@@ -630,7 +665,7 @@ public class InboundPanel extends javax.swing.JPanel {
                 .addGap(0, 0, Short.MAX_VALUE))
         );
 
-        btRemove.setIcon(new javax.swing.ImageIcon(getClass().getResource("/image/product/banned.png"))); // NOI18N
+        btRemove.setIcon(new javax.swing.ImageIcon(getClass().getResource("/image/product/Delete.png"))); // NOI18N
         btRemove.setText("Remove");
         btRemove.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -639,7 +674,7 @@ public class InboundPanel extends javax.swing.JPanel {
         });
 
         btUpdate.setIcon(new javax.swing.ImageIcon(getClass().getResource("/image/product/Save.png"))); // NOI18N
-        btUpdate.setText("Update");
+        btUpdate.setText("Update...");
         btUpdate.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btUpdateActionPerformed(evt);
@@ -647,7 +682,7 @@ public class InboundPanel extends javax.swing.JPanel {
         });
 
         btAdd.setIcon(new javax.swing.ImageIcon(getClass().getResource("/image/product/Add.png"))); // NOI18N
-        btAdd.setText("Add new...");
+        btAdd.setText("Add New...");
         btAdd.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btAddActionPerformed(evt);
@@ -681,9 +716,9 @@ public class InboundPanel extends javax.swing.JPanel {
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
-                .addContainerGap()
+                .addContainerGap(14, Short.MAX_VALUE)
                 .addComponent(jLabel7)
-                .addContainerGap())
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
@@ -694,26 +729,29 @@ public class InboundPanel extends javax.swing.JPanel {
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addComponent(btAdd, javax.swing.GroupLayout.PREFERRED_SIZE, 141, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(btUpdate, javax.swing.GroupLayout.PREFERRED_SIZE, 152, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(btUpdate, javax.swing.GroupLayout.PREFERRED_SIZE, 148, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(btRemove, javax.swing.GroupLayout.PREFERRED_SIZE, 138, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 138, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 143, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                .addGap(2, 2, 2)
+                .addGap(5, 5, 5)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(pnlSearch, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
+                    .addGroup(layout.createSequentialGroup()
+                        .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addContainerGap())))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
+                .addContainerGap()
                 .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(pnlSearch, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(pnlSearch, javax.swing.GroupLayout.PREFERRED_SIZE, 109, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(18, 18, Short.MAX_VALUE)
                 .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
@@ -730,7 +768,7 @@ public class InboundPanel extends javax.swing.JPanel {
             new InboundDialog(null).setVisible(true);
             refreshAction(false);
 
-            scrollToRow(tbInboundList.getRowCount() - 1);
+            scrollToRow(selectedRowIndex);
        
     }//GEN-LAST:event_btAddActionPerformed
 
@@ -782,11 +820,14 @@ public class InboundPanel extends javax.swing.JPanel {
     private void btUpdateActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btUpdateActionPerformed
         new InboundDialog(selectedInbound).setVisible(true);
         refreshAction(false);
-       new ProductPanel().getProductTableModel().fireTableDataChanged();
+       if (inboundTableModel.getRowCount() > 0) {
+            scrollToRow(selectedRowIndex);
+        }
     }//GEN-LAST:event_btUpdateActionPerformed
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
         refreshAction(true);
+        SwingUtils.showInfoDialog(SwingUtils.DB_REFRESH);
     }//GEN-LAST:event_jButton1ActionPerformed
     public void setTableColumnType(JTable tbl, Integer colID, Class type) {
         TableColumn col = tbl.getColumnModel().getColumn(colID);
@@ -823,8 +864,8 @@ public class InboundPanel extends javax.swing.JPanel {
     }
     
     private void scrollToRow(int row) {
-        tbProductList.getSelectionModel().setSelectionInterval(row, row);
-        tbProductList.scrollRectToVisible(new Rectangle(tbProductList.getCellRect(row, 0, true)));
+        tbInboundList.getSelectionModel().setSelectionInterval(row, row);
+        tbInboundList.scrollRectToVisible(new Rectangle(tbInboundList.getCellRect(row, 0, true)));
     }
    private void deleteAction() {
         setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));

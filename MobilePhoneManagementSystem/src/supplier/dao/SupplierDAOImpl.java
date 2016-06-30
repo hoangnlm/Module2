@@ -86,6 +86,9 @@ public class SupplierDAOImpl implements IDAO<Supplier> {
                 SwingUtils.showInfoDialog("Dupplicate supplier address!");
                 return false;
             }
+            
+           
+            
             runPS("Update Suppliers set SupName=?,SupAddress=?,SupEnabled=? where SupID=?", supplier.getSupName(),supplier.getSupAddress(),supplier.getSupStatus(),supplier.getSupID());
             
             result = true;

@@ -5,9 +5,15 @@
  */
 package inbound.model;
 
+import branch.model.Branch;
 import database.IDAO;
 import inbound.model.SupplierDAOImpl;
 import inbound.model.Supplier;
+import java.sql.SQLException;
+import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javax.sql.rowset.CachedRowSet;
 import utility.CustomizedComboBoxModel;
 
 /**
@@ -15,9 +21,10 @@ import utility.CustomizedComboBoxModel;
  * @author tuan
  */
 public class SupplierComboboxModel extends CustomizedComboBoxModel<Supplier> {
-
+    
     public SupplierComboboxModel() {
         super(new SupplierDAOImpl());
+         
     }
     
     public Supplier getSupplierFromID(int supID) {
@@ -41,5 +48,7 @@ public class SupplierComboboxModel extends CustomizedComboBoxModel<Supplier> {
         }
         return result;
     }
+    
+    
     
 }

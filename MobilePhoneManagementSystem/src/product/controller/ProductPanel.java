@@ -5,7 +5,7 @@
  */
 package product.controller;
 
-import branch.model.Branch;
+
 import database.DBProvider;
 import inbound.controller.FloatEditor;
 import inbound.model.CurrencyCellRenderer;
@@ -48,6 +48,8 @@ import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
+import javax.swing.event.RowSorterEvent;
+import javax.swing.event.RowSorterListener;
 import javax.swing.event.TableModelEvent;
 import javax.swing.event.TableModelListener;
 import javax.swing.filechooser.FileNameExtensionFilter;
@@ -58,6 +60,7 @@ import javax.swing.table.TableRowSorter;
 import main.controller.LoginFrame;
 import main.model.UserFunction;
 import org.jdesktop.xswingx.PromptSupport;
+import product.dao.Branch;
 import product.dao.BranchNameComboBoxModel;
 import product.dao.BranchNameComboBoxRender;
 import product.dao.MyQuery;
@@ -152,6 +155,10 @@ public class ProductPanel extends javax.swing.JPanel {
                 btBrowse.setEnabled(true);//enable khi bam chon vao table
                 tbProductList.setSurrendersFocusOnKeystroke(false);
             }
+            else{
+                btRemove.setEnabled(false);
+                btBrowse.setEnabled(false);//enable khi bam chon vao table
+            }
         });
 
         //customize combobox status
@@ -209,8 +216,24 @@ public class ProductPanel extends javax.swing.JPanel {
                         selectedProduct.setProEnabled((boolean) tcl.getNewValue());
                         break;
                 }
+                int ans = SwingUtils.showConfirmDialog("Are you sure to update?");
+                if(ans==JOptionPane.YES_OPTION)
+                    updateAction();
+                else
+                    refreshAction(false);
+            }
+        });
+        
+        //event trong truong hop k co record trong table
+        sorter.addRowSorterListener(new RowSorterListener() {
 
-                updateAction();
+            @Override
+            public void sorterChanged(RowSorterEvent e) {
+                if (tbProductList.getRowCount() == 0) {
+                    btRemove.setEnabled(false);
+                } else {
+                    btRemove.setEnabled(true);
+                }
             }
         });
 
@@ -316,17 +339,18 @@ public class ProductPanel extends javax.swing.JPanel {
 
     private void updateAction() {
         if (productTableModel.update(selectedProduct)) {
-            formatTable();
-            tbProductList.setRowHeight(120);
+            
             JOptionPane.showMessageDialog(this, "Update successfully");
         } else {
             //refresh
             refreshAction(true);
-            productTableModel.refresh();
+            
             formatTable();
 
         }
-
+        formatTable();
+        tbProductList.setRowHeight(120);
+        productTableModel.refresh();
     }
 
     private void refreshAction() {
@@ -352,17 +376,17 @@ public class ProductPanel extends javax.swing.JPanel {
         tbProductList.getColumnModel().getColumn(COL_ID).setCellRenderer(centerRenderer);
         //branch 
         tbProductList.getColumnModel().getColumn(COL_BraName).setMinWidth(80);
-        tbProductList.getColumnModel().getColumn(COL_BraName).setMaxWidth(80);
+//        tbProductList.getColumnModel().getColumn(COL_BraName).setMaxWidth(80);
         tbProductList.getColumnModel().getColumn(COL_BraName).setCellRenderer(centerRenderer);
         tbProductList.getColumnModel().getColumn(COL_BraName).setCellEditor(new product.dao.ComboBoxCellEditor(new BranchNameComboBoxModel()));
 
         //name
         tbProductList.getColumnModel().getColumn(COL_ProName).setMinWidth(80);
         tbProductList.getColumnModel().getColumn(COL_ProName).setCellRenderer(centerRenderer);
-        tbProductList.getColumnModel().getColumn(COL_ProName).setCellEditor(new StringCellEditor(1, 70, "[a-zA-Z1-9 ]+"));
+        tbProductList.getColumnModel().getColumn(COL_ProName).setCellEditor(new StringCellEditor(1, 70,SwingUtils.PATTERN_NAMEWITHSPACE));
         //stock
         tbProductList.getColumnModel().getColumn(COL_ProStock).setMinWidth(35);
-        tbProductList.getColumnModel().getColumn(COL_ProStock).setMaxWidth(50);
+//        tbProductList.getColumnModel().getColumn(COL_ProStock).setMaxWidth(50);
         tbProductList.getColumnModel().getColumn(COL_ProStock).setCellRenderer(centerRenderer);
 
         //price
@@ -372,15 +396,15 @@ public class ProductPanel extends javax.swing.JPanel {
         //desc
         tbProductList.getColumnModel().getColumn(COL_ProDescr).setMinWidth(150);
         tbProductList.getColumnModel().getColumn(COL_ProDescr).setCellRenderer(centerRenderer);
-        tbProductList.getColumnModel().getColumn(COL_ProDescr).setCellEditor(new StringCellEditor(1, 100, "[a-zA-Z1-9 ]+"));
+        tbProductList.getColumnModel().getColumn(COL_ProDescr).setCellEditor(new StringCellEditor(1, 100, SwingUtils.PATTERN_NAMEWITHSPACE));
 
         //enable
         tbProductList.getColumnModel().getColumn(COL_ProEnable).setMinWidth(45);
-        tbProductList.getColumnModel().getColumn(COL_ProEnable).setMaxWidth(45);
+//        tbProductList.getColumnModel().getColumn(COL_ProEnable).setMaxWidth(45);
 
         //saleoff
         tbProductList.getColumnModel().getColumn(COL_SaleOff).setMinWidth(100);
-        tbProductList.getColumnModel().getColumn(COL_SaleOff).setMaxWidth(100);
+//        tbProductList.getColumnModel().getColumn(COL_SaleOff).setMaxWidth(100);
         tbProductList.getColumnModel().getColumn(COL_SaleOff).setCellRenderer(centerRenderer);
 
         //image
@@ -388,7 +412,7 @@ public class ProductPanel extends javax.swing.JPanel {
 //        tbProductList.getColumnModel().getColumn(COL_Img).setMaxWidth(100);
 //        tbProductList.getColumnModel().getColumn(COL_Img).setCellRenderer(new ImageRenderer(selectedProduct));
 
-        tbProductList.setDefaultEditor(Float.class, new FloatEditor(1000000, 100000000));
+        tbProductList.setDefaultEditor(Float.class, new FloatEditor(1000000, 30000000));
 
     }
 
@@ -705,7 +729,8 @@ public class ProductPanel extends javax.swing.JPanel {
 
         refreshAction(false);
         formatTable();
-        scrollToRow(tbProductList.getRowCount() - 1);
+        scrollToRow(selectedRowIndex);
+        SwingUtils.showInfoDialog(SwingUtils.DB_REFRESH);
     }//GEN-LAST:event_jrefreshFilterMouseClicked
 
     private void btBrowseMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btBrowseMouseClicked
@@ -761,6 +786,7 @@ public class ProductPanel extends javax.swing.JPanel {
     private void btBranchMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btBranchMouseClicked
         new branch.controller.BranchDialog().setVisible(true);
         refreshAction(true);
+        formatTable();
     }//GEN-LAST:event_btBranchMouseClicked
 
     private void btRemoveActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btRemoveActionPerformed
@@ -792,7 +818,6 @@ public class ProductPanel extends javax.swing.JPanel {
             // Refresh combobox filter
             branchNameComboBoxModel.refresh();
             branchNameComboBoxModel.addElement(filterBranch);
-
             // Refresh combobox column table
 //            branchNameComboBoxModel1.refresh();
             setCursor(null);

@@ -74,8 +74,7 @@ public class OutboundDetailDAOImpl implements IDAO<OutboundDetail>{
             runPS("Insert into Outbounds values('06/06/2016',1,(select min(userid) from users),'AAAAA')");
             CachedRowSet crs2 = getCRS("Select Max(OutID) as Outid from Outbounds");
             crs2.next();
-            DBProvider db = new DBProvider();
-            db.start();
+            
             for(int i = 0;i<inDetail.size();i++){
             runPS("Insert into OutDetails(Outid,ProID,ProQty) values(?,?,?)",
                     crs2.getInt("Outid"),
@@ -142,9 +141,10 @@ public class OutboundDetailDAOImpl implements IDAO<OutboundDetail>{
             }
             
             //update cho table inbound
-            runPS("Update outbounds set OutContent=? where OutID=(SELECT max(OutID) from outbounds)",
+            runPS("Update outbounds set OutContent=? where OutID=?",
                    
-                    inbound.getOutContent());
+                    inbound.getOutContent(),
+                    inbound.getOutID());
             
             result = true;
         } catch (SQLException ex) {

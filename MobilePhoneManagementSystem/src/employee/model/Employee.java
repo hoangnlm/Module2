@@ -17,10 +17,10 @@ public class Employee {
     private String empName;
     private String empPhone;
     private Date empBirthday;
-    private float empSalary;
+    private int empSalary;
     private String empDes;
     private Date empStartDate;
-    private float empBonus;
+    private int empBonus;
     private boolean empEnabled;
 
     //Khai bao ten column de hien thi tren table
@@ -42,7 +42,7 @@ public class Employee {
         this.empDes = empDes;
     }
 
-    public Employee(int empID,  String empName, String empPhone, Date empBirthday, float empSalary, String empDes, Date empStartDate, float empBonus, boolean empEnabled) {
+    public Employee(int empID,  String empName, String empPhone, Date empBirthday, int empSalary, String empDes, Date empStartDate, int empBonus, boolean empEnabled) {
         this.empID = empID;        
         this.empName = empName;
         this.empPhone = empPhone;
@@ -78,11 +78,11 @@ public class Employee {
         this.empPhone = empPhone;
     }
 
-    public float getEmpSalary() {
+    public int getEmpSalary() {
         return empSalary;
     }
 
-    public void setEmpSalary(float empSalary) {
+    public void setEmpSalary(int empSalary) {
         this.empSalary = empSalary;
     }
 
@@ -110,11 +110,11 @@ public class Employee {
         this.empStartDate = empStartDate;
     }
 
-    public float getEmpBonus() {
+    public int getEmpBonus() {
         return empBonus;
     }
 
-    public void setEmpBonus(float empBonus) {
+    public void setEmpBonus(int empBonus) {
         this.empBonus = empBonus;
     }
 

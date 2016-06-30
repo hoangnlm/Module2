@@ -136,16 +136,6 @@ public class TableCellListener implements PropertyChangeListener, Runnable {
         newValue = table.getModel().getValueAt(row, column);
         //  The data has changed, invoke the supplied Action
         if (!newValue.equals(oldValue)) {
-            //  Make a copy of the data in case another cell starts editing
-            //  while processing this change
-
-//            TableCellListener tcl = new TableCellListener(
-//                    getTable(), getRow(), getColumn(), getOldValue(), getNewValue());
-
-//            ActionEvent event = new ActionEvent(
-//                    tcl,
-//                    ActionEvent.ACTION_PERFORMED,
-//                    "");
             ActionEvent event = new ActionEvent(
                     this,
                     ActionEvent.ACTION_PERFORMED,

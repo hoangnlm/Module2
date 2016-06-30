@@ -5,7 +5,7 @@
  */
 package product.dao;
 
-import branch.model.Branch;
+
 import java.awt.Color;
 import java.awt.Component;
 import javax.swing.JLabel;
@@ -26,7 +26,7 @@ public class BranchNameComboBoxRender extends JLabel implements ListCellRenderer
 
     @Override
     public Component getListCellRendererComponent(JList<? extends Branch> list, Branch value, int index, boolean isSelected, boolean cellHasFocus) {
-        
+        if(value!=null){
         if (isSelected) {
            jtf.setBackground(Color.ORANGE);
             jtf.setForeground(Color.BLACK);
@@ -40,7 +40,9 @@ public class BranchNameComboBoxRender extends JLabel implements ListCellRenderer
         jtf.setText(value.getBraName() + "");
         jtf.setBorder(null);
         jtf.setHorizontalAlignment(CENTER);
+        }
         return jtf;
     }
+    
     
 }

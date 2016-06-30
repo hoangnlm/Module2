@@ -20,7 +20,7 @@
           <Component id="jPanel1" max="32767" attributes="0"/>
           <Component id="jPanel2" alignment="0" max="32767" attributes="0"/>
           <Group type="102" alignment="0" attributes="0">
-              <EmptySpace min="-2" pref="201" max="-2" attributes="0"/>
+              <EmptySpace pref="201" max="32767" attributes="0"/>
               <Component id="btAdd" min="-2" pref="144" max="-2" attributes="0"/>
               <EmptySpace min="-2" pref="2" max="-2" attributes="0"/>
               <Component id="btRemove" min="-2" pref="146" max="-2" attributes="0"/>
