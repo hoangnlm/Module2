@@ -49,6 +49,7 @@ import javax.swing.AbstractAction;
 import javax.swing.event.RowSorterEvent;
 import javax.swing.event.RowSorterListener;
 import javax.swing.table.DefaultTableCellRenderer;
+import main.controller.LoginFrame;
 import order.controller.OrderBranchListCellRenderer;
 import order.controller.OrderBranchListModel;
 import order.model.OrderBranch;
@@ -128,6 +129,7 @@ public class OutboundDialog extends javax.swing.JDialog implements ItemListener 
             this.outbound.setOutContent("");
             backup = this.outbound.clone();
             setTrackChanges(false);
+            txtUser.setText(LoginFrame.config.userName);
         } else {
             this.outbound = outbound.clone();
             backup = this.outbound.clone();
@@ -135,7 +137,7 @@ public class OutboundDialog extends javax.swing.JDialog implements ItemListener 
             jdcDate.setDate(this.outbound.getOutDate());//set data cho ngay
             jdcDate.setEnabled(false);//disable ngay,k cho update
             txtContent.setText(this.outbound.getOutContent());
-            
+            txtUser.setText(this.outbound.getUserName());
             setTrackChanges(false);
         }
         
@@ -478,6 +480,7 @@ public class OutboundDialog extends javax.swing.JDialog implements ItemListener 
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setMinimumSize(new java.awt.Dimension(730, 627));
+        setResizable(false);
 
         jPanel1.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "Outbound", javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Tahoma", 1, 13), new java.awt.Color(255, 153, 0))); // NOI18N
 
@@ -682,18 +685,18 @@ public class OutboundDialog extends javax.swing.JDialog implements ItemListener 
             .addComponent(jPanel3, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
             .addComponent(jPanel1, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
             .addGroup(layout.createSequentialGroup()
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(btnAdd, javax.swing.GroupLayout.PREFERRED_SIZE, 105, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(btDelete)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+            .addGroup(layout.createSequentialGroup()
                 .addGap(0, 0, Short.MAX_VALUE)
                 .addComponent(btnSave, javax.swing.GroupLayout.PREFERRED_SIZE, 132, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jButton3)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jButton5, javax.swing.GroupLayout.PREFERRED_SIZE, 139, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                .addGap(0, 0, Short.MAX_VALUE)
-                .addComponent(btnAdd, javax.swing.GroupLayout.PREFERRED_SIZE, 105, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(btDelete)
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
@@ -825,7 +828,7 @@ public class OutboundDialog extends javax.swing.JDialog implements ItemListener 
 //            }
              
             ib.setOutContent(txtContent.getText());
-
+            ib.setUserName(LoginFrame.config.userName);
             //update lai database
             if (new OutboundDetailDAOImpl().update(ib)) {
                 SwingUtils.showInfoDialog(SwingUtils.INSERT_SUCCESS);

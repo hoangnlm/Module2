@@ -94,9 +94,10 @@ public class OutboundDetailDAOImpl implements IDAO<OutboundDetail>{
             
             
             
-                runPS("Update outbounds set OutDate=?,OutContent=? where OutID=(SELECT max(OutID) from outbounds)",
+                runPS("Update outbounds set OutDate=?,OutContent=?,UserID = (SELECT userid from users where username = ?) where OutID=(SELECT max(OutID) from outbounds)",
                     inbound.getOutDate(),
-                    inbound.getOutContent());
+                    inbound.getOutContent(),
+                    inbound.getUserName());
             
             result = true;
             

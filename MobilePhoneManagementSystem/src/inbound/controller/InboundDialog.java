@@ -57,6 +57,7 @@ import javax.swing.event.RowSorterListener;
 import javax.swing.event.TableModelEvent;
 import javax.swing.event.TableModelListener;
 import javax.swing.table.DefaultTableCellRenderer;
+import main.controller.LoginFrame;
 import main.model.Login;
 import utility.SpinnerCellEditor;
 import utility.SwingUtils;
@@ -116,7 +117,7 @@ public class InboundDialog extends javax.swing.JDialog implements ItemListener {
         insertMode = inbound == null;
         initComponents();
         setLocationRelativeTo(null);
-
+        
         setting();
         btDelete.setEnabled(false);
         btnAdd.setEnabled(false);
@@ -127,20 +128,24 @@ public class InboundDialog extends javax.swing.JDialog implements ItemListener {
             this.inbound.setInDate(new Date());
             this.inbound.setSupID(1);
             this.inbound.setSupInvoiceID("");
-            this.inbound.setUserName(Login.USER_NAME);
+//            this.inbound.setUserName(user);
             backup = this.inbound.clone();
             setTrackChanges(false);
             txtInvoice.setEditable(true);
+            txtUser.setText(LoginFrame.config.userName);
+            tbProductList.setEnabled(false);
         } else {
             this.inbound = inbound.clone();
             backup = this.inbound.clone();
             cbSupplier.setSelectedItem(supplierComboboxModel.getSupplierFromValue(this.inbound.getSupName()));//set data cho combobox
+            doFilter();
             jdcDate.setDate(this.inbound.getInDate());//set data cho ngay
             jdcDate.setEnabled(false);//disable ngay,k cho update
             txtInvoice.setText(this.inbound.getSupInvoiceID());
             setTrackChanges(false);
             txtInvoice.setEditable(false);
             cbSupplier.setEnabled(false);
+            txtUser.setText(this.inbound.getUserName());
         }
 
         inboundDetailTableModel.load(this.inbound.getInID());//null neu insert mode
@@ -148,7 +153,7 @@ public class InboundDialog extends javax.swing.JDialog implements ItemListener {
         //update lai list
         listIn = inboundDetailTableModel.getList();//null neu insert mode
         
-        tbProductList.setEnabled(false);
+        
     }
 
     public void setting() {
@@ -191,12 +196,17 @@ public class InboundDialog extends javax.swing.JDialog implements ItemListener {
             public void actionPerformed(ActionEvent e) {
                 btnAdd.setEnabled(false);
                 tbProductList.setEnabled(true);
+   
                 if(tbInDetail.getRowCount()!=0&& supplierComboboxModel.getSelectedItem().getSupID()!=selectedSupplier.getSupID()){ //chon lai supplier nhung khac voi supplier cu
                     int ans = SwingUtils.showConfirmDialog("Discard changes and choose another suppliers?");
                     if(ans==JOptionPane.YES_OPTION&&insertMode){//insert mode
                         inboundDetailTableModel.load(backup.getInID());
                         doFilter();
                     }
+                    else{
+                        supplierComboboxModel.setSelectedItem(selectedSupplier);
+                    }
+                    
                     
                 }
                 else{
@@ -499,6 +509,7 @@ public class InboundDialog extends javax.swing.JDialog implements ItemListener {
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setMinimumSize(new java.awt.Dimension(730, 627));
+        setResizable(false);
 
         jPanel1.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "Inbound", javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Tahoma", 1, 13), new java.awt.Color(255, 153, 0))); // NOI18N
 
@@ -739,6 +750,8 @@ public class InboundDialog extends javax.swing.JDialog implements ItemListener {
 
     private void btnAddActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAddActionPerformed
 
+        
+        
         InboundDetail inbound = new InboundDetail();
         inbound.setInID(0);
         inbound.setProID(selectedProduct.getProId());
@@ -833,7 +846,7 @@ public class InboundDialog extends javax.swing.JDialog implements ItemListener {
                 ib.setSupName(supplierComboboxModel.getSelectedItem().getSupName());
             }
             ib.setSupInvoiceID(txtInvoice.getText());
-
+            ib.setUserName(LoginFrame.config.userName);
             //update lai database
             if (new InboundDetailDAOImpl().update(ib)) {
                 SwingUtils.showInfoDialog(SwingUtils.INSERT_SUCCESS);
@@ -933,10 +946,8 @@ public class InboundDialog extends javax.swing.JDialog implements ItemListener {
     }
 
     private void fetchSupplier(){
-        selectedSupplier.setSupID(supplierComboboxModel.getSelectedItem().getSupID());
-        selectedSupplier.setSupName(supplierComboboxModel.getSelectedItem().getSupName());
-        selectedSupplier.setSupAddress(supplierComboboxModel.getSelectedItem().getSupAddress());
-        selectedSupplier.setSupStatus(supplierComboboxModel.getSelectedItem().getSupStatus());
+        selectedSupplier=(Supplier) cbSupplier.getSelectedItem();
+        
     }
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btDelete;

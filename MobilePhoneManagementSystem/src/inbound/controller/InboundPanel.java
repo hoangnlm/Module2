@@ -258,7 +258,7 @@ public class InboundPanel extends javax.swing.JPanel {
         tbInboundList.setModel(inboundTableModel);
         tbProductList.setModel(inboundProductTableModel);
         
-        // Bat su kien select row tren table sales off
+        // Bat su kien select row tren table
         tbInboundList.getSelectionModel().addListSelectionListener((ListSelectionEvent e) -> {
             DefaultListSelectionModel model = (DefaultListSelectionModel) e.getSource();
             if (!model.isSelectionEmpty()) {

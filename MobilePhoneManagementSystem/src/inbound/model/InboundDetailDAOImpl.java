@@ -104,10 +104,11 @@ public class InboundDetailDAOImpl implements IDAO<InboundDetail>{
             
             
             
-                runPS("Update inbounds set InDate=?,SupID = (SELECT supid from suppliers where supname=?),SupInvoiceID=? where InID=(SELECT max(InID) from inbounds)",
+                runPS("Update inbounds set InDate=?,SupID = (SELECT supid from suppliers where supname=?),SupInvoiceID=?,UserID = (SELECT UserID from Users where UserName=?) where InID=(SELECT max(InID) from inbounds)",
                     inbound.getInDate(),
                     inbound.getSupName(),
-                    inbound.getSupInvoiceID());
+                    inbound.getSupInvoiceID(),
+                    inbound.getUserName());
             
             result = true;
             
