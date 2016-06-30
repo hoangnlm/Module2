@@ -53,7 +53,6 @@ public interface IDAO<T> {
                 for (int i = 0; i < args.length; i++) {
                     if (args[i].getClass() == Integer.class) {
                         crs.setInt(i + 1, (int) args[i]);
-
                     }
 
                     if (args[i].getClass() == Float.class) {
