@@ -37,6 +37,7 @@ import employee.model.DateCellWorkingDateEditor;
 import employee.model.EmployeeSwingUtils;
 import javax.swing.JLabel;
 import javax.swing.table.DefaultTableCellRenderer;
+import utility.SwingUtils;
 import utility.TableCellListener;
 
 /**
@@ -90,7 +91,7 @@ public class ServicePanel extends javax.swing.JPanel {
         dcFilter.setBounds(0, 0, 120, 20);
         dcFilter.setDateFormatString("dd/MM/yyyy");
         dcFilter.setDate(null);
-        c.set(2010,0, 1);
+        c.set(2010, 0, 1);
         dcFilter.setMinSelectableDate(c.getTime());
         Calendar c1 = Calendar.getInstance();
         dcFilter.setMaxSelectableDate(c1.getTime());
@@ -237,8 +238,6 @@ public class ServicePanel extends javax.swing.JPanel {
                 switch (tcl.getColumn()) {
 
                 }
-//                
-//                updateAction();
             }
         });
 //</editor-fold>
@@ -537,7 +536,7 @@ public class ServicePanel extends javax.swing.JPanel {
         pnTitle.setPreferredSize(new java.awt.Dimension(790, 65));
 
         jLabel1.setFont(new java.awt.Font("Lucida Grande", 1, 24)); // NOI18N
-        jLabel1.setForeground(new java.awt.Color(0, 255, 255));
+        jLabel1.setForeground(new java.awt.Color(225, 153, 0));
         jLabel1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/image/main/Service.png"))); // NOI18N
         jLabel1.setText("<html><u><i><font color='red'>S</font>ervice <font color='red'>M</font>anagement</i></u></html>");
 
@@ -583,15 +582,15 @@ public class ServicePanel extends javax.swing.JPanel {
                 .addComponent(pnFilter, javax.swing.GroupLayout.PREFERRED_SIZE, 76, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 222, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 210, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 207, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(btRemove, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(btUpdate, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(btAdd, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(btRefresh, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap())
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
     }// </editor-fold>//GEN-END:initComponents
 //<editor-fold defaultstate="collapsed" desc="Bat su kien">
@@ -607,7 +606,11 @@ public class ServicePanel extends javax.swing.JPanel {
     }//GEN-LAST:event_btUpdateActionPerformed
 
     private void btRemoveActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btRemoveActionPerformed
-        deleteAction();
+        if (EmployeeSwingUtils.showConfirmDialog("Are you sure to delete ?") == JOptionPane.NO_OPTION) {
+            return;
+        } else {
+            deleteAction();
+        }
     }//GEN-LAST:event_btRemoveActionPerformed
 
     private void btRefreshActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btRefreshActionPerformed

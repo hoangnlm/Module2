@@ -828,6 +828,11 @@ public class OrderPanel extends javax.swing.JPanel {
             JasperReport jasperReport = JasperCompileManager.compileReport(reportSrcFile);
             // Create connection
             DBProvider db = new DBProvider();
+            db.setDbHost(LoginFrame.config.host);
+            db.setDbPort(LoginFrame.config.port);
+            db.setDbName(LoginFrame.config.DBName);
+            db.setDbUsername(LoginFrame.config.name);
+            db.setDbPassword(LoginFrame.config.password);
             db.start();
             Connection connection = db.getConnection();
             // Pass parameters

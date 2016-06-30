@@ -6,11 +6,13 @@
 package user.controller;
 
 import database.IDAO;
+import employee.model.EmployeeSwingUtils;
 import java.sql.SQLException;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JFrame;
+import javax.swing.JOptionPane;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import user.model.User;
@@ -122,7 +124,8 @@ public class AdminPasswordDialog extends javax.swing.JDialog implements IDAO<Use
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setTitle("Change Password");
-        setMinimumSize(new java.awt.Dimension(400, 180));
+        setMaximumSize(new java.awt.Dimension(338, 158));
+        setMinimumSize(new java.awt.Dimension(338, 158));
         setResizable(false);
 
         btOK.setFont(new java.awt.Font("Lucida Grande", 0, 14)); // NOI18N
@@ -214,7 +217,11 @@ public class AdminPasswordDialog extends javax.swing.JDialog implements IDAO<Use
     }//GEN-LAST:event_btCancelActionPerformed
 
     private void btOKActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btOKActionPerformed
-        update(this.user);
+        if (EmployeeSwingUtils.showConfirmDialog("Are you sure to update ?") == JOptionPane.NO_OPTION) {
+            return;
+        } else {
+            update(this.user);
+        }        
     }//GEN-LAST:event_btOKActionPerformed
 
     // Variables declaration - do not modify//GEN-BEGIN:variables

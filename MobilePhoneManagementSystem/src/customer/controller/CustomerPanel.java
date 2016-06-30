@@ -106,19 +106,19 @@ public class CustomerPanel extends javax.swing.JPanel {
         tbCustomerList.getColumnModel().getColumn(COL_CUSNAME).setCellEditor(new StringCellEditor(1, 50, SwingUtils.PATTERN_NAMEWITHSPACE));
 
         // Col cus paid
-        tbCustomerList.getColumnModel().getColumn(COL_CUSPAID).setMinWidth(120);
+        tbCustomerList.getColumnModel().getColumn(COL_CUSPAID).setMinWidth(90);
         tbCustomerList.getColumnModel().getColumn(COL_CUSPAID).setCellRenderer(new CurrencyCellRenderer());
 
         // Col cus level name
-        tbCustomerList.getColumnModel().getColumn(COL_CUSLEVELNAME).setMinWidth(150);
+        tbCustomerList.getColumnModel().getColumn(COL_CUSLEVELNAME).setMinWidth(50);
         tbCustomerList.getColumnModel().getColumn(COL_CUSLEVELNAME).setCellEditor(new CustomerLevelComboBoxCellEditor(customerLevelComboBoxModel2));
 
         // Col cus phone
-        tbCustomerList.getColumnModel().getColumn(COL_CUSPHONE).setMinWidth(100);
+        tbCustomerList.getColumnModel().getColumn(COL_CUSPHONE).setMinWidth(90);
         tbCustomerList.getColumnModel().getColumn(COL_CUSPHONE).setCellEditor(new StringCellEditor(1, 20, SwingUtils.PATTERN_NUMBER));
 
         // Col cus address
-        tbCustomerList.getColumnModel().getColumn(COL_CUSADDRESS).setMinWidth(100);
+        tbCustomerList.getColumnModel().getColumn(COL_CUSADDRESS).setMinWidth(200);
         tbCustomerList.getColumnModel().getColumn(COL_CUSADDRESS).setCellEditor(new StringCellEditor(1, 200, SwingUtils.PATTERN_ADDRESS));
 
         // Col status

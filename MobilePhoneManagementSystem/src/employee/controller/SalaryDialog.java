@@ -38,14 +38,14 @@ import utility.TableCellListener;
  * @author Hoang
  */
 public class SalaryDialog extends javax.swing.JDialog {
-    
+
     private JDateChooser dcFilter;
     private SalaryTableModel salaryTableModel;
     private TableRowSorter<SalaryTableModel> sorter;
 
     // Salary dang duoc chon trong table
     private Salary selectedSalary;
-    private int selectedRowIndex=-1;
+    private int selectedRowIndex = -1;
     private int backupRowCount;
     Employee employee;
 
@@ -62,6 +62,7 @@ public class SalaryDialog extends javax.swing.JDialog {
     private List<Salary> salary;
 
     public SalaryDialog(Employee employee) {
+        //<editor-fold defaultstate="collapsed" desc="constructor">      
         super((JFrame) null, true);
         initComponents();
         this.employee = employee;
@@ -130,11 +131,11 @@ public class SalaryDialog extends javax.swing.JDialog {
         }
         );
 
-//</editor-fold>
         // Set data cho table chinh
         salaryTableModel.load(employee.getEmpID());
-       
-        //<editor-fold defaultstate="collapsed" desc="Set cell listener cho updating">
+//</editor-fold>
+
+//<editor-fold defaultstate="collapsed" desc="Set cell listener cho updating">
         TableCellListener tcl = new TableCellListener(tbSalaryList, new AbstractAction() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -152,11 +153,9 @@ public class SalaryDialog extends javax.swing.JDialog {
                         break;
                 }
                 if (EmployeeSwingUtils.showConfirmDialog("Are you sure to update ?") == JOptionPane.NO_OPTION) {
-                    return;
+                    refreshAction(false);
                 } else {
-                    System.out.println("Update: "+selectedSalary.toString());
                     updateAction();
-
                 }
                 //
             }
@@ -192,7 +191,8 @@ public class SalaryDialog extends javax.swing.JDialog {
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setTitle("Salary");
-        setMinimumSize(new java.awt.Dimension(712, 500));
+        setMaximumSize(new java.awt.Dimension(738, 458));
+        setMinimumSize(new java.awt.Dimension(738, 458));
         setModal(true);
         setResizable(false);
 
@@ -265,8 +265,8 @@ public class SalaryDialog extends javax.swing.JDialog {
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 380, Short.MAX_VALUE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 406, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(btAdd, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(btRemove, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -287,7 +287,8 @@ public class SalaryDialog extends javax.swing.JDialog {
     }//GEN-LAST:event_btAddActionPerformed
 
     private void btRemoveActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btRemoveActionPerformed
-        deleteAction();
+        
+            deleteAction();
     }//GEN-LAST:event_btRemoveActionPerformed
 
     private void btRefreshActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btRefreshActionPerformed
@@ -314,7 +315,7 @@ public class SalaryDialog extends javax.swing.JDialog {
         details.setEmpID(employee.getEmpID());
         details.setBasicSalary(employee.getEmpSalary());
         details.setBonus(employee.getEmpBonus());
-        System.out.println("zzzzzzz:   " + details);
+//        System.out.println("zzzzzzz:   " + details);
         salaryTableModel.insert(details);
         refreshAction(false);
 
@@ -325,21 +326,20 @@ public class SalaryDialog extends javax.swing.JDialog {
     private void deleteAction() {
         if (EmployeeSwingUtils.showConfirmDialog("Are you sure to delete ?") == JOptionPane.NO_OPTION) {
             return;
-        }else if(selectedRowIndex==-1){
+        } else if (selectedRowIndex == -1) {
             EmployeeSwingUtils.showErrorDialog("Choose salary to delete !");
             return;
-        }else if(tbSalaryList.getRowCount()==1){
+        } else if (tbSalaryList.getRowCount() == 1) {
             EmployeeSwingUtils.showErrorDialog("At least 1 details !");
             return;
-        }
-        if (salaryTableModel.delete(selectedSalary)) {
+        }else if (salaryTableModel.delete(selectedSalary)) {
             EmployeeSwingUtils.showInfoDialog(EmployeeSwingUtils.DELETE_SUCCESS);
 
         } else {
             EmployeeSwingUtils.showInfoDialog(EmployeeSwingUtils.DELETE_FAIL);
         }
         refreshAction(false);
-        System.out.println("RowCount: "+tbSalaryList.getRowCount());
+//        System.out.println("RowCount: "+tbSalaryList.getRowCount());
         // Neu row xoa la row cuoi thi lui cursor ve
         // Neu row xoa la row khac cuoi thi tien cursor ve truoc
         selectedRowIndex = 0;
@@ -398,7 +398,7 @@ public class SalaryDialog extends javax.swing.JDialog {
         selectedSalary.setOffDays((int) tbSalaryList.getValueAt(selectedRowIndex, 5));
         selectedSalary.setBonus((int) tbSalaryList.getValueAt(selectedRowIndex, 6));
         selectedSalary.setBasicSalary((int) tbSalaryList.getValueAt(selectedRowIndex, 7));
-        
+
 //        if (selectedRowIndex >= 0) {
 //            int idx = tbSalaryList.convertRowIndexToModel(selectedRowIndex);
 //            selectedSalary = salaryTableModel.getSalaryFromIndex(idx);

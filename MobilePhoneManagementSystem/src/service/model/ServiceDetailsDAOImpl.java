@@ -122,8 +122,8 @@ public class ServiceDetailsDAOImpl implements IDAO<ServiceDetails> {
 
             // Insert table ServiceDetails
             for (ServiceDetails op : list) {
-                System.out.println("ServiceID :" + currentService.getSerID());
-                System.out.println("LIST Insert: " + list.toString());
+//                System.out.println("ServiceID :" + currentService.getSerID());
+//                System.out.println("LIST Insert: " + list.toString());
                 if (op.getOrdID() == 0) {
                     runPS("insert ServiceDetails(ServiceID, ProID, ServiceContent,ProQty,ServiceCost) values(?,?,?,?,?)", currentService.getSerID(), op.getProID(), op.getSerContent(), op.getProQty(), op.getSerCost());
                 } else {
