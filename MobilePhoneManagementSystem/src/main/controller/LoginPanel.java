@@ -32,6 +32,7 @@ public class LoginPanel extends javax.swing.JPanel {
 
     /**
      * Creates new form LoginPanel
+     *
      * @param parent
      */
     public LoginPanel(Container parent) {
@@ -220,7 +221,7 @@ public class LoginPanel extends javax.swing.JPanel {
         if (checkLogin()) { // True khi thong tin hop le
             // Ghi du lieu dang nhap vao file
             config.userName = tfUserName.getText().trim();
-            config.userPassword = new String(tfPassword.getPassword()).trim();
+            config.userPassword = encryptPass(new String(tfPassword.getPassword()).trim());
             config.userFunctions = functions;
 
             IOUtils.writeObject(LoginFrame.CONFIG_FILENAME, config);
@@ -260,7 +261,7 @@ public class LoginPanel extends javax.swing.JPanel {
         if (list.isEmpty()) {
             SwingUtils.showInfoDialog("Username not correct ! Please try again !");
             tfUserName.requestFocus();
-        } else if (!String.valueOf(tfPassword.getPassword()).trim().equals(list.get(0).userPassword)) {
+        } else if (!encryptPass(String.valueOf(tfPassword.getPassword()).trim()).equals(list.get(0).userPassword)) {
             SwingUtils.showInfoDialog("Password not correct ! Please try again !");
             tfPassword.requestFocus();
         } else {
@@ -268,5 +269,20 @@ public class LoginPanel extends javax.swing.JPanel {
             result = true;
         }
         return result;
+    }
+
+    public String encryptPass(String pass) {
+        try {
+            java.security.MessageDigest md = java.security.MessageDigest.getInstance("MD5");
+            byte[] array = md.digest(pass.getBytes());
+            StringBuffer sb = new StringBuffer();
+            for (int i = 0; i < array.length; ++i) {
+                sb.append(Integer.toHexString((array[i] & 0xFF) | 0x100).substring(1, 3));
+            }
+            return sb.toString();
+        } catch (java.security.NoSuchAlgorithmException e) {
+        }
+        return null;
+
     }
 }

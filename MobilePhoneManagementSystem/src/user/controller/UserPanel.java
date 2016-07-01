@@ -31,6 +31,7 @@ import utility.StringCellEditor;
 import utility.TableCellListener;
 import employee.model.EmployeeSwingUtils;
 import javax.swing.JOptionPane;
+import user.model.NewUserEmployeeDAOImpl;
 
 /**
  *
@@ -447,7 +448,12 @@ public class UserPanel extends javax.swing.JPanel {
 
     // <editor-fold defaultstate="collapsed" desc="Khai bao event">    
     private void btAddActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btAddActionPerformed
-        new AddNewUser().setVisible(true);
+        NewUserEmployeeDAOImpl nu = new NewUserEmployeeDAOImpl();
+        if (nu.isZeroEmployee() == false) {
+            new AddNewUser().setVisible(true);
+        } else {
+            EmployeeSwingUtils.showErrorDialog("All employee have account, please insert more employee before !");
+        }
         refreshAction(false);
     }//GEN-LAST:event_btAddActionPerformed
 
@@ -470,6 +476,7 @@ public class UserPanel extends javax.swing.JPanel {
             return;
         } else {
             deleteAction();
+            refreshAction(false);
         }
     }//GEN-LAST:event_btRemoveActionPerformed
 

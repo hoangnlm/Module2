@@ -31,6 +31,7 @@ public class AddNewUser extends javax.swing.JDialog implements IDAO<User> {
     private NewUserComboBoxRenderer employeeComboBoxRenderer;
     UserEmployee cbbEmp;
     int empID;
+    String pass = "", repass = "", userName = "";
 
     public AddNewUser() {
         super((JFrame) null, true);
@@ -46,9 +47,7 @@ public class AddNewUser extends javax.swing.JDialog implements IDAO<User> {
         employeeComboBoxRenderer = new NewUserComboBoxRenderer();
         cbEmployee.setRenderer(employeeComboBoxRenderer);
         cbEmployee.setSelectedIndex(cbEmployee.getItemCount() - 1);
-        if (cbEmployee.getItemCount() == 1) {
-            SwingUtils.showErrorDialog("All employee have account, please insert more employee before !");
-        }
+
         //<editor-fold defaultstate="collapsed" desc="event listener">
         txtNew.getDocument().addDocumentListener(
                 new DocumentListener() {
@@ -104,8 +103,12 @@ public class AddNewUser extends javax.swing.JDialog implements IDAO<User> {
 //</editor-fold>
     }
 
+    //<editor-fold defaultstate="collapsed" desc="method">
     private void setButton() {
-        if (txtNew.getText().isEmpty() || txtReNew.getText().isEmpty() || txtUserName.getText().isEmpty()) {
+        pass = String.valueOf(txtNew.getPassword()).trim();
+        repass = String.valueOf(txtReNew.getPassword()).trim();
+        userName = txtUserName.getText().trim();
+        if (pass.isEmpty() || repass.isEmpty() || userName.isEmpty()) {
             btOK.setEnabled(false);
             btCancel.setEnabled(false);
         } else {
@@ -114,45 +117,79 @@ public class AddNewUser extends javax.swing.JDialog implements IDAO<User> {
         }
     }
 
-    public boolean insert() {
+    public boolean validateField() {
+        boolean result = true;
         empID = ((UserEmployee) cbEmployee.getSelectedItem()).getEmpID();
-        boolean result = false;
-        if (txtNew.getText().trim().isEmpty()) {
+        if (pass.isEmpty()) {
+            result = false;
             SwingUtils.showErrorDialog("Must be not empty !");
             txtNew.requestFocus();
-        } else if (txtReNew.getText().trim().isEmpty()) {
+        } else if (repass.isEmpty()) {
+            result = false;
             SwingUtils.showErrorDialog("Must be not empty !");
             txtReNew.requestFocus();
-        } else if (txtUserName.getText().trim().isEmpty()) {
+        } else if (userName.isEmpty()) {
+            result = false;
             SwingUtils.showErrorDialog("Must be not empty !");
-            txtUserName.requestFocus();
-        } else if (!txtNew.getText().trim().matches("[A-Za-z0-9]{1,30}")) {
-            SwingUtils.showErrorDialog("Invalid format ! Only number and character !");
-            txtNew.requestFocus();
-        } else if (!txtReNew.getText().trim().matches("[A-Za-z0-9]{1,30}")) {
-            SwingUtils.showErrorDialog("Invalid format ! Only number and character !");
-            txtReNew.requestFocus();
-        } else if (!txtUserName.getText().trim().matches("[A-Za-z0-9]{1,30}")) {
-            SwingUtils.showErrorDialog("Invalid format ! Only number and character !");
             txtUserName.requestFocus();
         } else if (empID == 0) {
+            result = false;
             SwingUtils.showErrorDialog("Choose employee !");
+        } else if (!userName.matches("[A-Za-z0-9]{6,30}")) {
+            result = false;
+            SwingUtils.showErrorDialog("Invalid format ! Only number and character, minimum 6 and maximum 30 characters !");
+            txtUserName.requestFocus();
+        } else if (!pass.matches("[A-Za-z0-9]{6,30}")) {
+            result = false;
+            SwingUtils.showErrorDialog("Invalid format ! Only number and character, minimum 6 and maximum 30 characters !");
+            txtNew.requestFocus();
+        } else if (!repass.equals(pass)) {
+            result = false;
+            SwingUtils.showErrorDialog("Re-password does not matches!");
+            txtReNew.requestFocus();
         } else {
             try {
-                CachedRowSet crs = getCRS("select * from Users where UserName=?", txtUserName.getText().trim());
+                CachedRowSet crs = getCRS("select * from Users where UserName=?", userName);
                 if (crs.first()) {
+                    result = false;
                     SwingUtils.showErrorDialog("Username can't be duplicate !");
                     txtUserName.requestFocus();
-                } else {
-                    runPS("insert into Users values(?,?,?,?)", txtUserName.getText().trim(), txtNew.getText().trim(), 1, empID);
-                    result = true;
-                    SwingUtils.showInfoDialog(SwingUtils.INSERT_SUCCESS);
                 }
             } catch (SQLException ex) {
                 Logger.getLogger(AddNewUser.class.getName()).log(Level.SEVERE, null, ex);
             }
         }
         return result;
+    }
+
+    public boolean insert() {
+        boolean result = false;
+
+        try {
+            runPS("insert into Users values(?,?,?,?)", userName, encryptPass(pass), 1, empID);
+            result = true;
+            dispose();
+        } catch (SQLException ex) {
+            Logger.getLogger(AddNewUser.class.getName()).log(Level.SEVERE, null, ex);
+        }
+
+//        System.out.println(pass + "  \t\tMD5:  " + encryptPass(pass));
+        return result;
+    }
+
+    public String encryptPass(String pass) {
+        try {
+            java.security.MessageDigest md = java.security.MessageDigest.getInstance("MD5");
+            byte[] array = md.digest(pass.getBytes());
+            StringBuffer sb = new StringBuffer();
+            for (int i = 0; i < array.length; ++i) {
+                sb.append(Integer.toHexString((array[i] & 0xFF) | 0x100).substring(1, 3));
+            }
+            return sb.toString();
+        } catch (java.security.NoSuchAlgorithmException e) {
+        }
+        return null;
+
     }
 
     private void refreshField() {
@@ -162,6 +199,37 @@ public class AddNewUser extends javax.swing.JDialog implements IDAO<User> {
         cbEmployee.setSelectedIndex(cbEmployee.getItemCount() - 1);
     }
 
+    @Override
+    public List<User> getList() {
+        return null;
+    }
+
+    @Override
+    public boolean update(User model) {
+        return false;
+    }
+
+    @Override
+    public boolean delete(User model) {
+        return false;
+    }
+
+    @Override
+    public int getSelectingIndex(int idx) {
+        return 0;
+    }
+
+    @Override
+    public void setSelectingIndex(int idx) {
+
+    }
+
+    @Override
+    public boolean insert(User model) {
+        return false;
+    }
+
+//</editor-fold>
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -224,6 +292,8 @@ public class AddNewUser extends javax.swing.JDialog implements IDAO<User> {
         jLabel3.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
         jLabel3.setText("Re-password:");
 
+        txtNew.setMinimumSize(new java.awt.Dimension(6, 6));
+
         jLabel11.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
         jLabel11.setForeground(new java.awt.Color(255, 0, 51));
         jLabel11.setText("*");
@@ -269,7 +339,7 @@ public class AddNewUser extends javax.swing.JDialog implements IDAO<User> {
                         .addGap(42, 42, 42)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                             .addComponent(cbEmployee, 0, 157, Short.MAX_VALUE)
-                            .addComponent(txtNew)
+                            .addComponent(txtNew, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                             .addComponent(txtReNew, javax.swing.GroupLayout.DEFAULT_SIZE, 157, Short.MAX_VALUE)
                             .addComponent(txtUserName))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -289,10 +359,11 @@ public class AddNewUser extends javax.swing.JDialog implements IDAO<User> {
                     .addComponent(txtUserName, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel11))
                 .addGap(18, 18, 18)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(cbEmployee, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel5)
-                    .addComponent(jLabel12))
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jLabel12)
+                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                        .addComponent(cbEmployee, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(jLabel5)))
                 .addGap(18, 18, 18)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
@@ -323,15 +394,17 @@ public class AddNewUser extends javax.swing.JDialog implements IDAO<User> {
     }//GEN-LAST:event_btCancelActionPerformed
 
     private void btOKActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btOKActionPerformed
-        if (EmployeeSwingUtils.showConfirmDialog("Are you sure to update ?") == JOptionPane.NO_OPTION) {
-            return;
-        } else {
-            boolean result = insert();
-            if (result == true) {
-                dispose();
+        if (validateField() == true) {
+            if (EmployeeSwingUtils.showConfirmDialog("Are you sure to update ?") == JOptionPane.NO_OPTION) {
+                return;
+            } else {
+                boolean result = insert();
+                EmployeeSwingUtils.showInfoDialog(result ? EmployeeSwingUtils.INSERT_SUCCESS : EmployeeSwingUtils.INSERT_FAIL);
+//                if (result == true) {
+//                    refreshField();
+//                }
             }
         }
-
     }//GEN-LAST:event_btOKActionPerformed
 
     private void btCloseActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btCloseActionPerformed
@@ -356,33 +429,4 @@ public class AddNewUser extends javax.swing.JDialog implements IDAO<User> {
     private javax.swing.JTextField txtUserName;
     // End of variables declaration//GEN-END:variables
 
-    @Override
-    public List<User> getList() {
-        return null;
-    }
-
-    @Override
-    public boolean update(User model) {
-        return false;
-    }
-
-    @Override
-    public boolean delete(User model) {
-        return false;
-    }
-
-    @Override
-    public int getSelectingIndex(int idx) {
-        return 0;
-    }
-
-    @Override
-    public void setSelectingIndex(int idx) {
-
-    }
-
-    @Override
-    public boolean insert(User model) {
-        return false;
-    }
 }

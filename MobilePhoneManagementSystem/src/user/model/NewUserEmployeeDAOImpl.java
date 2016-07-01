@@ -13,7 +13,6 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.sql.rowset.CachedRowSet;
 
-
 /**
  *
  * @author BonBon
@@ -23,8 +22,22 @@ public class NewUserEmployeeDAOImpl implements IDAO<UserEmployee> {
     private CachedRowSet crs;  //CRS to update table
 
     public NewUserEmployeeDAOImpl() {
-        crs = getCRS("select EmpID,EmpName from Employees WHERE  EmpID NOT IN (select u.EmpID from  Users u ) ");       
+        crs = getCRS("select EmpID,EmpName from Employees WHERE  EmpID NOT IN (select u.EmpID from  Users u ) ");
 //        crs = getCRS("select EmpID,EmpName from Employees");
+    }
+
+    public boolean isZeroEmployee() {
+        boolean result = false;
+        try {
+            if (!crs.first()) {
+                result = true;
+            } else {
+                result = false;
+            }
+        } catch (SQLException ex) {
+            Logger.getLogger(NewUserEmployeeDAOImpl.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return result;
     }
 
     @Override
@@ -33,7 +46,7 @@ public class NewUserEmployeeDAOImpl implements IDAO<UserEmployee> {
         try {
             if (crs.first()) {
                 do {
-                    list.add(new UserEmployee(                            
+                    list.add(new UserEmployee(
                             crs.getInt(UserEmployee.COL_ID),
                             crs.getString(UserEmployee.COL_NAME)));
                 } while (crs.next());
@@ -68,5 +81,4 @@ public class NewUserEmployeeDAOImpl implements IDAO<UserEmployee> {
     public void setSelectingIndex(int idx) {
     }
 
-   
 }

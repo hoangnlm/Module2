@@ -142,11 +142,13 @@ public class UserPasswordDialog extends javax.swing.JDialog implements IDAO<User
         );
         try {
             
-            if (crs.first() && !crs.getString("UserPassword").equals(encryptPass(oldPass))) {
+            if (crs.first() && !crs.getString("UserPassword").equals(oldPass)) {//encryptPass(oldPass)
                 result = false;
                 SwingUtils.showErrorDialog("Old password is not correct !");
                 txtOld.requestFocus();
-            } else if (!oldPass.matches("[A-Za-z0-9]{1,30}")) {
+            } else 
+                
+                if (!oldPass.matches("[A-Za-z0-9]{1,30}")) {
                 result = false;
                 SwingUtils.showErrorDialog("Invalid format ! Only number and character, minimum 6 and maximum 30 characters !");
                 txtOld.requestFocus();

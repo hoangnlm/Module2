@@ -44,6 +44,7 @@ public class EmployeeSwingUtils {
     public static final String PATTERN_SERVICECONTENT = "[A-Za-z0-9 .,-]+";
     public static final String PATTERN_PASS ="[A-Za-z0-9]{1,30}";
     public static final String PATTERN_PHONE2="[0-9]{1,20}";
+    public static final String PATTERN_USERNAME = "[A-Za-z0-9]{6,30}";
 
     public enum FormatType {
         DATE, PERCENT, CURRENCY, CURRENCYINTERGER, CURRENCYDOUBLE
