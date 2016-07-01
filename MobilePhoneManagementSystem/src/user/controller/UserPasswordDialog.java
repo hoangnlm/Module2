@@ -34,7 +34,8 @@ public class UserPasswordDialog extends javax.swing.JDialog implements IDAO<User
         setLocationRelativeTo(null);
         this.user = user;
         btOK.setEnabled(false);
-        
+      
+         //<editor-fold defaultstate="collapsed" desc="listener">
         txtNew.getDocument().addDocumentListener(
                 new DocumentListener() {
             @Override
@@ -86,6 +87,7 @@ public class UserPasswordDialog extends javax.swing.JDialog implements IDAO<User
                 setButton();
             }
         });
+        //</editor-fold>
     }
     
     //<editor-fold defaultstate="collapsed" desc="method">
@@ -148,7 +150,7 @@ public class UserPasswordDialog extends javax.swing.JDialog implements IDAO<User
                 txtOld.requestFocus();
             } else 
                 
-                if (!oldPass.matches("[A-Za-z0-9]{1,30}")) {
+                if (!oldPass.matches("[A-Za-z0-9]{6,30}")) {
                 result = false;
                 SwingUtils.showErrorDialog("Invalid format ! Only number and character, minimum 6 and maximum 30 characters !");
                 txtOld.requestFocus();
@@ -283,11 +285,11 @@ public class UserPasswordDialog extends javax.swing.JDialog implements IDAO<User
                     .addComponent(jLabel11, javax.swing.GroupLayout.PREFERRED_SIZE, 14, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                .addContainerGap(65, Short.MAX_VALUE)
+                .addContainerGap(70, Short.MAX_VALUE)
                 .addComponent(btOK, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(btCancel, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(65, Short.MAX_VALUE))
+                .addContainerGap(70, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
