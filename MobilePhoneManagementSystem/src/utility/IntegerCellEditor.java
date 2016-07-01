@@ -79,10 +79,10 @@ public class IntegerCellEditor extends DefaultCellEditor {
     //of this method so that everything gets cleaned up.
     @Override
     public boolean stopCellEditing() {
-        System.out.println("stopcelledit");
+//        System.out.println("stopcelledit");
         JFormattedTextField ftf2 = (JFormattedTextField) getComponent();
         if (ftf2.isEditValid()) {
-            System.out.println("stopcelledit:isValid");
+//            System.out.println("stopcelledit:isValid");
 //               userSaysRevert();
             try {
                 ftf2.commitEdit();
@@ -90,7 +90,7 @@ public class IntegerCellEditor extends DefaultCellEditor {
             }
 
         } else { //text is invalid
-            System.out.println("stopcelledit:notValid");
+//            System.out.println("stopcelledit:notValid");
 
             if (!userSaysRevert()) { //user wants to edit
                 return false; //don't let the editor go away

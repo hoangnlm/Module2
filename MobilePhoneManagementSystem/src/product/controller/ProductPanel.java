@@ -63,7 +63,6 @@ import org.jdesktop.xswingx.PromptSupport;
 import product.dao.Branch;
 import product.dao.BranchNameComboBoxModel;
 import product.dao.BranchNameComboBoxRender;
-import product.dao.MyQuery;
 import product.dao.ProductDAOImpl;
 import product.model.ImageRenderer;
 import product.model.Product;

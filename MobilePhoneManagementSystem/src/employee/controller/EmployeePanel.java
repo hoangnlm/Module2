@@ -541,7 +541,7 @@ public class EmployeePanel extends javax.swing.JPanel {
         pnTitle.setBorder(javax.swing.BorderFactory.createEtchedBorder());
 
         jLabel1.setFont(new java.awt.Font("Lucida Grande", 1, 24)); // NOI18N
-        jLabel1.setForeground(new java.awt.Color(0, 255, 255));
+        jLabel1.setForeground(new java.awt.Color(225, 153, 0));
         jLabel1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/image/main/Employee.png"))); // NOI18N
         jLabel1.setText("<html><u><i><font color='red'>E</font>mployee <font color='red'>M</font>anagement</i></u></html>");
 
@@ -653,7 +653,11 @@ public class EmployeePanel extends javax.swing.JPanel {
     }//GEN-LAST:event_btRefreshActionPerformed
 
     private void btRemoveActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btRemoveActionPerformed
-        deleteAction();
+        if (EmployeeSwingUtils.showConfirmDialog("Are you sure to delete ?") == JOptionPane.NO_OPTION) {
+                    return;
+                } else {
+                    deleteAction();
+                }        
     }//GEN-LAST:event_btRemoveActionPerformed
 
     private void cbStatusFilterItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_cbStatusFilterItemStateChanged
@@ -778,6 +782,7 @@ public class EmployeePanel extends javax.swing.JPanel {
     }
 //</editor-fold>
 
+    // Test commit ti
     private void clearFilter() {
         tfIdFilter.setText(null);
         tfBonusFilter.setText(null);
