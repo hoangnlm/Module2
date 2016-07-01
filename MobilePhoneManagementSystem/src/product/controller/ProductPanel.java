@@ -63,7 +63,6 @@ import org.jdesktop.xswingx.PromptSupport;
 import product.dao.Branch;
 import product.dao.BranchNameComboBoxModel;
 import product.dao.BranchNameComboBoxRender;
-import product.dao.MyQuery;
 import product.dao.ProductDAOImpl;
 import product.model.ImageRenderer;
 import product.model.Product;
@@ -381,16 +380,16 @@ public class ProductPanel extends javax.swing.JPanel {
         tbProductList.getColumnModel().getColumn(COL_BraName).setCellEditor(new product.dao.ComboBoxCellEditor(new BranchNameComboBoxModel()));
 
         //name
-        tbProductList.getColumnModel().getColumn(COL_ProName).setMinWidth(80);
+        tbProductList.getColumnModel().getColumn(COL_ProName).setMinWidth(150);
         tbProductList.getColumnModel().getColumn(COL_ProName).setCellRenderer(centerRenderer);
         tbProductList.getColumnModel().getColumn(COL_ProName).setCellEditor(new StringCellEditor(1, 70,SwingUtils.PATTERN_NAMEWITHSPACE));
         //stock
-        tbProductList.getColumnModel().getColumn(COL_ProStock).setMinWidth(35);
-//        tbProductList.getColumnModel().getColumn(COL_ProStock).setMaxWidth(50);
+        tbProductList.getColumnModel().getColumn(COL_ProStock).setMinWidth(30);
+        tbProductList.getColumnModel().getColumn(COL_ProStock).setMaxWidth(50);
         tbProductList.getColumnModel().getColumn(COL_ProStock).setCellRenderer(centerRenderer);
 
         //price
-        tbProductList.getColumnModel().getColumn(COL_ProPrice).setMinWidth(80);
+        tbProductList.getColumnModel().getColumn(COL_ProPrice).setMinWidth(100);
         tbProductList.getColumnModel().getColumn(COL_ProPrice).setCellRenderer(new CurrencyCellRenderer());
 
         //desc
@@ -399,7 +398,7 @@ public class ProductPanel extends javax.swing.JPanel {
         tbProductList.getColumnModel().getColumn(COL_ProDescr).setCellEditor(new StringCellEditor(1, 100, SwingUtils.PATTERN_NAMEWITHSPACE));
 
         //enable
-        tbProductList.getColumnModel().getColumn(COL_ProEnable).setMinWidth(45);
+        tbProductList.getColumnModel().getColumn(COL_ProEnable).setMinWidth(25);
 //        tbProductList.getColumnModel().getColumn(COL_ProEnable).setMaxWidth(45);
 
         //saleoff
@@ -736,6 +735,7 @@ public class ProductPanel extends javax.swing.JPanel {
     private void btBrowseMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btBrowseMouseClicked
 
         JFileChooser fileChooser = new JFileChooser();
+        fileChooser.setDialogTitle("IMAGE 150x120");
         fileChooser.setCurrentDirectory(new File(System.getProperty("user.name")));
         FileNameExtensionFilter filter = new FileNameExtensionFilter("*.IMAGE", "jpg", "gif", "png");
         fileChooser.addChoosableFileFilter(filter);

@@ -16,7 +16,7 @@ public class CurrencyCellRenderer extends DefaultTableCellRenderer {
     @Override
     public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
         JLabel label = (JLabel) super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
-        label.setText(String.format("%,.0f VNĐ", (float) value));
+        label.setText(String.format("%,.0f Đ", (float) value));
         label.setHorizontalAlignment(CENTER);
         return label;
     }
