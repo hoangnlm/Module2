@@ -21,6 +21,7 @@ public class DateCellWorkingDateEditor extends DefaultCellEditor {
     public DateCellWorkingDateEditor() {
         super(new JTextField());
         dc = new JDateChooser();
+        dc.setDateFormatString("MMM dd, yyyy");
         Calendar c = Calendar.getInstance();
         dc.getJCalendar().setMaxSelectableDate(c.getTime());
         
