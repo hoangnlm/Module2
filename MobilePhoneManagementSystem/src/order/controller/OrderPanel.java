@@ -180,6 +180,10 @@ public class OrderPanel extends javax.swing.JPanel {
                 fetchAction();
                 if (LoginFrame.checkPermission(new UserFunction(UserFunction.FG_ORDER, UserFunction.FN_UPDATE))) {
                     setButtonEnabled(true);
+                    // Khong cho xoa order da done
+                    if(((String) tbOrderList.getValueAt(tbOrderList.getSelectedRow(), COL_STATUS)).equalsIgnoreCase("Done")){
+                        btRemove.setEnabled(false);
+                    }
                 }
             } else {
                 setButtonEnabled(false);
