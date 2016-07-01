@@ -832,6 +832,7 @@ public class EmployeePanel extends javax.swing.JPanel {
         tbEmpployeeList.getEditorComponent().requestFocus();
     }
 
+    // comment thu de push
     private void updateAction() {
 //        System.out.println("Updateaction: "+selectedEmployee.toString());
         setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
