@@ -12,6 +12,7 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.sql.rowset.CachedRowSet;
+import utility.SwingUtils;
 
 /**
  *
@@ -65,6 +66,19 @@ public class OrderDAOImpl implements IDAO<Order> {
     public boolean delete(Order model) {
         boolean result = false;
         try {
+            // Check trang thai order, neu la "Done" thi khong cho xoa
+            if(model.getOrdStatus().equals("Done")){
+                SwingUtils.showErrorDialog("Cannot delete order which has been done !");
+                return result;
+            }
+            
+            // Check neu order dang trong service thi khong cho xoa
+            CachedRowSet crs2 = getCRS("select OrdID from ServiceDetails where OrdID=?", model.getOrdID());
+            if(crs2.first()){
+                 SwingUtils.showErrorDialog("Order is in Service !");
+                return result;               
+            }
+            
             // Xoa data trong table OrderDetails
             runPS("delete OrderDetails where OrdID=?", model.getOrdID());
             // Xoa data trong table Orders
