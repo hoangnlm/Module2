@@ -829,6 +829,11 @@ public class ServiceDialog extends javax.swing.JDialog implements ItemListener {
 
                 track = true;
                 break;
+            case 3:
+                EmployeeSwingUtils.showErrorDialog("This product does not exist in this order !");
+//                tbProduct.setValueAt(0, tbProduct.getSelectedRow(), COL_ODERID);
+                track = false;
+                break;
         }
         return track;
     }

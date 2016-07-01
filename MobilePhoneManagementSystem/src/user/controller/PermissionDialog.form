@@ -185,7 +185,7 @@
           <Border info="org.netbeans.modules.form.compat2.border.TitledBorderInfo">
             <TitledBorder title="User">
               <Font PropertyName="font" name="Tahoma" size="12" style="1"/>
-              <Color PropertyName="color" blue="ff" green="33" red="33" type="rgb"/>
+              <Color PropertyName="color" blue="0" green="99" red="ff" type="rgb"/>
             </TitledBorder>
           </Border>
         </Property>
@@ -239,7 +239,7 @@
           <Border info="org.netbeans.modules.form.compat2.border.TitledBorderInfo">
             <TitledBorder title="Product">
               <Font PropertyName="font" name="Tahoma" size="12" style="1"/>
-              <Color PropertyName="color" blue="ff" green="33" red="33" type="rgb"/>
+              <Color PropertyName="color" blue="0" green="99" red="ff" type="rgb"/>
             </TitledBorder>
           </Border>
         </Property>
@@ -293,7 +293,7 @@
           <Border info="org.netbeans.modules.form.compat2.border.TitledBorderInfo">
             <TitledBorder title="Outbound">
               <Font PropertyName="font" name="Tahoma" size="12" style="1"/>
-              <Color PropertyName="color" blue="ff" green="33" red="33" type="rgb"/>
+              <Color PropertyName="color" blue="0" green="99" red="ff" type="rgb"/>
             </TitledBorder>
           </Border>
         </Property>
@@ -347,7 +347,7 @@
           <Border info="org.netbeans.modules.form.compat2.border.TitledBorderInfo">
             <TitledBorder title="Inbound">
               <Font PropertyName="font" name="Tahoma" size="12" style="1"/>
-              <Color PropertyName="color" blue="ff" green="33" red="33" type="rgb"/>
+              <Color PropertyName="color" blue="0" green="99" red="ff" type="rgb"/>
             </TitledBorder>
           </Border>
         </Property>
@@ -401,7 +401,7 @@
           <Border info="org.netbeans.modules.form.compat2.border.TitledBorderInfo">
             <TitledBorder title="Branch">
               <Font PropertyName="font" name="Tahoma" size="12" style="1"/>
-              <Color PropertyName="color" blue="ff" green="33" red="33" type="rgb"/>
+              <Color PropertyName="color" blue="0" green="99" red="ff" type="rgb"/>
             </TitledBorder>
           </Border>
         </Property>
@@ -455,7 +455,7 @@
           <Border info="org.netbeans.modules.form.compat2.border.TitledBorderInfo">
             <TitledBorder title="Customer">
               <Font PropertyName="font" name="Tahoma" size="12" style="1"/>
-              <Color PropertyName="color" blue="ff" green="33" red="33" type="rgb"/>
+              <Color PropertyName="color" blue="0" green="99" red="ff" type="rgb"/>
             </TitledBorder>
           </Border>
         </Property>
@@ -509,7 +509,7 @@
           <Border info="org.netbeans.modules.form.compat2.border.TitledBorderInfo">
             <TitledBorder title="SaleOff">
               <Font PropertyName="font" name="Tahoma" size="12" style="1"/>
-              <Color PropertyName="color" blue="ff" green="33" red="33" type="rgb"/>
+              <Color PropertyName="color" blue="0" green="99" red="ff" type="rgb"/>
             </TitledBorder>
           </Border>
         </Property>
@@ -563,7 +563,7 @@
           <Border info="org.netbeans.modules.form.compat2.border.TitledBorderInfo">
             <TitledBorder title="Order">
               <Font PropertyName="font" name="Tahoma" size="12" style="1"/>
-              <Color PropertyName="color" blue="ff" green="33" red="33" type="rgb"/>
+              <Color PropertyName="color" blue="0" green="99" red="ff" type="rgb"/>
             </TitledBorder>
           </Border>
         </Property>
@@ -617,7 +617,7 @@
           <Border info="org.netbeans.modules.form.compat2.border.TitledBorderInfo">
             <TitledBorder title="Salary">
               <Font PropertyName="font" name="Tahoma" size="12" style="1"/>
-              <Color PropertyName="color" blue="ff" green="33" red="33" type="rgb"/>
+              <Color PropertyName="color" blue="0" green="99" red="ff" type="rgb"/>
             </TitledBorder>
           </Border>
         </Property>
@@ -671,7 +671,7 @@
           <Border info="org.netbeans.modules.form.compat2.border.TitledBorderInfo">
             <TitledBorder title="Service">
               <Font PropertyName="font" name="Tahoma" size="12" style="1"/>
-              <Color PropertyName="color" blue="ff" green="33" red="33" type="rgb"/>
+              <Color PropertyName="color" blue="0" green="99" red="ff" type="rgb"/>
             </TitledBorder>
           </Border>
         </Property>
@@ -725,7 +725,7 @@
           <Border info="org.netbeans.modules.form.compat2.border.TitledBorderInfo">
             <TitledBorder title="CustomerLevel">
               <Font PropertyName="font" name="Tahoma" size="12" style="1"/>
-              <Color PropertyName="color" blue="ff" green="33" red="33" type="rgb"/>
+              <Color PropertyName="color" blue="0" green="99" red="ff" type="rgb"/>
             </TitledBorder>
           </Border>
         </Property>
@@ -797,7 +797,7 @@
           <Border info="org.netbeans.modules.form.compat2.border.TitledBorderInfo">
             <TitledBorder title="Permission">
               <Font PropertyName="font" name="Tahoma" size="12" style="1"/>
-              <Color PropertyName="color" blue="ff" green="33" red="33" type="rgb"/>
+              <Color PropertyName="color" blue="0" green="99" red="ff" type="rgb"/>
             </TitledBorder>
           </Border>
         </Property>
@@ -853,7 +853,7 @@
           <Border info="org.netbeans.modules.form.compat2.border.TitledBorderInfo">
             <TitledBorder title="Employee">
               <Font PropertyName="font" name="Tahoma" size="12" style="1"/>
-              <Color PropertyName="color" blue="ff" green="33" red="33" type="rgb"/>
+              <Color PropertyName="color" blue="0" green="99" red="ff" type="rgb"/>
             </TitledBorder>
           </Border>
         </Property>
@@ -907,7 +907,7 @@
           <Border info="org.netbeans.modules.form.compat2.border.TitledBorderInfo">
             <TitledBorder title="Suplier">
               <Font PropertyName="font" name="Tahoma" size="12" style="1"/>
-              <Color PropertyName="color" blue="ff" green="33" red="33" type="rgb"/>
+              <Color PropertyName="color" blue="0" green="99" red="ff" type="rgb"/>
             </TitledBorder>
           </Border>
         </Property>

@@ -536,7 +536,7 @@ public class ServicePanel extends javax.swing.JPanel {
         pnTitle.setPreferredSize(new java.awt.Dimension(790, 65));
 
         jLabel1.setFont(new java.awt.Font("Lucida Grande", 1, 24)); // NOI18N
-        jLabel1.setForeground(new java.awt.Color(225, 153, 0));
+        jLabel1.setForeground(new java.awt.Color(0, 255, 255));
         jLabel1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/image/main/Service.png"))); // NOI18N
         jLabel1.setText("<html><u><i><font color='red'>S</font>ervice <font color='red'>M</font>anagement</i></u></html>");
 
