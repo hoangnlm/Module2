@@ -48,6 +48,9 @@ public class AddNewUser extends javax.swing.JDialog implements IDAO<User> {
         cbEmployee.setRenderer(employeeComboBoxRenderer);
         cbEmployee.setSelectedIndex(cbEmployee.getItemCount() - 1);
 
+        SwingUtils.validateStringInput(txtUserName, 4, 30, SwingUtils.PATTERN_NAMENOSPACE);
+        EmployeeSwingUtils.validateStringInput(txtNew, 6, 30, EmployeeSwingUtils.PATTERN_NAMENOSPACE);
+        
         //<editor-fold defaultstate="collapsed" desc="event listener">
         txtNew.getDocument().addDocumentListener(
                 new DocumentListener() {
@@ -120,26 +123,28 @@ public class AddNewUser extends javax.swing.JDialog implements IDAO<User> {
     public boolean validateField() {
         boolean result = true;
         empID = ((UserEmployee) cbEmployee.getSelectedItem()).getEmpID();
-        if (pass.isEmpty()) {
-            result = false;
-            SwingUtils.showErrorDialog("Must be not empty !");
-            txtNew.requestFocus();
-        } else if (repass.isEmpty()) {
-            result = false;
-            SwingUtils.showErrorDialog("Must be not empty !");
-            txtReNew.requestFocus();
-        } else if (userName.isEmpty()) {
-            result = false;
-            SwingUtils.showErrorDialog("Must be not empty !");
-            txtUserName.requestFocus();
-        } else if (empID == 0) {
+//        if (pass.isEmpty()) {
+//            result = false;
+//            SwingUtils.showErrorDialog("Must be not empty !");
+//            txtNew.requestFocus();
+//        } else if (repass.isEmpty()) {
+//            result = false;
+//            SwingUtils.showErrorDialog("Must be not empty !");
+//            txtReNew.requestFocus();
+//        } else if (userName.isEmpty()) {
+//            result = false;
+//            SwingUtils.showErrorDialog("Must be not empty !");
+//            txtUserName.requestFocus();
+//        } else 
+//            
+        if (empID == 0) {
             result = false;
             SwingUtils.showErrorDialog("Choose employee !");
-        } else if (!userName.matches("[A-Za-z0-9]{6,30}")) {
+        } else if (!userName.matches(EmployeeSwingUtils.PATTERN_USERNAME)) {
             result = false;
-            SwingUtils.showErrorDialog("Invalid format ! Only number and character, minimum 6 and maximum 30 characters !");
+            SwingUtils.showErrorDialog("Invalid format ! Only number and character, minimum 4 and maximum 30 characters !");
             txtUserName.requestFocus();
-        } else if (!pass.matches("[A-Za-z0-9]{6,30}")) {
+        } else if (!pass.matches(EmployeeSwingUtils.PATTERN_PASSWORD)) {
             result = false;
             SwingUtils.showErrorDialog("Invalid format ! Only number and character, minimum 6 and maximum 30 characters !");
             txtNew.requestFocus();
