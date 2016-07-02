@@ -103,7 +103,7 @@ public class CustomerPanel extends javax.swing.JPanel {
 
         // Col cus name
         tbCustomerList.getColumnModel().getColumn(COL_CUSNAME).setMinWidth(100);
-        tbCustomerList.getColumnModel().getColumn(COL_CUSNAME).setCellEditor(new StringCellEditor(1, 50, SwingUtils.PATTERN_NAMEWITHSPACE));
+        tbCustomerList.getColumnModel().getColumn(COL_CUSNAME).setCellEditor(new StringCellEditor(1, 50, SwingUtils.PATTERN_CUSNAME));
 
         // Col cus paid
         tbCustomerList.getColumnModel().getColumn(COL_CUSPAID).setMinWidth(90);
