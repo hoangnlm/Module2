@@ -114,6 +114,7 @@ public class ConfigPanel extends javax.swing.JPanel {
 
         tfDBName.setFont(new java.awt.Font("Lucida Grande", 1, 13)); // NOI18N
         tfDBName.setForeground(new java.awt.Color(153, 0, 153));
+        tfDBName.setEnabled(false);
         tfDBName.addFocusListener(new java.awt.event.FocusAdapter() {
             public void focusGained(java.awt.event.FocusEvent evt) {
                 tfDBNameFocusGained(evt);
