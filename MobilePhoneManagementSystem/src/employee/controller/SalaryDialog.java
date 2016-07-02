@@ -92,7 +92,7 @@ public class SalaryDialog extends javax.swing.JDialog {
 
         // Col Ser ID (HIDDEN)
         tbSalaryList.getColumnModel().getColumn(COL_SALID).setMinWidth(0);
-        tbSalaryList.getColumnModel().getColumn(COL_SALID).setMaxWidth(40);
+        tbSalaryList.getColumnModel().getColumn(COL_SALID).setMaxWidth(0);
         tbSalaryList.getColumnModel().getColumn(COL_EMPID).setMinWidth(0);
         tbSalaryList.getColumnModel().getColumn(COL_EMPID).setMaxWidth(0);
         // Col pro ID (HIDDEN)
@@ -313,7 +313,7 @@ public class SalaryDialog extends javax.swing.JDialog {
         Calendar calendar = Calendar.getInstance();
         int y=calendar.get(Calendar.YEAR);
         int m=calendar.get(Calendar.MONTH);
-        System.out.println(m);
+//        System.out.println(m);
         calendar.set(y, m, 5);
 //        System.out.println(calendar.getTime());
         details.setPayDay(calendar.getTime());
