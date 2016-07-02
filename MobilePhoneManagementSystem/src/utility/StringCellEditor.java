@@ -50,10 +50,10 @@ public class StringCellEditor extends DefaultCellEditor {
                 if (textLength >= minLength) {
                     result = true;
                 } else {
-                    SwingUtils.showErrorDialog("Text must have at least " + minLength + " character(s) !");
+                    SwingUtils.showErrorDialog("Must have at least " + minLength + " character(s) !");
                 }
             } else {
-                SwingUtils.showErrorDialog("Text cannot be empty !");
+                SwingUtils.showErrorDialog("Cannot be empty !");
             }
         } else {
             result = true;
