@@ -236,7 +236,7 @@ public class ServiceDialog extends javax.swing.JDialog implements ItemListener {
         });
 
 //</editor-fold>
-        
+ //<editor-fold defaultstate="collapsed" desc="SXu ly mode insert update">       
     // Xu ly mode
         if (insertMode) { // Mode insert
             setTitle("New Service");
@@ -292,7 +292,7 @@ public class ServiceDialog extends javax.swing.JDialog implements ItemListener {
             setTrackChanges(false);
 
         }
-
+//</editor-fold>
         // Set data cho table chinh
         serviceDetailsTableModelDialog.load(this.service.getSerID());    //Emply list neu o mode insert
 
@@ -848,15 +848,8 @@ public class ServiceDialog extends javax.swing.JDialog implements ItemListener {
                 break;
             case 2:
                 EmployeeSwingUtils.showInfoDialog("In warranty  !");
-//                tbProduct.setValueAt(selectedDetails.getOrdID(), tbProduct.getSelectedRow(), COL_ODERID);
-
                 track = true;
-                break;
-            case 3:
-                EmployeeSwingUtils.showErrorDialog("This product does not exist in this order !");
-//                tbProduct.setValueAt(0, tbProduct.getSelectedRow(), COL_ODERID);
-                track = false;
-                break;
+                break;           
         }
         return track;
     }

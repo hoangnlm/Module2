@@ -84,21 +84,16 @@ public class ServiceDetailsDAOImpl implements IDAO<ServiceDetails> {
             try {
                 CachedRowSet crs3 = getCRS("select OrdID,OrdDate from Orders where OrdID=? AND SttID=2", id);
                 if (crs3.first()) {
-                    CachedRowSet crs4 = getCRS("select ProID from OrderDetails where OrdID=?", id);
-                    if (crs4.first()) {
-                        Date ordDate = crs3.getDate("OrdDate");
-                        Date now = new Date();
-                        Calendar cal = Calendar.getInstance();
-                        cal.setTime(ordDate);
-                        cal.add(Calendar.YEAR, +1);
-                        Date warranty = cal.getTime();
-                        if (warranty.after(now)) {
-                            result = 2;
-                        } else {
-                            result = 1;
-                        }
-                    }else{
-                        result = 3;
+                    Date ordDate = crs3.getDate("OrdDate");
+                    Date now = new Date();
+                    Calendar cal = Calendar.getInstance();
+                    cal.setTime(ordDate);
+                    cal.add(Calendar.YEAR, +1);
+                    Date warranty = cal.getTime();
+                    if (warranty.after(now)) {
+                        result = 2;
+                    } else {
+                        result = 1;
                     }
                 }
             } catch (SQLException ex) {
