@@ -37,6 +37,7 @@ public class EmployeeSwingUtils {
     // Declare some regex constants
     public static final String PATTERN_NAMENOSPACE = "[A-Za-z0-9]+";
     public static final String PATTERN_NAMEWITHSPACE = "[A-Za-z0-9 ]+";
+    public static final String PATTERN_EMPNAME = "[A-Za-z ]+";
     public static final String PATTERN_NUMBER = "\\d+";
     public static final String PATTERN_ADDRESS = "[A-Za-z0-9 .,\\/-]+";
     public static final String PATTERN_DATE = "MMM dd, yyyy";
