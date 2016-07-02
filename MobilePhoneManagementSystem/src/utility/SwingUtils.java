@@ -35,8 +35,10 @@ public class SwingUtils {
     public static final String DB_RESET = "Data have been reset !";
 
     // Declare some regex constants
+    public static final String PATTERN_DBNAME = "[A-Za-z0-9_]+";
     public static final String PATTERN_NAMENOSPACE = "[A-Za-z0-9]+";
     public static final String PATTERN_NAMEWITHSPACE = "[A-Za-z0-9 ]+";
+    public static final String PATTERN_CUSNAME = "[A-Za-z ]+";
     public static final String PATTERN_NUMBER = "\\d+";
     public static final String PATTERN_ADDRESS = "[A-Za-z0-9 .,\\/-]+";
     public static final String PATTERN_DATE = "MMM dd, yyyy";

@@ -59,7 +59,7 @@ public class ConfigPanel extends javax.swing.JPanel {
         // Validate input
         SwingUtils.validateStringInput(tfHost, 9, 30, SwingUtils.PATTERN_HOST);
         SwingUtils.validateIntegerInput(tfPort);
-        SwingUtils.validateStringInput(tfDBName, 3, 30, SwingUtils.PATTERN_NAMENOSPACE);
+        SwingUtils.validateStringInput(tfDBName, 3, 50, SwingUtils.PATTERN_DBNAME);
         SwingUtils.validateStringInput(tfName, 2, 30, SwingUtils.PATTERN_NAMENOSPACE);
         SwingUtils.validateStringInput(tfPassword, 1, 30, SwingUtils.PATTERN_NAMENOSPACE);
 
@@ -114,6 +114,7 @@ public class ConfigPanel extends javax.swing.JPanel {
 
         tfDBName.setFont(new java.awt.Font("Lucida Grande", 1, 13)); // NOI18N
         tfDBName.setForeground(new java.awt.Color(153, 0, 153));
+        tfDBName.setEnabled(false);
         tfDBName.addFocusListener(new java.awt.event.FocusAdapter() {
             public void focusGained(java.awt.event.FocusEvent evt) {
                 tfDBNameFocusGained(evt);

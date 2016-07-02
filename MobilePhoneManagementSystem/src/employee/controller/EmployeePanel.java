@@ -146,7 +146,7 @@ public class EmployeePanel extends javax.swing.JPanel {
         // Col cus phone    
         tbEmpployeeList.getColumnModel().getColumn(COL_EMPPHONE).setMinWidth(100);
         tbEmpployeeList.getColumnModel().getColumn(COL_EMPPHONE).setMaxWidth(100);
-        tbEmpployeeList.getColumnModel().getColumn(COL_EMPPHONE).setCellEditor(new StringCellEditor(9,15, SwingUtils.PATTERN_NUMBER));
+        tbEmpployeeList.getColumnModel().getColumn(COL_EMPPHONE).setCellEditor(new StringCellEditor(10,50, SwingUtils.PATTERN_NUMBER));
         
         //col bonus
         tbEmpployeeList.getColumnModel().getColumn(COL_BONUS).setMinWidth(80);
