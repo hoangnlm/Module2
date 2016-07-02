@@ -21,13 +21,19 @@ public class DateCellBirthDayEditor extends DefaultCellEditor {
     public DateCellBirthDayEditor() {
         super(new JTextField());
         dc = new JDateChooser();
+        dc.setDateFormatString("MMM dd, yyyy");
         Calendar c = Calendar.getInstance();
         c.set(1945, 11, 31);
         dc.getJCalendar().setMinSelectableDate(c.getTime());
-        Calendar c1 = Calendar.getInstance();
-//        c1.set(Calendar.YEAR-18, 11, 31);
-        System.out.println(c1.getTime());
-        System.out.println(Calendar.MONTH);
+        
+        Date today=new Date();
+        Calendar c1=Calendar.getInstance();
+        c1.setTime(today);
+        int year=c1.get(Calendar.YEAR);
+        int month=c1.get(Calendar.MONTH);
+        int day=c1.get(Calendar.DATE);
+        c1.set(year-18,month,day-1);
+//        System.out.println(c1.getTime());
         dc.getJCalendar().setMaxSelectableDate(c1.getTime());
         dc.getDateEditor().setEnabled(false);
     }

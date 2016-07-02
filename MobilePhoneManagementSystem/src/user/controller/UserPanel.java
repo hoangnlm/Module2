@@ -31,6 +31,7 @@ import utility.StringCellEditor;
 import utility.TableCellListener;
 import employee.model.EmployeeSwingUtils;
 import javax.swing.JOptionPane;
+import user.model.NewUserEmployeeDAOImpl;
 
 /**
  *
@@ -351,7 +352,7 @@ public class UserPanel extends javax.swing.JPanel {
         pnTitle.setBorder(javax.swing.BorderFactory.createEtchedBorder());
 
         jLabel1.setFont(new java.awt.Font("Lucida Grande", 1, 24)); // NOI18N
-        jLabel1.setForeground(new java.awt.Color(255, 153, 0));
+        jLabel1.setForeground(new java.awt.Color(0, 255, 255));
         jLabel1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/image/main/User.png"))); // NOI18N
         jLabel1.setText("<html><u><i><font color='red'>U</font>ser <font color='red'>M</font>anagement</i></u></html>");
 
@@ -447,7 +448,12 @@ public class UserPanel extends javax.swing.JPanel {
 
     // <editor-fold defaultstate="collapsed" desc="Khai bao event">    
     private void btAddActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btAddActionPerformed
-        new AddNewUser().setVisible(true);
+        NewUserEmployeeDAOImpl nu = new NewUserEmployeeDAOImpl();
+        if (nu.isZeroEmployee() == false) {
+            new AddNewUser().setVisible(true);
+        } else {
+            EmployeeSwingUtils.showErrorDialog("All employee have account, please insert more employee before !");
+        }
         refreshAction(false);
     }//GEN-LAST:event_btAddActionPerformed
 
@@ -470,6 +476,7 @@ public class UserPanel extends javax.swing.JPanel {
             return;
         } else {
             deleteAction();
+            refreshAction(false);
         }
     }//GEN-LAST:event_btRemoveActionPerformed
 

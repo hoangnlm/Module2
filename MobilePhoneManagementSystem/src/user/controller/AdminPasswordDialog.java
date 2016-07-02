@@ -11,6 +11,7 @@ import java.sql.SQLException;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.sql.rowset.CachedRowSet;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.event.DocumentEvent;
@@ -25,7 +26,8 @@ import utility.SwingUtils;
 public class AdminPasswordDialog extends javax.swing.JDialog implements IDAO<User> {
 
     User user;
-
+    String newPass = "", reNewPass = "";
+//<editor-fold defaultstate="collapsed" desc="Constructor">
     public AdminPasswordDialog(User user) {
         super((JFrame) null, true);
         initComponents();
@@ -33,7 +35,7 @@ public class AdminPasswordDialog extends javax.swing.JDialog implements IDAO<Use
         this.user = user;
         btOK.setEnabled(false);
 
-        txtPass1.getDocument().addDocumentListener(
+        txtNew.getDocument().addDocumentListener(
                 new DocumentListener() {
             @Override
             public void changedUpdate(DocumentEvent e) {
@@ -50,7 +52,7 @@ public class AdminPasswordDialog extends javax.swing.JDialog implements IDAO<Use
                 setButton();
             }
         });
-        txtPass2.getDocument().addDocumentListener(
+        txtReNew.getDocument().addDocumentListener(
                 new DocumentListener() {
             @Override
             public void changedUpdate(DocumentEvent e) {
@@ -68,41 +70,95 @@ public class AdminPasswordDialog extends javax.swing.JDialog implements IDAO<Use
             }
         });
     }
-
-    private void setButton() {
-        if (txtPass1.getText().isEmpty() || txtPass2.getText().isEmpty()) {
-            btOK.setEnabled(false);
-        } else {
-            btOK.setEnabled(true);
-        }
-    }
-
+//</editor-fold>
+    
+//<editor-fold defaultstate="collapsed" desc="method">    
     @Override
     public boolean update(User user) {
         boolean result = false;
         try {
-            if (txtPass1.getText().isEmpty()) {
-                SwingUtils.showErrorDialog("Must be not empty !");
-            } else if (!(txtPass1.getText().matches("[A-Za-z0-9]{1,30}"))) {
-                SwingUtils.showErrorDialog("Must be character !");
-            } else if (!txtPass1.getText().equals(txtPass2.getText())) {
-                SwingUtils.showErrorDialog("Repassword do not match !");
-            } else {
 
-                runPS("update Users set  UserPassword=? where UserID=?",
-                        txtPass1.getText(),
-                        user.getUserID()
-                );
+            runPS("update Users set  UserPassword=? where UserID=?",
+                    encryptPass(newPass),
+                    user.getUserID()
+            );
+            result = true;
+            dispose();
 
-                result = true;
-                SwingUtils.showInfoDialog(result ? SwingUtils.UPDATE_SUCCESS : SwingUtils.UPDATE_FAIL);
-                dispose();
-            }
         } catch (SQLException ex) {
-            Logger.getLogger(AdminPasswordDialog.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(UserPasswordDialog.class.getName()).log(Level.SEVERE, null, ex);
         }
         return result;
     }
+
+    private void setButton() {
+        newPass = String.valueOf(txtNew.getPassword()).trim();
+        reNewPass = String.valueOf(txtReNew.getPassword()).trim();
+        if (newPass.isEmpty() || reNewPass.isEmpty()) {
+            btOK.setEnabled(false);
+            btCancel.setEnabled(false);
+        } else {
+            btOK.setEnabled(true);
+            btCancel.setEnabled(true);
+        }
+    }
+
+    
+    public String encryptPass(String newPass) {
+        try {
+            java.security.MessageDigest md = java.security.MessageDigest.getInstance("MD5");
+            byte[] array = md.digest(newPass.getBytes());
+            StringBuffer sb = new StringBuffer();
+            for (int i = 0; i < array.length; ++i) {
+                sb.append(Integer.toHexString((array[i] & 0xFF) | 0x100).substring(1, 3));
+            }
+            return sb.toString();
+        } catch (java.security.NoSuchAlgorithmException e) {
+        }
+        return null;
+
+    }
+
+    public boolean validateField() {
+        boolean result = true;
+        if (!newPass.matches("[A-Za-z0-9]{6,30}")) {
+            result = false;
+            SwingUtils.showErrorDialog("Invalid format ! Only number and character, minimum 6 and maximum 30 characters !");
+            txtNew.requestFocus();
+        } else if (!reNewPass.equals(newPass)) {
+            result = false;
+            SwingUtils.showErrorDialog("Re-new password does not matches!");
+            txtReNew.requestFocus();
+        }
+
+        return result;
+    }
+    
+    @Override
+    public List<User> getList() {
+        return null;
+    }
+
+    @Override
+    public boolean insert(User model) {
+        return false;
+    }
+
+    @Override
+    public boolean delete(User model) {
+        return false;
+    }
+
+    @Override
+    public int getSelectingIndex(int idx) {
+        return 0;
+    }
+
+    @Override
+    public void setSelectingIndex(int idx) {
+
+    }
+//</editor-fold>
 
     /**
      * This method is called from within the constructor to initialize the form.
@@ -119,8 +175,8 @@ public class AdminPasswordDialog extends javax.swing.JDialog implements IDAO<Use
         jLabel10 = new javax.swing.JLabel();
         jLabel2 = new javax.swing.JLabel();
         jLabel3 = new javax.swing.JLabel();
-        txtPass1 = new javax.swing.JPasswordField();
-        txtPass2 = new javax.swing.JPasswordField();
+        txtNew = new javax.swing.JPasswordField();
+        txtReNew = new javax.swing.JPasswordField();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setTitle("Change Password");
@@ -171,8 +227,8 @@ public class AdminPasswordDialog extends javax.swing.JDialog implements IDAO<Use
                     .addComponent(jLabel3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addGap(21, 21, 21)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(txtPass1)
-                    .addComponent(txtPass2, javax.swing.GroupLayout.PREFERRED_SIZE, 157, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(txtNew)
+                    .addComponent(txtReNew, javax.swing.GroupLayout.PREFERRED_SIZE, 157, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jLabel9, javax.swing.GroupLayout.PREFERRED_SIZE, 14, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -196,11 +252,11 @@ public class AdminPasswordDialog extends javax.swing.JDialog implements IDAO<Use
                         .addComponent(jLabel3))
                     .addGroup(layout.createSequentialGroup()
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                            .addComponent(txtPass1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(txtNew, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addComponent(jLabel9))
                         .addGap(18, 18, 18)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                            .addComponent(txtPass2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(txtReNew, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addComponent(jLabel10))))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 29, Short.MAX_VALUE)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
@@ -217,11 +273,14 @@ public class AdminPasswordDialog extends javax.swing.JDialog implements IDAO<Use
     }//GEN-LAST:event_btCancelActionPerformed
 
     private void btOKActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btOKActionPerformed
-        if (EmployeeSwingUtils.showConfirmDialog("Are you sure to update ?") == JOptionPane.NO_OPTION) {
-            return;
-        } else {
-            update(this.user);
-        }        
+        if (validateField() == true) {
+            if (EmployeeSwingUtils.showConfirmDialog("Are you sure to update ?") == JOptionPane.NO_OPTION) {
+                return;
+            } else {
+                boolean result = update(user);
+                EmployeeSwingUtils.showInfoDialog(result ? EmployeeSwingUtils.UPDATE_SUCCESS : EmployeeSwingUtils.UPDATE_FAIL);
+            }
+        }
     }//GEN-LAST:event_btOKActionPerformed
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
@@ -231,32 +290,9 @@ public class AdminPasswordDialog extends javax.swing.JDialog implements IDAO<Use
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel9;
-    private javax.swing.JPasswordField txtPass1;
-    private javax.swing.JPasswordField txtPass2;
+    private javax.swing.JPasswordField txtNew;
+    private javax.swing.JPasswordField txtReNew;
     // End of variables declaration//GEN-END:variables
 
-    @Override
-    public List<User> getList() {
-        return null;
-    }
-
-    @Override
-    public boolean insert(User model) {
-        return false;
-    }
-
-    @Override
-    public boolean delete(User model) {
-        return false;
-    }
-
-    @Override
-    public int getSelectingIndex(int idx) {
-        return 0;
-    }
-
-    @Override
-    public void setSelectingIndex(int idx) {
-
-    }
+    
 }

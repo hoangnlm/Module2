@@ -24,28 +24,30 @@ import utility.SwingUtils;
  * @author BonBon
  */
 public class UserPasswordDialog extends javax.swing.JDialog implements IDAO<User> {
-
+    
     User user;
-
+    String newPass = "", reNewPass = "", oldPass = "";
+    
     public UserPasswordDialog(User user) {
         super((JFrame) null, true);
         initComponents();
         setLocationRelativeTo(null);
         this.user = user;
         btOK.setEnabled(false);
-
+      
+         //<editor-fold defaultstate="collapsed" desc="listener">
         txtNew.getDocument().addDocumentListener(
                 new DocumentListener() {
             @Override
             public void changedUpdate(DocumentEvent e) {
                 setButton();
             }
-
+            
             @Override
             public void insertUpdate(DocumentEvent e) {
                 setButton();
             }
-
+            
             @Override
             public void removeUpdate(DocumentEvent e) {
                 setButton();
@@ -57,12 +59,12 @@ public class UserPasswordDialog extends javax.swing.JDialog implements IDAO<User
             public void changedUpdate(DocumentEvent e) {
                 setButton();
             }
-
+            
             @Override
             public void insertUpdate(DocumentEvent e) {
                 setButton();
             }
-
+            
             @Override
             public void removeUpdate(DocumentEvent e) {
                 setButton();
@@ -74,65 +76,126 @@ public class UserPasswordDialog extends javax.swing.JDialog implements IDAO<User
             public void changedUpdate(DocumentEvent e) {
                 setButton();
             }
-
+            
             @Override
             public void insertUpdate(DocumentEvent e) {
                 setButton();
             }
-
+            
             @Override
             public void removeUpdate(DocumentEvent e) {
                 setButton();
             }
         });
+        //</editor-fold>
     }
-
+    
+    //<editor-fold defaultstate="collapsed" desc="method">
     private void setButton() {
-        if (txtNew.getText().isEmpty() || txtReNew.getText().isEmpty() || txtReNew.getText().isEmpty()) {
+        oldPass = String.valueOf(txtOld.getPassword()).trim();
+        newPass = String.valueOf(txtNew.getPassword()).trim();
+        reNewPass = String.valueOf(txtReNew.getPassword()).trim();
+        if (newPass.isEmpty() || reNewPass.isEmpty() || oldPass.isEmpty()) {
             btOK.setEnabled(false);
+            btCancel.setEnabled(false);
         } else {
             btOK.setEnabled(true);
+            btCancel.setEnabled(true);
         }
     }
-
+    
     @Override
     public boolean update(User user) {
         boolean result = false;
         try {
-            if (txtNew.getText().isEmpty()||txtReNew.getText().isEmpty()||txtOld.getText().isEmpty()) {
-                SwingUtils.showErrorDialog("Must be not empty !");
-            } else if (!(txtNew.getText().matches("[A-Za-z0-9]{1,30}"))) {
-                SwingUtils.showErrorDialog("Must be character !");
-            } else if (!txtNew.getText().equals(txtReNew.getText())) {
-                SwingUtils.showErrorDialog("Repassword do not match !");
-            } else {
-                CachedRowSet crs = getCRS("select UserPassword from Users where UserID=?",
-                        user.getUserID()
-                );
-                if (crs.first()) {
-                    if (crs.getString("UserPassword").equals(txtOld.getText().trim())) {
-                        runPS("update Users set  UserPassword=? where UserID=?",
-                                txtNew.getText().trim(),
-                                user.getUserID()
-                        );
-                        result = true;
-                        SwingUtils.showInfoDialog(result ? SwingUtils.UPDATE_SUCCESS : SwingUtils.UPDATE_FAIL);
-                        dispose();
-                    } else {
-                        result = false;
-                        SwingUtils.showErrorDialog("Old password is not correct !");
-                    }
-                } else {
-                    result = false;
-                    SwingUtils.showErrorDialog("Old password is not correct !");
-                }
+            
+            runPS("update Users set  UserPassword=? where UserID=?",
+                    encryptPass(newPass),
+                    user.getUserID()
+            );
+            result = true;
+            dispose();
+            
+        } catch (SQLException ex) {
+            Logger.getLogger(UserPasswordDialog.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return result;
+    }
+    
+    public String encryptPass(String newPass) {
+        try {
+            java.security.MessageDigest md = java.security.MessageDigest.getInstance("MD5");
+            byte[] array = md.digest(newPass.getBytes());
+            StringBuffer sb = new StringBuffer();
+            for (int i = 0; i < array.length; ++i) {
+                sb.append(Integer.toHexString((array[i] & 0xFF) | 0x100).substring(1, 3));
+            }
+            return sb.toString();
+        } catch (java.security.NoSuchAlgorithmException e) {
+        }
+        return null;
+        
+    }
+    
+    public boolean validateField() {
+        boolean result = true;
+        CachedRowSet crs = getCRS("select UserPassword from Users where UserID=?",
+                user.getUserID()
+        );
+        try {
+            
+            if (crs.first() && !crs.getString("UserPassword").equals(oldPass)) {//encryptPass(oldPass)
+                result = false;
+                SwingUtils.showErrorDialog("Old password is not correct !");
+                txtOld.requestFocus();
+            } else 
+                
+                if (!oldPass.matches("[A-Za-z0-9]{6,30}")) {
+                result = false;
+                SwingUtils.showErrorDialog("Invalid format ! Only number and character, minimum 6 and maximum 30 characters !");
+                txtOld.requestFocus();
+            } else if (!newPass.matches("[A-Za-z0-9]{6,30}")) {
+                result = false;
+                SwingUtils.showErrorDialog("Invalid format ! Only number and character, minimum 6 and maximum 30 characters !");
+                txtNew.requestFocus();
+            } else if (!reNewPass.equals(newPass)) {
+                result = false;
+                SwingUtils.showErrorDialog("Re-new password does not matches!");
+                txtReNew.requestFocus();
             }
         } catch (SQLException ex) {
             Logger.getLogger(UserPasswordDialog.class.getName()).log(Level.SEVERE, null, ex);
         }
         return result;
     }
-
+    
+    @Override
+    public List<User> getList() {
+        return null;
+    }
+    
+    @Override
+    public boolean insert(User model) {
+        return false;
+    }
+    
+    @Override
+    public boolean delete(User model) {
+        return false;
+    }
+    
+    @Override
+    public int getSelectingIndex(int idx) {
+        return 0;
+    }
+    
+    @Override
+    public void setSelectingIndex(int idx) {
+        
+    }
+    //</editor-fold>
+    
+    
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -156,8 +219,9 @@ public class UserPasswordDialog extends javax.swing.JDialog implements IDAO<User
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setTitle("Change Password");
-        setMaximumSize(new java.awt.Dimension(300, 169));
-        setMinimumSize(new java.awt.Dimension(300, 169));
+        setMaximumSize(new java.awt.Dimension(340, 200));
+        setMinimumSize(new java.awt.Dimension(340, 200));
+        setPreferredSize(new java.awt.Dimension(340, 189));
         setResizable(false);
 
         btOK.setFont(new java.awt.Font("Lucida Grande", 0, 14)); // NOI18N
@@ -220,12 +284,12 @@ public class UserPasswordDialog extends javax.swing.JDialog implements IDAO<User
                     .addComponent(jLabel10, javax.swing.GroupLayout.PREFERRED_SIZE, 14, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel11, javax.swing.GroupLayout.PREFERRED_SIZE, 14, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-            .addGroup(layout.createSequentialGroup()
-                .addContainerGap(45, Short.MAX_VALUE)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                .addContainerGap(70, Short.MAX_VALUE)
                 .addComponent(btOK, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(18, 18, 18)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(btCancel, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(46, Short.MAX_VALUE))
+                .addContainerGap(70, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -249,11 +313,11 @@ public class UserPasswordDialog extends javax.swing.JDialog implements IDAO<User
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                             .addComponent(txtReNew, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addComponent(jLabel10))))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGap(18, 18, 18)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(btOK, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(btCancel, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(15, Short.MAX_VALUE))
+                .addGap(19, 19, 19))
         );
 
         pack();
@@ -264,11 +328,14 @@ public class UserPasswordDialog extends javax.swing.JDialog implements IDAO<User
     }//GEN-LAST:event_btCancelActionPerformed
 
     private void btOKActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btOKActionPerformed
-       if (EmployeeSwingUtils.showConfirmDialog("Are you sure to update ?") == JOptionPane.NO_OPTION) {
-            return;
-        } else {
-            update(this.user);
-        }        
+        if (validateField() == true) {
+            if (EmployeeSwingUtils.showConfirmDialog("Are you sure to update ?") == JOptionPane.NO_OPTION) {
+                return;
+            } else {
+                boolean result = update(user);
+                EmployeeSwingUtils.showInfoDialog(result ? EmployeeSwingUtils.UPDATE_SUCCESS : EmployeeSwingUtils.UPDATE_FAIL);
+            }
+        }
     }//GEN-LAST:event_btOKActionPerformed
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
@@ -285,28 +352,4 @@ public class UserPasswordDialog extends javax.swing.JDialog implements IDAO<User
     private javax.swing.JPasswordField txtReNew;
     // End of variables declaration//GEN-END:variables
 
-    @Override
-    public List<User> getList() {
-        return null;
-    }
-
-    @Override
-    public boolean insert(User model) {
-        return false;
-    }
-
-    @Override
-    public boolean delete(User model) {
-        return false;
-    }
-
-    @Override
-    public int getSelectingIndex(int idx) {
-        return 0;
-    }
-
-    @Override
-    public void setSelectingIndex(int idx) {
-
-    }
 }

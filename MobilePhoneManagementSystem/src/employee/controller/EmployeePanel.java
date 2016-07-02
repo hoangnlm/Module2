@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package employee.controller;
 
 //import utility.ComboBoxCellEditor;
@@ -77,26 +72,34 @@ public class EmployeePanel extends javax.swing.JPanel {
         initComponents();
 // Set date picker len giao dien
         Calendar c = Calendar.getInstance();
-
+        //birth day
         dcFilter = new JDateChooser();
         dcFilter.setBounds(0, 0, 110, 20);
-        dcFilter.setDateFormatString("dd/MM/yyyy");
+        dcFilter.setDateFormatString("MMM dd, yyyy");
         dcFilter.setDate(null);
         c.set(1944, 11, 31);
         dcFilter.getJCalendar().setMinSelectableDate(c.getTime());
-        c.set(1999, 11, 31);
-        dcFilter.getJCalendar().setMaxSelectableDate(c.getTime());
+        Date today=new Date();
+        Calendar c1=Calendar.getInstance();
+        c1.setTime(today);
+        int year=c1.get(Calendar.YEAR);
+        int month=c1.get(Calendar.MONTH);
+        int day=c1.get(Calendar.DATE);
+        c1.set(year-18,month,day-1);        
+        dcFilter.getJCalendar().setMaxSelectableDate(c1.getTime());
         pnBirthday.add(dcFilter);
+        dcFilter.getDateEditor().setEnabled(false);
         //work day
         dcFilter1 = new JDateChooser();
         dcFilter1.setBounds(0, 0, 110, 20);
-        dcFilter1.setDateFormatString("dd/MM/yyyy");
+        dcFilter1.setDateFormatString("MMM dd, yyyy");
         dcFilter1.setDate(null);
         c.set(2010, 0, 1);
         dcFilter1.getJCalendar().setMinSelectableDate(c.getTime());
-        Calendar c1 = Calendar.getInstance();
-        dcFilter1.getJCalendar().setMaxSelectableDate(c1.getTime());
+        Calendar c2 = Calendar.getInstance();
+        dcFilter1.getJCalendar().setMaxSelectableDate(c2.getTime());
         pnStartDate.add(dcFilter1);
+        dcFilter1.getDateEditor().setEnabled(false);
         //Disable button khi moi khoi dong len
         setButtonEnabled(false);
 
@@ -128,22 +131,23 @@ public class EmployeePanel extends javax.swing.JPanel {
         tbEmpployeeList.getColumnModel().getColumn(COL_STATUS).setMaxWidth(30);
 
         // Col emp name
-        tbEmpployeeList.getColumnModel().getColumn(COL_EMPNAME).setMinWidth(160);
+        tbEmpployeeList.getColumnModel().getColumn(COL_EMPNAME).setMinWidth(150);
         tbEmpployeeList.getColumnModel().getColumn(COL_EMPNAME).setMaxWidth(300);
         tbEmpployeeList.getColumnModel().getColumn(COL_EMPNAME).setCellEditor(new StringCellEditor(1, 50, EmployeeSwingUtils.PATTERN_NAMEWITHSPACE));
         
 
-        tbEmpployeeList.getColumnModel().getColumn(COL_EMPDES).setMinWidth(120);
+        tbEmpployeeList.getColumnModel().getColumn(COL_EMPDES).setMinWidth(130);
         tbEmpployeeList.getColumnModel().getColumn(COL_EMPDES).setCellEditor(new StringCellEditor(1, 30, EmployeeSwingUtils.PATTERN_NAMEWITHSPACE));
 
         // Col emp phone        
 //        tbEmpployeeList.getColumnModel().getColumn(COL_EMPPHONE).setMinWidth(100);
 //        
 //        tbEmpployeeList.getColumnModel().getColumn(COL_EMPPHONE).setCellEditor(new StringCellEditor(1, 20, SwingUtils.PATTERN_NUMBER));
-// Col cus phone
-        tbEmpployeeList.getColumnModel().getColumn(2).setMinWidth(100);
-        tbEmpployeeList.getColumnModel().getColumn(2).setCellEditor(new StringCellEditor(1, 20, SwingUtils.PATTERN_NUMBER));
-//        tbEmpployeeList.getColumnModel().getColumn(COL_EMPPHONE).setMaxWidth(100);
+        // Col cus phone    
+        tbEmpployeeList.getColumnModel().getColumn(COL_EMPPHONE).setMinWidth(100);
+        tbEmpployeeList.getColumnModel().getColumn(COL_EMPPHONE).setMaxWidth(100);
+        tbEmpployeeList.getColumnModel().getColumn(COL_EMPPHONE).setCellEditor(new StringCellEditor(10,12, SwingUtils.PATTERN_NUMBER));
+        
         //col bonus
         tbEmpployeeList.getColumnModel().getColumn(COL_BONUS).setMinWidth(80);
         tbEmpployeeList.getColumnModel().getColumn(COL_BONUS).setMaxWidth(80);
@@ -541,7 +545,7 @@ public class EmployeePanel extends javax.swing.JPanel {
         pnTitle.setBorder(javax.swing.BorderFactory.createEtchedBorder());
 
         jLabel1.setFont(new java.awt.Font("Lucida Grande", 1, 24)); // NOI18N
-        jLabel1.setForeground(new java.awt.Color(225, 153, 0));
+        jLabel1.setForeground(new java.awt.Color(0, 255, 255));
         jLabel1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/image/main/Employee.png"))); // NOI18N
         jLabel1.setText("<html><u><i><font color='red'>E</font>mployee <font color='red'>M</font>anagement</i></u></html>");
 
@@ -837,6 +841,7 @@ public class EmployeePanel extends javax.swing.JPanel {
         tbEmpployeeList.getEditorComponent().requestFocus();
     }
 
+    // comment thu de push
     private void updateAction() {
 //        System.out.println("Updateaction: "+selectedEmployee.toString());
         setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));

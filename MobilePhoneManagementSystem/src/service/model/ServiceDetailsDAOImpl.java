@@ -82,19 +82,24 @@ public class ServiceDetailsDAOImpl implements IDAO<ServiceDetails> {
             return 0;
         } else {
             try {
-                CachedRowSet crs3 = getCRS("select OrdID,OrdDate from Orders where OrdID=?", id);
+                CachedRowSet crs3 = getCRS("select OrdID,OrdDate from Orders where OrdID=? AND SttID=2", id);
                 if (crs3.first()) {
-                    Date ordDate = crs3.getDate("OrdDate");
-                    Date now = new Date();
-                    Calendar cal = Calendar.getInstance();
-                    cal.setTime(ordDate);                    
-                    cal.add(Calendar.YEAR, +1);
-                    Date warranty=cal.getTime();                  
-                    if(warranty.after(now)){
-                        result=2;
+                    CachedRowSet crs4 = getCRS("select ProID from OrderDetails where OrdID=?", id);
+                    if (crs4.first()) {
+                        Date ordDate = crs3.getDate("OrdDate");
+                        Date now = new Date();
+                        Calendar cal = Calendar.getInstance();
+                        cal.setTime(ordDate);
+                        cal.add(Calendar.YEAR, +1);
+                        Date warranty = cal.getTime();
+                        if (warranty.after(now)) {
+                            result = 2;
+                        } else {
+                            result = 1;
+                        }
                     }else{
-                        result=1;
-                    }                    
+                        result = 3;
+                    }
                 }
             } catch (SQLException ex) {
                 Logger.getLogger(ServiceDetailsDAOImpl.class.getName()).log(Level.SEVERE, null, ex);
@@ -154,7 +159,7 @@ public class ServiceDetailsDAOImpl implements IDAO<ServiceDetails> {
             runPS("delete ServiceDetails where ServiceID =?", currentService.getSerID());
             // Update table ServiceDetails
 
-            for (ServiceDetails op : list) {               
+            for (ServiceDetails op : list) {
 
                 if (op.getOrdID() == 0) {
                     runPS("insert ServiceDetails(ServiceID, ProID, ServiceContent,ProQty,ServiceCost) values(?,?,?,?,?)", currentService.getSerID(), op.getProID(), op.getSerContent(), op.getProQty(), op.getSerCost());

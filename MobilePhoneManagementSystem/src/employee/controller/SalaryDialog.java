@@ -105,11 +105,11 @@ public class SalaryDialog extends javax.swing.JDialog {
         // Col oderid
         tbSalaryList.getColumnModel().getColumn(COL_WORKDAYS).setMinWidth(70);
         tbSalaryList.getColumnModel().getColumn(COL_WORKDAYS).setMaxWidth(70);
-        tbSalaryList.getColumnModel().getColumn(COL_WORKDAYS).setCellEditor(new SpinnerCellEditor(0, 28));
+        tbSalaryList.getColumnModel().getColumn(COL_WORKDAYS).setCellEditor(new SpinnerCellEditor(14, 28));
         // Col oderid
         tbSalaryList.getColumnModel().getColumn(COL_OFFDAYS).setMinWidth(60);
         tbSalaryList.getColumnModel().getColumn(COL_OFFDAYS).setMaxWidth(60);
-        tbSalaryList.getColumnModel().getColumn(COL_OFFDAYS).setCellEditor(new SpinnerCellEditor(0, 14));
+        tbSalaryList.getColumnModel().getColumn(COL_OFFDAYS).setCellEditor(new SpinnerCellEditor(0, 7));
         tbSalaryList.getColumnModel().getColumn(COL_BONUS).setMinWidth(100);
         tbSalaryList.getColumnModel().getColumn(COL_BONUS).setCellRenderer(new IntegerCurrencyCellRenderer());
         tbSalaryList.getColumnModel().getColumn(COL_BASICSALARY).setMinWidth(100);

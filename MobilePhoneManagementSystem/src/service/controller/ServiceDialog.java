@@ -83,14 +83,12 @@ public class ServiceDialog extends javax.swing.JDialog implements ItemListener {
 
         dcFilter = new JDateChooser();
         dcFilter.setBounds(0, 0, 130, 30);
-        dcFilter.setDateFormatString("MMMM dd,yyyy");
+        dcFilter.setDateFormatString("MMM dd, yyyy");
 
         Calendar cal = Calendar.getInstance();
-
-//        dcFilter.setMinSelectableDate(cal.getTime());
         cal.add(Calendar.DATE, +30);
-        dcFilter.setMaxSelectableDate(cal.getTime());
-
+        dcFilter.setMaxSelectableDate(cal.getTime());        
+        dcFilter.getDateEditor().setEnabled(false);
         setLocationRelativeTo(null);
         insertMode = service == null;
 
@@ -828,6 +826,11 @@ public class ServiceDialog extends javax.swing.JDialog implements ItemListener {
 //                tbProduct.setValueAt(selectedDetails.getOrdID(), tbProduct.getSelectedRow(), COL_ODERID);
 
                 track = true;
+                break;
+            case 3:
+                EmployeeSwingUtils.showErrorDialog("This product does not exist in this order !");
+//                tbProduct.setValueAt(0, tbProduct.getSelectedRow(), COL_ODERID);
+                track = false;
                 break;
         }
         return track;

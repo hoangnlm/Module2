@@ -89,23 +89,24 @@ public class ServicePanel extends javax.swing.JPanel {
         Calendar c = Calendar.getInstance();
         dcFilter = new JDateChooser();
         dcFilter.setBounds(0, 0, 120, 20);
-        dcFilter.setDateFormatString("dd/MM/yyyy");
+        dcFilter.setDateFormatString("MMM dd, yyyy");
         dcFilter.setDate(null);
         c.set(2010, 0, 1);
         dcFilter.setMinSelectableDate(c.getTime());
         Calendar c1 = Calendar.getInstance();
         dcFilter.setMaxSelectableDate(c1.getTime());
         pnReceiveDate.add(dcFilter);
+        dcFilter.getDateEditor().setEnabled(false);
         // Set date picker1 len giao dien
         dcFilter1 = new JDateChooser();
         dcFilter1.setBounds(0, 0, 120, 20);
-        dcFilter1.setDateFormatString("dd/MM/yyyy");
+        dcFilter1.setDateFormatString("MMM dd, yyyy");
         dcFilter1.setDate(null);
         dcFilter1.getJCalendar().setMinSelectableDate(c.getTime());
-
         c1.add(Calendar.DATE, +30);
         dcFilter1.getJCalendar().setMaxSelectableDate(c1.getTime());
         pnReturnDate.add(dcFilter1);
+        dcFilter1.getDateEditor().setEnabled(false);
         //Disable button khi moi khoi dong len
         setButtonEnabled(false);
 
@@ -536,7 +537,7 @@ public class ServicePanel extends javax.swing.JPanel {
         pnTitle.setPreferredSize(new java.awt.Dimension(790, 65));
 
         jLabel1.setFont(new java.awt.Font("Lucida Grande", 1, 24)); // NOI18N
-        jLabel1.setForeground(new java.awt.Color(225, 153, 0));
+        jLabel1.setForeground(new java.awt.Color(0, 255, 255));
         jLabel1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/image/main/Service.png"))); // NOI18N
         jLabel1.setText("<html><u><i><font color='red'>S</font>ervice <font color='red'>M</font>anagement</i></u></html>");
 
