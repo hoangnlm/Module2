@@ -112,7 +112,6 @@ public class ConfigPanel extends javax.swing.JPanel {
         add(tfPort);
         tfPort.setBounds(60, 170, 150, 40);
 
-        tfDBName.setEditable(false);
         tfDBName.setFont(new java.awt.Font("Lucida Grande", 1, 13)); // NOI18N
         tfDBName.setForeground(new java.awt.Color(153, 0, 153));
         tfDBName.addFocusListener(new java.awt.event.FocusAdapter() {

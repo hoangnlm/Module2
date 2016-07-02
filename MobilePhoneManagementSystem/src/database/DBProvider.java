@@ -19,10 +19,11 @@ public class DBProvider {
     private ResultSet resultSet;
 
     // Khai bao cac tri default
-    public static final String HOST = "10.211.55.7";
-//    public static final String HOST = "localhost";
+//    public static final String HOST = "10.211.55.7";
+    public static final String HOST = "localhost";
     public static final String PORT = "1433";
-    public static final String DBNAME = "F21508T1C_MobileShopSystemManage";
+//    public static final String DBNAME = "F21508T1C_MobileShopSystemManage";
+    public static final String DBNAME="Mobile";
     public static final String NAME = "sa";
 //    public static final String PASSWORD = "26101996";
     public static final String PASSWORD = "1";
