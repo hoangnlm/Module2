@@ -471,7 +471,6 @@ public class InboundDialog extends javax.swing.JDialog implements ItemListener {
         for (Object item : arr) {
             filters.add(RowFilter.regexFilter("^" + item.toString(), 1));
             rf = RowFilter.orFilter(filters);
-            System.err.println(item);
         }
 
         sorter.setRowFilter(rf);

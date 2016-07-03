@@ -46,19 +46,10 @@
   </Layout>
   <SubComponents>
     <Component class="javax.swing.JLabel" name="lbId">
-      <Properties>
-        <Property name="text" type="java.lang.String" value="123"/>
-      </Properties>
     </Component>
     <Component class="javax.swing.JLabel" name="lbName">
-      <Properties>
-        <Property name="text" type="java.lang.String" value="Nguyen Le Minh Hoang"/>
-      </Properties>
     </Component>
     <Component class="javax.swing.JLabel" name="lbAddress">
-      <Properties>
-        <Property name="text" type="java.lang.String" value="121/23 Ly Te Xuyen, KP 4, P Linh Dong, Q Thu Duc"/>
-      </Properties>
     </Component>
   </SubComponents>
 </Form>

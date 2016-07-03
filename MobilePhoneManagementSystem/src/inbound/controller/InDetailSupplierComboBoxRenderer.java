@@ -48,12 +48,6 @@ public class InDetailSupplierComboBoxRenderer extends JPanel implements ListCell
         setBackground(new java.awt.Color(51, 51, 51));
         setPreferredSize(new java.awt.Dimension(800, 30));
 
-        lbId.setText("123");
-
-        lbName.setText("Nguyen Le Minh Hoang");
-
-        lbAddress.setText("121/23 Ly Te Xuyen, KP 4, P Linh Dong, Q Thu Duc");
-
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
         layout.setHorizontalGroup(
