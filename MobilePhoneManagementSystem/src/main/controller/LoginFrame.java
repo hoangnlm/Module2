@@ -15,7 +15,8 @@ import utility.IOUtils;
 import utility.SwingUtils;
 
 /**
- *
+ * Man hinh login
+ * 
  * @author Hoang
  */
 public class LoginFrame extends javax.swing.JFrame {
