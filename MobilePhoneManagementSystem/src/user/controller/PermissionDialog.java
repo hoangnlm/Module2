@@ -1229,8 +1229,8 @@ public class PermissionDialog extends javax.swing.JDialog {
         } else {
             permissionDAOImpl.delete(user);
             insertPermission();
-            SwingUtils.showInfoDialog(SwingUtils.UPDATE_SUCCESS);
             dispose();
+            SwingUtils.showInfoDialog(SwingUtils.UPDATE_SUCCESS);            
         }
     }//GEN-LAST:event_btSaveActionPerformed
 

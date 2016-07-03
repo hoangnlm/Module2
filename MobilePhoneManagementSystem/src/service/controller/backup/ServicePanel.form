@@ -84,15 +84,15 @@
               <Group type="102" attributes="0">
                   <EmptySpace max="-2" attributes="0"/>
                   <Group type="103" groupAlignment="0" max="-2" attributes="0">
+                      <Component id="jLabel3" max="32767" attributes="0"/>
                       <Component id="jLabel2" max="32767" attributes="0"/>
-                      <Component id="jLabel3" pref="70" max="32767" attributes="0"/>
                   </Group>
-                  <EmptySpace max="-2" attributes="0"/>
+                  <EmptySpace type="separate" max="-2" attributes="0"/>
                   <Group type="103" groupAlignment="0" max="-2" attributes="0">
                       <Component id="tfIdFilter" pref="143" max="32767" attributes="0"/>
-                      <Component id="tfPhoneFilter" max="32767" attributes="0"/>
+                      <Component id="tfUserFilter" max="32767" attributes="0"/>
                   </Group>
-                  <EmptySpace pref="42" max="32767" attributes="0"/>
+                  <EmptySpace pref="44" max="32767" attributes="0"/>
                   <Group type="103" groupAlignment="0" max="-2" attributes="0">
                       <Component id="lbOrderDate" pref="77" max="32767" attributes="0"/>
                       <Component id="lbOrderDate1" max="32767" attributes="0"/>
@@ -102,7 +102,7 @@
                       <Component id="pnReceiveDate" min="-2" max="-2" attributes="0"/>
                       <Component id="pnReturnDate" alignment="0" min="-2" max="-2" attributes="0"/>
                   </Group>
-                  <EmptySpace pref="43" max="32767" attributes="0"/>
+                  <EmptySpace pref="45" max="32767" attributes="0"/>
                   <Group type="103" groupAlignment="0" attributes="0">
                       <Component id="jLabel7" alignment="1" min="-2" pref="48" max="-2" attributes="0"/>
                       <Component id="jLabel6" alignment="1" min="-2" pref="48" max="-2" attributes="0"/>
@@ -138,7 +138,7 @@
                           <Component id="cbStatusFilter" alignment="3" min="-2" pref="20" max="-2" attributes="0"/>
                       </Group>
                       <Group type="103" alignment="0" groupAlignment="3" attributes="0">
-                          <Component id="tfPhoneFilter" alignment="3" min="-2" max="-2" attributes="0"/>
+                          <Component id="tfUserFilter" alignment="3" min="-2" max="-2" attributes="0"/>
                           <Component id="jLabel3" alignment="3" min="-2" max="-2" attributes="0"/>
                           <Component id="lbOrderDate1" alignment="3" max="32767" attributes="0"/>
                       </Group>
@@ -252,10 +252,10 @@
         </Component>
         <Component class="javax.swing.JLabel" name="jLabel3">
           <Properties>
-            <Property name="text" type="java.lang.String" value="Cus.Phone:"/>
+            <Property name="text" type="java.lang.String" value="User Name"/>
           </Properties>
         </Component>
-        <Component class="javax.swing.JTextField" name="tfPhoneFilter">
+        <Component class="javax.swing.JTextField" name="tfUserFilter">
         </Component>
         <Container class="javax.swing.JPanel" name="pnReturnDate">
           <Properties>
