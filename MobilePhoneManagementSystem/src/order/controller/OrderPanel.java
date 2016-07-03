@@ -10,6 +10,7 @@ import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
+import java.io.InputStream;
 import java.sql.Connection;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -35,6 +36,8 @@ import net.sf.jasperreports.engine.JasperCompileManager;
 import net.sf.jasperreports.engine.JasperFillManager;
 import net.sf.jasperreports.engine.JasperPrint;
 import net.sf.jasperreports.engine.JasperReport;
+import net.sf.jasperreports.engine.design.JasperDesign;
+import net.sf.jasperreports.engine.xml.JRXmlLoader;
 import net.sf.jasperreports.view.JasperViewer;
 import order.model.Order;
 import order.model.OrderStatus;
@@ -181,7 +184,7 @@ public class OrderPanel extends javax.swing.JPanel {
                 if (LoginFrame.checkPermission(new UserFunction(UserFunction.FG_ORDER, UserFunction.FN_UPDATE))) {
                     setButtonEnabled(true);
                     // Khong cho xoa order da done
-                    if(((String) tbOrderList.getValueAt(tbOrderList.getSelectedRow(), COL_STATUS)).equalsIgnoreCase("Done")){
+                    if (((String) tbOrderList.getValueAt(tbOrderList.getSelectedRow(), COL_STATUS)).equalsIgnoreCase("Done")) {
                         btRemove.setEnabled(false);
                     }
                 }
@@ -827,9 +830,14 @@ public class OrderPanel extends javax.swing.JPanel {
     private void viewReport(int OrdID) {
         try {
             // Access xml file
-            String reportSrcFile = getClass().getResource("bill.jrxml").getPath();
+//            String reportPath = getClass().getResource("bill.jrxml").getPath();
+            InputStream in = getClass().getResourceAsStream("bill.jrxml");
+            JasperDesign jasperDesign = JRXmlLoader.load(in);
+
             // Compile xml file to .jasper file
-            JasperReport jasperReport = JasperCompileManager.compileReport(reportSrcFile);
+//            JasperReport jasperReport = JasperCompileManager.compileReport(reportPath);
+            JasperReport jasperReport = JasperCompileManager.compileReport(jasperDesign);
+
             // Create connection
             DBProvider db = new DBProvider();
             db.setDbHost(LoginFrame.config.host);
