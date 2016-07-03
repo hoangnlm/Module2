@@ -94,7 +94,6 @@ public class InboundDAOImpl implements IDAO<Inbound> {
     public boolean delete(Inbound inbound) {
         boolean result = false;
         try {
-            runPS("delete from InDetails where InID=?", inbound.getInID());
             runPS("delete from Inbounds where InID=?", inbound.getInID());
             crs.execute();
             result = true;

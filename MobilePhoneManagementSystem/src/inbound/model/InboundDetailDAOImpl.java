@@ -179,7 +179,14 @@ public class InboundDetailDAOImpl implements IDAO<InboundDetail>{
 
     @Override
     public boolean delete(InboundDetail model) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+       boolean result = false;
+        try {
+            runPS("DELETE InDetails where InID=?", model.getInID());
+            result = true;
+        } catch (SQLException ex) {
+            Logger.getLogger(InboundDetailDAOImpl.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return result;
     }
     //dung de update THAT SU LAI INBOUND sau khi da INSERT bang default value
     public boolean delete(Inbound inbound){

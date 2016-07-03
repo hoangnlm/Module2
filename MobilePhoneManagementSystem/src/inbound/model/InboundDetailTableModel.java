@@ -5,6 +5,7 @@
  */
 package inbound.model;
 
+import database.IDAO;
 import java.util.List;
 import inbound.model.InboundDetail;
 import inbound.model.InboundDetailDAOImpl;
@@ -16,7 +17,7 @@ import utility.SwingUtils;
  *
  * @author tuan
  */
-public class InboundDetailTableModel extends CustomizedTableModel<InboundDetail> {
+public class InboundDetailTableModel extends CustomizedTableModel<InboundDetail>{
 
     public InboundDetailTableModel() {
         super(new InboundDetailDAOImpl(), new String[]{"ProID","ProName","ProCost","ProQty"});
@@ -64,9 +65,8 @@ public class InboundDetailTableModel extends CustomizedTableModel<InboundDetail>
 
     @Override
     public boolean delete(InboundDetail item) {
-        
          list.remove(selectingIndex);
-         
+//         new InboundDetailDAOImpl().delete(item);
          fireTableRowsDeleted(selectingIndex, selectingIndex);
         return true;
     }
@@ -112,6 +112,7 @@ public class InboundDetailTableModel extends CustomizedTableModel<InboundDetail>
              return true;
          return false;
     }
-    
+
+   
     
 }
