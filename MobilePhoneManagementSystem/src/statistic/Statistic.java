@@ -581,7 +581,7 @@ public class Statistic extends javax.swing.JDialog implements IDAO {
 
         tfOrd5.setEditable(false);
 
-        jLabel69.setText("VNÄ");
+        jLabel69.setText("VNÄ?");
 
         javax.swing.GroupLayout jPanel4Layout = new javax.swing.GroupLayout(jPanel4);
         jPanel4.setLayout(jPanel4Layout);
@@ -811,9 +811,9 @@ public class Statistic extends javax.swing.JDialog implements IDAO {
 
         jLabel58.setText("services");
 
-        jLabel59.setText("VNÄ");
+        jLabel59.setText("VNÄ?");
 
-        jLabel60.setText("VNÄ");
+        jLabel60.setText("VNÄ?");
 
         javax.swing.GroupLayout jPanel8Layout = new javax.swing.GroupLayout(jPanel8);
         jPanel8.setLayout(jPanel8Layout);
@@ -911,7 +911,7 @@ public class Statistic extends javax.swing.JDialog implements IDAO {
 
         jLabel63.setText("employees");
 
-        jLabel64.setText("VNÄ");
+        jLabel64.setText("VNÄ?");
 
         javax.swing.GroupLayout jPanel9Layout = new javax.swing.GroupLayout(jPanel9);
         jPanel9.setLayout(jPanel9Layout);

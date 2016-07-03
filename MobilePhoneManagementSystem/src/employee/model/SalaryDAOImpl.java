@@ -38,13 +38,16 @@ public class SalaryDAOImpl implements IDAO<Salary> {
     @Override
     public List<Salary> getList() {
         List<Salary> list = new ArrayList<>();
+        Calendar calendar = Calendar.getInstance();
         try {
             if (crs != null && crs.first()) {
                 do {
+                    calendar.setTime(crs.getDate(Salary.COL_PAYDAY));
+                    int month=calendar.get(Calendar.MONTH);
                     list.add(new Salary(
                             crs.getInt(Salary.COL_SALID),
                             crs.getInt(Salary.COL_EMPID),
-                            (crs.getDate(Salary.COL_PAYDAY).getMonth()),
+                            month,
                             crs.getDate(Salary.COL_PAYDAY),
                             crs.getInt(Salary.COL_WORKDAYS),
                             crs.getInt(Salary.COL_OFFDAYS),
