@@ -18,7 +18,7 @@ public class Login implements Serializable {
     public static final String NAME = DBProvider.NAME;
     public static final String PASSWORD = DBProvider.PASSWORD;
     public static final String USER_NAME = "root";
-    public static final String USER_PASSWORD = "1";
+    public static final String USER_PASSWORD = "123123";
     public static final List<UserFunction> USER_FUNCTIONS = Arrays.asList(
             new UserFunction(UserFunction.FG_USER, UserFunction.FN_VIEW),
             new UserFunction(UserFunction.FG_USER, UserFunction.FN_UPDATE),

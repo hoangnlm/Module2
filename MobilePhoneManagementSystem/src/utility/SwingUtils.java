@@ -92,6 +92,10 @@ public class SwingUtils {
         return null;
     }
 
+    public static int showExitConfirmDialog(String message) {
+        return JOptionPane.showConfirmDialog(null, message, "Confirm:", JOptionPane.YES_NO_CANCEL_OPTION);
+    }
+    
     public static int showConfirmDialog(String message) {
         return JOptionPane.showConfirmDialog(null, message, "Confirm:", JOptionPane.YES_NO_OPTION);
     }
@@ -153,6 +157,11 @@ public class SwingUtils {
                 }
             });
         }
+    }
+    
+    public static void validateStringInput2(JTextField tf, int minLength, int maxLength, String regex) {
+        AbstractDocument abstractDocument = (AbstractDocument) tf.getDocument();
+        abstractDocument.setDocumentFilter(new StringDocumentFilter(maxLength, regex));
     }
 
     public static class IntegerDocumentFilter extends DocumentFilter {

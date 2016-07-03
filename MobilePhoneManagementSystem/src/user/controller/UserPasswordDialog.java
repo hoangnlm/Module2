@@ -28,6 +28,9 @@ public class UserPasswordDialog extends javax.swing.JDialog implements IDAO<User
     User user;
     String newPass = "", reNewPass = "", oldPass = "";
 
+    public static final int MIN = 6;
+    public static final int MAX = 30;
+
     public UserPasswordDialog(User user) {
         super((JFrame) null, true);
         initComponents();
@@ -35,8 +38,9 @@ public class UserPasswordDialog extends javax.swing.JDialog implements IDAO<User
         this.user = user;
         btOK.setEnabled(false);
 
-        SwingUtils.validateStringInput(txtOld, 6, 30, SwingUtils.PATTERN_NAMENOSPACE);
-        EmployeeSwingUtils.validateStringInput(txtNew, 6, 30, EmployeeSwingUtils.PATTERN_NAMENOSPACE);
+        SwingUtils.validateStringInput2(txtOld, MIN, MAX, SwingUtils.PATTERN_NAMENOSPACE);
+        SwingUtils.validateStringInput2(txtNew, MIN, MAX, SwingUtils.PATTERN_NAMENOSPACE);
+
         //<editor-fold defaultstate="collapsed" desc="listener">
         txtNew.getDocument().addDocumentListener(
                 new DocumentListener() {
@@ -139,7 +143,38 @@ public class UserPasswordDialog extends javax.swing.JDialog implements IDAO<User
 
     }
 
+    private boolean checkLength() {
+        boolean result = false;
+        String oldPw = new String(txtOld.getPassword()).trim();
+        String newPw = new String(txtNew.getPassword()).trim();
+        if (oldPw.isEmpty()) {
+            SwingUtils.showInfoDialog("Old password is empty !");
+            txtOld.requestFocus();
+            txtOld.selectAll();
+        } else if (oldPw.length() < MIN) {
+            SwingUtils.showInfoDialog("Minimum 6 characters !");
+            txtOld.requestFocus();
+            txtOld.selectAll();
+        } else if (newPw.isEmpty()) {
+            SwingUtils.showInfoDialog("New password is empty !");
+            txtNew.requestFocus();
+            txtNew.selectAll();
+        } else if (newPw.length() < MIN) {
+            SwingUtils.showInfoDialog("Minimum 6 characters !");
+            txtNew.requestFocus();
+            txtNew.selectAll();
+        } else {
+            result = true;
+        }
+
+        return result;
+    }
+
     public boolean validateField() {
+        if (!checkLength()) {
+            return false;
+        }
+
         boolean result = true;
         CachedRowSet crs = getCRS("select UserPassword from Users where UserID=?",
                 user.getUserID()
@@ -150,8 +185,7 @@ public class UserPasswordDialog extends javax.swing.JDialog implements IDAO<User
                 result = false;
                 SwingUtils.showErrorDialog("Old password is not correct !");
                 txtOld.requestFocus();
-            } else 
-            //                if (!oldPass.matches("[A-Za-z0-9]{6,30}")) {
+            } else //                if (!oldPass.matches("[A-Za-z0-9]{6,30}")) {
             //                    result = false;
             //                    SwingUtils.showErrorDialog("Invalid format ! Only number and character, minimum 6 and maximum 30 characters !");
             //                    txtOld.requestFocus();
@@ -160,10 +194,12 @@ public class UserPasswordDialog extends javax.swing.JDialog implements IDAO<User
             //                    SwingUtils.showErrorDialog("Invalid format ! Only number and character, minimum 6 and maximum 30 characters !");
             //                    txtNew.requestFocus();
             //                } else
-            if (!reNewPass.equals(newPass)) {
-                result = false;
-                SwingUtils.showErrorDialog("Re-new password does not matches!");
-                txtReNew.requestFocus();
+            {
+                if (!reNewPass.equals(newPass)) {
+                    result = false;
+                    SwingUtils.showErrorDialog("Re-new password does not matches!");
+                    txtReNew.requestFocus();
+                }
             }
         } catch (SQLException ex) {
             Logger.getLogger(UserPasswordDialog.class.getName()).log(Level.SEVERE, null, ex);
@@ -269,28 +305,30 @@ public class UserPasswordDialog extends javax.swing.JDialog implements IDAO<User
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
-                    .addComponent(jLabel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jLabel3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jLabel4, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                .addGap(21, 21, 21)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(txtOld)
-                    .addComponent(txtNew)
-                    .addComponent(txtReNew, javax.swing.GroupLayout.DEFAULT_SIZE, 157, Short.MAX_VALUE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jLabel9, javax.swing.GroupLayout.PREFERRED_SIZE, 14, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel10, javax.swing.GroupLayout.PREFERRED_SIZE, 14, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel11, javax.swing.GroupLayout.PREFERRED_SIZE, 14, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-            .addGroup(layout.createSequentialGroup()
-                .addGap(70, 70, 70)
-                .addComponent(btOK, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(btCancel, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(70, 70, 70))
+                    .addGroup(layout.createSequentialGroup()
+                        .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                            .addComponent(jLabel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(jLabel3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(jLabel4, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                        .addGap(21, 21, 21)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                            .addComponent(txtOld)
+                            .addComponent(txtNew)
+                            .addComponent(txtReNew, javax.swing.GroupLayout.DEFAULT_SIZE, 157, Short.MAX_VALUE))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jLabel9, javax.swing.GroupLayout.PREFERRED_SIZE, 14, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(jLabel10, javax.swing.GroupLayout.PREFERRED_SIZE, 14, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(jLabel11, javax.swing.GroupLayout.PREFERRED_SIZE, 14, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addGap(0, 0, Short.MAX_VALUE))
+                    .addGroup(layout.createSequentialGroup()
+                        .addGap(70, 70, 70)
+                        .addComponent(btOK, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(btCancel, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addContainerGap())
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
