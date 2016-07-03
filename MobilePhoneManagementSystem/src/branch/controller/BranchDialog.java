@@ -47,6 +47,7 @@ import javax.swing.event.TableModelListener;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.TableModel;
 import javax.swing.table.TableRowSorter;
+import org.jdesktop.xswingx.PromptSupport;
 import utility.StringCellEditor;
 import utility.SwingUtils;
 import utility.TableCellListener;
@@ -215,6 +216,14 @@ public class BranchDialog extends javax.swing.JDialog {
         
         //button delete
         btRemove.setEnabled(false);
+        
+        // Set promt text
+        PromptSupport.setPrompt("ID...",tfIdFilter);
+        PromptSupport.setFocusBehavior(PromptSupport.FocusBehavior.SHOW_PROMPT, tfIdFilter);
+        
+         // Set promt text
+        PromptSupport.setPrompt("Name...",tfNameFilter);
+        PromptSupport.setFocusBehavior(PromptSupport.FocusBehavior.SHOW_PROMPT, tfNameFilter);
     }
     
     public void formatTable(){

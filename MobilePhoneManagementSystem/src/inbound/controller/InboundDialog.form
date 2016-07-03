@@ -43,18 +43,18 @@
           </Group>
           <Group type="102" alignment="0" attributes="0">
               <EmptySpace max="32767" attributes="0"/>
-              <Component id="btnSave" min="-2" pref="136" max="-2" attributes="0"/>
+              <Component id="btnSave" min="-2" pref="108" max="-2" attributes="0"/>
               <EmptySpace max="-2" attributes="0"/>
-              <Component id="jButton3" min="-2" pref="142" max="-2" attributes="0"/>
+              <Component id="btReset" min="-2" pref="115" max="-2" attributes="0"/>
               <EmptySpace max="-2" attributes="0"/>
-              <Component id="jButton5" min="-2" pref="136" max="-2" attributes="0"/>
+              <Component id="jButton5" min="-2" pref="115" max="-2" attributes="0"/>
               <EmptySpace max="32767" attributes="0"/>
           </Group>
           <Group type="102" alignment="0" attributes="0">
               <EmptySpace max="32767" attributes="0"/>
               <Component id="btnAdd" min="-2" pref="108" max="-2" attributes="0"/>
               <EmptySpace max="-2" attributes="0"/>
-              <Component id="btDelete" min="-2" max="-2" attributes="0"/>
+              <Component id="btDelete" min="-2" pref="112" max="-2" attributes="0"/>
               <EmptySpace max="32767" attributes="0"/>
           </Group>
       </Group>
@@ -80,12 +80,13 @@
               <Component id="jPanel1" min="-2" pref="72" max="-2" attributes="0"/>
               <EmptySpace type="unrelated" max="32767" attributes="0"/>
               <Group type="103" groupAlignment="0" attributes="0">
-                  <Component id="jButton3" alignment="1" min="-2" pref="41" max="-2" attributes="0"/>
-                  <Group type="103" groupAlignment="3" attributes="0">
-                      <Component id="btnSave" alignment="3" min="-2" max="-2" attributes="0"/>
+                  <Component id="btnSave" alignment="1" min="-2" max="-2" attributes="0"/>
+                  <Group type="103" alignment="1" groupAlignment="3" attributes="0">
+                      <Component id="btReset" alignment="3" min="-2" pref="25" max="-2" attributes="0"/>
                       <Component id="jButton5" alignment="3" min="-2" max="-2" attributes="0"/>
                   </Group>
               </Group>
+              <EmptySpace min="-2" pref="16" max="-2" attributes="0"/>
           </Group>
       </Group>
     </DimensionLayout>
@@ -303,7 +304,7 @@
     <Component class="javax.swing.JButton" name="btnSave">
       <Properties>
         <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
-          <Image iconType="3" name="/image/product/apply.png"/>
+          <Image iconType="3" name="/image/order/OK2.png"/>
         </Property>
         <Property name="text" type="java.lang.String" value="Save all"/>
       </Properties>
@@ -314,7 +315,7 @@
     <Component class="javax.swing.JButton" name="btnAdd">
       <Properties>
         <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
-          <Image iconType="3" name="/image/product/Add.png"/>
+          <Image iconType="3" name="/image/product/add2.png"/>
         </Property>
         <Property name="text" type="java.lang.String" value="Add"/>
       </Properties>
@@ -325,7 +326,7 @@
     <Component class="javax.swing.JButton" name="btDelete">
       <Properties>
         <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
-          <Image iconType="3" name="/image/product/Delete.png"/>
+          <Image iconType="3" name="/image/order/crossout.png"/>
         </Property>
         <Property name="text" type="java.lang.String" value="Remove"/>
       </Properties>
@@ -336,7 +337,7 @@
     <Component class="javax.swing.JButton" name="jButton5">
       <Properties>
         <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
-          <Image iconType="3" name="/image/product/banned.png"/>
+          <Image iconType="3" name="/image/order/Cancel2.png"/>
         </Property>
         <Property name="text" type="java.lang.String" value="Discard"/>
       </Properties>
@@ -344,15 +345,15 @@
         <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="jButton5ActionPerformed"/>
       </Events>
     </Component>
-    <Component class="javax.swing.JButton" name="jButton3">
+    <Component class="javax.swing.JButton" name="btReset">
       <Properties>
         <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
-          <Image iconType="3" name="/image/product/Refresh.png"/>
+          <Image iconType="3" name="/image/product/refresh_1.png"/>
         </Property>
         <Property name="text" type="java.lang.String" value="Reset Data"/>
       </Properties>
       <Events>
-        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="jButton3ActionPerformed"/>
+        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="btResetActionPerformed"/>
       </Events>
     </Component>
     <Component class="javax.swing.JLabel" name="jLabel3">

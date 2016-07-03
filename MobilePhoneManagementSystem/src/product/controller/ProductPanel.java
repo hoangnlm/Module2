@@ -395,7 +395,7 @@ public class ProductPanel extends javax.swing.JPanel {
         //desc
         tbProductList.getColumnModel().getColumn(COL_ProDescr).setMinWidth(150);
         tbProductList.getColumnModel().getColumn(COL_ProDescr).setCellRenderer(centerRenderer);
-        tbProductList.getColumnModel().getColumn(COL_ProDescr).setCellEditor(new StringCellEditor(1, 100, SwingUtils.PATTERN_NAMEWITHSPACE));
+        tbProductList.getColumnModel().getColumn(COL_ProDescr).setCellEditor(new StringCellEditor(1, 100, SwingUtils.PATTERN_ADDRESS));
 
         //enable
         tbProductList.getColumnModel().getColumn(COL_ProEnable).setMinWidth(25);
