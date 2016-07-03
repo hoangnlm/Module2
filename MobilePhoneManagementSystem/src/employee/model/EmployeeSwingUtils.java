@@ -13,6 +13,7 @@ import java.util.logging.Logger;
 import javax.swing.InputVerifier;
 import javax.swing.JComponent;
 import javax.swing.JOptionPane;
+import javax.swing.JPasswordField;
 import javax.swing.JTextField;
 import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
@@ -43,9 +44,8 @@ public class EmployeeSwingUtils {
     public static final String PATTERN_DATE = "MMM dd, yyyy";
     public static final String PATTERN_HOST = "[A-Za-z0-9.]+";
     public static final String PATTERN_SERVICECONTENT = "[A-Za-z0-9 .,-]+";
-    public static final String PATTERN_PASS ="[A-Za-z0-9]{1,30}";
-    public static final String PATTERN_PHONE2="[0-9]{1,20}";
-    public static final String PATTERN_USERNAME = "[A-Za-z0-9]{6,30}";
+    public static final String PATTERN_PASSWORD ="[A-Za-z0-9]{6,30}";    
+    public static final String PATTERN_USERNAME = "[A-Za-z0-9]+";//{4,30}";
 
     public enum FormatType {
         DATE, PERCENT, CURRENCY, CURRENCYINTERGER, CURRENCYDOUBLE
@@ -166,7 +166,22 @@ public class EmployeeSwingUtils {
             });
         }
     }
-
+    public static void validatePasswordInput(JPasswordField tf, int minLength, int maxLength, String regex) {
+        AbstractDocument abstractDocument = (AbstractDocument) tf.getDocument();
+        abstractDocument.setDocumentFilter(new StringDocumentFilter(maxLength, regex));
+        if (minLength > 0) {
+            tf.setInputVerifier(new InputVerifier() {
+                @Override
+                public boolean verify(JComponent input) {
+                    if (String.valueOf(tf.getPassword()).length() < minLength) {
+                        EmployeeSwingUtils.showErrorDialog("At least " + minLength + " character(s) !");
+                        return false;
+                    }
+                    return true;
+                }
+            });
+        }
+    }
     public static class IntegerDocumentFilter extends DocumentFilter {
 
         @Override
@@ -195,7 +210,7 @@ public class EmployeeSwingUtils {
                 if (text.matches(regex)) {
                     int totalLength = fb.getDocument().getLength() + text.length();
                     if (totalLength <= maxLength) {
-//                        super.replace(fb, offset, length, text, attrs);
+                        super.replace(fb, offset, length, text, attrs);
                     } else {
                         EmployeeSwingUtils.showErrorDialog("Maximum length: " + maxLength + " characters!");
                     }

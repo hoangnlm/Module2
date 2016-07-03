@@ -34,7 +34,9 @@ public class AdminPasswordDialog extends javax.swing.JDialog implements IDAO<Use
         setLocationRelativeTo(null);
         this.user = user;
         btOK.setEnabled(false);
+        
 
+        EmployeeSwingUtils.validateStringInput(txtNew, 6, 30, EmployeeSwingUtils.PATTERN_NAMENOSPACE);
         txtNew.getDocument().addDocumentListener(
                 new DocumentListener() {
             @Override
@@ -121,11 +123,12 @@ public class AdminPasswordDialog extends javax.swing.JDialog implements IDAO<Use
 
     public boolean validateField() {
         boolean result = true;
-        if (!newPass.matches("[A-Za-z0-9]{6,30}")) {
-            result = false;
-            SwingUtils.showErrorDialog("Invalid format ! Only number and character, minimum 6 and maximum 30 characters !");
-            txtNew.requestFocus();
-        } else if (!reNewPass.equals(newPass)) {
+//        if (!newPass.matches("[A-Za-z0-9]{6,30}")) {
+//            result = false;
+//            SwingUtils.showErrorDialog("Invalid format ! Only number and character, minimum 6 and maximum 30 characters !");
+//            txtNew.requestFocus();
+//        } else 
+            if (!reNewPass.equals(newPass)) {
             result = false;
             SwingUtils.showErrorDialog("Re-new password does not matches!");
             txtReNew.requestFocus();
@@ -234,7 +237,7 @@ public class AdminPasswordDialog extends javax.swing.JDialog implements IDAO<Use
                     .addComponent(jLabel9, javax.swing.GroupLayout.PREFERRED_SIZE, 14, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel10, javax.swing.GroupLayout.PREFERRED_SIZE, 14, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addContainerGap(22, Short.MAX_VALUE))
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+            .addGroup(layout.createSequentialGroup()
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addComponent(btOK, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(18, 18, 18)

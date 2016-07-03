@@ -28,6 +28,7 @@ import javax.swing.table.TableRowSorter;
 import main.controller.LoginFrame;
 import main.model.UserFunction;
 import employee.model.EmployeeSwingUtils;
+import employee.model.SalaryDAOImpl;
 import javax.swing.JLabel;
 import javax.swing.table.DefaultTableCellRenderer;
 import utility.SpinnerCellEditor;
@@ -287,8 +288,8 @@ public class SalaryDialog extends javax.swing.JDialog {
     }//GEN-LAST:event_btAddActionPerformed
 
     private void btRemoveActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btRemoveActionPerformed
-        
-            deleteAction();
+
+        deleteAction();
     }//GEN-LAST:event_btRemoveActionPerformed
 
     private void btRefreshActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btRefreshActionPerformed
@@ -310,15 +311,26 @@ public class SalaryDialog extends javax.swing.JDialog {
         details.setWorkDays(22);
         details.setOffDays(0);
         Calendar calendar = Calendar.getInstance();
+        int y=calendar.get(Calendar.YEAR);
+        int m=calendar.get(Calendar.MONTH);
+        System.out.println(m);
+        calendar.set(y, m, 5);
+//        System.out.println(calendar.getTime());
         details.setPayDay(calendar.getTime());
-        details.setMonth(calendar.get(Calendar.MONTH - 1));
+//        details.setPayDay(new Date());
+        details.setMonth(m);
         details.setEmpID(employee.getEmpID());
         details.setBasicSalary(employee.getEmpSalary());
         details.setBonus(employee.getEmpBonus());
-//        System.out.println("zzzzzzz:   " + details);
+        
+        System.out.println("zzzzzzz:   " + details);
+        SalaryDAOImpl sd= new SalaryDAOImpl();
+        if(sd.checkPayDay(details)==true){
         salaryTableModel.insert(details);
         refreshAction(false);
-
+        }else{
+            EmployeeSwingUtils.showErrorDialog("Salary of last month was paid !");
+        }
         scrollToRow(tbSalaryList.getRowCount() - 1);
         //
     }
@@ -332,7 +344,7 @@ public class SalaryDialog extends javax.swing.JDialog {
         } else if (tbSalaryList.getRowCount() == 1) {
             EmployeeSwingUtils.showErrorDialog("At least 1 details !");
             return;
-        }else if (salaryTableModel.delete(selectedSalary)) {
+        } else if (salaryTableModel.delete(selectedSalary)) {
             EmployeeSwingUtils.showInfoDialog(EmployeeSwingUtils.DELETE_SUCCESS);
 
         } else {
