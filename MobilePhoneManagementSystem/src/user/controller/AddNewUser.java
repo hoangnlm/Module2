@@ -26,6 +26,7 @@ import utility.SwingUtils;
  */
 public class AddNewUser extends javax.swing.JDialog implements IDAO<User> {
 
+//    private AddNewUser newUser;
     User user;
     private NewUserComboBoxModel employeeComboBoxModel;
     private NewUserComboBoxRenderer employeeComboBoxRenderer;
@@ -47,7 +48,8 @@ public class AddNewUser extends javax.swing.JDialog implements IDAO<User> {
         employeeComboBoxRenderer = new NewUserComboBoxRenderer();
         cbEmployee.setRenderer(employeeComboBoxRenderer);
         cbEmployee.setSelectedIndex(cbEmployee.getItemCount() - 1);
-
+        txtUserName.setText("");
+        txtNew.setText("");
         SwingUtils.validateStringInput(txtUserName, 4, 30, SwingUtils.PATTERN_NAMENOSPACE);
         EmployeeSwingUtils.validateStringInput(txtNew, 6, 30, EmployeeSwingUtils.PATTERN_NAMENOSPACE);
         
@@ -413,7 +415,7 @@ public class AddNewUser extends javax.swing.JDialog implements IDAO<User> {
     }//GEN-LAST:event_btOKActionPerformed
 
     private void btCloseActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btCloseActionPerformed
-        dispose();
+       dispose();
     }//GEN-LAST:event_btCloseActionPerformed
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
