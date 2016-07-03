@@ -221,9 +221,8 @@ public class LoginPanel extends javax.swing.JPanel {
         if (checkLogin()) { // True khi thong tin hop le
             // Ghi du lieu dang nhap vao file
             config.userName = tfUserName.getText().trim();
-            config.userPassword = encryptPass(new String(tfPassword.getPassword()).trim());
+            config.userPassword = new String(tfPassword.getPassword()).trim();
             config.userFunctions = functions;
-
             IOUtils.writeObject(LoginFrame.CONFIG_FILENAME, config);
 
             // Chuyen sang main frame

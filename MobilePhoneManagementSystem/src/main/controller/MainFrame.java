@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package main.controller;
 
 import main.model.Login;
@@ -29,6 +24,8 @@ import java.awt.CardLayout;
 import main.model.UserFunction;
 import customer.controller.CustomerPanel;
 import employee.controller.EmployeePanel;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import order.controller.OrderPanel;
 import outbound.controller.OutboundPanel;
 import product.controller.ProductPanel;
@@ -211,8 +208,11 @@ public final class MainFrame extends javax.swing.JFrame {
     public void setSelected(int index) {
         // If user pressed "Exit"
         if (lb[index] == lbExit) {
-//            exit();
-            System.exit(0);
+            if (exit()) {
+                System.exit(0);
+            }else{
+                return;
+            }
         }
 
         // If user pressed "Log out"
@@ -528,9 +528,19 @@ public final class MainFrame extends javax.swing.JFrame {
         return img;
     }
 
-    private void exit() {
-        if (SwingUtils.showConfirmDialog("Are you sure to exit?") == JOptionPane.YES_OPTION) {
-            System.exit(0);
+    private boolean exit() {
+        int result = SwingUtils.showExitConfirmDialog("Remember your session & exit ?");
+        if (result == JOptionPane.CANCEL_OPTION) {
+            return false;
         }
+
+        if (result == JOptionPane.NO_OPTION) {
+            try {
+                Files.deleteIfExists(Paths.get(LoginFrame.CONFIG_FILENAME));
+            } catch (IOException ex) {
+                Logger.getLogger(MainFrame.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
+        return true;
     }
 }

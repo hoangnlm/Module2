@@ -321,7 +321,7 @@ public class SalaryDialog extends javax.swing.JDialog {
         details.setBasicSalary(employee.getEmpSalary());
         details.setBonus(employee.getEmpBonus());
 
-        System.out.println("zzzzzzz:   " + details);
+//        System.out.println("salary:   " + details);
         SalaryDAOImpl sd = new SalaryDAOImpl();
         if (sd.checkPayDay(details) == true) {
             salaryTableModel.insert(details);

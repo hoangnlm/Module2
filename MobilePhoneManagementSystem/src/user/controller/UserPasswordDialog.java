@@ -28,6 +28,9 @@ public class UserPasswordDialog extends javax.swing.JDialog implements IDAO<User
     User user;
     String newPass = "", reNewPass = "", oldPass = "";
 
+    public static final int MIN = 6;
+    public static final int MAX = 30;
+
     public UserPasswordDialog(User user) {
         super((JFrame) null, true);
         initComponents();
@@ -35,8 +38,9 @@ public class UserPasswordDialog extends javax.swing.JDialog implements IDAO<User
         this.user = user;
         btOK.setEnabled(false);
 
-        SwingUtils.validateStringInput(txtOld, 6, 30, SwingUtils.PATTERN_NAMENOSPACE);
-        EmployeeSwingUtils.validateStringInput(txtNew, 6, 30, EmployeeSwingUtils.PATTERN_NAMENOSPACE);
+        SwingUtils.validateStringInput2(txtOld, MIN, MAX, SwingUtils.PATTERN_NAMENOSPACE);
+        SwingUtils.validateStringInput2(txtNew, MIN, MAX, SwingUtils.PATTERN_NAMENOSPACE);
+
         //<editor-fold defaultstate="collapsed" desc="listener">
         txtNew.getDocument().addDocumentListener(
                 new DocumentListener() {
@@ -99,7 +103,7 @@ public class UserPasswordDialog extends javax.swing.JDialog implements IDAO<User
         reNewPass = String.valueOf(txtReNew.getPassword()).trim();
         if (newPass.isEmpty() || reNewPass.isEmpty() || oldPass.isEmpty()) {
             btOK.setEnabled(false);
-            btCancel.setEnabled(false);
+//            btCancel.setEnabled(false);
         } else {
             btOK.setEnabled(true);
             btCancel.setEnabled(true);
@@ -139,7 +143,38 @@ public class UserPasswordDialog extends javax.swing.JDialog implements IDAO<User
 
     }
 
+    private boolean checkLength() {
+        boolean result = false;
+        String oldPw = new String(txtOld.getPassword()).trim();
+        String newPw = new String(txtNew.getPassword()).trim();
+        if (oldPw.isEmpty()) {
+            SwingUtils.showInfoDialog("Old password is empty !");
+            txtOld.requestFocus();
+            txtOld.selectAll();
+        } else if (oldPw.length() < MIN) {
+            SwingUtils.showInfoDialog("Minimum 6 characters !");
+            txtOld.requestFocus();
+            txtOld.selectAll();
+        } else if (newPw.isEmpty()) {
+            SwingUtils.showInfoDialog("New password is empty !");
+            txtNew.requestFocus();
+            txtNew.selectAll();
+        } else if (newPw.length() < MIN) {
+            SwingUtils.showInfoDialog("Minimum 6 characters !");
+            txtNew.requestFocus();
+            txtNew.selectAll();
+        } else {
+            result = true;
+        }
+
+        return result;
+    }
+
     public boolean validateField() {
+        if (!checkLength()) {
+            return false;
+        }
+
         boolean result = true;
         CachedRowSet crs = getCRS("select UserPassword from Users where UserID=?",
                 user.getUserID()
@@ -150,17 +185,7 @@ public class UserPasswordDialog extends javax.swing.JDialog implements IDAO<User
                 result = false;
                 SwingUtils.showErrorDialog("Old password is not correct !");
                 txtOld.requestFocus();
-            } else 
-            //                if (!oldPass.matches("[A-Za-z0-9]{6,30}")) {
-            //                    result = false;
-            //                    SwingUtils.showErrorDialog("Invalid format ! Only number and character, minimum 6 and maximum 30 characters !");
-            //                    txtOld.requestFocus();
-            //                } else if (!newPass.matches("[A-Za-z0-9]{6,30}")) {
-            //                    result = false;
-            //                    SwingUtils.showErrorDialog("Invalid format ! Only number and character, minimum 6 and maximum 30 characters !");
-            //                    txtNew.requestFocus();
-            //                } else
-            if (!reNewPass.equals(newPass)) {
+            } else if (!reNewPass.equals(newPass)) {
                 result = false;
                 SwingUtils.showErrorDialog("Re-new password does not matches!");
                 txtReNew.requestFocus();
@@ -286,11 +311,11 @@ public class UserPasswordDialog extends javax.swing.JDialog implements IDAO<User
                     .addComponent(jLabel11, javax.swing.GroupLayout.PREFERRED_SIZE, 14, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
             .addGroup(layout.createSequentialGroup()
-                .addGap(70, 70, 70)
+                .addContainerGap(49, Short.MAX_VALUE)
                 .addComponent(btOK, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(btCancel, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(70, 70, 70))
+                .addContainerGap(50, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -314,11 +339,11 @@ public class UserPasswordDialog extends javax.swing.JDialog implements IDAO<User
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                             .addComponent(txtReNew, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addComponent(jLabel10))))
-                .addGap(18, 18, 18)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 26, Short.MAX_VALUE)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(btOK, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(btCancel, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(19, 19, 19))
+                .addContainerGap())
         );
 
         pack();

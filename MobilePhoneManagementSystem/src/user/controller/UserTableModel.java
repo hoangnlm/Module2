@@ -12,7 +12,7 @@ import utility.CustomizedTableModel;
 public class UserTableModel extends CustomizedTableModel<User> {
 
     public UserTableModel() {
-        super(new UserDAOImpl(), new String[]{"ID", "User Name", "Empployee Name", "Status", "Password","EmpID"});
+        super(new UserDAOImpl(), new String[]{"ID", "User Name", "Employee Name", "Status", "Password","EmpID"});
     }
    
     @Override

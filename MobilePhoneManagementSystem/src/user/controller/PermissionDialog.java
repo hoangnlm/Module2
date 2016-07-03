@@ -42,7 +42,6 @@ public class PermissionDialog extends javax.swing.JDialog {
         initComponents();
         setLocationRelativeTo(null);
         this.user = user;
-        lblID.setText(user.getUserID() + "");
         lblID1.setText(user.getUserName() + "");
 
         //Lay data
@@ -63,6 +62,8 @@ public class PermissionDialog extends javax.swing.JDialog {
             setCheckBoxEnable(false);
         } else {
             setButton(false);
+            btSelectAll.setEnabled(true);
+            btDeselectAll.setEnabled(true);
         }
 
     }
@@ -112,8 +113,6 @@ public class PermissionDialog extends javax.swing.JDialog {
         jPanel23 = new javax.swing.JPanel();
         cusLevelUpdate = new javax.swing.JCheckBox();
         cusLevelView = new javax.swing.JCheckBox();
-        jLabel1 = new javax.swing.JLabel();
-        lblID = new javax.swing.JLabel();
         jLabel4 = new javax.swing.JLabel();
         jPanel24 = new javax.swing.JPanel();
         permissionUpdate = new javax.swing.JCheckBox();
@@ -126,6 +125,8 @@ public class PermissionDialog extends javax.swing.JDialog {
         supplierUpdate = new javax.swing.JCheckBox();
         supplierView = new javax.swing.JCheckBox();
         btClose = new javax.swing.JButton();
+        btSelectAll = new javax.swing.JButton();
+        btDeselectAll = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setTitle("Permission");
@@ -536,9 +537,6 @@ public class PermissionDialog extends javax.swing.JDialog {
                 .addContainerGap())
         );
 
-        jLabel1.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
-        jLabel1.setText("User ID: ");
-
         jLabel4.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
         jLabel4.setText("User Name: ");
 
@@ -656,6 +654,22 @@ public class PermissionDialog extends javax.swing.JDialog {
             }
         });
 
+        btSelectAll.setIcon(new javax.swing.ImageIcon(getClass().getResource("/image/order/accept.png"))); // NOI18N
+        btSelectAll.setText("Select All");
+        btSelectAll.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btSelectAllActionPerformed(evt);
+            }
+        });
+
+        btDeselectAll.setIcon(new javax.swing.ImageIcon(getClass().getResource("/image/order/crossout.png"))); // NOI18N
+        btDeselectAll.setText("Deselect All");
+        btDeselectAll.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btDeselectAllActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
@@ -674,6 +688,20 @@ public class PermissionDialog extends javax.swing.JDialog {
                     .addGroup(layout.createSequentialGroup()
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addGroup(layout.createSequentialGroup()
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                                    .addGroup(layout.createSequentialGroup()
+                                        .addComponent(jLabel4, javax.swing.GroupLayout.PREFERRED_SIZE, 75, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                        .addComponent(lblID1, javax.swing.GroupLayout.PREFERRED_SIZE, 120, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                        .addGap(18, 18, 18)
+                                        .addComponent(btSelectAll, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                                    .addGroup(layout.createSequentialGroup()
+                                        .addComponent(jPanel4, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                        .addComponent(jPanel24, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(jPanel5, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addGroup(layout.createSequentialGroup()
                                 .addComponent(jPanel8, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                                 .addComponent(jPanel7, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -685,12 +713,7 @@ public class PermissionDialog extends javax.swing.JDialog {
                                 .addComponent(jPanel13, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                                 .addComponent(jPanel10, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                            .addGroup(layout.createSequentialGroup()
-                                .addComponent(jPanel4, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(jPanel24, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(jPanel5, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                            .addComponent(btDeselectAll, javax.swing.GroupLayout.Alignment.TRAILING))
                         .addGap(0, 0, Short.MAX_VALUE))
                     .addGroup(layout.createSequentialGroup()
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -700,14 +723,6 @@ public class PermissionDialog extends javax.swing.JDialog {
                                 .addComponent(jPanel25, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                                 .addComponent(jPanel16, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                            .addGroup(layout.createSequentialGroup()
-                                .addComponent(jLabel1)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                                .addComponent(lblID, javax.swing.GroupLayout.PREFERRED_SIZE, 59, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addGap(39, 39, 39)
-                                .addComponent(jLabel4)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(lblID1, javax.swing.GroupLayout.PREFERRED_SIZE, 143, javax.swing.GroupLayout.PREFERRED_SIZE))
                             .addGroup(layout.createSequentialGroup()
                                 .addComponent(jPanel23, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -719,11 +734,11 @@ public class PermissionDialog extends javax.swing.JDialog {
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jLabel1)
-                    .addComponent(lblID, javax.swing.GroupLayout.PREFERRED_SIZE, 17, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel4)
-                    .addComponent(lblID1, javax.swing.GroupLayout.PREFERRED_SIZE, 17, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(22, 22, 22)
+                    .addComponent(btDeselectAll, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(btSelectAll, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(lblID1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(jLabel4, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jPanel4, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jPanel5, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -743,7 +758,7 @@ public class PermissionDialog extends javax.swing.JDialog {
                     .addComponent(jPanel22, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jPanel25, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jPanel16, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jPanel23, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jPanel26, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
@@ -761,6 +776,8 @@ public class PermissionDialog extends javax.swing.JDialog {
     private void setButton(boolean enabled) {
         btSave.setEnabled(enabled);
         btCancel.setEnabled(enabled);
+        btSelectAll.setEnabled(enabled);
+        btDeselectAll.setEnabled(enabled);
     }
 //<editor-fold defaultstate="collapsed" desc="If else -- met vai linh hon">
 
@@ -1203,6 +1220,8 @@ public class PermissionDialog extends javax.swing.JDialog {
                 clearChkBox(false);
                 setCheckBox();
                 setButton(false);
+                btSelectAll.setEnabled(true);
+                btDeselectAll.setEnabled(true);
                 return;
             }
         } else if (EmployeeSwingUtils.showConfirmDialog("Are you sure to update ?") == JOptionPane.NO_OPTION) {
@@ -1224,13 +1243,32 @@ public class PermissionDialog extends javax.swing.JDialog {
         setCheckBox();
     }//GEN-LAST:event_btCancelActionPerformed
 
-    //   <editor-fold>  
+    private void btSelectAllActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btSelectAllActionPerformed
+        if (LoginFrame.config.userName.equals("root")) {
+            clearChkBox(true);
+            setButton(true);
+        } else {
+            clearChkBox(true);
+            userUpdate.setSelected(false);
+            permissionUpdate.setSelected(false);
+            setButton(true);
+        }
+    }//GEN-LAST:event_btSelectAllActionPerformed
+
+    private void btDeselectAllActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btDeselectAllActionPerformed
+        clearChkBox(false);
+        setButton(true);
+    }//GEN-LAST:event_btDeselectAllActionPerformed
+
+//   <editor-fold>  
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JCheckBox branchUpdate;
     private javax.swing.JCheckBox branchView;
     private javax.swing.JButton btCancel;
     private javax.swing.JButton btClose;
+    private javax.swing.JButton btDeselectAll;
     private javax.swing.JButton btSave;
+    private javax.swing.JButton btSelectAll;
     private javax.swing.JCheckBox cusLevelUpdate;
     private javax.swing.JCheckBox cusLevelView;
     private javax.swing.JCheckBox cusUpdate;
@@ -1239,7 +1277,6 @@ public class PermissionDialog extends javax.swing.JDialog {
     private javax.swing.JCheckBox empView;
     private javax.swing.JCheckBox inboundUpdate;
     private javax.swing.JCheckBox inboundView;
-    private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel4;
     private javax.swing.JPanel jPanel10;
     private javax.swing.JPanel jPanel13;
@@ -1254,7 +1291,6 @@ public class PermissionDialog extends javax.swing.JDialog {
     private javax.swing.JPanel jPanel5;
     private javax.swing.JPanel jPanel7;
     private javax.swing.JPanel jPanel8;
-    private javax.swing.JLabel lblID;
     private javax.swing.JLabel lblID1;
     private javax.swing.JCheckBox orderUpdate;
     private javax.swing.JCheckBox orderView;

@@ -11,7 +11,6 @@ import java.sql.SQLException;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javax.sql.rowset.CachedRowSet;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.event.DocumentEvent;
@@ -27,16 +26,18 @@ public class AdminPasswordDialog extends javax.swing.JDialog implements IDAO<Use
 
     User user;
     String newPass = "", reNewPass = "";
+    public static final int MIN = 6;
+    public static final int MAX = 30;
 //<editor-fold defaultstate="collapsed" desc="Constructor">
+
     public AdminPasswordDialog(User user) {
         super((JFrame) null, true);
         initComponents();
         setLocationRelativeTo(null);
         this.user = user;
         btOK.setEnabled(false);
-        
 
-        EmployeeSwingUtils.validateStringInput(txtNew, 6, 30, EmployeeSwingUtils.PATTERN_NAMENOSPACE);
+        SwingUtils.validateStringInput2(txtNew, MIN, MAX, EmployeeSwingUtils.PATTERN_NAMENOSPACE);
         txtNew.getDocument().addDocumentListener(
                 new DocumentListener() {
             @Override
@@ -73,7 +74,7 @@ public class AdminPasswordDialog extends javax.swing.JDialog implements IDAO<Use
         });
     }
 //</editor-fold>
-    
+
 //<editor-fold defaultstate="collapsed" desc="method">    
     @Override
     public boolean update(User user) {
@@ -98,14 +99,13 @@ public class AdminPasswordDialog extends javax.swing.JDialog implements IDAO<Use
         reNewPass = String.valueOf(txtReNew.getPassword()).trim();
         if (newPass.isEmpty() || reNewPass.isEmpty()) {
             btOK.setEnabled(false);
-            btCancel.setEnabled(false);
+//            btCancel.setEnabled(false);
         } else {
             btOK.setEnabled(true);
             btCancel.setEnabled(true);
         }
     }
 
-    
     public String encryptPass(String newPass) {
         try {
             java.security.MessageDigest md = java.security.MessageDigest.getInstance("MD5");
@@ -121,22 +121,44 @@ public class AdminPasswordDialog extends javax.swing.JDialog implements IDAO<Use
 
     }
 
+    private boolean checkLength() {
+        boolean result = false;
+        String newPw = new String(txtNew.getPassword()).trim();
+        if (newPw.isEmpty()) {
+            SwingUtils.showInfoDialog("New password is empty !");
+            txtNew.requestFocus();
+            txtNew.selectAll();
+        } else if (newPw.length() < MIN) {
+            SwingUtils.showInfoDialog("Minimum 6 characters !");
+            txtNew.requestFocus();
+            txtNew.selectAll();
+        } else {
+            result = true;
+        }
+        return result;
+    }
+
     public boolean validateField() {
+        if (!checkLength()) {
+            return false;
+        }
         boolean result = true;
 //        if (!newPass.matches("[A-Za-z0-9]{6,30}")) {
 //            result = false;
 //            SwingUtils.showErrorDialog("Invalid format ! Only number and character, minimum 6 and maximum 30 characters !");
 //            txtNew.requestFocus();
 //        } else 
-            if (!reNewPass.equals(newPass)) {
+
+        if (!reNewPass.equals(newPass)) {
             result = false;
             SwingUtils.showErrorDialog("Re-new password does not matches!");
             txtReNew.requestFocus();
+            txtReNew.selectAll();
         }
 
         return result;
     }
-    
+
     @Override
     public List<User> getList() {
         return null;
@@ -224,7 +246,7 @@ public class AdminPasswordDialog extends javax.swing.JDialog implements IDAO<Use
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addContainerGap(21, Short.MAX_VALUE)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
                     .addComponent(jLabel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(jLabel3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
@@ -236,7 +258,7 @@ public class AdminPasswordDialog extends javax.swing.JDialog implements IDAO<Use
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jLabel9, javax.swing.GroupLayout.PREFERRED_SIZE, 14, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel10, javax.swing.GroupLayout.PREFERRED_SIZE, 14, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(22, Short.MAX_VALUE))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addComponent(btOK, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -297,5 +319,4 @@ public class AdminPasswordDialog extends javax.swing.JDialog implements IDAO<Use
     private javax.swing.JPasswordField txtReNew;
     // End of variables declaration//GEN-END:variables
 
-    
 }
