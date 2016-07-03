@@ -139,16 +139,37 @@ public class SalaryDialog extends javax.swing.JDialog {
             @Override
             public void actionPerformed(ActionEvent e) {
                 TableCellListener tcl = (TableCellListener) e.getSource();
+                Calendar cal = Calendar.getInstance();
+                int yNow = cal.get(Calendar.YEAR);
+                int mNow = cal.get(Calendar.MONTH);
 
+                cal.setTime(selectedSalary.getPayDay());
+                int yPay, mPay;
                 switch (tcl.getColumn()) {
 
                     case COL_WORKDAYS:
-                        selectedSalary.setWorkDays((int) tcl.getNewValue());
-                        //
+                        cal.setTime(selectedSalary.getPayDay());
+                        yPay = cal.get(Calendar.YEAR);
+                        mPay = cal.get(Calendar.MONTH);
+                        if (!(yPay == yNow && mPay == mNow)) {
+                            EmployeeSwingUtils.showErrorDialog("Can't update workdays of the month before!");
+                            refreshAction(false);
+                            return;
+                        } else {
+                            selectedSalary.setWorkDays((int) tcl.getNewValue());
+                        }
                         break;
                     case COL_OFFDAYS:
-                        selectedSalary.setOffDays((int) tcl.getNewValue());
-                        //
+                        cal.setTime(selectedSalary.getPayDay());
+                        yPay = cal.get(Calendar.YEAR);
+                        mPay = cal.get(Calendar.MONTH);
+                        if (!(yPay == yNow && mPay == mNow)) {
+                            EmployeeSwingUtils.showErrorDialog("Can't update offdays of the month before!");
+                            refreshAction(false);
+                            return;
+                        } else {
+                            selectedSalary.setOffDays((int) tcl.getNewValue());
+                        }
                         break;
                 }
                 if (EmployeeSwingUtils.showConfirmDialog("Are you sure to update ?") == JOptionPane.NO_OPTION) {
@@ -156,7 +177,6 @@ public class SalaryDialog extends javax.swing.JDialog {
                 } else {
                     updateAction();
                 }
-                //
             }
         });
 //</editor-fold>

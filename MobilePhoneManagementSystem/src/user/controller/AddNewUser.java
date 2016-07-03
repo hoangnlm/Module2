@@ -414,7 +414,7 @@ public class AddNewUser extends javax.swing.JDialog implements IDAO<User> {
 
     private void btOKActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btOKActionPerformed
         if (validateField() == true) {
-            if (EmployeeSwingUtils.showConfirmDialog("Are you sure to update ?") == JOptionPane.NO_OPTION) {
+            if (EmployeeSwingUtils.showConfirmDialog("Are you sure to insert ?") == JOptionPane.NO_OPTION) {
                 return;
             } else {
                 boolean result = insert();

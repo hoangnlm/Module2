@@ -1,5 +1,6 @@
-package service.controller;
+package service.controller.backup;
 
+import service.controller.*;
 import java.util.Date;
 import service.model.Service;
 import service.model.ServiceDAOImpl;
@@ -12,7 +13,7 @@ import utility.CustomizedTableModel;
 public class ServiceTableModel extends CustomizedTableModel<Service> {
 
     public ServiceTableModel() {
-        super(new ServiceDAOImpl(), new String[]{"ID", "User Name","Cus.Phone", "Receive Date", "Return Date", "Service Type", "Status"});
+        super(new ServiceDAOImpl(), new String[]{"ID", "User Name", "Receive Date", "Return Date", "Service Type", "Status"});
     }
     
     public Service getServiceAtIndex(int index){
@@ -26,7 +27,7 @@ public class ServiceTableModel extends CustomizedTableModel<Service> {
     
     @Override
     public Class<?> getColumnClass(int column) {
-        Class[] columnClasses = {Integer.class, String.class, String.class, Date.class, Date.class, String.class, String.class};
+        Class[] columnClasses = {Integer.class, String.class,  Date.class, Date.class, String.class, String.class};
         return columnClasses[column];
     }
 
@@ -42,18 +43,15 @@ public class ServiceTableModel extends CustomizedTableModel<Service> {
                 result = item.getUserName();
                 break;
             case 2:
-                result = item.getCusPhone();
-                break;
-            case 3:
                 result = item.getReceiveDate();
                 break;
-            case 4:
+            case 3:
                 result = item.getReturnDate();
                 break;
-            case 5:
+            case 4:
                 result = item.getSerTypeName();
                 break;
-            case 6:
+            case 5:
                 result = item.getSerStatus();
                 break;
         }
@@ -71,18 +69,15 @@ public class ServiceTableModel extends CustomizedTableModel<Service> {
                 item.setUserName((String) aValue);
                 break;
             case 2:
-                item.setCusPhone((String) aValue);
-                break;
-            case 3:
                 item.setReceiveDate((Date) aValue);
                 break;
-            case 4:
+            case 3:
                 item.setReturnDate((Date) aValue);
                 break;
-            case 5:
+            case 4:
                 item.setSerTypeName((String) aValue);
                 break;
-            case 6:
+            case 5:
                 item.setSerStatus((String) aValue);
                 break;
         }

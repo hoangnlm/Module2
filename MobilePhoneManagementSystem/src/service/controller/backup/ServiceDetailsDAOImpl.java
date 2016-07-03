@@ -3,8 +3,9 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package service.model;
+package service.controller.backup;
 
+import service.model.*;
 import database.IDAO;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -113,7 +114,7 @@ public class ServiceDetailsDAOImpl implements IDAO<ServiceDetails> {
         try {
 //            System.out.println("CurentService: " + currentService.toString());
             // Insert table Service
-            runPS("insert Service(UserID, CusPhone, ReceiveDate, ReturnDate, ServiceTypeID, SttID) values((select UserID from Users where UserName=?),?,?,?,?,?)", currentService.getUserName(),currentService.getCusPhone(), currentService.getReceiveDate(), currentService.getReturnDate(), currentService.getSerTypeID(), currentService.getSerStatusID());
+            runPS("insert Service(UserID, ReceiveDate,ReturnDate, ServiceTypeID, SttID) values((select UserID from Users where UserName=?),?,?,?,?)", currentService.getUserName(), currentService.getReceiveDate(), currentService.getReturnDate(), currentService.getSerTypeID(), currentService.getSerStatusID());
             // Lay serID sau khi insert table Sevice
             CachedRowSet crs2 = getCRS("select top(1) ServiceID from Service order by ServiceID DESC");
             crs2.first();
@@ -149,7 +150,7 @@ public class ServiceDetailsDAOImpl implements IDAO<ServiceDetails> {
 
         try {
             // Update table Service
-            runPS("update Service set UserID=(select UserID from Users where UserName=?), CusPhone=?, ReceiveDate=?,ReturnDate=?, ServiceTypeID=?, SttID=? where ServiceID=? ", currentService.getUserName(),currentService.getCusPhone(), currentService.getReceiveDate(), currentService.getReturnDate(), currentService.getSerTypeID(), currentService.getSerStatusID(), currentService.getSerID());
+            runPS("update Service set UserID=(select UserID from Users where UserName=?), ReceiveDate=?,ReturnDate=?, ServiceTypeID=?, SttID=? where ServiceID=? ", currentService.getUserName(), currentService.getReceiveDate(), currentService.getReturnDate(), currentService.getSerTypeID(), currentService.getSerStatusID(), currentService.getSerID());
             // Xoa het ServiceDetails cu cua current service
             runPS("delete ServiceDetails where ServiceID =?", currentService.getSerID());
             // Update table ServiceDetails

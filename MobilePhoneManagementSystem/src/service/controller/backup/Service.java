@@ -3,8 +3,9 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package service.model;
+package service.controller.backup;
 
+import service.model.*;
 import java.util.Date;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -14,11 +15,10 @@ import order.model.Order;
  *
  * @author BonBon
  */
-public class Service implements Cloneable {
+public class Service implements Cloneable{
 
     private int serID;
     private String userName;
-    private String cusPhone;
     private Date receiveDate;
     private Date returnDate;
     private String serTypeName;
@@ -30,7 +30,6 @@ public class Service implements Cloneable {
 
     public static final String COL_SERID = "ServiceID";
     public static final String COL_USERNAME = "UserName";
-    public static final String COL_CUSPHONE = "CusPhone";
     public static final String COL_RECEIVEDATE = "ReceiveDate";
     public static final String COL_RETURNDATE = "ReturnDate";
     public static final String COL_SERTYPENAME = "ServiceTypeName";
@@ -43,10 +42,9 @@ public class Service implements Cloneable {
     public Service() {
     }
 
-    public Service(int serID, String userName, String cusPhone, Date receiveDate, Date returnDate, String serTypeName, String serStatus, int userID, int serStatusID, int serTypeID) {
+    public Service(int serID, String userName, Date receiveDate, Date returnDate, String serTypeName, String serStatus, int userID, int serStatusID, int serTypeID) {
         this.serID = serID;
         this.userName = userName;
-        this.cusPhone = cusPhone;
         this.receiveDate = receiveDate;
         this.returnDate = returnDate;
         this.serTypeName = serTypeName;
@@ -68,14 +66,6 @@ public class Service implements Cloneable {
 
     public void setSerID(int serID) {
         this.serID = serID;
-    }
-
-    public String getCusPhone() {
-        return cusPhone;
-    }
-
-    public void setCusPhone(String cusPhone) {
-        this.cusPhone = cusPhone;
     }
 
     public String getUserName() {
@@ -141,7 +131,8 @@ public class Service implements Cloneable {
     public void setSerTypeID(int serTypeID) {
         this.serTypeID = serTypeID;
     }
-
+    
+    
     @Override
     public Service clone() {
         Service result = null;
@@ -150,6 +141,6 @@ public class Service implements Cloneable {
         } catch (CloneNotSupportedException ex) {
             Logger.getLogger(Service.class.getName()).log(Level.SEVERE, null, ex);
         }
-        return result;
+        return result; 
     }
 }

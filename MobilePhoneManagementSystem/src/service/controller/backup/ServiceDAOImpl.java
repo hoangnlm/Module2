@@ -3,8 +3,9 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package service.model;
+package service.controller.backup;
 
+import service.model.*;
 import database.IDAO;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -22,7 +23,7 @@ public class ServiceDAOImpl implements IDAO<Service> {
     private int selectingIndex;
 
     public  ServiceDAOImpl() {
-        crs = getCRS("select a.ServiceID, b.UserName,a.CusPhone, a.ReceiveDate, a.ReturnDate, c.ServiceTypeName,s.SttName,a.UserID,a.ServiceTypeID,a.SttID from Service a join Users b on a.UserID=b.UserID join ServiceTypes c on a.ServiceTypeID=c.ServiceTypeID join Status s on a.SttID=s.SttID ORDER BY a.ReceiveDate DESC");
+        crs = getCRS("select a.ServiceID, b.UserName, a.ReceiveDate, a.ReturnDate, c.ServiceTypeName,s.SttName,a.UserID,a.ServiceTypeID,a.SttID from Service a join Users b on a.UserID=b.UserID join ServiceTypes c on a.ServiceTypeID=c.ServiceTypeID join Status s on a.SttID=s.SttID ORDER BY a.ReceiveDate DESC");
     }
     @Override
     public List<Service> getList() {
@@ -32,8 +33,7 @@ List<Service> list = new ArrayList<>();
                 do {
                     list.add(new Service(
                             crs.getInt(Service.COL_SERID),
-                            crs.getString(Service.COL_USERNAME),
-                            crs.getString(Service.COL_CUSPHONE),
+                            crs.getString(Service.COL_USERNAME),                            
                             crs.getDate(Service.COL_RECEIVEDATE),
                             crs.getDate(Service.COL_RETURNDATE),
                             crs.getString(Service.COL_SERTYPENAME),

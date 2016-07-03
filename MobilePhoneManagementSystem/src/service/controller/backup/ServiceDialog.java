@@ -1,5 +1,6 @@
-package service.controller;
+package service.controller.backup;
 
+import service.controller.*;
 import com.toedter.calendar.JDateChooser;
 import employee.model.IntegerCurrencyCellRenderer;
 import order.controller.*;
@@ -56,8 +57,6 @@ public class ServiceDialog extends javax.swing.JDialog implements ItemListener {
     private ServiceTypeComboBoxRenderer serviceTypeComboBoxRenderer;
     private ServiceDetailsComboBoxModel serviceDetailsComboBoxModel;
 
-    public static final int MIN = 10;
-    public static final int MAX = 20;
     // Product dang duoc chon trong table product list
     private ServiceDetails selectedDetails;
     private int selectedRowIndex = -1;
@@ -80,7 +79,6 @@ public class ServiceDialog extends javax.swing.JDialog implements ItemListener {
     // List de save vao database
     private List<ServiceDetails> serviceDetails;
 
-//<editor-fold defaultstate="collapsed" desc="constructor">
     public ServiceDialog(Service service) {
         super((JFrame) null, true);
         initComponents();
@@ -89,6 +87,7 @@ public class ServiceDialog extends javax.swing.JDialog implements ItemListener {
         dcFilter.setBounds(0, 0, 130, 30);
         dcFilter.setDateFormatString("MMM dd, yyyy");
         dcFilter.getDateEditor().setEnabled(false);
+
         setLocationRelativeTo(null);
         insertMode = service == null;
 
@@ -238,8 +237,8 @@ public class ServiceDialog extends javax.swing.JDialog implements ItemListener {
         });
 
 //</editor-fold>
-        //<editor-fold defaultstate="collapsed" desc="SXu ly mode insert update">       
-        // Xu ly mode
+ //<editor-fold defaultstate="collapsed" desc="SXu ly mode insert update">       
+    // Xu ly mode
         if (insertMode) { // Mode insert
             setTitle("New Service");
             this.service = new Service();
@@ -253,19 +252,18 @@ public class ServiceDialog extends javax.swing.JDialog implements ItemListener {
             this.service.setReceiveDate(new Date());
 
             backup = this.service.clone(); // Backup
-
+            
             tfID.setText("New");
             tfReceiveDate.setText(EmployeeSwingUtils.formatString(new Date(), FormatType.DATE));
-//            tfCusPhone.setText(System.currentTimeMillis() + "");
-            SwingUtils.validateStringInput2(tfCusPhone, MIN, MAX, SwingUtils.PATTERN_NUMBER);
+            
             Calendar cal = Calendar.getInstance();
-            returnDate = cal.getTime();
+            returnDate = cal.getTime();            
             dcFilter.setMinSelectableDate(cal.getTime());
             cal.add(Calendar.DATE, +30);
             dcFilter.setMaxSelectableDate(cal.getTime());
             dcFilter.setDate(returnDate);
             pnReturnDate.add(dcFilter);
-
+            
 //            this.service.setReturnDate(dcFilter.getDate());
             tfUser.setText(LoginFrame.config.userName);
             cbStatus.setSelectedIndex(0);
@@ -277,18 +275,17 @@ public class ServiceDialog extends javax.swing.JDialog implements ItemListener {
             backup = this.service.clone(); // Backup
 
             tfID.setText(this.service.getSerID() + "");
-            tfCusPhone.setText(this.service.getCusPhone() + "");
-            SwingUtils.validateStringInput2(tfCusPhone, MIN, MAX, SwingUtils.PATTERN_NUMBER);
-            tfReceiveDate.setText(EmployeeSwingUtils.formatString(this.service.getReceiveDate(), FormatType.DATE));
-            returnDate = backup.getReturnDate();
 
+            tfReceiveDate.setText(EmployeeSwingUtils.formatString(this.service.getReceiveDate(), FormatType.DATE));           
+            returnDate = backup.getReturnDate();            
+            
             dcFilter.setMinSelectableDate(this.service.getReceiveDate());
-            Calendar cal = Calendar.getInstance();
+            Calendar cal = Calendar.getInstance();            
             cal.add(Calendar.DATE, +30);
             dcFilter.setMaxSelectableDate(cal.getTime());
-            dcFilter.setDate(returnDate);
+            dcFilter.setDate(returnDate);                       
             pnReturnDate.add(dcFilter);
-
+            
 //            this.service.setReturnDate(dcFilter.getDate());           
             tfUser.setText(this.service.getUserName());
             cbStatus.setSelectedItem(serviceStatusComboBoxModel.getStatusFromValue(this.service.getSerStatus()));
@@ -302,26 +299,8 @@ public class ServiceDialog extends javax.swing.JDialog implements ItemListener {
 
         // Set data cho cac label
         updateItemsLabel();
+//event cho jdatechooser
 
-//<editor-fold defaultstate="collapsed" desc="event cua phone + date">
-//event cho jdatechooser + cusphone
-        tfCusPhone.getDocument().addDocumentListener(
-                new DocumentListener() {
-            @Override
-            public void changedUpdate(DocumentEvent e) {
-                setTrackWhenSerTypeChange();
-            }
-
-            @Override
-            public void insertUpdate(DocumentEvent e) {
-                setTrackWhenSerTypeChange();
-            }
-
-            @Override
-            public void removeUpdate(DocumentEvent e) {
-                setTrackWhenSerTypeChange();
-            }
-        });
         dcFilter.getDateEditor().addPropertyChangeListener(new PropertyChangeListener() {
 
             @Override
@@ -334,8 +313,6 @@ public class ServiceDialog extends javax.swing.JDialog implements ItemListener {
                 }
             }
         });
-        //</editor-fold>
-
 //<editor-fold defaultstate="collapsed" desc="xu ly cho vung filter">
 // Set data cho list filter
         list.setModel(new OrderBranchListModel());
@@ -353,7 +330,6 @@ public class ServiceDialog extends javax.swing.JDialog implements ItemListener {
         list.addListSelectionListener(new ListSelectionListener() {
             @Override
             public void valueChanged(ListSelectionEvent e) {
-                serviceDetailsComboBoxModel.refresh();
                 serviceDetailsComboBoxModel.setBraList((List<OrderBranch>) list.getSelectedValuesList());
                 serviceDetailsComboBoxModel.filter();
             }
@@ -381,7 +357,6 @@ public class ServiceDialog extends javax.swing.JDialog implements ItemListener {
         });
 //</editor-fold>
     }
-//</editor-fold>
 
 //<editor-fold defaultstate="collapsed" desc="Bat su kien">
     @SuppressWarnings("unchecked")
@@ -401,8 +376,6 @@ public class ServiceDialog extends javax.swing.JDialog implements ItemListener {
         cbType = new javax.swing.JComboBox<>();
         jLabel11 = new javax.swing.JLabel();
         pnReturnDate = new javax.swing.JPanel();
-        jLabel4 = new javax.swing.JLabel();
-        tfCusPhone = new javax.swing.JTextField();
         jPanel2 = new javax.swing.JPanel();
         btAdd = new javax.swing.JButton();
         btRemove = new javax.swing.JButton();
@@ -485,28 +458,20 @@ public class ServiceDialog extends javax.swing.JDialog implements ItemListener {
             .addGap(0, 0, Short.MAX_VALUE)
         );
 
-        jLabel4.setText("Cus.Phone:");
-
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addContainerGap()
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jLabel7, javax.swing.GroupLayout.PREFERRED_SIZE, 65, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel8, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addComponent(jLabel8)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(tfID, javax.swing.GroupLayout.PREFERRED_SIZE, 61, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addComponent(jLabel4, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                .addGap(18, 18, 18)
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addComponent(jLabel7, javax.swing.GroupLayout.PREFERRED_SIZE, 65, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(tfUser, javax.swing.GroupLayout.PREFERRED_SIZE, 130, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addComponent(tfCusPhone))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(tfUser, javax.swing.GroupLayout.DEFAULT_SIZE, 130, Short.MAX_VALUE)
+                    .addComponent(tfID))
+                .addGap(18, 66, Short.MAX_VALUE)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                     .addComponent(jLabel9, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(jLabel3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
@@ -514,7 +479,7 @@ public class ServiceDialog extends javax.swing.JDialog implements ItemListener {
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                     .addComponent(tfReceiveDate, javax.swing.GroupLayout.DEFAULT_SIZE, 130, Short.MAX_VALUE)
                     .addComponent(pnReturnDate, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 50, Short.MAX_VALUE)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                     .addComponent(jLabel6, javax.swing.GroupLayout.DEFAULT_SIZE, 44, Short.MAX_VALUE)
                     .addComponent(jLabel11, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
@@ -534,18 +499,16 @@ public class ServiceDialog extends javax.swing.JDialog implements ItemListener {
                     .addComponent(tfID, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel8)
                     .addComponent(tfReceiveDate, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel3)
-                    .addComponent(jLabel7)
-                    .addComponent(tfUser, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(jLabel3))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(tfCusPhone, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(pnReturnDate, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                         .addComponent(jLabel9)
                         .addComponent(jLabel11)
                         .addComponent(cbType, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addComponent(jLabel4)))
+                        .addComponent(jLabel7)
+                        .addComponent(tfUser, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addContainerGap())
         );
 
@@ -641,7 +604,7 @@ public class ServiceDialog extends javax.swing.JDialog implements ItemListener {
                         .addComponent(tfNameFilter, javax.swing.GroupLayout.PREFERRED_SIZE, 231, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(btClear, javax.swing.GroupLayout.PREFERRED_SIZE, 140, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 124, Short.MAX_VALUE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addComponent(btAdd, javax.swing.GroupLayout.PREFERRED_SIZE, 108, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(btRemove, javax.swing.GroupLayout.PREFERRED_SIZE, 108, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -770,11 +733,7 @@ public class ServiceDialog extends javax.swing.JDialog implements ItemListener {
     }//GEN-LAST:event_btAddActionPerformed
 
     private void btRemoveActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btRemoveActionPerformed
-        if (EmployeeSwingUtils.showConfirmDialog("Are you sure to delete ?") == JOptionPane.NO_OPTION) {
-            return;
-        } else {
-            deleteAction();
-        }
+        deleteAction();
     }//GEN-LAST:event_btRemoveActionPerformed
 
     private void btResetActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btResetActionPerformed
@@ -782,13 +741,9 @@ public class ServiceDialog extends javax.swing.JDialog implements ItemListener {
     }//GEN-LAST:event_btResetActionPerformed
 
     private void btSaveActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btSaveActionPerformed
-        if (checkPhone() == false) {
-            return;
-        } else if (EmployeeSwingUtils.showConfirmDialog("Are you sure to update ?") == JOptionPane.NO_OPTION) {
-            return;
-        } else {
-            updateAction();
-        }
+
+        updateAction();
+
     }//GEN-LAST:event_btSaveActionPerformed
 
     private void btClearActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btClearActionPerformed
@@ -813,7 +768,7 @@ public class ServiceDialog extends javax.swing.JDialog implements ItemListener {
 //                this.service.setReturnDate(dcFilter.getDate());
                 setTrackChanges(!checkOrdIDEmpty() && !checkProductEmpty());
             } else {
-                returnDate = new Date();
+                returnDate = new Date();                
                 dcFilter.setDate(returnDate);
                 pnReturnDate.add(dcFilter);
 //                this.service.setReturnDate(dcFilter.getDate());
@@ -833,7 +788,6 @@ public class ServiceDialog extends javax.swing.JDialog implements ItemListener {
         // TODO add your handling code here:
     }//GEN-LAST:event_tfUserActionPerformed
     //</editor-fold>
-
     //<editor-fold>
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btAdd;
@@ -848,7 +802,6 @@ public class ServiceDialog extends javax.swing.JDialog implements ItemListener {
     private javax.swing.JLabel jLabel10;
     private javax.swing.JLabel jLabel11;
     private javax.swing.JLabel jLabel3;
-    private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabel5;
     private javax.swing.JLabel jLabel6;
     private javax.swing.JLabel jLabel7;
@@ -864,7 +817,6 @@ public class ServiceDialog extends javax.swing.JDialog implements ItemListener {
     private javax.swing.JList<OrderBranch> list;
     private javax.swing.JPanel pnReturnDate;
     private javax.swing.JTable tbProduct;
-    private javax.swing.JTextField tfCusPhone;
     private javax.swing.JTextField tfID;
     private javax.swing.JTextField tfNameFilter;
     private javax.swing.JTextField tfReceiveDate;
@@ -893,7 +845,7 @@ public class ServiceDialog extends javax.swing.JDialog implements ItemListener {
             case 2:
                 EmployeeSwingUtils.showInfoDialog("In warranty  !");
                 track = true;
-                break;
+                break;           
         }
         return track;
     }
@@ -935,38 +887,21 @@ public class ServiceDialog extends javax.swing.JDialog implements ItemListener {
         setTrackChanges(true);
     }
 
-    private boolean checkPhone() {
-        boolean result = false;
-        String phone = tfCusPhone.getText().trim();
-
-        if (phone.length() < MIN) {
-            SwingUtils.showErrorDialog("Minimum 10 numbers !");
-            tfCusPhone.requestFocus();
-            tfCusPhone.selectAll();
-        } else if (phone.length() > MAX) {
-            SwingUtils.showErrorDialog("Maximum 20 numbers !");
-            tfCusPhone.requestFocus();
-            tfCusPhone.selectAll();
-        } else {
-            result = true;
-        }
-        return result;
-    }
-
     // Ham goi khi bam nut Save
     private void updateAction() {
         // Check da co product chua va product da chon het chua
         if (checkProductEmpty()) {
             EmployeeSwingUtils.showInfoDialog("Please choose product name !");
             return;
-        } else if (cbType.getSelectedIndex() == 1 && checkOrdIDEmpty()) {
+        }
+        if (cbType.getSelectedIndex() == 1 && checkOrdIDEmpty()) {
             EmployeeSwingUtils.showInfoDialog("Please input OrdID !");
             return;
-        } else if (cbType.getSelectedIndex() == 0 && checkCostEmpty()) {
+        }
+        if (cbType.getSelectedIndex() == 0 && checkCostEmpty()) {
             EmployeeSwingUtils.showInfoDialog("Please input Cost !");
             return;
         }
-        this.service.setCusPhone(tfCusPhone.getText());
         this.service.setReturnDate(dcFilter.getDate());
         if (service.getSerID() == -1) { // Insert mode
             if (serviceDetailsTableModelDialog.insert(service)) {
@@ -1089,7 +1024,6 @@ public class ServiceDialog extends javax.swing.JDialog implements ItemListener {
 
     private void clearFilter() {
         list.getSelectionModel().clearSelection();
-        serviceDetailsComboBoxModel.refresh();
         tfNameFilter.setText(null);
     }
 
