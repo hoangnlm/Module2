@@ -25,8 +25,8 @@ public class DBProvider {
     public static final String DBNAME = "F21508T1C_MobileShopSystemManage";
     public static final String NAME = "sa";
 //    public static final String PASSWORD = "26101996";
-    public static final String PASSWORD = "1";
-//    public static final String PASSWORD = "111";
+//    public static final String PASSWORD = "1";
+    public static final String PASSWORD = "111";
     
 
     public static void main(String[] args) throws SQLException {
