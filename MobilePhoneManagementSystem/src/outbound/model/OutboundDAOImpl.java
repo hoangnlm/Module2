@@ -27,9 +27,10 @@ import utility.SwingUtils;
 public class OutboundDAOImpl implements IDAO<Outbound> {
     private CachedRowSet crs;
     public static String mainCRS = "SELECT OutID,OutDate,OutContent,UserName,u.UserID from Outbounds o join Users u on u.UserID=o.UserID order by OutID desc";
-
+    private static List<OutboundDetail> listTemp = new ArrayList<>();
     public OutboundDAOImpl() {
         this.crs = getCRS(mainCRS);
+        
     }
     
     
@@ -80,7 +81,14 @@ public class OutboundDAOImpl implements IDAO<Outbound> {
     @Override
     public boolean delete(Outbound outbound) {
         boolean result = false;
+        OutboundDetailDAOImpl od = new OutboundDetailDAOImpl();
+        od.load(outbound.getOutID());
+        listTemp = od.getList();
         try {
+            for(int i =0;i<listTemp.size();i++){
+            
+            runPS("Delete from OutDetails where OutID=? and ProID=?",outbound.getOutID(),listTemp.get(i).getProID());
+            }
             runPS("delete from Outbounds where OutID=?",outbound.getOutID() );
             crs.execute();
             result = true;

@@ -9,7 +9,7 @@ import utility.CustomizedTableModel;
  * @author Hoang
  */
 public class OutboundProductTableModel extends CustomizedTableModel<OutboundProduct> {
-
+    
     public OutboundProductTableModel() {
         super(new OutboundProductDAOImpl(), new String[]{"ID", "Product Name", "Quantity"});
     }
@@ -18,7 +18,7 @@ public class OutboundProductTableModel extends CustomizedTableModel<OutboundProd
         return list.get(index);
     }
 
-    public void load(int proID) {
+    public  void load(int proID) {
         ((OutboundProductDAOImpl) super.daoImpl).load(proID);
         list = daoImpl.getList();
         fireTableDataChanged();
