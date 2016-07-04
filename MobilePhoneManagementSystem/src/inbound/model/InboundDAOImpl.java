@@ -17,6 +17,7 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.sql.rowset.CachedRowSet;
+import outbound.model.OutboundDetail;
 import utility.SwingUtils;
 
 /**
@@ -26,6 +27,7 @@ import utility.SwingUtils;
 public class InboundDAOImpl implements IDAO<Inbound> {
     private CachedRowSet crs;
     public static String mainCRS="SELECT InID,InDate,SupName,SupInvoiceID,UserName,s.SupID,u.UserID from Inbounds i join Suppliers s on i.SupID=s.SupID join Users u on u.UserID=i.UserID order by InID desc";
+    private static List<InboundDetail> listTemp = new ArrayList<>();
     public InboundDAOImpl() {
         this.crs = getCRS(mainCRS);
         
@@ -93,7 +95,13 @@ public class InboundDAOImpl implements IDAO<Inbound> {
     @Override
     public boolean delete(Inbound inbound) {
         boolean result = false;
+        InboundDetailDAOImpl id = new InboundDetailDAOImpl();
+        id.load(inbound.getInID());
+        listTemp = id.getList();
         try {
+            for(int i =0;i<listTemp.size();i++){
+                runPS("Delete from InDetails where InID=? and ProID=?",inbound.getInID(),listTemp.get(i).getProID());
+            }
             runPS("delete from Inbounds where InID=?", inbound.getInID());
             crs.execute();
             result = true;
