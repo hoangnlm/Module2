@@ -5,7 +5,6 @@
  */
 package product.dao;
 
-
 import database.DBProvider;
 import database.IDAO;
 import java.io.InputStream;
@@ -16,8 +15,14 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.sql.rowset.CachedRowSet;
+import main.controller.LoginFrame;
 import product.model.Product;
 import utility.SwingUtils;
+
+
+
+
+
 /**
  *
  * @author tuan
@@ -28,6 +33,7 @@ public class ProductDAOImpl implements IDAO<Product> {
 
     public ProductDAOImpl() {
         this.crs = getCRS(Product.Query_Show);
+         
     }
     
     
@@ -158,15 +164,15 @@ public class ProductDAOImpl implements IDAO<Product> {
     
     public boolean updateImage(Product product,InputStream is){
         boolean result = false;
+        
         try {
-            DBProvider db = new DBProvider();
-            db.start();
+           DBProvider db = new DBProvider(LoginFrame.config.host, LoginFrame.config.port, LoginFrame.config.DBName, LoginFrame.config.name, LoginFrame.config.password);
+             db.start();
             PreparedStatement ps = db.getPreparedStatement("Update Products set ProImage=? where ProID=?");
             ps.setBlob(1, is);
             ps.setInt(2, product.getProId());
-            
-            ps.executeUpdate();
             result = true;
+            ps.executeUpdate();
         } catch (SQLException ex) {
             Logger.getLogger(ProductDAOImpl.class.getName()).log(Level.SEVERE, null, ex);
         }

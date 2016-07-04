@@ -3,30 +3,30 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package user.controller;
+package service.controller.backup;
 
-
+import service.controller.*;
 import java.awt.Color;
 import java.awt.Component;
 import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.ListCellRenderer;
-import user.model.UserEmployee;
-
+import static javax.swing.SwingConstants.CENTER;
+import service.model.ServiceType;
 
 /**
  *
  * @author BonBon
  */
-public class UserEmployeeComboBoxRenderer extends JLabel implements ListCellRenderer<UserEmployee> {
+public class ServiceTypeComboBoxRenderer extends JLabel implements ListCellRenderer<ServiceType> {
 
-    public UserEmployeeComboBoxRenderer() {
+    public ServiceTypeComboBoxRenderer() {
         setHorizontalAlignment(LEFT);
     }
 
 
     @Override
-    public Component getListCellRendererComponent(JList<? extends UserEmployee> list, UserEmployee value, int index, boolean isSelected, boolean cellHasFocus) {
+    public Component getListCellRendererComponent(JList<? extends ServiceType> list, ServiceType value, int index, boolean isSelected, boolean cellHasFocus) {
         if (isSelected) {
             setBackground(list.getSelectionBackground());
             setForeground(Color.RED);
@@ -35,7 +35,7 @@ public class UserEmployeeComboBoxRenderer extends JLabel implements ListCellRend
             setForeground(list.getForeground());
         }
         if (value != null) {
-            setText(String.format("ID: %-10s   %s",value.getEmpID(),value.getEmpName()));
+            setText(value.getSerTypeName()+ "");
         }
         return this;
 

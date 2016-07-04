@@ -92,7 +92,7 @@ public class SalaryDialog extends javax.swing.JDialog {
 
         // Col Ser ID (HIDDEN)
         tbSalaryList.getColumnModel().getColumn(COL_SALID).setMinWidth(0);
-        tbSalaryList.getColumnModel().getColumn(COL_SALID).setMaxWidth(40);
+        tbSalaryList.getColumnModel().getColumn(COL_SALID).setMaxWidth(0);
         tbSalaryList.getColumnModel().getColumn(COL_EMPID).setMinWidth(0);
         tbSalaryList.getColumnModel().getColumn(COL_EMPID).setMaxWidth(0);
         // Col pro ID (HIDDEN)
@@ -124,11 +124,9 @@ public class SalaryDialog extends javax.swing.JDialog {
             if (!model.isSelectionEmpty()) {
                 fetchAction();
                 setButtonEnabled(true);
-//                System.out.println("row index: "+selectedRowIndex+"___SelectedSalary: "+selectedSalary.toString());
             } else {
                 setButtonEnabled(false);
             }
-            //
         }
         );
 
@@ -141,16 +139,37 @@ public class SalaryDialog extends javax.swing.JDialog {
             @Override
             public void actionPerformed(ActionEvent e) {
                 TableCellListener tcl = (TableCellListener) e.getSource();
+                Calendar cal = Calendar.getInstance();
+                int yNow = cal.get(Calendar.YEAR);
+                int mNow = cal.get(Calendar.MONTH);
 
+                cal.setTime(selectedSalary.getPayDay());
+                int yPay, mPay;
                 switch (tcl.getColumn()) {
 
                     case COL_WORKDAYS:
-                        selectedSalary.setWorkDays((int) tcl.getNewValue());
-                        //
+                        cal.setTime(selectedSalary.getPayDay());
+                        yPay = cal.get(Calendar.YEAR);
+                        mPay = cal.get(Calendar.MONTH);
+                        if (!(yPay == yNow && mPay == mNow)) {
+                            EmployeeSwingUtils.showErrorDialog("Can't update workdays of the month before!");
+                            refreshAction(false);
+                            return;
+                        } else {
+                            selectedSalary.setWorkDays((int) tcl.getNewValue());
+                        }
                         break;
                     case COL_OFFDAYS:
-                        selectedSalary.setOffDays((int) tcl.getNewValue());
-                        //
+                        cal.setTime(selectedSalary.getPayDay());
+                        yPay = cal.get(Calendar.YEAR);
+                        mPay = cal.get(Calendar.MONTH);
+                        if (!(yPay == yNow && mPay == mNow)) {
+                            EmployeeSwingUtils.showErrorDialog("Can't update offdays of the month before!");
+                            refreshAction(false);
+                            return;
+                        } else {
+                            selectedSalary.setOffDays((int) tcl.getNewValue());
+                        }
                         break;
                 }
                 if (EmployeeSwingUtils.showConfirmDialog("Are you sure to update ?") == JOptionPane.NO_OPTION) {
@@ -158,7 +177,6 @@ public class SalaryDialog extends javax.swing.JDialog {
                 } else {
                     updateAction();
                 }
-                //
             }
         });
 //</editor-fold>
@@ -311,9 +329,9 @@ public class SalaryDialog extends javax.swing.JDialog {
         details.setWorkDays(22);
         details.setOffDays(0);
         Calendar calendar = Calendar.getInstance();
-        int y=calendar.get(Calendar.YEAR);
-        int m=calendar.get(Calendar.MONTH);
-        System.out.println(m);
+        int y = calendar.get(Calendar.YEAR);
+        int m = calendar.get(Calendar.MONTH);
+//        System.out.println(m);
         calendar.set(y, m, 5);
 //        System.out.println(calendar.getTime());
         details.setPayDay(calendar.getTime());
@@ -322,13 +340,13 @@ public class SalaryDialog extends javax.swing.JDialog {
         details.setEmpID(employee.getEmpID());
         details.setBasicSalary(employee.getEmpSalary());
         details.setBonus(employee.getEmpBonus());
-        
-        System.out.println("zzzzzzz:   " + details);
-        SalaryDAOImpl sd= new SalaryDAOImpl();
-        if(sd.checkPayDay(details)==true){
-        salaryTableModel.insert(details);
-        refreshAction(false);
-        }else{
+
+//        System.out.println("salary:   " + details);
+        SalaryDAOImpl sd = new SalaryDAOImpl();
+        if (sd.checkPayDay(details) == true) {
+            salaryTableModel.insert(details);
+            refreshAction(false);
+        } else {
             EmployeeSwingUtils.showErrorDialog("Salary of last month was paid !");
         }
         scrollToRow(tbSalaryList.getRowCount() - 1);
@@ -336,19 +354,32 @@ public class SalaryDialog extends javax.swing.JDialog {
     }
 
     private void deleteAction() {
-        if (EmployeeSwingUtils.showConfirmDialog("Are you sure to delete ?") == JOptionPane.NO_OPTION) {
-            return;
-        } else if (selectedRowIndex == -1) {
+
+        if (selectedRowIndex == -1) {
             EmployeeSwingUtils.showErrorDialog("Choose salary to delete !");
             return;
         } else if (tbSalaryList.getRowCount() == 1) {
             EmployeeSwingUtils.showErrorDialog("At least 1 details !");
             return;
-        } else if (salaryTableModel.delete(selectedSalary)) {
-            EmployeeSwingUtils.showInfoDialog(EmployeeSwingUtils.DELETE_SUCCESS);
-
         } else {
-            EmployeeSwingUtils.showInfoDialog(EmployeeSwingUtils.DELETE_FAIL);
+            Calendar cal = Calendar.getInstance();
+            int yNow = cal.get(Calendar.YEAR);
+            int mNow = cal.get(Calendar.MONTH);
+
+            cal.setTime(selectedSalary.getPayDay());
+            int yPay = cal.get(Calendar.YEAR);
+            int mPay = cal.get(Calendar.MONTH);
+            if (!(yPay == yNow && mPay == mNow)) {
+                EmployeeSwingUtils.showErrorDialog("Can't delete salary of the month before!");
+
+            } else if (EmployeeSwingUtils.showConfirmDialog("Are you sure to delete ?") == JOptionPane.NO_OPTION) {
+                return;
+            } else if (salaryTableModel.delete(selectedSalary)) {
+                EmployeeSwingUtils.showInfoDialog(EmployeeSwingUtils.DELETE_SUCCESS);
+
+            } else {
+                EmployeeSwingUtils.showInfoDialog(EmployeeSwingUtils.DELETE_FAIL);
+            }
         }
         refreshAction(false);
 //        System.out.println("RowCount: "+tbSalaryList.getRowCount());
@@ -356,6 +387,7 @@ public class SalaryDialog extends javax.swing.JDialog {
         // Neu row xoa la row khac cuoi thi tien cursor ve truoc
         selectedRowIndex = 0;
 //        selectedRowIndex = (selectedRowIndex == tbSalaryList.getRowCount() ? tbSalaryList.getRowCount() - 1 : selectedRowIndex++);
+
         scrollToRow(selectedRowIndex);
         //
     }
@@ -422,6 +454,7 @@ public class SalaryDialog extends javax.swing.JDialog {
     }
 
     private void setButtonEnabled(boolean enabled, JButton... exclude) {
+
         btRemove.setEnabled(enabled);
 //        btAdd.setEnabled(enabled);
 

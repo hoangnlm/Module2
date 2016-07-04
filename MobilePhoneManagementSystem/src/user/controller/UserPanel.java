@@ -32,7 +32,7 @@ import utility.TableCellListener;
 import employee.model.EmployeeSwingUtils;
 import javax.swing.JOptionPane;
 import user.model.NewUserEmployeeDAOImpl;
-
+//test push
 /**
  *
  * @author BonBon
@@ -132,7 +132,7 @@ public class UserPanel extends javax.swing.JPanel {
                 TableCellListener tcl = (TableCellListener) e.getSource();
 
                 switch (tcl.getColumn()) {
-                    case COL_EMPNAME:
+                    case COL_EMPNAME:                        
                         selectedUser.setEmpName((String) tcl.getNewValue());
                         selectedUser.setEmpID(employeeComboBoxModel1.getUserEmployeeNameFromValue((String) tcl.getNewValue()).getEmpID());
                         employeeComboBoxModel1.refresh();

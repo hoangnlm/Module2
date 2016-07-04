@@ -3,8 +3,9 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package service.model;
+package service.controller.backup;
 
+import service.model.*;
 import order.model.*;
 import database.IDAO;
 import java.sql.SQLException;
@@ -26,7 +27,7 @@ public class ServiceDetailsDAOImplComboBox implements IDAO<ServiceDetails> {
 
     public ServiceDetailsDAOImplComboBox() {
         // Chi thao tac voi product dang enable
-        crs = getCRS("select p.ProID,p.ProName,b.BraName,b.BraID from Products p join Branches b on b.BraID=p.BraID where ProEnabled=1 ORDER BY b.BraName");
+        crs = getCRS("select p.ProID,p.ProName,b.BraName,b.BraID from Products p join Branches b on b.BraID=p.BraID ORDER BY b.BraName");
     }
 
     @Override

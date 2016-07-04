@@ -108,7 +108,7 @@ public class IntegerCellEditor extends DefaultCellEditor {
      */
     protected boolean userSaysRevert() {
         Toolkit.getDefaultToolkit().beep();
-        System.out.println("userSaysRevert1: " + ftf.getValue());
+//        System.out.println("userSaysRevert1: " + ftf.getValue());
 
         if (SwingUtils.showInputValidationDialog(
                 "The value must be an integer between "
@@ -116,7 +116,7 @@ public class IntegerCellEditor extends DefaultCellEditor {
                 + maximum + ".\n"
                 + "You can either reinput or "
                 + "revert to the last valid value.") == JOptionPane.NO_OPTION) { //Revert!
-            System.out.println("userSaysRevert2: " + ftf.getValue());
+//            System.out.println("userSaysRevert2: " + ftf.getValue());
             ftf.setValue(ftf.getValue());
             return true;
         }

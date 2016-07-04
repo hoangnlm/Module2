@@ -6,7 +6,7 @@
       <Color blue="33" green="33" red="33" type="rgb"/>
     </Property>
     <Property name="preferredSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
-      <Dimension value="[800, 30]"/>
+      <Dimension value="[450, 25]"/>
     </Property>
   </Properties>
   <AuxValues>
@@ -26,30 +26,49 @@
       <Group type="103" groupAlignment="0" attributes="0">
           <Group type="102" alignment="0" attributes="0">
               <EmptySpace max="-2" attributes="0"/>
-              <Component id="lbId" min="-2" pref="48" max="-2" attributes="0"/>
-              <EmptySpace min="-2" pref="84" max="-2" attributes="0"/>
-              <Component id="lbName" pref="213" max="32767" attributes="0"/>
-              <EmptySpace min="-2" pref="66" max="-2" attributes="0"/>
-              <Component id="lbAddress" pref="377" max="32767" attributes="0"/>
+              <Component id="lbBranch" min="-2" pref="114" max="-2" attributes="0"/>
+              <EmptySpace max="-2" attributes="0"/>
+              <Component id="lbName" min="-2" pref="251" max="-2" attributes="0"/>
+              <EmptySpace max="-2" attributes="0"/>
+              <Component id="lbStock" pref="63" max="32767" attributes="0"/>
+              <EmptySpace max="-2" attributes="0"/>
           </Group>
       </Group>
     </DimensionLayout>
     <DimensionLayout dim="1">
       <Group type="103" groupAlignment="0" attributes="0">
-          <Component id="lbId" alignment="0" pref="30" max="32767" attributes="0"/>
           <Group type="103" alignment="0" groupAlignment="3" attributes="0">
-              <Component id="lbAddress" alignment="3" max="32767" attributes="0"/>
-              <Component id="lbName" alignment="3" pref="30" max="32767" attributes="0"/>
+              <Component id="lbBranch" alignment="3" max="32767" attributes="0"/>
+              <Component id="lbName" alignment="3" min="-2" max="-2" attributes="0"/>
+              <Component id="lbStock" alignment="3" min="-2" pref="25" max="-2" attributes="0"/>
           </Group>
       </Group>
     </DimensionLayout>
   </Layout>
   <SubComponents>
-    <Component class="javax.swing.JLabel" name="lbId">
+    <Component class="javax.swing.JLabel" name="lbBranch">
+      <Properties>
+        <Property name="text" type="java.lang.String" value="Nokia"/>
+        <Property name="preferredSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
+          <Dimension value="[138, 25]"/>
+        </Property>
+      </Properties>
     </Component>
     <Component class="javax.swing.JLabel" name="lbName">
+      <Properties>
+        <Property name="text" type="java.lang.String" value="Nokia Lumia 910 multimedia"/>
+        <Property name="preferredSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
+          <Dimension value="[182, 25]"/>
+        </Property>
+      </Properties>
     </Component>
-    <Component class="javax.swing.JLabel" name="lbAddress">
+    <Component class="javax.swing.JLabel" name="lbStock">
+      <Properties>
+        <Property name="text" type="java.lang.String" value="Stock: 0"/>
+        <Property name="preferredSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
+          <Dimension value="[51, 25]"/>
+        </Property>
+      </Properties>
     </Component>
   </SubComponents>
 </Form>

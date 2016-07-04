@@ -81,7 +81,6 @@ public class OutboundDAOImpl implements IDAO<Outbound> {
     public boolean delete(Outbound outbound) {
         boolean result = false;
         try {
-            runPS("delete from OutDetails where OutID=?",outbound.getOutID());
             runPS("delete from Outbounds where OutID=?",outbound.getOutID() );
             crs.execute();
             result = true;

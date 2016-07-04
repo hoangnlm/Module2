@@ -5,16 +5,20 @@
  */
 package product.model;
 
-
-
-
-import database.IDAO;
 import java.awt.Image;
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import product.dao.Branch;
 import product.dao.ProductDAOImpl;
 import utility.CustomizedTableModel;
+
+
+
+
+
+
+
+
 
 /**
  *
@@ -23,7 +27,7 @@ import utility.CustomizedTableModel;
 public class ProductTableModel extends CustomizedTableModel<Product> {
 
     public ProductTableModel() {
-        super(new ProductDAOImpl(), new String[]{"ID", "Branch", "Product Name", "Stock", "Price", "Description","Enable","SaleOff","Image"});
+        super(new ProductDAOImpl(), new String[]{"ID", "Branch", "Product Name", "Stock", "Price", "Description","Status","SaleOff","Image"});
     }
     
 

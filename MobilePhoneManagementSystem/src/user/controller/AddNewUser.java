@@ -26,12 +26,16 @@ import utility.SwingUtils;
  */
 public class AddNewUser extends javax.swing.JDialog implements IDAO<User> {
 
+//    private AddNewUser newUser;
     User user;
     private NewUserComboBoxModel employeeComboBoxModel;
     private NewUserComboBoxRenderer employeeComboBoxRenderer;
     UserEmployee cbbEmp;
     int empID;
     String pass = "", repass = "", userName = "";
+    public static final int MINUSER = 4;
+    public static final int MIN = 6;
+    public static final int MAX = 30;
 
     public AddNewUser() {
         super((JFrame) null, true);
@@ -47,10 +51,11 @@ public class AddNewUser extends javax.swing.JDialog implements IDAO<User> {
         employeeComboBoxRenderer = new NewUserComboBoxRenderer();
         cbEmployee.setRenderer(employeeComboBoxRenderer);
         cbEmployee.setSelectedIndex(cbEmployee.getItemCount() - 1);
+        txtUserName.setText("");
+        txtNew.setText("");
+        SwingUtils.validateStringInput2(txtUserName, MINUSER, MAX, SwingUtils.PATTERN_NAMENOSPACE);
+        SwingUtils.validateStringInput2(txtNew, MIN, MAX, SwingUtils.PATTERN_NAMENOSPACE);
 
-        SwingUtils.validateStringInput(txtUserName, 4, 30, SwingUtils.PATTERN_NAMENOSPACE);
-        EmployeeSwingUtils.validateStringInput(txtNew, 6, 30, EmployeeSwingUtils.PATTERN_NAMENOSPACE);
-        
         //<editor-fold defaultstate="collapsed" desc="event listener">
         txtNew.getDocument().addDocumentListener(
                 new DocumentListener() {
@@ -120,38 +125,47 @@ public class AddNewUser extends javax.swing.JDialog implements IDAO<User> {
         }
     }
 
+    private boolean checkLength() {
+        boolean result = false;
+        String oldPw = new String(txtUserName.getText()).trim();
+        String newPw = new String(txtNew.getPassword()).trim();
+        if (oldPw.isEmpty()) {
+            SwingUtils.showInfoDialog("User name is empty !");
+            txtUserName.requestFocus();
+            txtUserName.selectAll();
+        } else if (oldPw.length() < MINUSER) {
+            SwingUtils.showInfoDialog("Minimum 4 characters !");
+            txtUserName.requestFocus();
+            txtUserName.selectAll();
+        } else if (newPw.isEmpty()) {
+            SwingUtils.showInfoDialog("New password is empty !");
+            txtNew.requestFocus();
+            txtNew.selectAll();
+        } else if (newPw.length() < MIN) {
+            SwingUtils.showInfoDialog("Minimum 6 characters !");
+            txtNew.requestFocus();
+            txtNew.selectAll();
+        } else {
+            result = true;
+        }
+
+        return result;
+    }
+
     public boolean validateField() {
         boolean result = true;
         empID = ((UserEmployee) cbEmployee.getSelectedItem()).getEmpID();
-//        if (pass.isEmpty()) {
-//            result = false;
-//            SwingUtils.showErrorDialog("Must be not empty !");
-//            txtNew.requestFocus();
-//        } else if (repass.isEmpty()) {
-//            result = false;
-//            SwingUtils.showErrorDialog("Must be not empty !");
-//            txtReNew.requestFocus();
-//        } else if (userName.isEmpty()) {
-//            result = false;
-//            SwingUtils.showErrorDialog("Must be not empty !");
-//            txtUserName.requestFocus();
-//        } else 
-//            
+
         if (empID == 0) {
             result = false;
             SwingUtils.showErrorDialog("Choose employee !");
-        } else if (!userName.matches(EmployeeSwingUtils.PATTERN_USERNAME)) {
+        } else if (!checkLength()) {
             result = false;
-            SwingUtils.showErrorDialog("Invalid format ! Only number and character, minimum 4 and maximum 30 characters !");
-            txtUserName.requestFocus();
-        } else if (!pass.matches(EmployeeSwingUtils.PATTERN_PASSWORD)) {
-            result = false;
-            SwingUtils.showErrorDialog("Invalid format ! Only number and character, minimum 6 and maximum 30 characters !");
-            txtNew.requestFocus();
         } else if (!repass.equals(pass)) {
             result = false;
             SwingUtils.showErrorDialog("Re-password does not matches!");
             txtReNew.requestFocus();
+            txtReNew.selectAll();
         } else {
             try {
                 CachedRowSet crs = getCRS("select * from Users where UserName=?", userName);
@@ -400,7 +414,7 @@ public class AddNewUser extends javax.swing.JDialog implements IDAO<User> {
 
     private void btOKActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btOKActionPerformed
         if (validateField() == true) {
-            if (EmployeeSwingUtils.showConfirmDialog("Are you sure to update ?") == JOptionPane.NO_OPTION) {
+            if (EmployeeSwingUtils.showConfirmDialog("Are you sure to insert ?") == JOptionPane.NO_OPTION) {
                 return;
             } else {
                 boolean result = insert();

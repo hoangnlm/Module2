@@ -121,6 +121,7 @@ public class InboundDialog extends javax.swing.JDialog implements ItemListener {
         setting();
         btDelete.setEnabled(false);
         btnAdd.setEnabled(false);
+        btReset.setEnabled(false);
         if (insertMode) {
             setTitle("New Inbound");
             this.inbound = new Inbound();
@@ -133,14 +134,14 @@ public class InboundDialog extends javax.swing.JDialog implements ItemListener {
             setTrackChanges(false);
             txtInvoice.setEditable(true);
             txtUser.setText(LoginFrame.config.userName);
+            tfDate.setText(SwingUtils.formatString(new Date(), SwingUtils.FormatType.DATE));
             tbProductList.setEnabled(false);
         } else {
             this.inbound = inbound.clone();
             backup = this.inbound.clone();
             cbSupplier.setSelectedItem(supplierComboboxModel.getSupplierFromValue(this.inbound.getSupName()));//set data cho combobox
             doFilter();
-            jdcDate.setDate(this.inbound.getInDate());//set data cho ngay
-            jdcDate.setEnabled(false);//disable ngay,k cho update
+            tfDate.setText(SwingUtils.formatString(this.inbound.getInDate(), SwingUtils.FormatType.DATE));
             txtInvoice.setText(this.inbound.getSupInvoiceID());
             setTrackChanges(false);
             txtInvoice.setEditable(false);
@@ -228,13 +229,13 @@ public class InboundDialog extends javax.swing.JDialog implements ItemListener {
         PromptSupport.setFocusBehavior(PromptSupport.FocusBehavior.SHOW_PROMPT, txtInvoice);
 
         // ---------- Settup Jdatechooser
-        jdcDate.setBounds(0, 0, 130, 20);
-        jdcDate.setDateFormatString("MMM dd, yyyy");
-        jdcDate.getDateEditor().setEnabled(false);
-        pnlDate.add(jdcDate);
-        //Lay ngay hien tai
-        java.util.Date today = new java.util.Date();
-        jdcDate.setDate(today);
+//        jdcDate.setBounds(0, 0, 130, 20);
+//        jdcDate.setDateFormatString("MMM dd, yyyy");
+//        jdcDate.getDateEditor().setEnabled(false);
+//        pnlDate.add(jdcDate);
+//        //Lay ngay hien tai
+//        java.util.Date today = new java.util.Date();
+//        jdcDate.setDate(today);
 
         //bat su kien sua thong tin table InDetail
         TableCellListener tcl = new TableCellListener(tbInDetail, new AbstractAction() {
@@ -294,6 +295,8 @@ public class InboundDialog extends javax.swing.JDialog implements ItemListener {
                 fetchAction();
                 btDelete.setEnabled(true);
             }
+            else
+                btDelete.setEnabled(false);
         });
 
         tbInDetail.setDefaultEditor(Float.class, new FloatEditor(1000000, 30000000));
@@ -388,7 +391,7 @@ public class InboundDialog extends javax.swing.JDialog implements ItemListener {
         if (!insertMode) {
             cbSupplier.setSelectedItem(supplierComboboxModel.getSupplierFromValue(this.inbound.getSupName()));
         } else {
-            cbSupplier.setSelectedIndex(0);
+//            cbSupplier.setSelectedIndex();
         }
         jdcDate.setDate(new Date());
 
@@ -425,6 +428,7 @@ public class InboundDialog extends javax.swing.JDialog implements ItemListener {
     public void setTrackChanges(boolean trackChanges) {
         this.trackChanges = trackChanges;
         btnSave.setEnabled(trackChanges);
+        btReset.setEnabled(trackChanges);
     }
 
     private void refreshAction2(boolean mustInfo) {
@@ -471,7 +475,6 @@ public class InboundDialog extends javax.swing.JDialog implements ItemListener {
         for (Object item : arr) {
             filters.add(RowFilter.regexFilter("^" + item.toString(), 1));
             rf = RowFilter.orFilter(filters);
-            System.err.println(item);
         }
 
         sorter.setRowFilter(rf);
@@ -487,12 +490,12 @@ public class InboundDialog extends javax.swing.JDialog implements ItemListener {
     private void initComponents() {
 
         jPanel1 = new javax.swing.JPanel();
-        pnlDate = new javax.swing.JPanel();
         jLabel4 = new javax.swing.JLabel();
         txtInvoice = new javax.swing.JTextField();
         jLabel5 = new javax.swing.JLabel();
         txtUser = new javax.swing.JTextField();
         jLabel2 = new javax.swing.JLabel();
+        tfDate = new javax.swing.JTextField();
         jPanel3 = new javax.swing.JPanel();
         jScrollPane1 = new javax.swing.JScrollPane();
         tbInDetail = new javax.swing.JTable();
@@ -503,7 +506,7 @@ public class InboundDialog extends javax.swing.JDialog implements ItemListener {
         btnAdd = new javax.swing.JButton();
         btDelete = new javax.swing.JButton();
         jButton5 = new javax.swing.JButton();
-        jButton3 = new javax.swing.JButton();
+        btReset = new javax.swing.JButton();
         jLabel3 = new javax.swing.JLabel();
         cbSupplier = new javax.swing.JComboBox<>();
 
@@ -512,19 +515,6 @@ public class InboundDialog extends javax.swing.JDialog implements ItemListener {
         setResizable(false);
 
         jPanel1.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "Inbound", javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Tahoma", 1, 13), new java.awt.Color(255, 153, 0))); // NOI18N
-
-        pnlDate.setEnabled(false);
-
-        javax.swing.GroupLayout pnlDateLayout = new javax.swing.GroupLayout(pnlDate);
-        pnlDate.setLayout(pnlDateLayout);
-        pnlDateLayout.setHorizontalGroup(
-            pnlDateLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 148, Short.MAX_VALUE)
-        );
-        pnlDateLayout.setVerticalGroup(
-            pnlDateLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 0, Short.MAX_VALUE)
-        );
 
         jLabel4.setText("Suppplier Invoice:");
 
@@ -539,6 +529,9 @@ public class InboundDialog extends javax.swing.JDialog implements ItemListener {
 
         jLabel2.setText("Date:");
 
+        tfDate.setEditable(false);
+        tfDate.setEnabled(false);
+
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
@@ -546,8 +539,8 @@ public class InboundDialog extends javax.swing.JDialog implements ItemListener {
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(jLabel2)
-                .addGap(26, 26, 26)
-                .addComponent(pnlDate, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(tfDate, javax.swing.GroupLayout.PREFERRED_SIZE, 169, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(jLabel4)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -568,8 +561,9 @@ public class InboundDialog extends javax.swing.JDialog implements ItemListener {
                         .addComponent(jLabel4)
                         .addComponent(jLabel5)
                         .addComponent(txtUser, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addComponent(jLabel2)
-                    .addComponent(pnlDate, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                        .addComponent(jLabel2)
+                        .addComponent(tfDate, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
@@ -644,7 +638,7 @@ public class InboundDialog extends javax.swing.JDialog implements ItemListener {
                 .addGap(0, 0, Short.MAX_VALUE))
         );
 
-        btnSave.setIcon(new javax.swing.ImageIcon(getClass().getResource("/image/product/apply.png"))); // NOI18N
+        btnSave.setIcon(new javax.swing.ImageIcon(getClass().getResource("/image/order/OK2.png"))); // NOI18N
         btnSave.setText("Save all");
         btnSave.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -652,7 +646,7 @@ public class InboundDialog extends javax.swing.JDialog implements ItemListener {
             }
         });
 
-        btnAdd.setIcon(new javax.swing.ImageIcon(getClass().getResource("/image/product/Add.png"))); // NOI18N
+        btnAdd.setIcon(new javax.swing.ImageIcon(getClass().getResource("/image/product/add2.png"))); // NOI18N
         btnAdd.setText("Add");
         btnAdd.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -660,7 +654,7 @@ public class InboundDialog extends javax.swing.JDialog implements ItemListener {
             }
         });
 
-        btDelete.setIcon(new javax.swing.ImageIcon(getClass().getResource("/image/product/Delete.png"))); // NOI18N
+        btDelete.setIcon(new javax.swing.ImageIcon(getClass().getResource("/image/order/crossout.png"))); // NOI18N
         btDelete.setText("Remove");
         btDelete.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -668,7 +662,7 @@ public class InboundDialog extends javax.swing.JDialog implements ItemListener {
             }
         });
 
-        jButton5.setIcon(new javax.swing.ImageIcon(getClass().getResource("/image/product/banned.png"))); // NOI18N
+        jButton5.setIcon(new javax.swing.ImageIcon(getClass().getResource("/image/order/Cancel2.png"))); // NOI18N
         jButton5.setText("Discard");
         jButton5.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -676,11 +670,11 @@ public class InboundDialog extends javax.swing.JDialog implements ItemListener {
             }
         });
 
-        jButton3.setIcon(new javax.swing.ImageIcon(getClass().getResource("/image/product/Refresh.png"))); // NOI18N
-        jButton3.setText("Reset Data");
-        jButton3.addActionListener(new java.awt.event.ActionListener() {
+        btReset.setIcon(new javax.swing.ImageIcon(getClass().getResource("/image/product/refresh_1.png"))); // NOI18N
+        btReset.setText("Reset Data");
+        btReset.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton3ActionPerformed(evt);
+                btResetActionPerformed(evt);
             }
         });
 
@@ -703,17 +697,17 @@ public class InboundDialog extends javax.swing.JDialog implements ItemListener {
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(btnSave, javax.swing.GroupLayout.PREFERRED_SIZE, 136, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(btnSave, javax.swing.GroupLayout.PREFERRED_SIZE, 108, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jButton3, javax.swing.GroupLayout.PREFERRED_SIZE, 142, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(btReset, javax.swing.GroupLayout.PREFERRED_SIZE, 115, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jButton5, javax.swing.GroupLayout.PREFERRED_SIZE, 136, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(jButton5, javax.swing.GroupLayout.PREFERRED_SIZE, 115, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addComponent(btnAdd, javax.swing.GroupLayout.PREFERRED_SIZE, 108, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(btDelete)
+                .addComponent(btDelete, javax.swing.GroupLayout.PREFERRED_SIZE, 112, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
@@ -735,10 +729,11 @@ public class InboundDialog extends javax.swing.JDialog implements ItemListener {
                 .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, 72, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jButton3, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 41, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                        .addComponent(btnSave)
-                        .addComponent(jButton5))))
+                    .addComponent(btnSave, javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                        .addComponent(btReset, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(jButton5)))
+                .addGap(16, 16, 16))
         );
 
         pack();
@@ -794,15 +789,20 @@ public class InboundDialog extends javax.swing.JDialog implements ItemListener {
         deleteAction();
     }//GEN-LAST:event_btDeleteActionPerformed
 
-    private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton3ActionPerformed
-        resetAction(true);
-    }//GEN-LAST:event_jButton3ActionPerformed
+    private void btResetActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btResetActionPerformed
+        
+        int ans = SwingUtils.showConfirmDialog("Are you sure to reset data to initial value?");
+        if(ans==JOptionPane.YES_OPTION)
+            resetAction(true);
+    
+    }//GEN-LAST:event_btResetActionPerformed
 
     private void tbProductListPropertyChange(java.beans.PropertyChangeEvent evt) {//GEN-FIRST:event_tbProductListPropertyChange
 
     }//GEN-LAST:event_tbProductListPropertyChange
     public void deleteAction() {
-
+        int ans = SwingUtils.showConfirmDialog("Are you sure to delete? Quantity of such product will deduct in stock");
+        if(ans==JOptionPane.YES_OPTION){
         inboundDetailTableModel.delete(selectedInDetail);
         selectedRowIndex = (selectedRowIndex == tbInDetail.getRowCount() ? tbInDetail.getRowCount() - 1 : selectedRowIndex++);
         // scrollToRow(selectedRowIndex);
@@ -810,6 +810,7 @@ public class InboundDialog extends javax.swing.JDialog implements ItemListener {
         //refreshAction2(false);
         //inboundDetailTableModel.refresh();
         setTrackChanges(true);
+        }
     }
 
     public void cancelAction() {
@@ -951,10 +952,10 @@ public class InboundDialog extends javax.swing.JDialog implements ItemListener {
     }
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btDelete;
+    private javax.swing.JButton btReset;
     private javax.swing.JButton btnAdd;
     private javax.swing.JButton btnSave;
     private javax.swing.JComboBox<Supplier> cbSupplier;
-    private javax.swing.JButton jButton3;
     private javax.swing.JButton jButton5;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
@@ -965,9 +966,9 @@ public class InboundDialog extends javax.swing.JDialog implements ItemListener {
     private javax.swing.JPanel jPanel4;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane2;
-    private javax.swing.JPanel pnlDate;
     private javax.swing.JTable tbInDetail;
     private javax.swing.JTable tbProductList;
+    private javax.swing.JTextField tfDate;
     private javax.swing.JTextField txtInvoice;
     private javax.swing.JTextField txtUser;
     // End of variables declaration//GEN-END:variables
